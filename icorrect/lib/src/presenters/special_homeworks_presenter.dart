@@ -1,0 +1,61 @@
+import 'dart:convert';
+
+import 'package:icorrect/src/data_sources/dependency_injection.dart';
+import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
+import 'package:icorrect/src/models/my_test_models/activity_result_model.dart';
+import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/models/user_data_models/student_model.dart';
+
+abstract class SpecialHomeworksContracts {
+  void getSpecialHomeWork(List<StudentResultModel> studentsResults);
+  void getSpecicalHomeWorksFail(String message);
+}
+
+class SpecialHomeworksPresenter {
+  final SpecialHomeworksContracts? _view;
+  MyTestRepository? _myTestRepository;
+
+  SpecialHomeworksPresenter(this._view) {
+    _myTestRepository = Injector().getMyTestRepository();
+  }
+
+  void getSpecialHomeWorks(
+      {required String email,
+      required String activityId,
+      required int status,
+      required int example}) {
+    assert(_view != null && _myTestRepository != null);
+    _myTestRepository!
+        .getSpecialHomeWorks(email, activityId, status, example)
+        .then((value) {
+      Map<String, dynamic> dataMap = jsonDecode(value) ?? [];
+      print(dataMap.toString());
+      if (dataMap.isNotEmpty) {
+        if (dataMap['error_code'] == 200) {
+          List<StudentResultModel> results =
+              _getStudentResultsModel(dataMap['data'] ?? {});
+          _view!.getSpecialHomeWork(results);
+        } else {
+          _view!.getSpecicalHomeWorksFail('Loading result response fail !');
+        }
+      } else {
+        _view!.getSpecicalHomeWorksFail(
+            'Loading result response fail.Please check your internet and try again!');
+      }
+    }).catchError((onError) {
+      _view!.getSpecicalHomeWorksFail(
+          'Error when load homeworks : ${onError.toString()}');
+      print(onError.toString());
+    });
+  }
+
+  List<StudentResultModel> _getStudentResultsModel(List<dynamic> data) {
+    print(data.toString());
+    List<StudentResultModel> results = [];
+    for (int i = 0; i < data.length; i++) {
+      dynamic item = data[i];
+      results.add(StudentResultModel.fromJson(item));
+    }
+    return results;
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
 import 'package:icorrect/src/data_sources/repositories/homework_repository.dart';
+import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 import 'package:icorrect/src/data_sources/repositories/test_repository.dart';
 
 class Injector {
@@ -11,4 +12,5 @@ class Injector {
   AuthRepository getAuthRepository() => AuthRepositoryImpl();
   HomeWorkRepository getHomeWorkRepository() => HomeWorkRepositoryImpl();
   TestRepository getTestRepository() => TestRepositoryImpl();
+  MyTestRepository getMyTestRepository() => MyTestImpl();
 }

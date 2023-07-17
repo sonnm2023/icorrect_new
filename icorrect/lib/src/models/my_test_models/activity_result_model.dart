@@ -1,33 +1,32 @@
 class ActivityResult {
-  var _id;
-  var _name;
-  var _type;
-  var _test;
-  var _startDate;
-  var _startTime;
-  var _endTime;
-  var _endDate;
-  var _syllabusId;
-  var _status;
-  var _createdAt;
-  var _updatedAt;
-  var _activityId;
-  var _tips;
-  var _cost;
-  var _bankClone;
-  var _sendEmail;
-  var _uuid;
-  var _activityBankMyBank;
-  var _packageId;
-  var _bank;
-  var _bankName;
-  var _question;
-  var _bankType;
-  var _bankDistributeCode;
-  var _isTested;
-  var _activityType;
-  var _questionType;
-  var _questionIndex;
+  int? _id;
+  String? _name;
+  String? _type;
+  String? _test;
+  String? _startDate;
+  String? _startTime;
+  String? _endTime;
+  String? _endDate;
+  String? _syllabusId;
+  int? _status;
+  String? _createdAt;
+  String? _updatedAt;
+  int? _activityId;
+  String? _tips;
+  int? _cost;
+  int? _bankClone;
+  int? _sendEmail;
+  String? _uuid;
+  String? _activityBankMyBank;
+  int? _packageId;
+  int? _bank;
+  String? _bankName;
+  int? _question;
+  int? _bankType;
+  String? _bankDistributeCode;
+  int? _isTested;
+  String? _activityType;
+  int? _questionIndex;
 
   ActivityResult([
     this._id,
@@ -57,11 +56,10 @@ class ActivityResult {
     this._bankDistributeCode,
     this._isTested,
     this._activityType,
-    this._questionType,
     this._questionIndex,
   ]);
 
-  get id => this._id;
+  get id => this._id ?? 0;
 
   set id(value) => this._id = value;
 
@@ -73,107 +71,134 @@ class ActivityResult {
 
   set type(value) => this._type = value;
 
-  get test => this._test ?? '';
+  get test => this._test;
 
   set test(value) => this._test = value;
 
-  get startDate => this._startDate ?? '';
+  get startDate => this._startDate;
 
   set startDate(value) => this._startDate = value;
 
-  get startTime => this._startTime ?? '';
+  get startTime => this._startTime;
 
   set startTime(value) => this._startTime = value;
 
-  get endTime => this._endTime ?? '';
+  get endTime => this._endTime;
 
   set endTime(value) => this._endTime = value;
 
-  get endDate => this._endDate ?? '';
+  get endDate => this._endDate;
 
   set endDate(value) => this._endDate = value;
 
-  get syllabusId => this._syllabusId ?? '';
+  get syllabusId => this._syllabusId;
 
   set syllabusId(value) => this._syllabusId = value;
 
-  get status => this._status ?? '';
+  get status => this._status;
 
   set status(value) => this._status = value;
 
-  get createdAt => this._createdAt ?? '';
+  get createdAt => this._createdAt;
 
   set createdAt(value) => this._createdAt = value;
 
-  get updatedAt => this._updatedAt ?? '';
+  get updatedAt => this._updatedAt;
 
   set updatedAt(value) => this._updatedAt = value;
 
-  get activityId => this._activityId ?? '';
+  get activityId => this._activityId;
 
   set activityId(value) => this._activityId = value;
 
-  get tips => this._tips ?? '';
+  get tips => this._tips;
 
   set tips(value) => this._tips = value;
 
-  get cost => this._cost ?? '';
+  get cost => this._cost;
 
   set cost(value) => this._cost = value;
 
-  get bankClone => this._bankClone ?? '';
+  get bankClone => this._bankClone;
 
   set bankClone(value) => this._bankClone = value;
 
-  get sendEmail => this._sendEmail ?? '';
+  get sendEmail => this._sendEmail;
 
   set sendEmail(value) => this._sendEmail = value;
 
-  get uuid => this._uuid ?? '';
+  get uuid => this._uuid;
 
   set uuid(value) => this._uuid = value;
 
-  get activityBankMyBank => this._activityBankMyBank ?? '';
+  get activityBankMyBank => this._activityBankMyBank;
 
   set activityBankMyBank(value) => this._activityBankMyBank = value;
 
-  get packageId => this._packageId ?? '';
+  get packageId => this._packageId;
 
   set packageId(value) => this._packageId = value;
 
-  get bank => this._bank ?? '';
+  get bank => this._bank;
 
   set bank(value) => this._bank = value;
 
-  get bankName => this._bankName ?? '';
+  get bankName => this._bankName;
 
   set bankName(value) => this._bankName = value;
 
-  get question => this._question ?? '';
+  get question => this._question;
 
   set question(value) => this._question = value;
 
-  get bankType => this._bankType ?? '';
+  get bankType => this._bankType;
 
   set bankType(value) => this._bankType = value;
 
-  get bankDistributeCode => this._bankDistributeCode ?? '';
+  get bankDistributeCode => this._bankDistributeCode;
 
   set bankDistributeCode(value) => this._bankDistributeCode = value;
 
-  get isTested => this._isTested ?? '';
+  get isTested => this._isTested;
 
   set isTested(value) => this._isTested = value;
 
-  get activityType => this._activityType ?? '';
+  get activityType => this._activityType;
 
   set activityType(value) => this._activityType = value;
 
-  get questionType => this._questionType ?? '';
-
-  set questionType(value) => this._questionType = value;
-
-  get questionIndex => this._questionIndex ?? '';
+  get questionIndex => this._questionIndex;
 
   set questionIndex(value) => this._questionIndex = value;
+
+  ActivityResult.fromJson(Map<String, dynamic> itemData) {
+    _id = itemData['id'] ?? 0;
+    _name = itemData['name'] ?? '';
+    _type = itemData['type'] ?? '';
+    _test = itemData['test'] ?? '';
+    _startDate = itemData['start_date'] ?? '';
+    _startTime = itemData['start_time'] ?? '';
+    _endTime = itemData['end_time'] ?? '';
+    _endDate = itemData['end_date'] ?? '';
+    _syllabusId = itemData['giaotrinh_id'] ?? '';
+    _status = itemData['status'] ?? 0;
+    _createdAt = itemData['created_at'] ?? '';
+    _updatedAt = itemData['updated_at'] ?? '';
+    _activityId = itemData['activity_id'] ?? 0;
+    _tips = itemData['tips'] ?? '';
+    _cost = itemData['cost'] ?? 0;
+    _bankClone = itemData['bank_clone'] ?? 0;
+    _sendEmail = itemData['send_email'] ?? 0;
+    _uuid = itemData['uuid'] ?? '';
+    _activityBankMyBank = itemData['activity_bank_my_bank'] ?? '';
+    _packageId = itemData['package_id'] ?? '';
+    _bank = itemData['bank'] ?? 0;
+    _bankName = itemData['bank_name'] ?? '';
+    _question = itemData['question'] ?? 0;
+    _bankType = itemData['bank_type'] ?? 0;
+    _bankDistributeCode = itemData['bank_distribute_code'] ?? '';
+    _isTested = itemData['is_tested'] ?? 0;
+    _activityType = itemData['activity_type'] ?? '';
+    _questionIndex = itemData['question_index'] ?? 0;
+  }
 }

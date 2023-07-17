@@ -17,6 +17,16 @@ const String changePasswordEP = 'auth/change-password';
 const String getTestInfoEP = 'api/v1/ielts-test/syllabus/create';
 String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 
+String responseEP(String orderId) =>
+    '${toolDomain}api/response?order_id=$orderId';
+String AiResponseEP(String orderId) =>
+    '${icorrectDomain}ai-response/index.html?order_id=$orderId';
+
+String specialHomeWorksEP(
+        String email, String activityId, int status, int example) =>
+    '${publicDomain}api/list-answers-activity?'
+    'activity_id=$activityId&email=$email&status="$status"&example="$example"&all=1';
+
 class RequestMethod {
   static const post = 'POST';
   static const get = 'GET';

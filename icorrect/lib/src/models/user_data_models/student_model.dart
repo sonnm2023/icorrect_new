@@ -1,23 +1,23 @@
 class StudentModel {
-  var _id;
-  var _name;
-  var _email;
-  var _emailVerifyAt;
-  var _createdAt;
-  var _updatedAt;
-  var _inviteCode;
-  var _phone;
-  var _rule;
-  var _age;
-  var _address;
-  var _deletedAt;
-  var _centerId;
-  var _apiId;
-  var _classId;
-  var _uuid;
-  var _canCreateMyBank;
-  var _studentClassName;
-  var _province;
+  int? _id;
+  String? _name;
+  String? _email;
+  String? _emailVerifyAt;
+  String? _createdAt;
+  String? _updatedAt;
+  String? _inviteCode;
+  String? _phone;
+  int? _rule;
+  String? _age;
+  String? _address;
+  String? _deletedAt;
+  int? _centerId;
+  int? _apiId;
+  int? _classId;
+  String? _uuid;
+  int? _canCreateMyBank;
+  String? _studentClassName;
+  String? _province;
 
   StudentModel([
     this._id,
@@ -116,4 +116,26 @@ class StudentModel {
   get province => this._province ?? '';
 
   set province(value) => this._province = value;
+
+  StudentModel.fromJson(Map<String, dynamic> itemData) {
+    _id = itemData['id'] ?? 0;
+    _name = itemData['name'] ?? '';
+    _email = itemData['email'] ?? '';
+    _emailVerifyAt = itemData['email_verified_at'] ?? '';
+    _createdAt = itemData['created_at'] ?? '';
+    _updatedAt = itemData['updated_at'] ?? '';
+    _inviteCode = itemData['invite_code'] ?? '';
+    _phone = itemData['phone'] ?? '';
+    _rule = itemData['rule'] ?? 0;
+    _age = itemData['age'] ?? '';
+    _address = itemData['address'] ?? '';
+    deletedAt = itemData['deleted_at'] ?? '';
+    _centerId = itemData['center_id'] ?? 0;
+    _apiId = itemData['api_id'] ?? 0;
+    _classId = itemData['class_id'] ?? 0;
+    _uuid = itemData['uuid'] ?? '';
+    _canCreateMyBank = itemData['can_create_mybank'] ?? 0;
+    _studentClassName = itemData['student_class_name'] ?? '';
+    _province = itemData['province'] ?? '';
+  }
 }
