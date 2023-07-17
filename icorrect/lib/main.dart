@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
-  print('Momeoeememe');
   runApp(const MyApp());
 }
 
