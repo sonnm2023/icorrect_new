@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
-
+  print('Momeoeememe');
   runApp(const MyApp());
 }
 
