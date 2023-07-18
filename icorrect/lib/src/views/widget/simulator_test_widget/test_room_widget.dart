@@ -54,7 +54,7 @@ class TestRoomWidget extends StatelessWidget {
               SingleChildScrollView(
                 child: TestQuestionWidget(
                   testPresenter: testPresenter,
-                  playAnswerCallBack: playReAnswerCallBack,
+                  playAnswerCallBack: playAnswerCallBack,
                   playReAnswerCallBack: playReAnswerCallBack,
                   showTipCallBack: showTipCallBack,
                 ),

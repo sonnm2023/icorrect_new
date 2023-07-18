@@ -20,11 +20,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
-          
         ),
         ChangeNotifierProvider(
           create: (_) => MyTestProvider(),
-          
         ),
       ],
       child: MaterialApp(

@@ -31,16 +31,16 @@ import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 import 'package:video_player/video_player.dart';
 
-class SimulatorTestNewScreen extends StatefulWidget {
-  const SimulatorTestNewScreen({super.key, required this.homeWorkModel});
+class SimulatorTestScreen extends StatefulWidget {
+  const SimulatorTestScreen({super.key, required this.homeWorkModel});
 
   final HomeWorkModel homeWorkModel;
 
   @override
-  State<SimulatorTestNewScreen> createState() => _SimulatorTestNewScreenState();
+  State<SimulatorTestScreen> createState() => _SimulatorTestScreenState();
 }
 
-class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
+class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     with WidgetsBindingObserver
     implements TestViewContract, ActionAlertListener {
   TestPresenter? _testPresenter;
@@ -52,9 +52,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
   VideoPlayerController? _playerController;
   final AudioPlayer _audioPlayer = AudioPlayer();
   final Record _record = Record();
-
-  // final int _countRepeat = 0; //TODO
   Timer? _countDown;
+  QuestionTopicModel? _currentQuestion;
 
   @override
   void initState() {
@@ -140,7 +139,7 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     if (kDebugMode) print("_okButtonTapped");
 
     _record.stop();
-    if(null != _testProvider!.playController) {
+    if (null != _testProvider!.playController) {
       _testProvider!.playController!.pause();
     }
 
@@ -191,17 +190,16 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
   }
 
   void _playAnswerCallBack(QuestionTopicModel question) async {
-    // if (_testProvider!.isShowPlayVideoButton) {
-    //   //TODO: Play answer audio
-    // } else {
-    //   showToastMsg(
-    //     msg: "Please wait until the test is finished!",
-    //     toastState: ToastStatesType.warning,
-    //   );
-    // }
-
-    String path = await FileStorageHelper.getFilePath(question.answers.first.url, MediaType.audio);
-    _playAudio(path, question.id.toString());
+    if (_testProvider!.isShowPlayVideoButton) {
+      String path = await FileStorageHelper.getFilePath(
+          question.answers.first.url, MediaType.audio);
+      _playAudio(path, question.id.toString());
+    } else {
+      showToastMsg(
+        msg: "Please wait until the test is finished!",
+        toastState: ToastStatesType.warning,
+      );
+    }
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
@@ -210,9 +208,14 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
       await _audioPlayer.setVolume(2.5);
       _audioPlayer.onPlayerComplete.listen((event) {
         //TODO: Update play answer button status
+        if (kDebugMode) {
+          print("Play audio complete");
+        }
       });
     } on PlatformException catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -231,7 +234,7 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     if (_testProvider!.isShowPlayVideoButton) {
       Future.delayed(
         Duration.zero,
-        () async {
+            () async {
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -375,7 +378,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
       } else {
         QuestionTopicModel question = followUpList.elementAt(index);
         //Set current question into Provider
-        _testProvider!.setCurrentQuestion(question);
+        // _testProvider!.setCurrentQuestion(question); //TODO
+        _currentQuestion = question;
 
         if (question.files.isEmpty) {
           if (kDebugMode) {
@@ -444,7 +448,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
       } else {
         QuestionTopicModel question = questionList.elementAt(index);
         //Set current question into Provider
-        _testProvider!.setCurrentQuestion(question);
+        // _testProvider!.setCurrentQuestion(question); //TODO
+        _currentQuestion = question;
 
         if (question.files.isEmpty) {
           if (kDebugMode) {
@@ -562,7 +567,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     }
   }
 
-  void _startRecordAnswer({required String fileName, required bool isPart2}) async {
+  void _startRecordAnswer(
+      {required String fileName, required bool isPart2}) async {
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -581,28 +587,34 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     _testProvider!.setCountDown(timeString);
 
     String path =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    await FileStorageHelper.getFilePath(fileName, MediaType.audio);
     _testProvider!.setFilePath(path);
 
     _countDown = _testPresenter!.startCountDown(context, timeRecord, isPart2);
-    _setVisibleRecord(true, _countDown, path);
+    _setVisibleRecord(true, _countDown, fileName);
   }
 
-  void _setVisibleRecord(bool visible, Timer? count, String? filePath) {
+  void _setVisibleRecord(bool visible, Timer? count, String? fileName) {
     _testProvider!.setVisibleRecord(visible);
 
     if (_testProvider!.visibleRecord) {
-      _recordAnswer(filePath!);
+      _recordAnswer(fileName!);
     } else {
       _record.stop();
     }
     _testProvider!.setCountDownTimer(count);
   }
 
-  Future<void> _recordAnswer(String filePath) async {
+  Future<void> _recordAnswer(String fileName) async {
+    if (kDebugMode) {
+      print("RECORD AS FILE PATH: $fileName");
+    }
+    String path =
+    await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+
     if (await _record.hasPermission()) {
       await _record.start(
-        path: filePath,
+        path: path,
         encoder: AudioEncoder.wav,
         bitRate: 128000,
         samplingRate: 44100,
@@ -611,9 +623,16 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
 
     //TODO
     _testProvider!.addAnswer(
-        FileTopicModel.fromJson({'id': 0, 'url': filePath, 'type': 0}));
-    _testProvider!.currentQuestion.answers.clear();
-    _testProvider!.currentQuestion.answers.addAll(_testProvider!.answers);
+        FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0}));
+    // _currentQuestion!.answers.clear();
+    // _currentQuestion!.answers.addAll(_testProvider!.answers);
+    if (_currentQuestion!.answers.isEmpty) {
+      _currentQuestion!.answers = [FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})];
+    }
+    _testProvider!.setCurrentQuestion(_currentQuestion!);
+    if (kDebugMode) {
+      print("Testing");
+    }
   }
 
   //TODO
@@ -650,7 +669,6 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     //Reset Play Video Button status
     _testProvider!.setIsShowPlayVideoButton(true);
 
-    //TODO: New following
     _testPresenter!.startPart(_testProvider!.topicsQueue);
   }
 
@@ -661,13 +679,14 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
         switch (handleWhenFinishType) {
           case HandleWhenFinish.questionVideoType:
             {
-              if (_testProvider!.currentQuestion.cueCard.isNotEmpty &&
+              // if (_testProvider!.currentQuestion.cueCard.isNotEmpty &&
+              if (_currentQuestion!.cueCard.isNotEmpty &&
                   (false == _testProvider!.isVisibleCueCard)) {
                 //Has Cue Card case
                 _testProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
-                _countDown = _testPresenter!.startCountDown(context, 5,
-                    false); // TODO: 5 for testing, 60 for product
+                _countDown = _testPresenter!.startCountDown(
+                    context, 5, false); // TODO: 5 for testing, 60 for product
               } else {
                 //Normal case
                 if (false == _testProvider!.visibleRecord &&
@@ -875,8 +894,7 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
         _testProvider!.setVisibleRecord(false);
 
         //Add question into List Question & show it
-        _testProvider!
-            .addCurrentQuestionIntoList(_testProvider!.currentQuestion);
+        _testProvider!.addCurrentQuestionIntoList(_currentQuestion!);
 
         _playNextQuestion();
       } else {
@@ -884,12 +902,11 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
         Queue<TopicModel> topicQueue = _testProvider!.topicsQueue;
         TopicModel topic = topicQueue.first;
 
-        //TODO: New
         _testPresenter!.playEndOfTakeNoteFile(topic);
       }
     } else {
       //Add question or followup into List Question & show it
-      _testProvider!.addCurrentQuestionIntoList(_testProvider!.currentQuestion);
+      _testProvider!.addCurrentQuestionIntoList(_currentQuestion!);
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {

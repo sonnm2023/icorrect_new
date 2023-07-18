@@ -8,7 +8,7 @@ import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
-import 'package:icorrect/src/views/screen/test/simulator_test_new/simulator_test_new_screen.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test_new/simulator_test_screen.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:icorrect/src/views/widget/homework_widget.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
@@ -310,7 +310,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider<TestProvider>(
             create: (_) => TestProvider(),
-            child: SimulatorTestNewScreen(homeWorkModel: _selectedHomeWorkModel!,),
+            child: SimulatorTestScreen(homeWorkModel: _selectedHomeWorkModel!,),
           ),
         ),
       );
