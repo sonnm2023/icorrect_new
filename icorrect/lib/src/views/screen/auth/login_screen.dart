@@ -62,16 +62,14 @@ class _LoginScreenState extends State<LoginScreen>
       Timer(const Duration(milliseconds: 2000), () async {
         _authProvider.updateProcessingStatus();
         Navigator.of(context).pushAndRemoveUntil(
-            // MaterialPageRoute<void>(
-            //     builder: (BuildContext context) => const HomeWorkScreen()),
-            // ModalRoute.withName('/'));
-            MaterialPageRoute(
-              builder: (_) => ChangeNotifierProvider<HomeWorkProvider>(
-                create: (_) => HomeWorkProvider(),
-                child: const HomeWorkScreen(),
-              ),
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider<HomeWorkProvider>(
+              create: (_) => HomeWorkProvider(),
+              child: const HomeWorkScreen(),
             ),
-            ModalRoute.withName('/'));
+          ),
+          ModalRoute.withName('/'),
+        );
       });
     }
   }
@@ -102,13 +100,15 @@ class _LoginScreenState extends State<LoginScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          const SizedBox(height: 40),
                           const LogoWidget(),
                           const LogoTextWidget(),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 60),
                           EmailInputWidget(emailController: emailController),
                           PasswordInputWidget(
-                              passwordController: passwordController,
-                              type: PasswordType.password),
+                            passwordController: passwordController,
+                            type: PasswordType.password,
+                          ),
                           _buildSignInButton(),
                           _buildSignUpButton(),
                           _buildForgotPasswordButton(),
@@ -213,12 +213,12 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider.updateProcessingStatus();
     Navigator.of(context).push(
       // MaterialPageRoute(builder: (context) => const HomeWorkScreen()),
-        MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<HomeWorkProvider>(
-            create: (_) => HomeWorkProvider(),
-            child: const HomeWorkScreen(),
-          ),
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider<HomeWorkProvider>(
+          create: (_) => HomeWorkProvider(),
+          child: const HomeWorkScreen(),
         ),
+      ),
     );
   }
 
