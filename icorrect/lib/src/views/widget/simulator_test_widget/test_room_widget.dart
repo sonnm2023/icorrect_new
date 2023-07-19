@@ -7,7 +7,6 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/video_player_widget.dart';
-import 'package:provider/provider.dart';
 
 class TestRoomWidget extends StatelessWidget {
   const TestRoomWidget({

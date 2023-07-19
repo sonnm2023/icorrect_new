@@ -31,6 +31,6 @@ class ResponsePresenter {
         _view!.getErrorResponse('Loading result response fail !');
       }
     }).catchError((onError) =>
-        _view!.getErrorResponse("Can\'t load response :${onError.toString()}"));
+        _view!.getErrorResponse("Can't load response :${onError.toString()}"));
   }
 }

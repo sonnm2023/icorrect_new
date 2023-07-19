@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
@@ -32,7 +32,9 @@ class _ResponseTabState extends State<ResponseTab>
   void initState() {
     super.initState();
     _presenter = ResponsePresenter(this);
-    print('meomeo: ${widget.homeWorkModel.activityId.toString()}');
+    if (kDebugMode) {
+      print('meomeo: ${widget.homeWorkModel.activityId.toString()}');
+    }
     _loading = CircleLoading();
     _loading?.show(context);
     if (widget.homeWorkModel.orderId.isNotEmpty) {
@@ -338,7 +340,9 @@ class _ResponseTabState extends State<ResponseTab>
   void getSuccessResponse(ResultResponseModel responseModel) {
     _loading!.hide();
     widget.provider.setResultResponseModel(responseModel);
-    print('responseModel: ${responseModel.fluency.toString()}');
+    if (kDebugMode) {
+      print('responseModel: ${responseModel.fluency.toString()}');
+    }
   }
 
   @override

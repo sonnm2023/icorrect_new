@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
@@ -6,7 +7,6 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
-import 'package:icorrect/src/models/user_data_models/user_info_model.dart';
 import 'package:icorrect/src/presenters/special_homeworks_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
@@ -43,7 +43,9 @@ class _HighLightTabState extends State<HighLightTab>
   void _getHighLightHomeWork() async {
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();
-    print(widget.homeWorkModel.activityId.toString());
+    if (kDebugMode) {
+      print(widget.homeWorkModel.activityId.toString());
+    }
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString() ?? '',
         activityId: widget.homeWorkModel.activityId.toString(),
@@ -145,7 +147,9 @@ class _HighLightTabState extends State<HighLightTab>
 
   @override
   void getSpecialHomeWork(List<StudentResultModel> studentsResults) {
-    print('meomoe : ' + studentsResults.length.toString());
+    if (kDebugMode) {
+      print('meomoe : ${studentsResults.length}');
+    }
     _loading?.hide();
     widget.provider.setHighLightHomeworks(studentsResults);
   }

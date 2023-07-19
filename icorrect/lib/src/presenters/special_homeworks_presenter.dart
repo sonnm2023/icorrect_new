@@ -1,10 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
-import 'package:icorrect/src/models/my_test_models/activity_result_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
-import 'package:icorrect/src/models/user_data_models/student_model.dart';
 
 abstract class SpecialHomeworksContracts {
   void getSpecialHomeWork(List<StudentResultModel> studentsResults);
@@ -29,7 +28,9 @@ class SpecialHomeworksPresenter {
         .getSpecialHomeWorks(email, activityId, status, example)
         .then((value) {
       Map<String, dynamic> dataMap = jsonDecode(value) ?? [];
-      print(dataMap.toString());
+      if (kDebugMode) {
+        print(dataMap.toString());
+      }
       if (dataMap.isNotEmpty) {
         if (dataMap['error_code'] == 200) {
           List<StudentResultModel> results =
@@ -45,12 +46,16 @@ class SpecialHomeworksPresenter {
     }).catchError((onError) {
       _view!.getSpecicalHomeWorksFail(
           'Error when load homeworks : ${onError.toString()}');
-      print(onError.toString());
+      if (kDebugMode) {
+        print(onError.toString());
+      }
     });
   }
 
   List<StudentResultModel> _getStudentResultsModel(List<dynamic> data) {
-    print(data.toString());
+    if (kDebugMode) {
+      print(data.toString());
+    }
     List<StudentResultModel> results = [];
     for (int i = 0; i < data.length; i++) {
       dynamic item = data[i];

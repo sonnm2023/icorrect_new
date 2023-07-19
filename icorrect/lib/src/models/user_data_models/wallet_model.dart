@@ -8,10 +8,10 @@ class WalletModel {
   int? _type;
   int? _point;
   String? _codeTransfer;
-  int _id = 0;
+  int? _id;
 
   WalletModel({
-    required int id,
+    int? id,
     int? usd,
     int? type,
     int? point,
@@ -32,7 +32,7 @@ class WalletModel {
   set point(int point) => _point = point;
   String get codeTransfer => _codeTransfer ?? "";
   set codeTransfer(String codeTransfer) => _codeTransfer = codeTransfer;
-  int get id => _id;
+  int get id => _id ?? 0;
   set id(int id) => _id = id;
 
   WalletModel.fromJson(Map<String, dynamic> json) {

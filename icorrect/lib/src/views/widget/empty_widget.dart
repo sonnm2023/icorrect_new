@@ -14,7 +14,7 @@ class NothingWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
+          SizedBox(
             width: widthSize,
             height: heightSize,
             child: const Image(
