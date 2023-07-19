@@ -34,7 +34,7 @@ class CircleLoading {
                       color: Colors.white),
                   child: const CircularProgressIndicator(
                     strokeWidth: 4,
-                    backgroundColor: AppColor.defaultPurpleColor,
+                    backgroundColor: AppColor.defaultLightGrayColor,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       AppColor.defaultPurpleColor,
                     ),

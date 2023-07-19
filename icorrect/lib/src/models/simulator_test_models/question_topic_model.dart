@@ -96,10 +96,10 @@ class QuestionTopicModel {
     _reAnswerCount = json['re_answer_count'];
     _numPart = json['num_part'];
 
-    if (json['answers'] != null) {
+    if (json['answer'] != null) {
       _answers = <FileTopicModel>[];
-      json['answers'].forEach((v) {
-        _answers!.add(FileTopicModel.fromJson(v));
+      json['answer'].forEach((v) {
+        _answers!.add(FileTopicModel.fromAnswerJson(v));
       });
     }
 

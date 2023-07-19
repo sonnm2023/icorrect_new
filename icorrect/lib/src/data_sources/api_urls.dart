@@ -19,6 +19,7 @@ String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 
 String responseEP(String orderId) =>
     '${toolDomain}api/response?order_id=$orderId';
+
 String AiResponseEP(String orderId) =>
     '${icorrectDomain}ai-response/index.html?order_id=$orderId';
 
@@ -26,6 +27,9 @@ String specialHomeWorksEP(
         String email, String activityId, int status, int example) =>
     '${publicDomain}api/list-answers-activity?'
     'activity_id=$activityId&email=$email&status="$status"&example="$example"&all=1';
+
+String myTestDetailEP(String testId) =>
+    '${icorrectDomain}api/v1/ielts-test/show/$testId';
 
 class RequestMethod {
   static const post = 'POST';

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
-
 TestDetailModel testDetailModelFromJson(String str) =>
     TestDetailModel.fromJson(json.decode(str));
 String testDetailModelToJson(TestDetailModel data) =>
@@ -25,18 +24,18 @@ class TestDetailModel {
 
   TestDetailModel(
       {String? activityType,
-        int? testOption,
-        TopicModel? introduce,
-        List<TopicModel>? part1,
-        String? domainName,
-        int? testId,
-        String? checkSum,
-        String? id,
-        String? status,
-        String? updateAt,
-        String? hasOrder,
-        TopicModel? part2,
-        TopicModel? part3}) {
+      int? testOption,
+      TopicModel? introduce,
+      List<TopicModel>? part1,
+      String? domainName,
+      int? testId,
+      String? checkSum,
+      String? id,
+      String? status,
+      String? updateAt,
+      String? hasOrder,
+      TopicModel? part2,
+      TopicModel? part3}) {
     _activityType = activityType;
     _testOption = testOption;
     _introduce = introduce;
@@ -126,5 +125,34 @@ class TestDetailModel {
       data['part3'] = _part3!.toJson();
     }
     return data;
+  }
+
+  TestDetailModel.fromMyTestJson(Map<String, dynamic> json) {
+    _id = json['_id'] ?? '';
+    _status = json['status'].toString();
+    _checkSum = json['check_sum'] ?? '';
+    _testId = json['test_id'] ?? 0;
+    _updateAt = json['updated_at'] ?? '';
+    _hasOrder = json['has_order'].toString();
+
+    _activityType = json['test']['activity_type'] ?? '';
+    _testOption = json['test']['test_option'] ?? 0;
+    _domainName = json['test']['domain_name'] ?? '';
+
+    _introduce = json['test']['introduce'] != null
+        ? TopicModel.fromJson(json['test']['introduce'])
+        : null;
+    if (json['test']['part1'] != null) {
+      _part1 = <TopicModel>[];
+      json['test']['part1'].forEach((v) {
+        _part1!.add(TopicModel.fromJson(v));
+      });
+    }
+    _part2 = json['test']['part2'] != null
+        ? TopicModel.fromJson(json['test']['part2'])
+        : null;
+    _part3 = json['test']['part3'] != null
+        ? TopicModel.fromJson(json['test']['part3'])
+        : null;
   }
 }

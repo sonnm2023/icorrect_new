@@ -3,6 +3,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/student_model.dart';
 
 class MyTestProvider extends ChangeNotifier {
@@ -19,6 +20,74 @@ class MyTestProvider extends ChangeNotifier {
     setResultResponseModel(ResultResponseModel());
     setOtherLightHomeWorks([]);
     setHighLightHomeworks([]);
+    setDownloadingFile(false);
+    setTotal(0);
+    updateDownloadingIndex(0);
+    updateDownloadingPercent(0);
+    setAnswerOfQuestions([]);
+  }
+
+  ///////////////My Test Screen/////////////////////////////////////////////////
+
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
+
+  void setDownloadingFile(bool downloading) {
+    _isDownloading = downloading;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _total = 0;
+  int get total => _total;
+  void setTotal(int total) {
+    _total = total;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _downloadingIndex = 1;
+  int get downloadingIndex => _downloadingIndex;
+  void updateDownloadingIndex(int index) {
+    _downloadingIndex = index;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  double _downloadingPercent = 0.0;
+  double get downloadingPercent => _downloadingPercent;
+  void updateDownloadingPercent(double percent) {
+    _downloadingPercent = percent;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  List<QuestionTopicModel> _questions = [];
+  List<QuestionTopicModel> get myAnswerOfQuestions => _questions;
+  void setAnswerOfQuestions(List<QuestionTopicModel> questions) {
+    _questions = questions;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _playAnswer = false;
+  String _questionId = '';
+  String get questionId => _questionId;
+
+  bool get playAnswer => _playAnswer;
+  void setPlayAnswer(bool visible, String questionId) {
+    _playAnswer = visible;
+    _questionId = questionId;
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   /////////////Response screen //////////////////////////////////////////////

@@ -164,4 +164,15 @@ class AlertClass {
     'Video path was incorrect. Please try again !',
     Alert.dataNotFound.type,
   );
+
+  static AlertInfo getTestDetailAlert = AlertInfo(
+    'Warning',
+    'Error when load your test. Please try again !',
+    Alert.dataNotFound.type,
+  );
+  static AlertInfo notResponseLoadTestAlert = AlertInfo(
+    'Warning',
+    'Error when load your test. Let contact to admin to support !',
+    Alert.dataNotFound.type,
+  );
 }

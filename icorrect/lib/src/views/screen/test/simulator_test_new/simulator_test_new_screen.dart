@@ -140,7 +140,7 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     if (kDebugMode) print("_okButtonTapped");
 
     _record.stop();
-    if(null != _testProvider!.playController) {
+    if (null != _testProvider!.playController) {
       _testProvider!.playController!.pause();
     }
 
@@ -200,7 +200,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     //   );
     // }
 
-    String path = await FileStorageHelper.getFilePath(question.answers.first.url, MediaType.audio);
+    String path = await FileStorageHelper.getFilePath(
+        question.answers.first.url, MediaType.audio);
     _playAudio(path, question.id.toString());
   }
 
@@ -273,7 +274,9 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
       await _initializePermission();
     }
 
-    _requestPermission(_microPermission!, context);
+    if (mounted) {
+      _requestPermission(_microPermission!, context);
+    }
   }
 
   Future<void> _requestPermission(
@@ -562,7 +565,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
     }
   }
 
-  void _startRecordAnswer({required String fileName, required bool isPart2}) async {
+  void _startRecordAnswer(
+      {required String fileName, required bool isPart2}) async {
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -666,8 +670,8 @@ class _SimulatorTestNewScreenState extends State<SimulatorTestNewScreen>
                 //Has Cue Card case
                 _testProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
-                _countDown = _testPresenter!.startCountDown(context, 5,
-                    false); // TODO: 5 for testing, 60 for product
+                _countDown = _testPresenter!.startCountDown(
+                    context, 5, false); // TODO: 5 for testing, 60 for product
               } else {
                 //Normal case
                 if (false == _testProvider!.visibleRecord &&

@@ -32,6 +32,13 @@ class FileTopicModel {
     _type = json['type'];
   }
 
+  FileTopicModel.fromAnswerJson(Map<String, dynamic> json) {
+    _id = json['file_id'];
+    if (json['file_link'] != null) {
+      _url = Utils.convertFileName(json['file_link']);
+    }
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = _id;

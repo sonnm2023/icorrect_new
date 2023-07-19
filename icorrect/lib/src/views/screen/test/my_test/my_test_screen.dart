@@ -76,17 +76,14 @@ class _MyTestScreenState extends State<MyTestScreen> {
           ),
           body: TabBarView(
             children: [
-              const MyTestTab(),
+              MyTestTab(
+                  homeWorkModel: widget.homeWorkModel, provider: _provider!),
               ResponseTab(
                   homeWorkModel: widget.homeWorkModel, provider: _provider!),
               HighLightTab(
-                provider: _provider!,
-                homeWorkModel: widget.homeWorkModel,
-              ),
+                  provider: _provider!, homeWorkModel: widget.homeWorkModel),
               OtherTab(
-                provider: _provider!,
-                homeWorkModel: widget.homeWorkModel,
-              ),
+                  provider: _provider!, homeWorkModel: widget.homeWorkModel),
             ],
           ),
         ),
