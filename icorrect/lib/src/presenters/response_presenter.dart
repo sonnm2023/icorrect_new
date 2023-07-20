@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
-import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
 
 abstract class ResponseContracts {
   void getSuccessResponse(ResultResponseModel responseModel);

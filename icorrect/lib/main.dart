@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/prepare_test_provider.dart';
+import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +25,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => MyTestProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => PrepareTestProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RecordProvider(),
         ),
       ],
       child: MaterialApp(

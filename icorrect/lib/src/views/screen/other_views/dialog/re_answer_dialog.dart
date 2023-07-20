@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_presenter.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -12,7 +12,6 @@ class ReAnswerDialog extends Dialog {
   final BuildContext _context;
   final QuestionTopicModel _question;
   Timer? _countDown;
-  final _timeRecord = 30;
   late Record _record;
   final String _filePath = '';
   final TestPresenter _testPresenter;
@@ -76,10 +75,10 @@ class ReAnswerDialog extends Dialog {
                 const SizedBox(height: 20),
                 const Image(image: AssetImage("assets/images/img_mic.png")),
                 const SizedBox(height: 10),
-                Consumer<TestProvider>(
-                  builder: (context, testProvider, child) {
+                Consumer<RecordProvider>(
+                  builder: (context, recordProvider, child) {
                     return Text(
-                      testProvider.strCount,
+                      recordProvider.strCount,
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 38,

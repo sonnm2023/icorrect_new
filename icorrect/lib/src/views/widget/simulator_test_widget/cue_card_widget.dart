@@ -39,7 +39,7 @@ class CueCardWidget extends StatelessWidget {
                   const SizedBox(height: 10),
                   Center(
                     child: Text(
-                      testProvider.strCount,
+                      "testProvider.strCount", //TODO
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,

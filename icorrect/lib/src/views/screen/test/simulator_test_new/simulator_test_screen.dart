@@ -17,6 +17,8 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/provider/prepare_test_provider.dart';
+import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
@@ -44,7 +46,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     with WidgetsBindingObserver
     implements TestViewContract, ActionAlertListener {
   TestPresenter? _testPresenter;
+
   TestProvider? _testProvider;
+  PrepareTestProvider? _prepareTestProvider;
+  RecordProvider? _recordProvider;
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
@@ -52,6 +57,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   VideoPlayerController? _playerController;
   final AudioPlayer _audioPlayer = AudioPlayer();
   final Record _record = Record();
+
   Timer? _countDown;
   QuestionTopicModel? _currentQuestion;
 
@@ -61,6 +67,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     super.initState();
 
     _testProvider = Provider.of<TestProvider>(context, listen: false);
+    _prepareTestProvider = Provider.of<PrepareTestProvider>(context, listen: false);
+    _recordProvider = Provider.of<RecordProvider>(context, listen: false);
+
     _testPresenter = TestPresenter(this);
     _getTestDetail();
   }
@@ -136,33 +145,34 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _okButtonTapped() {
-    if (kDebugMode) print("_okButtonTapped");
-
     _record.stop();
     if (null != _testProvider!.playController) {
       _testProvider!.playController!.pause();
     }
 
+    _recordProvider!.resetAll();
+    _prepareTestProvider!.resetAll();
     _testProvider!.resetAll();
+
     Navigator.of(context).pop();
   }
 
   Widget _buildBody() {
-    return Consumer<TestProvider>(
-      builder: (context, testProvider, child) {
-        if (testProvider.isProcessing) {
+    return Consumer<PrepareTestProvider>(
+      builder: (context, prepareTestProvider, child) {
+        if (prepareTestProvider.isProcessing) {
           return const DefaultLoadingIndicator(
             color: AppColor.defaultPurpleColor,
           );
         }
 
-        if (testProvider.isDownloading) {
+        if (prepareTestProvider.isDownloading) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const DownloadProgressingWidget(),
               Visibility(
-                visible: testProvider.canStartNow,
+                visible: prepareTestProvider.canStartNow,
                 child: StartNowButtonWidget(startNowButtonTapped: () {
                   _checkPermission();
                 }),
@@ -324,7 +334,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _testPresenter!.getTestDetail(widget.homeWorkModel.id.toString());
 
     Future.delayed(Duration.zero, () {
-      _testProvider!.updateProcessingStatus();
+      _prepareTestProvider!.updateProcessingStatus();
     });
   }
 
@@ -579,20 +589,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     String timeString = Utils.getTimeRecordString(timeRecord);
 
     //Record the answer
-    _testProvider!.setCountDown(timeString);
-
-    String path =
-    await FileStorageHelper.getFilePath(fileName, MediaType.audio);
-    _testProvider!.setFilePath(path);
+    _recordProvider!.setCountDown(timeString);
 
     _countDown = _testPresenter!.startCountDown(context, timeRecord, isPart2);
     _setVisibleRecord(true, _countDown, fileName);
   }
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) {
-    _testProvider!.setVisibleRecord(visible);
+    _recordProvider!.setVisibleRecord(visible);
 
-    if (_testProvider!.visibleRecord) {
+    if (_recordProvider!.visibleRecord) {
       _recordAnswer(fileName!);
     } else {
       _record.stop();
@@ -653,10 +659,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _startToDoTest() {
     //Hide StartNow button
-    _testProvider!.setStartNowButtonStatus(false);
+    _prepareTestProvider!.setStartNowButtonStatus(false);
 
     //Hide Loading view
-    _testProvider!.setDownloadingStatus(false);
+    _prepareTestProvider!.setDownloadingStatus(false);
 
     //Reset Play Video Button status
     _testProvider!.setIsShowPlayVideoButton(true);
@@ -675,13 +681,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               if (_currentQuestion!.cueCard.isNotEmpty &&
                   (false == _testProvider!.isVisibleCueCard)) {
                 //Has Cue Card case
-                _testProvider!.setVisibleRecord(false);
+                _recordProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
                 _countDown = _testPresenter!.startCountDown(
                     context, 60, false); // TODO: 5 for testing, 60 for product
               } else {
                 //Normal case
-                if (false == _testProvider!.visibleRecord &&
+                if (false == _recordProvider!.visibleRecord &&
                     false == _testProvider!.isVisibleCueCard) {
                   _startRecordAnswer(fileName: fileName, isPart2: false);
                 }
@@ -706,7 +712,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           case HandleWhenFinish.cueCardVideoType:
             {
               //Start count down & record answer for part 2 - 120 seconds
-              _testProvider!.setVisibleRecord(true);
+              _recordProvider!.setVisibleRecord(true);
               _startRecordAnswer(fileName: fileName, isPart2: true);
               break;
             }
@@ -755,7 +761,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onCountDown(String countDownString) {
     if (mounted) {
-      _testProvider!.setCountDown(countDownString);
+      _recordProvider!.setCountDown(countDownString);
     }
   }
 
@@ -782,13 +788,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total) {
-    _testProvider!.setTotal(total);
-    _testProvider!.updateDownloadingIndex(index);
-    _testProvider!.updateDownloadingPercent(percent);
+    _prepareTestProvider!.setTotal(total);
+    _prepareTestProvider!.updateDownloadingIndex(index);
+    _prepareTestProvider!.updateDownloadingPercent(percent);
 
     //Enable Start Testing Button
     if (index >= 5) {
-      _testProvider!.setStartNowButtonStatus(true);
+      _prepareTestProvider!.setStartNowButtonStatus(true);
     }
 
     if (index == total) {
@@ -799,9 +805,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
-    _testProvider!.updateProcessingStatus();
-    _testProvider!.setDownloadingStatus(true);
-    _testProvider!.setTotal(total);
+    _prepareTestProvider!.updateProcessingStatus();
+    _prepareTestProvider!.setDownloadingStatus(true);
+    _prepareTestProvider!.setTotal(total);
   }
 
   @override
@@ -881,7 +887,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (isPart2) {
         //Finish record answer for part2
         _setVisibleCueCard(false, null);
-        _testProvider!.setVisibleRecord(false);
+        _recordProvider!.setVisibleRecord(false);
 
         //Add question into List Question & show it
         _testProvider!.addCurrentQuestionIntoList(_currentQuestion!);

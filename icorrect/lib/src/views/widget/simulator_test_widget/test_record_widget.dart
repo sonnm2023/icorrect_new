@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class TestRecordWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
 
-    return Consumer<TestProvider>(builder: (context, testProvider, child) {
+    return Consumer2<TestProvider, RecordProvider>(builder: (context, testProvider, recordProvider, child) {
       bool isRepeat = false;
       if (testProvider.topicsQueue.isNotEmpty) {
         isRepeat = testProvider.topicsQueue.first.numPart == PartOfTest.part1.get ||
@@ -29,7 +30,7 @@ class TestRecordWidget extends StatelessWidget {
       }
 
       return Visibility(
-        visible: testProvider.visibleRecord,
+        visible: recordProvider.visibleRecord,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -50,7 +51,7 @@ class TestRecordWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    testProvider.strCount,
+                    recordProvider.strCount,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 20,

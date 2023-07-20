@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/prepare_test_provider.dart';
 import 'package:provider/provider.dart';
 
 class DownloadProgressingWidget extends StatelessWidget {
@@ -20,8 +20,8 @@ class DownloadProgressingWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           //percent
-          Consumer<TestProvider>(builder: (context, testProvider, child) {
-            double p = testProvider.downloadingPercent * 100;
+          Consumer<PrepareTestProvider>(builder: (context, prepareTestProvider, child) {
+            double p = prepareTestProvider.downloadingPercent * 100;
             return Text("${p.toStringAsFixed(0)}%");
           }),
           const SizedBox(height: 8),
@@ -32,9 +32,9 @@ class DownloadProgressingWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           //part of total
-          Consumer<TestProvider>(builder: (context, testProvider, child) {
+          Consumer<PrepareTestProvider>(builder: (context, prepareTestProvider, child) {
             return Text(
-                "${testProvider.downloadingIndex}/${testProvider.total}");
+                "${prepareTestProvider.downloadingIndex}/${prepareTestProvider.total}");
           }),
           const SizedBox(height: 8),
           const Text('Downloading...', style: TextStyle(fontSize: 15)),
@@ -45,12 +45,12 @@ class DownloadProgressingWidget extends StatelessWidget {
   }
 
   Widget _buildProgressBar() {
-    return Consumer<TestProvider>(builder: (context, testProvider, child) {
+    return Consumer<PrepareTestProvider>(builder: (context, prepareTestProvider, child) {
       return LinearProgressIndicator(
         backgroundColor: AppColor.defaultLightGrayColor,
         valueColor:
         const AlwaysStoppedAnimation<Color>(AppColor.defaultPurpleColor),
-        value: testProvider.downloadingPercent,
+        value: prepareTestProvider.downloadingPercent,
       );
     });
   }

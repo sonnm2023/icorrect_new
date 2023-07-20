@@ -24,66 +24,6 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  bool _isProcessing = false;
-  bool get isProcessing => _isProcessing;
-  void updateProcessingStatus() {
-    _isProcessing = !_isProcessing;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  bool _isDownloading = false;
-  bool get isDownloading => _isDownloading;
-  void setDownloadingStatus(bool isDownloading) {
-    _isDownloading = isDownloading;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  bool _canStartNow = false;
-  bool get canStartNow => _canStartNow;
-  void setStartNowButtonStatus(bool available) {
-    _canStartNow = available;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  int _total = 0;
-  int get total => _total;
-  void setTotal(int total) {
-    _total = total;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  int _downloadingIndex = 1;
-  int get downloadingIndex => _downloadingIndex;
-  void updateDownloadingIndex(int index) {
-    _downloadingIndex = index;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  double _downloadingPercent = 0.0;
-  double get downloadingPercent => _downloadingPercent;
-  void updateDownloadingPercent(double percent) {
-    _downloadingPercent = percent;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   //Cue card
   Timer? _timerCueCard;
   Timer get timerCueCard =>
@@ -94,16 +34,6 @@ class TestProvider with ChangeNotifier {
   void setVisibleCueCard(bool visible, {required Timer? timer}) {
     _isVisibleCueCard = visible;
     _timerCueCard = timer;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  String? _strCount;
-  String get strCount => _strCount ?? '00:00';
-  void setCountDown(String strCount) {
-    _strCount = strCount;
 
     if (!isDisposed) {
       notifyListeners();
@@ -174,16 +104,6 @@ class TestProvider with ChangeNotifier {
     _topicsQueue.clear();
   }
 
-  int _indexFollowUp = 0;
-  int get indexFollowUp => _indexFollowUp;
-  void incrementIndexFollowUpBy1() {
-    _indexFollowUp += 1;
-  }
-
-  void setIndexFollowUp(int i) {
-    _indexFollowUp = i;
-  }
-
   int _countRepeat = 0;
   int get countRepeat => _countRepeat;
   void setCountRepeat(int countRepeat) {
@@ -192,7 +112,6 @@ class TestProvider with ChangeNotifier {
 
   Timer? _countDownTimer;
   Timer? get countDownTimer => _countDownTimer;
-
   void setCountDownTimer(Timer? timer) {
     _countDownTimer = timer;
 
@@ -206,16 +125,6 @@ class TestProvider with ChangeNotifier {
   void setPlayController(VideoPlayerController? playerController) {
     _playerController = null;
     _playerController = playerController;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  bool _visibleRecord = false;
-  bool get visibleRecord => _visibleRecord;
-  void setVisibleRecord(bool isVisible) {
-    _visibleRecord = isVisible;
 
     if (!isDisposed) {
       notifyListeners();
@@ -283,26 +192,6 @@ class TestProvider with ChangeNotifier {
   int get permissionDeniedTime => _permissionDeniedTime;
   void setPermissionDeniedTime() {
     _permissionDeniedTime++;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  int _timeRecord = 0;
-  int get timeRecord => _timeRecord;
-  void setTimeRecord(int seconds) {
-    _timeRecord = seconds;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  String _pathFile = '';
-  String get pathFile => _pathFile;
-  void setFilePath(String filePath) {
-    _pathFile = filePath;
 
     if (!isDisposed) {
       notifyListeners();
@@ -400,34 +289,21 @@ class TestProvider with ChangeNotifier {
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
     _isLoadingVideo = false;
-    _isProcessing = false;
-    _isDownloading = false;
-    _canStartNow = false;
-    _total = 0;
-    _downloadingIndex = 1;
-    _downloadingPercent = 0.0;
     _isVisibleCueCard = false;
-    _strCount = '';
     _isRepeatVisible = true;
     _isVisibleSave = false;
     setTopicsList([]);
     clearQuestions();
-    // setTopicsQueue(Queue<TopicModel>());
     resetTopicsQueue();
-    _indexFollowUp = 0;
     _countRepeat = 0;
     _countDownTimer = null;
-    // setPlayController(VideoPlayerController.networkUrl(Uri.parse("")));
     _playerController = null;
-    _visibleRecord = false;
     _currentQuestion = QuestionTopicModel();
     clearAnswers();
     _isVisibleReAnswer = false;
     _dialogShowing = false;
     _permissionDeniedTime = 0;
     _indexOfCurrentQuestion = 0;
-    _timeRecord = 0;
-    _pathFile = '';
     _isShowPlayVideoButton = true;
   }
 }

@@ -134,6 +134,7 @@ class TestPresenter {
     filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
     return filesTopic;
   }
+
   Future<http.Response> _sendRequest(String name) async {
     String url = downloadFileEP(name);
     return await AppRepository.init()
