@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_presenter.dart';
-import 'package:icorrect/src/provider/record_provider.dart';
+import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -75,10 +75,10 @@ class ReAnswerDialog extends Dialog {
                 const SizedBox(height: 20),
                 const Image(image: AssetImage("assets/images/img_mic.png")),
                 const SizedBox(height: 10),
-                Consumer<RecordProvider>(
-                  builder: (context, recordProvider, child) {
+                Consumer<TimerProvider>(
+                  builder: (context, timerProvider, child) {
                     return Text(
-                      recordProvider.strCount,
+                      timerProvider.strCount,
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 38,

@@ -16,16 +16,6 @@ class RecordProvider with ChangeNotifier {
     }
   }
 
-  String? _strCount;
-  String get strCount => _strCount ?? '00:00';
-  void setCountDown(String strCount) {
-    _strCount = strCount;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   bool _visibleRecord = false;
   bool get visibleRecord => _visibleRecord;
   void setVisibleRecord(bool isVisible) {
@@ -47,7 +37,6 @@ class RecordProvider with ChangeNotifier {
   }
 
   void resetAll() {
-    _strCount = '';
     _visibleRecord = false;
     _timeRecord = 0;
   }

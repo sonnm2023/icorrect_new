@@ -4,6 +4,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
 
 class TestRecordWidget extends StatelessWidget {
@@ -16,22 +17,19 @@ class TestRecordWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
+    TestProvider testProvider =
+        Provider.of<TestProvider>(context, listen: false);
+    RecordProvider recordProvider =
+        Provider.of<RecordProvider>(context, listen: false);
+    QuestionTopicModel currentQuestion = testProvider.currentQuestion;
 
-    return Consumer2<TestProvider, RecordProvider>(builder: (context, testProvider, recordProvider, child) {
-      bool isRepeat = false;
-      if (testProvider.topicsQueue.isNotEmpty) {
-        isRepeat = testProvider.topicsQueue.first.numPart == PartOfTest.part1.get ||
-            testProvider.topicsQueue.first.numPart == PartOfTest.part3.get;
-      }
+    if (kDebugMode) print("TestRecordWidget: build");
+    bool isRepeat = false;
 
-      QuestionTopicModel currentQuestion = testProvider.currentQuestion;
-      if (kDebugMode) {
-        print(currentQuestion.content);
-      }
-
-      return Visibility(
-        visible: recordProvider.visibleRecord,
-        child: Column(
+    return Consumer<RecordProvider>(builder: (context, recordProvider, _) {
+      if (kDebugMode) print("TestRecordWidget: build Consumer");
+      if (recordProvider.visibleRecord) {
+        return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
@@ -50,28 +48,41 @@ class TestRecordWidget extends StatelessWidget {
                     height: 25,
                   ),
                   const SizedBox(height: 5),
-                  Text(
-                    recordProvider.strCount,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Consumer<TimerProvider>(builder: (context, timerProvider, _) {
+                    if (kDebugMode) print("TestRecordWidget: strCount");
+                    return Text(
+                      timerProvider.strCount,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  }),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildFinishButton(currentQuestion),
-                      Visibility(
-                        visible: isRepeat,
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 20),
-                            _buildRepeatButton(currentQuestion),
-                          ],
-                        ),
-                      ),
+                      Consumer2<TestProvider, RecordProvider>(
+                          builder: (context, testProvider, recordProvider, _) {
+                            if (testProvider.topicsQueue.isNotEmpty) {
+                              isRepeat = testProvider.topicsQueue.first.numPart ==
+                                  PartOfTest.part1.get ||
+                                  testProvider.topicsQueue.first.numPart ==
+                                      PartOfTest.part3.get;
+                            }
+                            if (kDebugMode) print("TestRecordWidget: isRepeat");
+                            return Visibility(
+                              visible: isRepeat,
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 20),
+                                  _buildRepeatButton(currentQuestion),
+                                ],
+                              ),
+                            );
+                          }),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -79,8 +90,10 @@ class TestRecordWidget extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      );
+        );
+      } else {
+        return const SizedBox();
+      }
     });
   }
 

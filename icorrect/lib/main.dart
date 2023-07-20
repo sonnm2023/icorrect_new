@@ -3,6 +3,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/prepare_test_provider.dart';
 import 'package:icorrect/src/provider/record_provider.dart';
+import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => RecordProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => TimerProvider(),
         ),
       ],
       child: MaterialApp(

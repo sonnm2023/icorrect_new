@@ -20,6 +20,7 @@ import 'package:icorrect/src/presenters/test_presenter.dart';
 import 'package:icorrect/src/provider/prepare_test_provider.dart';
 import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
@@ -50,6 +51,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   TestProvider? _testProvider;
   PrepareTestProvider? _prepareTestProvider;
   RecordProvider? _recordProvider;
+  TimerProvider? _timerProvider;
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
@@ -69,6 +71,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _testProvider = Provider.of<TestProvider>(context, listen: false);
     _prepareTestProvider = Provider.of<PrepareTestProvider>(context, listen: false);
     _recordProvider = Provider.of<RecordProvider>(context, listen: false);
+    _timerProvider = Provider.of<TimerProvider>(context, listen: false);
 
     _testPresenter = TestPresenter(this);
     _getTestDetail();
@@ -150,6 +153,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       _testProvider!.playController!.pause();
     }
 
+    _timerProvider!.resetAll();
     _recordProvider!.resetAll();
     _prepareTestProvider!.resetAll();
     _testProvider!.resetAll();
@@ -589,7 +593,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     String timeString = Utils.getTimeRecordString(timeRecord);
 
     //Record the answer
-    _recordProvider!.setCountDown(timeString);
+    _timerProvider!.setCountDown(timeString);
 
     _countDown = _testPresenter!.startCountDown(context, timeRecord, isPart2);
     _setVisibleRecord(true, _countDown, fileName);
@@ -761,7 +765,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onCountDown(String countDownString) {
     if (mounted) {
-      _recordProvider!.setCountDown(countDownString);
+      _timerProvider!.setCountDown(countDownString);
     }
   }
 
