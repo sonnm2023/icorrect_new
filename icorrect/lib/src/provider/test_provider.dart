@@ -54,16 +54,6 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  bool _isDoingTest = false;
-  bool get isDoingTest => _isDoingTest;
-  void setDoingTestStatus(bool isDoingTest) {
-    _isDoingTest = isDoingTest;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   int _total = 0;
   int get total => _total;
   void setTotal(int total) {
@@ -413,7 +403,6 @@ class TestProvider with ChangeNotifier {
     _isProcessing = false;
     _isDownloading = false;
     _canStartNow = false;
-    _isDoingTest = false;
     _total = 0;
     _downloadingIndex = 1;
     _downloadingPercent = 0.0;

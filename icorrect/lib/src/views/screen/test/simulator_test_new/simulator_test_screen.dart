@@ -171,20 +171,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           );
         }
 
-        if (testProvider.isDoingTest) {
-          return TestRoomWidget(
-            testPresenter: _testPresenter!,
-            testProvider: _testProvider!,
-            playVideoCallBack: _playVideo,
-            finishAnswerCallBack: _finishAnswerCallBack,
-            repeatQuestionCallBack: _repeatQuestionCallBack,
-            playAnswerCallBack: _playAnswerCallBack,
-            playReAnswerCallBack: _playReAnswerCallBack,
-            showTipCallBack: _showTipCallBack,
-          );
-        }
-
-        return Container(color: Colors.white);
+        return TestRoomWidget(
+          testPresenter: _testPresenter!,
+          testProvider: _testProvider!,
+          playVideoCallBack: _playVideo,
+          finishAnswerCallBack: _finishAnswerCallBack,
+          repeatQuestionCallBack: _repeatQuestionCallBack,
+          playAnswerCallBack: _playAnswerCallBack,
+          playReAnswerCallBack: _playReAnswerCallBack,
+          showTipCallBack: _showTipCallBack,
+        );
       },
     );
   }
@@ -329,7 +325,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     Future.delayed(Duration.zero, () {
       _testProvider!.updateProcessingStatus();
-      _testProvider!.setDoingTestStatus(false);
     });
   }
 
@@ -663,9 +658,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Hide Loading view
     _testProvider!.setDownloadingStatus(false);
 
-    //Update doing test status = true => show Doing test view
-    _testProvider!.setDoingTestStatus(true);
-
     //Reset Play Video Button status
     _testProvider!.setIsShowPlayVideoButton(true);
 
@@ -686,7 +678,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 _testProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
                 _countDown = _testPresenter!.startCountDown(
-                    context, 5, false); // TODO: 5 for testing, 60 for product
+                    context, 60, false); // TODO: 5 for testing, 60 for product
               } else {
                 //Normal case
                 if (false == _testProvider!.visibleRecord &&
@@ -796,12 +788,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     //Enable Start Testing Button
     if (index >= 5) {
-      if (!_testProvider!.isDoingTest) {
-        _testProvider!.setStartNowButtonStatus(true);
-      }
+      _testProvider!.setStartNowButtonStatus(true);
     }
 
-    if (index == total && _testProvider!.isDoingTest == false) {
+    if (index == total) {
       //Auto start to do test
       _checkPermission();
     }
