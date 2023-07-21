@@ -19,8 +19,6 @@ class TestRecordWidget extends StatelessWidget {
     double w = MediaQuery.of(context).size.width;
     TestProvider testProvider =
         Provider.of<TestProvider>(context, listen: false);
-    RecordProvider recordProvider =
-        Provider.of<RecordProvider>(context, listen: false);
     QuestionTopicModel currentQuestion = testProvider.currentQuestion;
 
     if (kDebugMode) print("TestRecordWidget: build");

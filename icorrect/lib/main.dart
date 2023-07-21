@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/prepare_test_provider.dart';
 import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => TimerProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => PlayAnswerProvider(),
         ),
       ],
       child: MaterialApp(

@@ -28,7 +28,7 @@ class TestRoomWidget extends StatelessWidget {
   final Function(QuestionTopicModel questionTopicModel) finishAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) repeatQuestionCallBack;
 
-  final Function(QuestionTopicModel questionTopicModel) playAnswerCallBack;
+  final Function(QuestionTopicModel questionTopicModel, int selectedQuestionIndex) playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) playReAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
 

@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/prepare_test_provider.dart';
 import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
@@ -52,13 +53,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   PrepareTestProvider? _prepareTestProvider;
   RecordProvider? _recordProvider;
   TimerProvider? _timerProvider;
+  PlayAnswerProvider? _playAnswerProvider;
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
 
-  VideoPlayerController? _playerController;
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  final Record _record = Record();
+  VideoPlayerController? _videoPlayerController;
+  final AudioPlayer _audioPlayerController = AudioPlayer();
+  final Record _recordController = Record();
 
   Timer? _countDown;
   QuestionTopicModel? _currentQuestion;
@@ -72,6 +74,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _prepareTestProvider = Provider.of<PrepareTestProvider>(context, listen: false);
     _recordProvider = Provider.of<RecordProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
+    _playAnswerProvider = Provider.of<PlayAnswerProvider>(context, listen: false);
 
     _testPresenter = TestPresenter(this);
     _getTestDetail();
@@ -81,19 +84,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
 
-    _record.dispose();
+    _recordController.dispose();
 
-    if (_audioPlayer.state == PlayerState.playing) {
-      _audioPlayer.stop();
+    if (_audioPlayerController.state == PlayerState.playing) {
+      _audioPlayerController.stop();
     }
 
-    _audioPlayer.dispose();
-    if (null != _playerController) {
-      if (_playerController!.value.isPlaying) {
-        _playerController!.pause();
+    _audioPlayerController.dispose();
+    if (null != _videoPlayerController) {
+      if (_videoPlayerController!.value.isPlaying) {
+        _videoPlayerController!.pause();
       }
 
-      _playerController!.dispose();
+      _videoPlayerController!.dispose();
     }
 
     super.dispose();
@@ -148,11 +151,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _okButtonTapped() {
-    _record.stop();
+    _recordController.stop();
     if (null != _testProvider!.playController) {
       _testProvider!.playController!.pause();
     }
 
+    _playAnswerProvider!.resetAll();
     _timerProvider!.resetAll();
     _recordProvider!.resetAll();
     _prepareTestProvider!.resetAll();
@@ -199,11 +203,31 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  void _playAnswerCallBack(QuestionTopicModel question) async {
+  void _playAnswerCallBack(QuestionTopicModel question, int selectedQuestionIndex) async {
     if (_testProvider!.isShowPlayVideoButton) {
-      String path = await FileStorageHelper.getFilePath(
-          question.answers.first.url, MediaType.audio);
-      _playAudio(path, question.id.toString());
+      //Check playing answers status
+      if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+        //Stop playing current question
+        _audioPlayerController.stop();
+
+        if (selectedQuestionIndex != _playAnswerProvider!.selectedQuestionIndex) {
+          //Update UI of play answer button
+          _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
+
+          //Play selected question
+          String path = await FileStorageHelper.getFilePath(
+              question.answers.first.url, MediaType.audio);
+          _playAudio(path, question.id.toString());
+        } else {
+          _playAnswerProvider!.resetSelectedQuestionIndex();
+        }
+      } else {
+        _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
+
+        String path = await FileStorageHelper.getFilePath(
+            question.answers.first.url, MediaType.audio);
+        _playAudio(path, question.id.toString());
+      }
     } else {
       showToastMsg(
         msg: "Please wait until the test is finished!",
@@ -214,12 +238,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
-      await _audioPlayer.play(DeviceFileSource(audioPath));
-      await _audioPlayer.setVolume(2.5);
-      _audioPlayer.onPlayerComplete.listen((event) {
+      await _audioPlayerController.play(DeviceFileSource(audioPath));
+      await _audioPlayerController.setVolume(2.5);
+      _audioPlayerController.onPlayerComplete.listen((event) {
         //TODO: Update play answer button status
         if (kDebugMode) {
           print("Play audio complete");
+          _playAnswerProvider!.resetSelectedQuestionIndex();
         }
       });
     } on PlatformException catch (e) {
@@ -522,26 +547,26 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     Utils.prepareVideoFile(fileName).then((value) {
       //Deallocate player memory
-      if (null != _playerController) {
-        _playerController!.dispose();
+      if (null != _videoPlayerController) {
+        _videoPlayerController!.dispose();
         _testProvider!.setPlayController(null);
       }
 
       //Initialize new player for new video
-      _playerController = VideoPlayerController.file(value)
+      _videoPlayerController = VideoPlayerController.file(value)
         ..addListener(() => _checkVideo(fileName, handleWhenFinishType))
         ..initialize().then((value) {
           _testProvider!.setIsLoadingVideo(false);
-          _playerController!.setLooping(false);
-          _playerController!.play();
+          _videoPlayerController!.setLooping(false);
+          _videoPlayerController!.play();
 
-          if (null != _playerController) {
-            _testProvider!.setPlayController(_playerController!);
+          if (null != _videoPlayerController) {
+            _testProvider!.setPlayController(_videoPlayerController!);
           }
 
           if (true == _testProvider!.isShowPlayVideoButton) {
             Future.delayed(const Duration(milliseconds: 1), () {
-              _playerController!.pause();
+              _videoPlayerController!.pause();
             });
           }
         });
@@ -605,7 +630,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (_recordProvider!.visibleRecord) {
       _recordAnswer(fileName!);
     } else {
-      _record.stop();
+      _recordController.stop();
     }
     _testProvider!.setCountDownTimer(count);
   }
@@ -617,8 +642,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     String path =
     await FileStorageHelper.getFilePath(fileName, MediaType.audio);
 
-    if (await _record.hasPermission()) {
-      await _record.start(
+    if (await _recordController.hasPermission()) {
+      await _recordController.start(
         path: path,
         encoder: AudioEncoder.wav,
         bitRate: 128000,

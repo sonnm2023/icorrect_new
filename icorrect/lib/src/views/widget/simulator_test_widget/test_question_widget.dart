@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,9 @@ class TestQuestionWidget extends StatelessWidget {
   });
 
   final TestPresenter testPresenter;
-  final Function(QuestionTopicModel questionTopicModel) playAnswerCallBack;
+  final Function(
+          QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
+      playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) playReAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
 
@@ -71,6 +74,7 @@ class TestQuestionWidget extends StatelessWidget {
                       child: _buildTestQuestionItem(
                         context,
                         testProvider.questionList.elementAt(index),
+                        index,
                       ),
                     ),
                   ],
@@ -106,6 +110,7 @@ class TestQuestionWidget extends StatelessWidget {
                       child: _buildTestQuestionItem(
                         context,
                         testProvider.questionList.elementAt(index),
+                        index,
                       ),
                     ),
                   ],
@@ -141,6 +146,7 @@ class TestQuestionWidget extends StatelessWidget {
                       child: _buildTestQuestionItem(
                         context,
                         testProvider.questionList.elementAt(index),
+                        index,
                       ),
                     ),
                   ],
@@ -152,6 +158,7 @@ class TestQuestionWidget extends StatelessWidget {
                 child: _buildTestQuestionItem(
                   context,
                   testProvider.questionList.elementAt(index),
+                  index,
                 ),
               );
             },
@@ -162,7 +169,7 @@ class TestQuestionWidget extends StatelessWidget {
   }
 
   Widget _buildTestQuestionItem(
-      BuildContext context, QuestionTopicModel question) {
+      BuildContext context, QuestionTopicModel question, int index) {
     bool hasCueCard = false;
     String questionStr = question.content;
     if (question.cueCard.trim().isNotEmpty) {
@@ -177,7 +184,8 @@ class TestQuestionWidget extends StatelessWidget {
           Visibility(
             visible: hasCueCard,
             child: Padding(
-              padding: const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+              padding:
+                  const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -203,15 +211,26 @@ class TestQuestionWidget extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              playAnswerCallBack(question);
+              playAnswerCallBack(question, index);
             },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-            leading: const Image(
-              image: AssetImage("assets/images/ic_play.png"),
-              width: 50,
-              height: 50,
-            ),
+            leading:
+                Consumer<PlayAnswerProvider>(builder: (context, playAnswerProvider, _) {
+              if (index == playAnswerProvider.selectedQuestionIndex) {
+                return const Image(
+                  image: AssetImage("assets/images/ic_pause.png"),
+                  width: 50,
+                  height: 50,
+                );
+              } else {
+                return const Image(
+                  image: AssetImage("assets/images/ic_play.png"),
+                  width: 50,
+                  height: 50,
+                );
+              }
+            }),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
