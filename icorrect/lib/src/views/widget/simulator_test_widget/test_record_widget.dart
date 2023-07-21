@@ -17,15 +17,15 @@ class TestRecordWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
+
     TestProvider testProvider =
         Provider.of<TestProvider>(context, listen: false);
+
     QuestionTopicModel currentQuestion = testProvider.currentQuestion;
 
-    if (kDebugMode) print("TestRecordWidget: build");
     bool isRepeat = false;
 
     return Consumer<RecordProvider>(builder: (context, recordProvider, _) {
-      if (kDebugMode) print("TestRecordWidget: build Consumer");
       if (recordProvider.visibleRecord) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -47,7 +47,6 @@ class TestRecordWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Consumer<TimerProvider>(builder: (context, timerProvider, _) {
-                    if (kDebugMode) print("TestRecordWidget: strCount");
                     return Text(
                       timerProvider.strCount,
                       style: const TextStyle(
@@ -70,7 +69,7 @@ class TestRecordWidget extends StatelessWidget {
                                   testProvider.topicsQueue.first.numPart ==
                                       PartOfTest.part3.get;
                             }
-                            if (kDebugMode) print("TestRecordWidget: isRepeat");
+
                             return Visibility(
                               visible: isRepeat,
                               child: Row(

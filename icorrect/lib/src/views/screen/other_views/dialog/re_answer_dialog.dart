@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_presenter.dart';
-import 'package:icorrect/src/provider/timer_provider.dart';
+import 'package:icorrect/src/provider/re_answer_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -12,6 +16,7 @@ class ReAnswerDialog extends Dialog {
   final BuildContext _context;
   final QuestionTopicModel _question;
   Timer? _countDown;
+  int _timeRecord = 30;
   late Record _record;
   final String _filePath = '';
   final TestPresenter _testPresenter;
@@ -31,12 +36,15 @@ class ReAnswerDialog extends Dialog {
   Widget? get child => _buildDialog();
 
   Widget _buildDialog() {
+    _timeRecord = Utils.getRecordTime(_question.numPart);
+
     _record = Record();
     _startCountDown();
     _startRecord();
+
     return Container(
       width: 400,
-      height: 350,
+      height: 280,
       padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -44,116 +52,116 @@ class ReAnswerDialog extends Dialog {
           Radius.circular(10),
         ),
       ),
-      child: Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            height: 50,
-            alignment: Alignment.topRight,
-            child: InkWell(
-              onTap: () {
-                _countDown!.cancel();
-                Navigator.pop(_context);
+      child: Container(
+        margin: const EdgeInsets.only(top: 20),
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Your answers are being recorded',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 20),
+            const Image(image: AssetImage("assets/images/img_mic.png")),
+            const SizedBox(height: 10),
+            Consumer<ReAnswerProvider>(
+              builder: (context, reAnswerProvider, child) {
+                return Text(
+                  reAnswerProvider.strCount,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w600,
+                  ),
+                );
               },
-              child: const Icon(Icons.cancel_outlined),
             ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            margin: const EdgeInsets.only(top: 20),
-            alignment: Alignment.center,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Your answers are being recorded',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 20),
-                const Image(image: AssetImage("assets/images/img_mic.png")),
-                const SizedBox(height: 10),
-                Consumer<TimerProvider>(
-                  builder: (context, timerProvider, child) {
-                    return Text(
-                      timerProvider.strCount,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 38,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    _record.stop();
-                    _countDown!.cancel();
-                    Navigator.pop(_context);
-                    _testPresenter.clickEndReAnswer(_question, _filePath);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.green),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                _finishReAnswer();
+              },
+              style: ButtonStyle(
+                backgroundColor:
+                MaterialStateProperty.all<Color>(Colors.green),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: const Text("Finish"),
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
+                ),
+              ),
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: const Text("Finish"),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  void onSkip() {
+  void _finishReAnswer() {
     _record.stop();
     _countDown!.cancel();
-    Navigator.pop(_context);
     _testPresenter.clickEndReAnswer(_question, _filePath);
+    Navigator.pop(_context);
   }
 
   void _startCountDown() {
-    //TODO
-    // Future.delayed(Duration.zero).then((value) {
-    //   _countDown != null ? _countDown!.cancel() : '';
-    //   _countDown = _testPresenter.startCountDown(_context, _timeRecord);
-    //   Provider.of<TestProvider>(_context, listen: false)
-    //       .setCountDown("00:$_timeRecord");
-    // });
+    Future.delayed(Duration.zero).then((value) {
+      _countDown != null ? _countDown!.cancel() : '';
+      _countDown = _countDownTimer(_context, _timeRecord, false);
+      Provider.of<ReAnswerProvider>(_context, listen: false)
+          .setCountDown("00:$_timeRecord");
+    });
   }
 
   void _startRecord() async {
-    // DateTime dateTime = DateTime.now();
-    // String timeNow =
-    //     '${dateTime.year}${dateTime.month}${dateTime.day}_${dateTime.hour}${dateTime.minute}';
-    // _filePath =
-    // '${await StorageHelper.init().rootPath()}\\${StringClass.AUDIO}\\${_question.id}_reanswer_$timeNow';
-    //
-    // if (await _record.hasPermission()) {
-    //   await _record.start(
-    //     path: _filePath,
-    //     encoder: AudioEncoder.wav,
-    //     bitRate: 128000,
-    //     samplingRate: 44100,
-    //   );
-    // }
+    String fileName = _question.files.first.url;
+    String filePath = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+
+    if (await _record.hasPermission()) {
+      await _record.start(
+        path: filePath,
+        encoder: AudioEncoder.wav,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+    }
+
+    _question.answers = [
+      FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
+    ];
   }
 
-  void onCountDown(String strCount) {
-    //TODO
-    // Provider.of<VariableProvider>(_context, listen: false)
-    //     .setCountDown(strCount);
+  Timer _countDownTimer(BuildContext context, int count, bool isPart2) {
+    bool finishCountDown = false;
+    const oneSec = Duration(seconds: 1);
+    return Timer.periodic(oneSec, (Timer timer) {
+      if (count < 1) {
+        timer.cancel();
+      } else {
+        count = count - 1;
+      }
+
+      dynamic minutes = count ~/ 60;
+      dynamic seconds = count % 60;
+
+      dynamic minuteStr = minutes.toString().padLeft(2, '0');
+      dynamic secondStr = seconds.toString().padLeft(2, '0');
+
+      Provider.of<ReAnswerProvider>(_context, listen: false)
+          .setCountDown("$minuteStr:$secondStr");
+
+      if (count == 0 && !finishCountDown) {
+        finishCountDown = true;
+        _finishReAnswer();
+      }
+    });
   }
 }

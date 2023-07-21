@@ -38,7 +38,7 @@ abstract class TestViewContract {
   void onNothingQuestion();
   void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onCountDown(String countDownString);
-  void onClickEndReAnswer(QuestionTopicModel question, String filePath);
+  // void onClickEndReAnswer(QuestionTopicModel question, String filePath);
   void onFinishAnswer(bool isPart2);
   void onNothingFileEndOfTakeNote();
   void onNothingEndOfTakeNote();

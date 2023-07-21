@@ -24,6 +24,7 @@ import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test_new/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
@@ -71,10 +72,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     super.initState();
 
     _testProvider = Provider.of<TestProvider>(context, listen: false);
-    _prepareTestProvider = Provider.of<PrepareTestProvider>(context, listen: false);
+    _prepareTestProvider =
+        Provider.of<PrepareTestProvider>(context, listen: false);
     _recordProvider = Provider.of<RecordProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
-    _playAnswerProvider = Provider.of<PlayAnswerProvider>(context, listen: false);
+    _playAnswerProvider =
+        Provider.of<PlayAnswerProvider>(context, listen: false);
 
     _testPresenter = TestPresenter(this);
     _getTestDetail();
@@ -203,14 +206,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  void _playAnswerCallBack(QuestionTopicModel question, int selectedQuestionIndex) async {
+  void _playAnswerCallBack(
+      QuestionTopicModel question, int selectedQuestionIndex) async {
     if (_testProvider!.isShowPlayVideoButton) {
       //Check playing answers status
       if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
         //Stop playing current question
         _audioPlayerController.stop();
 
-        if (selectedQuestionIndex != _playAnswerProvider!.selectedQuestionIndex) {
+        if (selectedQuestionIndex !=
+            _playAnswerProvider!.selectedQuestionIndex) {
           //Update UI of play answer button
           _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
@@ -256,7 +261,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _playReAnswerCallBack(QuestionTopicModel question) {
     if (_testProvider!.isShowPlayVideoButton) {
-      //TODO: re-answer the question which be selected
+      Future.delayed(Duration.zero, () async {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return ReAnswerDialog(
+              context,
+              question,
+              _testPresenter!,
+            );
+          },
+        );
+      });
     } else {
       showToastMsg(
         msg: "Please wait until the test is finished!",
@@ -269,7 +286,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (_testProvider!.isShowPlayVideoButton) {
       Future.delayed(
         Duration.zero,
-            () async {
+        () async {
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -411,6 +428,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _startToPlayQuestion();
       } else {
         QuestionTopicModel question = followUpList.elementAt(index);
+        question.numPart = topicModel.numPart;
         //Set current question into Provider
         // _testProvider!.setCurrentQuestion(question); //TODO
         _currentQuestion = question;
@@ -481,8 +499,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
       } else {
         QuestionTopicModel question = questionList.elementAt(index);
-        //Set current question into Provider
-        // _testProvider!.setCurrentQuestion(question); //TODO
+        question.numPart = topicModel.numPart;
         _currentQuestion = question;
 
         if (question.files.isEmpty) {
@@ -640,7 +657,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       print("RECORD AS FILE PATH: $fileName");
     }
     String path =
-    await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
 
     if (await _recordController.hasPermission()) {
       await _recordController.start(
@@ -657,12 +674,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     // _currentQuestion!.answers.clear();
     // _currentQuestion!.answers.addAll(_testProvider!.answers);
     if (_currentQuestion!.answers.isEmpty) {
-      _currentQuestion!.answers = [FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})];
+      _currentQuestion!.answers = [
+        FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
+      ];
     }
     _testProvider!.setCurrentQuestion(_currentQuestion!);
-    if (kDebugMode) {
-      print("Testing");
-    }
   }
 
   //TODO
@@ -776,16 +792,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     openAppSettings();
   }
 
-  @override
-  void onClickEndReAnswer(QuestionTopicModel question, String filePath) {
-    for (QuestionTopicModel q in _testProvider!.questionList) {
-      if (q.id == question.id) {
-        q.answers.last.url = filePath;
-        q.reAnswerCount++;
-        break;
-      }
-    }
-  }
+  // @override
+  // void onClickEndReAnswer(QuestionTopicModel question, String filePath) {
+  //   for (QuestionTopicModel q in _testProvider!.questionList) {
+  //     if (q.id == question.id) {
+  //       q.answers.last.url = filePath;
+  //       q.reAnswerCount++;
+  //       break;
+  //     }
+  //   }
+  // }
 
   @override
   void onCountDown(String countDownString) {

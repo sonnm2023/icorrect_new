@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:icorrect/src/models/user_data_models/country_model.dart';
 import 'package:icorrect/src/models/user_data_models/wallet_model.dart';
 
-
-
 ProfileModel profileModelFromJson(String str) => ProfileModel.fromJson(json.decode(str));
 String profileModelToJson(ProfileModel data) => json.encode(data.toJson());
 
@@ -129,7 +127,7 @@ class ProfileModel {
     _userId = json['user_id'];
     _phone = json['phone'];
     _countryCode = json['country_code'];
-    _gender = json['gender'];
+    _gender = json['gender'].toString();
     _displayName = json['display_name'];
     _birthday = json['birthday'];
     _avatar = json['avatar'];
