@@ -1,11 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -24,9 +23,9 @@ import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
 class MyTestTab extends StatefulWidget {
-  HomeWorkModel homeWorkModel;
-  MyTestProvider provider;
-  MyTestTab({super.key, required this.homeWorkModel, required this.provider});
+  final HomeWorkModel homeWorkModel;
+  final MyTestProvider provider;
+  const MyTestTab({super.key, required this.homeWorkModel, required this.provider});
 
   @override
   State<MyTestTab> createState() => _MyTestTabState();
@@ -93,7 +92,7 @@ class _MyTestTabState extends State<MyTestTab>
                     ? Expanded(child: LayoutBuilder(builder: (_, constraint) {
                         return InkWell(
                           onTap: () {
-                            _showAiResposne();
+                            _showAiResponse();
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -122,7 +121,7 @@ class _MyTestTabState extends State<MyTestTab>
     });
   }
 
-  _showAiResposne() {
+  _showAiResponse() {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -195,7 +194,11 @@ class _MyTestTabState extends State<MyTestTab>
                               .setPlayAnswer(false, question.id.toString());
                           _stopAudio();
                         },
-                        child: const Image(image: AssetImage(AppAsset.play)),
+                        child: const Image(
+                          image: AssetImage(AppAsset.play),
+                          width: 50,
+                          height: 50,
+                        ),
                       )
                     : InkWell(
                         onTap: () async {
@@ -209,7 +212,11 @@ class _MyTestTabState extends State<MyTestTab>
                                 questionId: question.id.toString());
                           }
                         },
-                        child: const Image(image: AssetImage(AppAsset.stop)),
+                        child: const Image(
+                          image: AssetImage(AppAsset.stop),
+                          width: 50,
+                          height: 50,
+                        ),
                       ),
                 Container(
                   margin: const EdgeInsets.only(left: 20),
@@ -323,7 +330,9 @@ class _MyTestTabState extends State<MyTestTab>
         widget.provider.setPlayAnswer(false, questionId);
       });
     } on PlatformException catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -354,13 +363,17 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void downloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
-    print('downloadFilesFail: ${alertInfo.description.toString()}');
+    if (kDebugMode) {
+      print('downloadFilesFail: ${alertInfo.description.toString()}');
+    }
   }
 
   @override
   void getMyTestFail(AlertInfo alertInfo) {
     _loading!.hide();
-    print('getMyTestFail: ${alertInfo.description.toString()}');
+    if (kDebugMode) {
+      print('getMyTestFail: ${alertInfo.description.toString()}');
+    }
   }
 
   @override
