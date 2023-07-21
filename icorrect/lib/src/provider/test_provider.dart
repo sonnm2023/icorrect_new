@@ -49,6 +49,12 @@ class TestProvider with ChangeNotifier {
     }
   }
 
+  int _countRepeat = 0;
+  int get countRepeat => _countRepeat;
+  void setCountRepeat(int countRepeat) {
+    _countRepeat = countRepeat;
+  }
+
   bool _isVisibleSave = false;
   bool get isVisibleSaveTheTest => _isVisibleSave;
   void setVisibleSaveTheTest(bool visible) {
@@ -104,12 +110,6 @@ class TestProvider with ChangeNotifier {
     _topicsQueue.clear();
   }
 
-  int _countRepeat = 0;
-  int get countRepeat => _countRepeat;
-  void setCountRepeat(int countRepeat) {
-    _countRepeat = countRepeat;
-  }
-
   Timer? _countDownTimer;
   Timer? get countDownTimer => _countDownTimer;
   void setCountDownTimer(Timer? timer) {
@@ -162,16 +162,6 @@ class TestProvider with ChangeNotifier {
 
   void clearAnswers() {
     _answers.clear();
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  bool _isVisibleReAnswer = false;
-  bool get isVisibleReAnswer => _isVisibleReAnswer;
-  void setVisibleReAnswer(bool visible) {
-    _isVisibleReAnswer = visible;
 
     if (!isDisposed) {
       notifyListeners();
@@ -300,7 +290,6 @@ class TestProvider with ChangeNotifier {
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
     clearAnswers();
-    _isVisibleReAnswer = false;
     _dialogShowing = false;
     _permissionDeniedTime = 0;
     _indexOfCurrentQuestion = 0;
