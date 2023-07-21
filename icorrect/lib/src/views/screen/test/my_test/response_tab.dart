@@ -117,7 +117,10 @@ class _ResponseTabState extends State<ResponseTab>
               alignment: Alignment.centerRight,
               width: constraint.maxWidth,
               child: (appState.responseModel.overallComment !=
-                      'Nothing overall comment in here')
+                          'Nothing overall comment in here' &&
+                      appState.responseModel.overallComment
+                          .toString()
+                          .isNotEmpty)
                   ? InkWell(
                       onTap: () {
                         widget.provider.setVisibleOverviewComment(

@@ -155,6 +155,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _okButtonTapped() {
     _recordController.stop();
+
     if (null != _testProvider!.playController) {
       _testProvider!.playController!.pause();
     }
@@ -213,7 +214,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
         //Stop playing current question
         _audioPlayerController.stop();
-
         if (selectedQuestionIndex !=
             _playAnswerProvider!.selectedQuestionIndex) {
           //Update UI of play answer button
@@ -239,6 +239,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         toastState: ToastStatesType.warning,
       );
     }
+    String path = await FileStorageHelper.getFilePath(
+        question.answers.first.url, MediaType.audio);
+    _playAudio(path, question.id.toString());
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
@@ -328,7 +331,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       await _initializePermission();
     }
 
-    _requestPermission(_microPermission!, context);
+    if (mounted) {
+      _requestPermission(_microPermission!, context);
+    }
   }
 
   Future<void> _requestPermission(
@@ -687,15 +692,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _setVisibleSaveTest(true);
     _setVisibleCueCard(false, null);
     _setVisibleRecord(false, null, null);
-    _setVisibleReAnswer(true);
   }
 
   void _setVisibleSaveTest(bool isVisible) {
     _testProvider!.setVisibleSaveTheTest(isVisible);
-  }
-
-  void _setVisibleReAnswer(bool visible) {
-    _testProvider!.setVisibleReAnswer(visible);
   }
 
   void _setVisibleCueCard(bool visible, Timer? count) {
@@ -728,8 +728,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 //Has Cue Card case
                 _recordProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
-                _countDown = _testPresenter!.startCountDown(
-                    context, 60, false); // TODO: 5 for testing, 60 for product
+                _countDown = _testPresenter!.startCountDown(context, 60, false);
               } else {
                 //Normal case
                 if (false == _recordProvider!.visibleRecord &&

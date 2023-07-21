@@ -20,27 +20,14 @@ class MyTestScreen extends StatefulWidget {
 
 class _MyTestScreenState extends State<MyTestScreen> {
   MyTestProvider? _provider;
-  TabBar get _tabBar => const TabBar(
-        indicatorColor: AppColor.defaultPurpleColor,
-        tabs: [
-          Tab(
-            child: Text('MY TEST',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          ),
-          Tab(
-            child: Text('RESPONSE',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          ),
-          Tab(
-            child: Text('HIGHLIGHT',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          ),
-          Tab(
-            child: Text('OTHERS',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          ),
-        ],
+  TabBar get _tabBar => TabBar(
+        indicator: const UnderlineTabIndicator(
+            borderSide:
+                BorderSide(width: 3.0, color: AppColor.defaultPurpleColor),
+            insets: EdgeInsets.symmetric(horizontal: 10.0)),
+        tabs: _tabsLabel(),
       );
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -60,7 +47,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         return false;
       },
       child: DefaultTabController(
-        length: 4,
+        length: widget.homeWorkModel.hasTeacherResponse() ? 4 : 3,
         child: Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
@@ -71,26 +58,79 @@ class _MyTestScreenState extends State<MyTestScreen> {
               "ICORRECT",
               style: TextStyle(color: AppColor.defaultPurpleColor),
             ),
-            bottom: _tabBar,
+            bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(50),
+                child: Container(
+                  decoration: const BoxDecoration(
+                      border: Border(
+                          bottom:
+                              BorderSide(color: AppColor.defaultPurpleColor))),
+                  child: _tabBar,
+                )),
             backgroundColor: AppColor.defaultWhiteColor,
           ),
           body: TabBarView(
-            children: [
-              const MyTestTab(),
-              ResponseTab(
-                  homeWorkModel: widget.homeWorkModel, provider: _provider!),
-              HighLightTab(
-                provider: _provider!,
-                homeWorkModel: widget.homeWorkModel,
-              ),
-              OtherTab(
-                provider: _provider!,
-                homeWorkModel: widget.homeWorkModel,
-              ),
-            ],
+            children: _tabBarView(),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _tabsLabel() {
+    return widget.homeWorkModel.hasTeacherResponse()
+        ? const [
+            Tab(
+              child: Text('MY TEST',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+            Tab(
+              child: Text('RESPONSE',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+            Tab(
+              child: Text('HIGHLIGHT',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+            Tab(
+              child: Text('OTHERS',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+          ]
+        : const [
+            Tab(
+              child: Text('MY TEST',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+            Tab(
+              child: Text('HIGHLIGHT',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+            Tab(
+              child: Text('OTHERS',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ),
+          ];
+  }
+
+  _tabBarView() {
+    print('has response: ${widget.homeWorkModel.hasTeacherResponse()}');
+    return widget.homeWorkModel.hasTeacherResponse()
+        ? [
+            MyTestTab(
+                homeWorkModel: widget.homeWorkModel, provider: _provider!),
+            ResponseTab(
+                homeWorkModel: widget.homeWorkModel, provider: _provider!),
+            HighLightTab(
+                provider: _provider!, homeWorkModel: widget.homeWorkModel),
+            OtherTab(provider: _provider!, homeWorkModel: widget.homeWorkModel),
+          ]
+        : [
+            MyTestTab(
+                homeWorkModel: widget.homeWorkModel, provider: _provider!),
+            HighLightTab(
+                provider: _provider!, homeWorkModel: widget.homeWorkModel),
+            OtherTab(provider: _provider!, homeWorkModel: widget.homeWorkModel),
+          ];
   }
 }
