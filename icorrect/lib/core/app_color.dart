@@ -16,4 +16,5 @@ class AppColor {
   static const defaultLightPurpleColor = Color.fromARGB(255, 108, 99, 131);
   static const defaultGrayColor = Color(0xFF807F7F);
   static const defaultLightGrayColor = Color(0xFFBCBCBC);
+  static const defaultGraySlightColor = Color.fromARGB(255, 221, 221, 221);
 }

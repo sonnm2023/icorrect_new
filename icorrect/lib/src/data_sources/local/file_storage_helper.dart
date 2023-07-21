@@ -8,15 +8,15 @@ import 'package:permission_handler/permission_handler.dart';
 class FileStorageHelper {
   static Future<String> getExternalDocumentPath() async {
     var status = await Permission.storage.status;
-    if(!status.isGranted) {
+    if (!status.isGranted) {
       await Permission.storage.request();
     }
-    
+
     Directory directory = Directory('');
     directory = await getApplicationDocumentsDirectory();
 
     final exPath = directory.path;
-    if(kDebugMode) print("Saved Path: $exPath");
+    if (kDebugMode) print("Saved Path: $exPath");
     await Directory(exPath).create(recursive: true);
     return exPath;
   }
@@ -44,14 +44,16 @@ class FileStorageHelper {
     return hideDirectory.path;
   }
 
-  static Future<File> writeVideo(String bytes, String name, MediaType mediaType) async {
+  static Future<File> writeVideo(
+      String bytes, String name, MediaType mediaType) async {
     final path = await getFolderPath(mediaType);
     File file = File('$path\\$name');
     if (kDebugMode) print('Save file: $path\\$name');
     return file.writeAsString(bytes);
   }
 
-  static Future<String> readVideoFromFile(String fileName, MediaType mediaType) async {
+  static Future<String> readVideoFromFile(
+      String fileName, MediaType mediaType) async {
     try {
       final path = await getFolderPath(mediaType);
       File file = File('$path\\$fileName');
@@ -62,14 +64,16 @@ class FileStorageHelper {
     }
   }
 
-  static Future<bool> checkExistFile(String fileName, MediaType mediaType) async {
+  static Future<bool> checkExistFile(
+      String fileName, MediaType mediaType) async {
     final path = await getFolderPath(mediaType);
     String filePath = '$path\\$fileName';
     bool result = await File(filePath).exists();
     return result;
   }
 
-  static Future<String> getFilePath(String fileName, MediaType mediaType) async {
+  static Future<String> getFilePath(
+      String fileName, MediaType mediaType) async {
     final path = await getFolderPath(mediaType);
     String filePath = '$path\\$fileName';
     return filePath;

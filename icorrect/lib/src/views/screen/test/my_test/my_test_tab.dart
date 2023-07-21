@@ -1,16 +1,24 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
+import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
+import 'package:record/record.dart';
 
 import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/circle_loading.dart';
@@ -29,17 +37,28 @@ class _MyTestTabState extends State<MyTestTab>
     implements MyTestConstract {
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
+
+  AudioPlayer? _player;
+  final Record _record = Record();
+
   @override
   void initState() {
     super.initState();
     _loading = CircleLoading();
     _presenter = MyTestPresenter(this);
+    _player = AudioPlayer();
     _loading!.show(context);
     _presenter!.getMyTest(widget.homeWorkModel.testId);
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _player!.dispose();
   }
 
   @override
@@ -68,32 +87,91 @@ class _MyTestTabState extends State<MyTestTab>
                     itemBuilder: (context, index) {
                       return _questionItem(provider.myAnswerOfQuestions[index]);
                     })),
-            (widget.homeWorkModel.aiOrder != 0)
-                ? Expanded(
-                    flex: 1,
-                    child: LayoutBuilder(builder: (_, constraint) {
-                      return InkWell(
-                        onTap: () {},
-                        child: Container(
-                          color: Colors.green,
-                          width: constraint.maxWidth,
-                          child: const Center(
-                            child: Text(
-                              'View AI Response',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 19),
+            Stack(
+              children: [
+                (widget.homeWorkModel.aiOrder != 0)
+                    ? Expanded(child: LayoutBuilder(builder: (_, constraint) {
+                        return InkWell(
+                          onTap: () {
+                            _showAiResposne();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            color: Colors.green,
+                            width: constraint.maxWidth,
+                            child: const Center(
+                              child: Text(
+                                'View AI Response',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 19),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }))
-                : Container()
+                        );
+                      }))
+                    : Container(),
+                Expanded(
+                    child: TestRecordWidget(finishAnswer: (currentQuestion) {}))
+              ],
+            )
           ],
         );
       }
     });
+  }
+
+  _showAiResposne() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        enableDrag: false,
+        barrierColor: AppColor.defaultGrayColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+        builder: (_) {
+          return FutureBuilder(
+              future: AiResponseEP(widget.homeWorkModel.aiOrder.toString()),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: AppColor.defaultGrayColor,
+                          size: 35,
+                        ),
+                      ),
+                      AIResponse(url: snapshot.data.toString())
+                    ],
+                  );
+                }
+                return Container(
+                  height: 400,
+                  color: Colors.white,
+                  child: const Center(
+                    child: Text('Nothing in here',
+                        style: TextStyle(
+                            color: AppColor.defaultGrayColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400)),
+                  ),
+                );
+              });
+        });
   }
 
   Widget _questionItem(QuestionTopicModel question) {
@@ -109,21 +187,30 @@ class _MyTestTabState extends State<MyTestTab>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                InkWell(
-                  onTap: () async {
-                    widget.provider.setPlayAnswer(
-                        !provider.playAnswer, question.id.toString());
-                    if (question.answers.isNotEmpty) {
-                      String audioPath = await FileStorageHelper.getFilePath(
-                          question.answers.last.url.toString(), MediaType.audio);
-                      print('audioPath: ${audioPath} ');
-                    }
-                  },
-                  child: (provider.playAnswer &&
-                          question.id.toString() == provider.questionId)
-                      ? const Image(image: AssetImage(AppAsset.play))
-                      : const Image(image: AssetImage(AppAsset.stop)),
-                ),
+                (provider.playAnswer &&
+                        question.id.toString() == provider.questionId)
+                    ? InkWell(
+                        onTap: () async {
+                          widget.provider
+                              .setPlayAnswer(false, question.id.toString());
+                          _stopAudio();
+                        },
+                        child: const Image(image: AssetImage(AppAsset.play)),
+                      )
+                    : InkWell(
+                        onTap: () async {
+                          widget.provider
+                              .setPlayAnswer(true, question.id.toString());
+
+                          if (question.answers.isNotEmpty) {
+                            _preparePlayAudio(
+                                fileName: Utils.convertFileName(
+                                    question.answers.last.url.toString()),
+                                questionId: question.id.toString());
+                          }
+                        },
+                        child: const Image(image: AssetImage(AppAsset.stop)),
+                      ),
                 Container(
                   margin: const EdgeInsets.only(left: 20),
                   alignment: Alignment.centerLeft,
@@ -152,7 +239,9 @@ class _MyTestTabState extends State<MyTestTab>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _showTips(question);
+                            },
                             child: const DefaultText(
                                 text: 'View Tips',
                                 color: AppColor.defaultPurpleColor,
@@ -160,14 +249,16 @@ class _MyTestTabState extends State<MyTestTab>
                                 fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 20),
-                          InkWell(
-                            onTap: () {},
-                            child: const DefaultText(
-                                text: 'Reanswer',
-                                color: AppColor.defaultPurpleColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          )
+                          (widget.homeWorkModel.canReanswer())
+                              ? InkWell(
+                                  onTap: () {},
+                                  child: const DefaultText(
+                                      text: 'Reanswer',
+                                      color: AppColor.defaultPurpleColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              : Container()
                         ],
                       )
                     ],
@@ -179,6 +270,65 @@ class _MyTestTabState extends State<MyTestTab>
         }),
       );
     });
+  }
+
+  _showTips(QuestionTopicModel questionTopicModel) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        enableDrag: false,
+        barrierColor: AppColor.defaultGrayColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+        builder: (_) {
+          return TipQuestionDialog.tipQuestionDialog(
+              context, questionTopicModel);
+        });
+  }
+
+  Future _recordReanswer(bool visibleRecord) async {
+    if (visibleRecord) {
+      if (await _record.hasPermission()) {
+        await _record.start(
+          path: await Utils.generateAudioFileName(),
+          encoder: AudioEncoder.wav,
+          bitRate: 128000,
+          samplingRate: 44100,
+        );
+      }
+    } else {
+      _record.stop();
+    }
+  }
+
+  Future _preparePlayAudio(
+      {required String fileName, required String questionId}) async {
+    Utils.prepareAudioFile(fileName).then((value) {
+      _playAudio(value.path.toString(), questionId);
+    });
+  }
+
+  Future<void> _playAudio(String audioPath, String questionId) async {
+    try {
+      await _player!.play(DeviceFileSource(audioPath));
+      await _player!.setVolume(2.5);
+      _player!.onPlayerComplete.listen((event) {
+        widget.provider.setPlayAnswer(false, questionId);
+      });
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _stopAudio() async {
+    await _player!.stop();
   }
 
   @override
@@ -199,7 +349,6 @@ class _MyTestTabState extends State<MyTestTab>
   void getMyTestSuccess(List<QuestionTopicModel> questions) {
     _loading!.hide();
     widget.provider.setAnswerOfQuestions(questions);
-    print('QuestionTopicModel: ${questions.length.toString()}');
   }
 
   @override

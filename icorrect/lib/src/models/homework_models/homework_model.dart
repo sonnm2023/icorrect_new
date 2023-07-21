@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:icorrect/src/models/homework_models/submited_model.dart';
 
-
-HomeWorkModel homeworkModelFromJson(String str) => HomeWorkModel.fromJson(json.decode(str));
+HomeWorkModel homeworkModelFromJson(String str) =>
+    HomeWorkModel.fromJson(json.decode(str));
 String homeworkModelToJson(HomeWorkModel data) => json.encode(data.toJson());
 
 class HomeWorkModel {
@@ -52,48 +52,48 @@ class HomeWorkModel {
 
   HomeWorkModel(
       {int? id,
-        String? name,
-        String? type,
-        String? test,
-        String? startDate,
-        String? startTime,
-        String? endTime,
-        String? endDate,
-        String? giaotrinhId,
-        int? status,
-        String? createdAt,
-        String? updatedAt,
-        int? activityId,
-        String? tips,
-        int? cost,
-        dynamic bankClone,
-        int? sendEmail,
-        String? uuid,
-        dynamic activityBankMyBank,
-        int? packageId,
-        String? dateTimeRelease,
-        String? dateTimeEnd,
-        int? question,
-        String? start,
-        String? end,
-        int? completeStatus,
-        SubmittedDateModel? submitedDateModel,
-        String? orderId,
-        String? aiResponseLink,
-        int? haveAiReponse,
-        String? aiScore,
-        int? aiOrder,
-        String? testId,
-        int? testOption,
-        String? className,
-        int? classId,
-        int? bank,
-        String? bankName,
-        int? bankType,
-        String? bankDistributeCode,
-        int? isTested,
-        String? activityType,
-        int? questionIndex}) {
+      String? name,
+      String? type,
+      String? test,
+      String? startDate,
+      String? startTime,
+      String? endTime,
+      String? endDate,
+      String? giaotrinhId,
+      int? status,
+      String? createdAt,
+      String? updatedAt,
+      int? activityId,
+      String? tips,
+      int? cost,
+      dynamic bankClone,
+      int? sendEmail,
+      String? uuid,
+      dynamic activityBankMyBank,
+      int? packageId,
+      String? dateTimeRelease,
+      String? dateTimeEnd,
+      int? question,
+      String? start,
+      String? end,
+      int? completeStatus,
+      SubmittedDateModel? submitedDateModel,
+      String? orderId,
+      String? aiResponseLink,
+      int? haveAiReponse,
+      String? aiScore,
+      int? aiOrder,
+      String? testId,
+      int? testOption,
+      String? className,
+      int? classId,
+      int? bank,
+      String? bankName,
+      int? bankType,
+      String? bankDistributeCode,
+      int? isTested,
+      String? activityType,
+      int? questionIndex}) {
     _id = id;
     _name = name;
     _type = type;
@@ -190,8 +190,10 @@ class HomeWorkModel {
   set end(String end) => _end = end;
   int get completeStatus => _completeStatus ?? 0;
   set completeStatus(int completeStatus) => _completeStatus = completeStatus;
-  SubmittedDateModel get submittedDateModel => _submittedDateModel ?? SubmittedDateModel();
-  set submittedDate(SubmittedDateModel submittedDateModel) => _submittedDateModel = submittedDateModel;
+  SubmittedDateModel get submittedDateModel =>
+      _submittedDateModel ?? SubmittedDateModel();
+  set submittedDate(SubmittedDateModel submittedDateModel) =>
+      _submittedDateModel = submittedDateModel;
   String get orderId => _orderId ?? "";
   set orderId(String orderId) => _orderId = orderId;
   String get aiResponseLink => _aiResponseLink ?? "";
@@ -226,6 +228,18 @@ class HomeWorkModel {
   int get questionIndex => _questionIndex ?? 0;
   set questionIndex(int questionIndex) => _questionIndex = questionIndex;
 
+  bool hasTeacherResponse() {
+    print('_orderId: ${_orderId.toString()}');
+    return _orderId != '0' && _orderId!.isNotEmpty;
+  }
+
+  bool canReanswer() {
+    if (_aiOrder != 0 || _orderId != '0' || _type != 'homework') {
+      return false;
+    }
+    return true;
+  }
+
   HomeWorkModel.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _name = json['name'];
@@ -252,7 +266,7 @@ class HomeWorkModel {
     _start = json['start'];
     _end = json['end'];
     _completeStatus = json['complete_status'];
-    if(json['submited_date'].toString() != '') {
+    if (json['submited_date'].toString() != '') {
       _submittedDateModel = json['submited_date'] != null
           ? SubmittedDateModel.fromJson(json['submited_date'])
           : null;

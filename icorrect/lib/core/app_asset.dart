@@ -7,4 +7,5 @@ class AppAsset {
   static const empty = 'assets/images/ic_emotion_sad.png';
   static const stop = 'assets/images/img_play.png';
   static const play = 'assets/images/img_pause.png';
+  static const record = 'assets/images/ic_record_2.png';
 }

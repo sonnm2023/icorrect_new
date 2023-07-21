@@ -90,6 +90,33 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
+  QuestionTopicModel _currentQuestion = QuestionTopicModel();
+  QuestionTopicModel get currentQuestion => _currentQuestion;
+  void setCurrentQuestion(QuestionTopicModel question) {
+    _currentQuestion = question;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _visibleRecord = false;
+  bool get visibleRecord => _visibleRecord;
+  void setVisibleRecord(bool visible) {
+    _visibleRecord = visible;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _timerCount = '00:00';
+  String get timerCount => _timerCount;
+  void setTimerCount(String time) {
+    _timerCount = time;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   /////////////Response screen //////////////////////////////////////////////
 
   bool _visibleOverViewComment = false;

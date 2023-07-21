@@ -229,6 +229,15 @@ class Utils {
     return '';
   }
 
+  static Future<String> generateAudioFileName() async {
+    DateTime dateTime = DateTime.now();
+    String timeNow =
+        '${dateTime.year}${dateTime.month}${dateTime.day}_${dateTime.hour}${dateTime.minute}${dateTime.second}';
+   
+    return '${StringClass.audio}\\${timeNow}_answer';
+  }
+
+
   static Future<File> prepareVideoFile(String fileName) async {
     File decodedVideoFile;
     String bs4str =
@@ -242,6 +251,21 @@ class Utils {
       decodedVideoFile = File(filePath);
     } else {
       //Convert for first time
+      decodedVideoFile = await File(filePath).writeAsBytes(decodedBytes);
+    }
+    return decodedVideoFile;
+  }
+
+  static Future<File> prepareAudioFile(String fileName) async {
+    File decodedVideoFile;
+    String bs4str =
+        await FileStorageHelper.readVideoFromFile(fileName, MediaType.audio);
+    Uint8List decodedBytes = base64.decode(bs4str);
+    String filePath =
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    if (decodedBytes.isEmpty) {
+      decodedVideoFile = File(filePath);
+    } else {
       decodedVideoFile = await File(filePath).writeAsBytes(decodedBytes);
     }
     return decodedVideoFile;

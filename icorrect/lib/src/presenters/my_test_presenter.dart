@@ -150,19 +150,25 @@ class MyTestPresenter {
       FileTopicModel temp = filesTopic[index];
       String fileTopic = temp.url;
       String fileNameForDownload = Utils.reConvertFileName(fileTopic);
-      print('fileNameForDownload: ${fileNameForDownload}');
-      print('fileTopic: ${fileTopic}');
 
       if (filesTopic.isNotEmpty) {
         String fileType = Utils.fileType(fileTopic);
+
+        if (_mediaType(fileType) == MediaType.audio) {
+          fileNameForDownload = fileTopic;
+          fileTopic = Utils.convertFileName(fileTopic);
+        }
+
         if (fileType.isNotEmpty &&
             !await _isExist(fileTopic, _mediaType(fileType))) {
           try {
             http.Response response = await _sendRequest(fileNameForDownload);
 
             if (response.statusCode == 200) {
-              //Save file using file_storage
               String contentString = await Utils.convertVideoToBase64(response);
+              print('content String:${contentString}');
+              print('file topic :${fileTopic}');
+
               await FileStorageHelper.writeVideo(
                   contentString, fileTopic, _mediaType(fileType));
 
