@@ -249,11 +249,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       await _audioPlayerController.play(DeviceFileSource(audioPath));
       await _audioPlayerController.setVolume(2.5);
       _audioPlayerController.onPlayerComplete.listen((event) {
-        //TODO: Update play answer button status
         if (kDebugMode) {
           print("Play audio complete");
-          _playAnswerProvider!.resetSelectedQuestionIndex();
         }
+        _playAnswerProvider!.resetSelectedQuestionIndex();
       });
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -262,21 +261,53 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
+  void _showReAnswerDialog(QuestionTopicModel question) {
+    Future.delayed(Duration.zero, () async {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return ReAnswerDialog(
+            context,
+            question,
+            _testPresenter!,
+          );
+        },
+      );
+    });
+  }
+
   void _playReAnswerCallBack(QuestionTopicModel question) {
     if (_testProvider!.isShowPlayVideoButton) {
-      Future.delayed(Duration.zero, () async {
+      //TODO: Check reviewing process
+      bool isReviewing = true;
+      if (isReviewing) {
         showDialog(
           context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return ReAnswerDialog(
-              context,
-              question,
-              _testPresenter!,
+          builder: (BuildContext context) {
+            return ConfirmDialogWidget(
+              title: "Notification",
+              message: "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
+              cancelButtonTitle: "Cancel",
+              okButtonTitle: "OK",
+              cancelButtonTapped: _cancelButtonTapped,
+              okButtonTapped: () {
+                //TODO: Pause reviewing process
+
+                //Show re-answer dialog
+                _showReAnswerDialog(question);
+              },
             );
           },
         );
-      });
+      } else {
+        if (_audioPlayerController.state == PlayerState.playing) {
+          _audioPlayerController.stop();
+          _playAnswerProvider!.resetSelectedQuestionIndex();
+        }
+
+        _showReAnswerDialog(question);
+      }
     } else {
       showToastMsg(
         msg: "Please wait until the test is finished!",
@@ -434,8 +465,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       } else {
         QuestionTopicModel question = followUpList.elementAt(index);
         question.numPart = topicModel.numPart;
-        //Set current question into Provider
-        // _testProvider!.setCurrentQuestion(question); //TODO
         _currentQuestion = question;
 
         if (question.files.isEmpty) {
@@ -676,13 +705,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //TODO
     _testProvider!.addAnswer(
         FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0}));
-    // _currentQuestion!.answers.clear();
-    // _currentQuestion!.answers.addAll(_testProvider!.answers);
-    if (_currentQuestion!.answers.isEmpty) {
-      _currentQuestion!.answers = [
-        FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
-      ];
-    }
+    _currentQuestion!.answers = [
+      FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
+    ];
     _testProvider!.setCurrentQuestion(_currentQuestion!);
   }
 
