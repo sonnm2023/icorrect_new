@@ -66,7 +66,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Timer? _countDown;
   QuestionTopicModel? _currentQuestion;
   int _countRepeat = 0;
-  final List<FileTopicModel> _answers = [];
 
   @override
   void initState() {
@@ -222,8 +221,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
           //Play selected question
-          String path = await FileStorageHelper.getFilePath(
-              question.answers.first.url, MediaType.audio);
+          String path = await FileStorageHelper.getFilePath(question.answers.first.url, MediaType.audio);
           _playAudio(path, question.id.toString());
         } else {
           _playAnswerProvider!.resetSelectedQuestionIndex();
@@ -231,8 +229,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       } else {
         _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-        String path = await FileStorageHelper.getFilePath(
-            question.answers.first.url, MediaType.audio);
+        String path = await FileStorageHelper.getFilePath(question.answers.first.url, MediaType.audio);
         _playAudio(path, question.id.toString());
       }
     } else {
@@ -241,9 +238,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         toastState: ToastStatesType.warning,
       );
     }
-    String path = await FileStorageHelper.getFilePath(
-        question.answers.first.url, MediaType.audio);
-    _playAudio(path, question.id.toString());
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
@@ -353,8 +347,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
     _countRepeat++;
 
-    String path = await _createPathFile(questionTopicModel.files!.first.url);
-    _answers.add(FileTopicModel.fromJson({'id': 0, 'url': path, 'type': 0}));
+    //Add question into List Question & show it
+    _testProvider!.addCurrentQuestionIntoList(questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
@@ -473,7 +467,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Future<void> _startToPlayFollowup({required bool needResetAnswerList}) async {
     if (needResetAnswerList) {
-      _answers.clear();
+      // _answers.clear();//TODO
     }
 
     //Reset countdown
@@ -540,7 +534,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Future<void> _startToPlayQuestion({required bool needResetAnswerList}) async {
     if (needResetAnswerList) {
-      _answers.clear();
+      // _answers.clear();//TODO
     }
 
     TopicModel? topicModel = _getCurrentPart();
@@ -767,7 +761,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       print("RECORD AS FILE PATH: $fileName");
     }
 
-    String path = await _createPathFile(fileName);//await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    String newFileName = await _createLocalAudioFileName(fileName);
+    String folderPath = await FileStorageHelper.getFolderPath(MediaType.audio);
+    String path = "$folderPath\\$newFileName";
 
     if (await _recordController.hasPermission()) {
       await _recordController.start(
@@ -778,27 +774,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       );
     }
 
-    if (_countRepeat == 0) {
-      _answers.add(FileTopicModel.fromJson({'id': 0, 'url': path, 'type': 0}));
-    }
-    // _currentQuestion!.answers.clear();
-    _currentQuestion!.answers.addAll(_answers);
+    List<FileTopicModel> temp = _currentQuestion!.answers;
+    temp.add(FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
+    _currentQuestion!.answers = temp;
     _testProvider!.setCurrentQuestion(_currentQuestion!);
-    if (kDebugMode) print("Check");
+    if (kDebugMode) print("Save audio path: $path");
   }
 
-  Future<String> _createPathFile(String origin) async {
-    DateTime dateTime = DateTime.now();
-    String timeNow =
-        '${dateTime.year}${dateTime.month}${dateTime.day}_${dateTime.hour}${dateTime.minute}${dateTime.second}';
+  Future<String> _createLocalAudioFileName(String origin) async {
     String fileName = "";
     if (_countRepeat > 0) {
-      fileName = '${timeNow}_${origin}_repeat';
+      fileName = 'repeat_${_countRepeat.toString()}_$origin';
     } else {
-      fileName = '${timeNow}_${origin}_answer';
+      fileName = 'answer_$origin';
     }
-    String path = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
-    return path;
+    return fileName;
   }
 
   //TODO
@@ -843,7 +833,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 //Has Cue Card case
                 _recordProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
-                _countDown = _testPresenter!.startCountDown(context, 60, false);
+                _countDown = _testPresenter!.startCountDown(context, 10, false); //For test 10, product 60
               } else {
                 //Normal case
                 if (false == _recordProvider!.visibleRecord &&
@@ -1044,7 +1034,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _recordProvider!.setVisibleRecord(false);
 
         //Add question into List Question & show it
-        _testProvider!.addCurrentQuestionIntoList(_currentQuestion!);
+        _testProvider!.addCurrentQuestionIntoList(questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
         _playNextQuestion();
       } else {
@@ -1056,7 +1046,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       }
     } else {
       //Add question or followup into List Question & show it
-      _testProvider!.addCurrentQuestionIntoList(_currentQuestion!);
+      _testProvider!.addCurrentQuestionIntoList(questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
