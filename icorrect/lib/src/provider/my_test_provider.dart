@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
@@ -25,6 +27,14 @@ class MyTestProvider extends ChangeNotifier {
     updateDownloadingIndex(0);
     updateDownloadingPercent(0);
     setAnswerOfQuestions([]);
+    setTimerCount('00:00');
+    _requestions = [];
+    setCountDownTimer(null);
+    setCurrentQuestion(QuestionTopicModel());
+    setVisibleRecord(false);
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   ///////////////My Test Screen/////////////////////////////////////////////////
@@ -77,6 +87,22 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
+  List<QuestionTopicModel> _requestions = [];
+  List<QuestionTopicModel> get reAnswerOfQuestions => _requestions;
+  void setReAnswerOfQuestions(QuestionTopicModel question) {
+    _requestions.add(question);
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void clearReAnswerOfQuestions() {
+    _requestions = [];
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   bool _playAnswer = false;
   String _questionId = '';
   String get questionId => _questionId;
@@ -112,6 +138,16 @@ class MyTestProvider extends ChangeNotifier {
   String get timerCount => _timerCount;
   void setTimerCount(String time) {
     _timerCount = time;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  Timer? _countDownTimer;
+  Timer? get countDownTimer => _countDownTimer;
+  void setCountDownTimer(Timer? timer) {
+    _countDownTimer = timer;
+
     if (!isDisposed) {
       notifyListeners();
     }

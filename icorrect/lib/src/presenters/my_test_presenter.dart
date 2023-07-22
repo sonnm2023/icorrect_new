@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:path/path.dart';
 
 import '../data_sources/api_urls.dart';
 import '../data_sources/constant_strings.dart';
@@ -23,6 +25,10 @@ abstract class MyTestConstract {
       double percent, int index, int total);
   void downloadFilesFail(AlertInfo alertInfo);
   void getMyTestFail(AlertInfo alertInfo);
+  void onCountDown(String time);
+  void finishCountDown();
+  void updateAnswersSuccess(String message);
+  void updateAnswerFail(AlertInfo info);
 }
 
 class MyTestPresenter {
@@ -204,5 +210,131 @@ class MyTestPresenter {
         }
       }
     }
+  }
+
+  Timer startCountDown(BuildContext context, int count) {
+    bool finishCountDown = false;
+    const oneSec = Duration(seconds: 1);
+    return Timer.periodic(oneSec, (Timer timer) {
+      if (count < 1) {
+        timer.cancel();
+      } else {
+        count = count - 1;
+      }
+
+      dynamic minutes = count ~/ 60;
+      dynamic seconds = count % 60;
+
+      dynamic minuteStr = minutes.toString().padLeft(2, '0');
+      dynamic secondStr = seconds.toString().padLeft(2, '0');
+
+      _view!.onCountDown("$minuteStr:$secondStr");
+
+      if (count == 0 && !finishCountDown) {
+        finishCountDown = true;
+        _view!.finishCountDown();
+      }
+    });
+  }
+
+  Future updateMyAnswer(
+      {required String testId,
+      required String activityId,
+      required List<QuestionTopicModel> reQuestions}) async {
+    assert(_view != null && _repository != null);
+
+    http.MultipartRequest multiRequest = await _formDataRequest(
+        testId: testId, activityId: activityId, questions: reQuestions);
+    try {
+      _repository!.updateAnswers(multiRequest).then((value) {
+        Map<String, dynamic> json = jsonDecode(value) ?? {};
+        if (json['error_code'] == 200 && json['status'] == 'success') {
+          _view!.updateAnswersSuccess('Save your answers successfully!');
+        }
+      }).catchError((onError) =>
+          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer));
+    } on TimeoutException {
+      _view!.updateAnswerFail(AlertClass.timeOutUpdateAnswer);
+    } on SocketException {
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+    } on http.ClientException {
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+    }
+  }
+
+  Future<http.MultipartRequest> _formDataRequest(
+      {required String testId,
+      required String activityId,
+      required List<QuestionTopicModel> questions}) async {
+    String url = submitHomeWorkEP();
+    http.MultipartRequest request =
+        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+    });
+
+    Map<String, String> formData = {};
+
+    formData.addEntries([MapEntry('test_id', testId)]);
+    formData.addEntries([MapEntry('activity_id', activityId)]);
+
+    if (Platform.isAndroid) {
+      formData.addEntries([const MapEntry('os', "android")]);
+    } else {
+      formData.addEntries([const MapEntry('os', "ios")]);
+    }
+    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+    String format = '';
+    String reanswerFormat = '';
+    String endFormat = '';
+    for (QuestionTopicModel q in questions) {
+      String questionId = q.id.toString();
+      if (q.numPart == PartOfTest.introduce.get) {
+        format = 'introduce[$questionId]';
+        reanswerFormat = 'reanswer_introduce[$questionId]';
+      }
+
+      if (q.numPart == PartOfTest.part1.get) {
+        format = 'part1[$questionId]';
+        reanswerFormat = 'reanswer_part1[$questionId]';
+      }
+
+      if (q.numPart == PartOfTest.part2.get) {
+        format = 'part2[$questionId]';
+        reanswerFormat = 'reanswer_part2[$questionId]';
+      }
+
+      if (q.numPart == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
+        format = 'part3[$questionId]';
+        reanswerFormat = 'reanswer_part3[$questionId]';
+      }
+      if (q.numPart == PartOfTest.part3.get && q.isFollowUpQuestion()) {
+        format = 'followup[$questionId]';
+        reanswerFormat = 'reanswer_followup[$questionId]';
+      }
+
+      formData
+          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
+
+      for (int i = 0; i < q.answers.length; i++) {
+        endFormat = '$format[$i]';
+        File audioFile = File(
+            '${await FileStorageHelper.getFilePath(q.answers.elementAt(i).url.toString(), MediaType.audio)}');
+        print('audioFile: ${audioFile.path.toString()}');
+
+        if (await audioFile.exists()) {
+          request.files.add(
+              await http.MultipartFile.fromPath(endFormat, audioFile.path));
+          print('meomeo');
+          formData.addEntries([MapEntry(endFormat, basename(audioFile.path))]);
+          print(formData.toString());
+        }
+      }
+    }
+
+    request.fields.addAll(formData);
+
+    return request;
   }
 }

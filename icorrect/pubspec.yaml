@@ -55,6 +55,7 @@ dependencies:
   path_provider: ^2.0.14
   video_player: ^2.6.1 #video play
   video_player_win: ^1.1.0
+  path: ^1.8.2 
   provider: ^6.0.5
   webview_flutter: ^4.2.2
 
