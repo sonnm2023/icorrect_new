@@ -72,11 +72,15 @@ class TestProvider with ChangeNotifier {
 
   final List<QuestionTopicModel> _questionList = [];
   List<QuestionTopicModel> get questionList => _questionList;
-  void addCurrentQuestionIntoList(
-      {required QuestionTopicModel questionTopic, required int repeatIndex}) {
-    QuestionTopicModel temp = QuestionTopicModel().copyWith(questionTopicModel: questionTopic);
+  void addCurrentQuestionIntoList({
+    required QuestionTopicModel questionTopic,
+    required int repeatIndex,
+  }) {
+    QuestionTopicModel temp =
+        QuestionTopicModel().copyWith(questionTopicModel: questionTopic);
     if (repeatIndex != 0) {
       temp.content = "Ask for repeating the question!";
+      temp.repeatIndex = repeatIndex;
     }
     _questionList.add(temp);
 

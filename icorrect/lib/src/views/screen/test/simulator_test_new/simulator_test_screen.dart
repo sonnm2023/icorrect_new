@@ -221,7 +221,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
           //Play selected question
-          String path = await FileStorageHelper.getFilePath(question.answers.first.url, MediaType.audio);
+          String path = await _getAudioPathToPlay(question);
           _playAudio(path, question.id.toString());
         } else {
           _playAnswerProvider!.resetSelectedQuestionIndex();
@@ -229,7 +229,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       } else {
         _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-        String path = await FileStorageHelper.getFilePath(question.answers.first.url, MediaType.audio);
+        String path = await _getAudioPathToPlay(question);
         _playAudio(path, question.id.toString());
       }
     } else {
@@ -238,6 +238,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         toastState: ToastStatesType.warning,
       );
     }
+  }
+
+  Future<String> _getAudioPathToPlay(QuestionTopicModel question) async {
+    String fileName = '';
+    if (question.answers.length > 1) {
+      if (question.repeatIndex == 0) {
+        fileName = question.answers.last.url;
+      } else {
+        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
+      }
+    } else {
+      fileName = question.answers.first.url;
+    }
+    String path = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    return path;
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
