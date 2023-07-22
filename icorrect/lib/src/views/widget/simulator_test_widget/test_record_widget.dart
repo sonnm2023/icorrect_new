@@ -64,10 +64,10 @@ class TestRecordWidget extends StatelessWidget {
                       Consumer2<TestProvider, RecordProvider>(
                           builder: (context, testProvider, recordProvider, _) {
                             if (testProvider.topicsQueue.isNotEmpty) {
-                              isRepeat = testProvider.topicsQueue.first.numPart ==
+                              isRepeat = (testProvider.topicsQueue.first.numPart ==
                                   PartOfTest.part1.get ||
                                   testProvider.topicsQueue.first.numPart ==
-                                      PartOfTest.part3.get;
+                                      PartOfTest.part3.get) && recordProvider.enableRepeatButton;
                             }
 
                             return Visibility(

@@ -65,6 +65,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Timer? _countDown;
   QuestionTopicModel? _currentQuestion;
+  int _countRepeat = 0;
+  final List<FileTopicModel> _answers = [];
 
   @override
   void initState() {
@@ -287,7 +289,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           builder: (BuildContext context) {
             return ConfirmDialogWidget(
               title: "Notification",
-              message: "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
+              message:
+                  "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
               cancelButtonTitle: "Cancel",
               okButtonTitle: "OK",
               cancelButtonTapped: _cancelButtonTapped,
@@ -347,8 +350,39 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     onFinishAnswer(isPart2);
   }
 
-  void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) {
-    if (kDebugMode) print("repeatQuestion");
+  void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    _countRepeat++;
+
+    String path = await _createPathFile(questionTopicModel.files!.first.url);
+    _answers.add(FileTopicModel.fromJson({'id': 0, 'url': path, 'type': 0}));
+
+    TopicModel? topicModel = _getCurrentPart();
+    if (null != topicModel) {
+      if (topicModel.numPart == PartOfTest.part3.get) {
+        bool finishFollowUp = _testProvider!.finishPlayFollowUp;
+        if (finishFollowUp == true) {
+          if (_countRepeat > 0 && _countRepeat <= 2) {
+            _repeatPlayCurrentQuestion();
+          } else {
+            _playNextQuestion();
+          }
+        } else {
+          if (_countRepeat > 0 && _countRepeat <= 2) {
+            _repeatPlayCurrentFollowup();
+          } else {
+            _playNextFollowup();
+          }
+        }
+      } else {
+        if (_countRepeat > 0 && _countRepeat <= 2) {
+          _repeatPlayCurrentQuestion();
+        } else {
+          _playNextQuestion();
+        }
+      }
+    } else {
+      if (kDebugMode) print("onFinishAnswer: ERROR-Current Part is NULL!");
+    }
   }
 
   void _playVideo() {
@@ -437,7 +471,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  Future<void> _startToPlayFollowup() async {
+  Future<void> _startToPlayFollowup({required bool needResetAnswerList}) async {
+    if (needResetAnswerList) {
+      _answers.clear();
+    }
+
+    //Reset countdown
+    _countDown!.cancel();
+
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -454,25 +495,25 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         print("This part hasn't any followup to playing");
       }
       _testProvider!.setFinishPlayFollowUp(true);
-      _startToPlayQuestion();
+      _startToPlayQuestion(needResetAnswerList: true);
     } else {
       _testProvider!.resetIndexOfCurrentQuestion();
 
       int index = _testProvider!.indexOfCurrentFollowUp;
       if (index >= followUpList.length) {
         _testProvider!.setFinishPlayFollowUp(true);
-        _startToPlayQuestion();
+        _startToPlayQuestion(needResetAnswerList: true);
       } else {
         QuestionTopicModel question = followUpList.elementAt(index);
         question.numPart = topicModel.numPart;
         _currentQuestion = question;
 
-        if (question.files.isEmpty) {
+        if (question.files!.isEmpty) {
           if (kDebugMode) {
             print("This is DATA ERROR");
           }
         } else {
-          FileTopicModel file = question.files.first;
+          FileTopicModel file = question.files!.first;
 
           //Start initialize video
           _initVideoController(
@@ -497,7 +538,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return topicModel;
   }
 
-  Future<void> _startToPlayQuestion() async {
+  Future<void> _startToPlayQuestion({required bool needResetAnswerList}) async {
+    if (needResetAnswerList) {
+      _answers.clear();
+    }
+
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -580,13 +625,41 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _playNextFollowup() {
+    //Reset countdown
+    _countDown!.cancel();
+
     _setIndexOfNextFollowUp();
-    _startToPlayFollowup();
+    _startToPlayFollowup(needResetAnswerList: true);
+  }
+
+  void _repeatPlayCurrentFollowup() {
+    if (_countRepeat == 2) {
+      //Disable repeat button
+      _recordProvider!.setEnableRepeatButton(false);
+    }
+    //Reset countdown
+    _countDown!.cancel();
+
+    _startToPlayFollowup(needResetAnswerList: false);
+  }
+
+  void _repeatPlayCurrentQuestion() {
+    if (_countRepeat == 2) {
+      //Disable repeat button
+      _recordProvider!.setEnableRepeatButton(false);
+    }
+    //Reset countdown
+    _countDown!.cancel();
+
+    _startToPlayQuestion(needResetAnswerList: false);
   }
 
   void _playNextQuestion() {
+    //Reset countdown
+    _countDown!.cancel();
+
     _setIndexOfNextQuestion();
-    _startToPlayQuestion();
+    _startToPlayQuestion(needResetAnswerList: true);
   }
 
   Future<void> _initVideoController({
@@ -609,6 +682,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         ..initialize().then((value) {
           _testProvider!.setIsLoadingVideo(false);
           _videoPlayerController!.setLooping(false);
+          if (_countRepeat != 0) {
+            _videoPlayerController!.setPlaybackSpeed(0.9);
+          }
           _videoPlayerController!.play();
 
           if (null != _videoPlayerController) {
@@ -690,8 +766,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (kDebugMode) {
       print("RECORD AS FILE PATH: $fileName");
     }
-    String path =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+
+    String path = await _createPathFile(fileName);//await FileStorageHelper.getFilePath(fileName, MediaType.audio);
 
     if (await _recordController.hasPermission()) {
       await _recordController.start(
@@ -702,13 +778,27 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       );
     }
 
-    //TODO
-    _testProvider!.addAnswer(
-        FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0}));
-    _currentQuestion!.answers = [
-      FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
-    ];
+    if (_countRepeat == 0) {
+      _answers.add(FileTopicModel.fromJson({'id': 0, 'url': path, 'type': 0}));
+    }
+    // _currentQuestion!.answers.clear();
+    _currentQuestion!.answers.addAll(_answers);
     _testProvider!.setCurrentQuestion(_currentQuestion!);
+    if (kDebugMode) print("Check");
+  }
+
+  Future<String> _createPathFile(String origin) async {
+    DateTime dateTime = DateTime.now();
+    String timeNow =
+        '${dateTime.year}${dateTime.month}${dateTime.day}_${dateTime.hour}${dateTime.minute}${dateTime.second}';
+    String fileName = "";
+    if (_countRepeat > 0) {
+      fileName = '${timeNow}_${origin}_repeat';
+    } else {
+      fileName = '${timeNow}_${origin}_answer';
+    }
+    String path = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    return path;
   }
 
   //TODO
@@ -748,7 +838,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           case HandleWhenFinish.questionVideoType:
             {
               // if (_testProvider!.currentQuestion.cueCard.isNotEmpty &&
-              if (_currentQuestion!.cueCard.isNotEmpty &&
+              if (_currentQuestion!.cueCard.trim().isNotEmpty &&
                   (false == _testProvider!.isVisibleCueCard)) {
                 //Has Cue Card case
                 _recordProvider!.setVisibleRecord(false);
@@ -771,9 +861,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               TopicModel? topicModel = _getCurrentPart();
               if (null != topicModel) {
                 if (topicModel.numPart == PartOfTest.part3.get) {
-                  _startToPlayFollowup();
+                  _startToPlayFollowup(needResetAnswerList: true);
                 } else {
-                  _startToPlayQuestion();
+                  _startToPlayQuestion(needResetAnswerList: true);
                 }
               }
               break;
@@ -815,17 +905,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _testProvider!.setDialogShowing(false);
     openAppSettings();
   }
-
-  // @override
-  // void onClickEndReAnswer(QuestionTopicModel question, String filePath) {
-  //   for (QuestionTopicModel q in _testProvider!.questionList) {
-  //     if (q.id == question.id) {
-  //       q.answers.last.url = filePath;
-  //       q.reAnswerCount++;
-  //       break;
-  //     }
-  //   }
-  // }
 
   @override
   void onCountDown(String countDownString) {
@@ -950,6 +1029,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void onFinishAnswer(bool isPart2) {
     //Reset countdown
     _countDown!.cancel();
+
+    //Reset count repeat
+    _countRepeat = 0;
+
+    //Enable repeat button
+    _recordProvider!.setEnableRepeatButton(true);
 
     if (_testProvider!.isVisibleCueCard) {
       //Has cue card case

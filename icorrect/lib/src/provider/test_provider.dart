@@ -74,6 +74,7 @@ class TestProvider with ChangeNotifier {
   final List<QuestionTopicModel> _questionList = [];
   List<QuestionTopicModel> get questionList => _questionList;
   void addCurrentQuestionIntoList(QuestionTopicModel questionTopic) {
+    // QuestionTopicModel temp = QuestionTopicModel().copyWith(questionTopic);
     _questionList.add(questionTopic);
 
     if (!isDisposed) {
@@ -135,33 +136,6 @@ class TestProvider with ChangeNotifier {
   QuestionTopicModel get currentQuestion => _currentQuestion;
   void setCurrentQuestion(QuestionTopicModel question) {
     _currentQuestion = question;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  final List<FileTopicModel> _answers = [];
-  List<FileTopicModel> get answers => _answers;
-  void addAnswer(FileTopicModel answer) {
-    _answers.add(answer);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void setAnswers(List<FileTopicModel> list) {
-    _answers.clear();
-    _answers.addAll(list);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void clearAnswers() {
-    _answers.clear();
 
     if (!isDisposed) {
       notifyListeners();
@@ -289,7 +263,6 @@ class TestProvider with ChangeNotifier {
     _countDownTimer = null;
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
-    clearAnswers();
     _dialogShowing = false;
     _permissionDeniedTime = 0;
     _indexOfCurrentQuestion = 0;

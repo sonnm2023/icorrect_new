@@ -21,7 +21,8 @@ class ReAnswerDialog extends Dialog {
   final String _filePath = '';
   final TestPresenter _testPresenter;
 
-  ReAnswerDialog(this._context, this._question, this._testPresenter, {super.key});
+  ReAnswerDialog(this._context, this._question, this._testPresenter,
+      {super.key});
 
   @override
   double? get elevation => 0;
@@ -86,8 +87,7 @@ class ReAnswerDialog extends Dialog {
                 _finishReAnswer();
               },
               style: ButtonStyle(
-                backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.green),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -123,7 +123,8 @@ class ReAnswerDialog extends Dialog {
 
   void _startRecord() async {
     String fileName = _question.files.first.url;
-    String filePath = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    String filePath =
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
 
     if (await _record.hasPermission()) {
       await _record.start(
@@ -134,9 +135,9 @@ class ReAnswerDialog extends Dialog {
       );
     }
 
-    _question.answers = [
+    _question.answers.addAll([
       FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
-    ];
+    ]);
   }
 
   Timer _countDownTimer(BuildContext context, int count, bool isPart2) {

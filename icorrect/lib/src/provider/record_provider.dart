@@ -36,7 +36,18 @@ class RecordProvider with ChangeNotifier {
     }
   }
 
+  bool _enableRepeatButton = true;
+  bool get enableRepeatButton => _enableRepeatButton;
+  void setEnableRepeatButton(bool enable) {
+    _enableRepeatButton = enable;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   void resetAll() {
+    _enableRepeatButton = true;
     _visibleRecord = false;
     _timeRecord = 0;
   }
