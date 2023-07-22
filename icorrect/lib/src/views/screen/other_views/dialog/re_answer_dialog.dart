@@ -122,22 +122,16 @@ class ReAnswerDialog extends Dialog {
   }
 
   void _startRecord() async {
-    String fileName = _question.files.first.url;
-    String filePath =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    String path = await Utils.getAudioPathToPlay(_question);
 
     if (await _record.hasPermission()) {
       await _record.start(
-        path: filePath,
+        path: path,
         encoder: AudioEncoder.wav,
         bitRate: 128000,
         samplingRate: 44100,
       );
     }
-
-    _question.answers.addAll([
-      FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
-    ]);
   }
 
   Timer _countDownTimer(BuildContext context, int count, bool isPart2) {

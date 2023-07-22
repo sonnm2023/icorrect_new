@@ -211,17 +211,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
     if (_testProvider!.isShowPlayVideoButton) {
+
+      //Stop playing current question
+      if (_audioPlayerController.state == PlayerState.playing) {
+        _audioPlayerController.stop();
+      }
+
       //Check playing answers status
       if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
-        //Stop playing current question
-        _audioPlayerController.stop();
         if (selectedQuestionIndex !=
             _playAnswerProvider!.selectedQuestionIndex) {
           //Update UI of play answer button
           _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
           //Play selected question
-          String path = await _getAudioPathToPlay(question);
+          String path = await Utils.getAudioPathToPlay(question);
           _playAudio(path, question.id.toString());
         } else {
           _playAnswerProvider!.resetSelectedQuestionIndex();
@@ -229,7 +233,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       } else {
         _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-        String path = await _getAudioPathToPlay(question);
+        String path = await Utils.getAudioPathToPlay(question);
         _playAudio(path, question.id.toString());
       }
     } else {
@@ -238,21 +242,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         toastState: ToastStatesType.warning,
       );
     }
-  }
-
-  Future<String> _getAudioPathToPlay(QuestionTopicModel question) async {
-    String fileName = '';
-    if (question.answers.length > 1) {
-      if (question.repeatIndex == 0) {
-        fileName = question.answers.last.url;
-      } else {
-        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
-      }
-    } else {
-      fileName = question.answers.first.url;
-    }
-    String path = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
-    return path;
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
@@ -777,8 +766,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
 
     String newFileName = await _createLocalAudioFileName(fileName);
-    String folderPath = await FileStorageHelper.getFolderPath(MediaType.audio);
-    String path = "$folderPath\\$newFileName";
+    // String folderPath = await FileStorageHelper.getFolderPath(MediaType.audio);
+    // String path = "$folderPath\\$newFileName";
+    String path = await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
 
     if (await _recordController.hasPermission()) {
       await _recordController.start(
@@ -793,7 +783,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     temp.add(FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
     _currentQuestion!.answers = temp;
     _testProvider!.setCurrentQuestion(_currentQuestion!);
-    if (kDebugMode) print("Save audio path: $path");
   }
 
   Future<String> _createLocalAudioFileName(String origin) async {
