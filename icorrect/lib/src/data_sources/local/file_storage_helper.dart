@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class FileStorageHelper {
   static Future<String> getExternalDocumentPath() async {
-    var status = await Permission.storage.status;
+    var status = await Permission.storage.status; 
     if (!status.isGranted) {
       await Permission.storage.request();
     }

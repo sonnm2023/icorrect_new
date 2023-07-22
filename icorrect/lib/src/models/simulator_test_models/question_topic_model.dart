@@ -23,17 +23,17 @@ class QuestionTopicModel {
 
   QuestionTopicModel(
       {int? id,
-        String? content,
-        int? type,
-        int? topicId,
-        String? tips,
-        int? tipType,
-        int? isFollowUp,
-        String? cueCard,
-        int? reAnswerCount,
-        List<FileTopicModel>? answers,
-        int? numPart,
-        List<FileTopicModel>? files}) {
+      String? content,
+      int? type,
+      int? topicId,
+      String? tips,
+      int? tipType,
+      int? isFollowUp,
+      String? cueCard,
+      int? reAnswerCount,
+      List<FileTopicModel>? answers,
+      int? numPart,
+      List<FileTopicModel>? files}) {
     _id = id;
     _content = content;
     _type = type;
@@ -74,6 +74,10 @@ class QuestionTopicModel {
 
   List<FileTopicModel> get files => _files ?? [];
   set files(List<FileTopicModel> files) => _files = files;
+
+  bool isFollowUpQuestion() {
+    return isFollowUp == 1;
+  }
 
   QuestionTopicModel.fromJson(Map<String, dynamic> json) {
     _id = json['id'];

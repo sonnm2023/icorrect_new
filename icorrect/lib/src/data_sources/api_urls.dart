@@ -33,6 +33,10 @@ String specialHomeWorksEP(
 String myTestDetailEP(String testId) =>
     '${icorrectDomain}api/v1/ielts-test/show/$testId';
 
+String submitHomeWorkEP() {
+  return '${icorrectDomain}api/v1/ielts-test/syllabus/submit';
+}
+
 class RequestMethod {
   static const post = 'POST';
   static const get = 'GET';

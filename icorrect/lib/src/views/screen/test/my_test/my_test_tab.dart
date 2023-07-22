@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -20,12 +24,15 @@ import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
 import '../../../../presenters/my_test_presenter.dart';
+import '../../other_views/dialog/alert_dialog.dart';
 import '../../other_views/dialog/circle_loading.dart';
+import '../../other_views/dialog/message_dialog.dart';
 
 class MyTestTab extends StatefulWidget {
   final HomeWorkModel homeWorkModel;
   final MyTestProvider provider;
-  const MyTestTab({super.key, required this.homeWorkModel, required this.provider});
+  const MyTestTab(
+      {super.key, required this.homeWorkModel, required this.provider});
 
   @override
   State<MyTestTab> createState() => _MyTestTabState();
@@ -33,7 +40,7 @@ class MyTestTab extends StatefulWidget {
 
 class _MyTestTabState extends State<MyTestTab>
     with AutomaticKeepAliveClientMixin<MyTestTab>
-    implements MyTestConstract {
+    implements MyTestConstract, ActionAlertListener {
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
 
@@ -112,13 +119,64 @@ class _MyTestTabState extends State<MyTestTab>
                       }))
                     : Container(),
                 Expanded(
-                    child: TestRecordWidget(finishAnswer: (currentQuestion) {}))
+                    child: Stack(children: [
+                  TestRecordWidget(finishAnswer: (currentQuestion) {
+                    _onFinishReanswer(currentQuestion);
+                  }),
+                  (provider.reAnswerOfQuestions.isNotEmpty &&
+                          !provider.visibleRecord)
+                      ? LayoutBuilder(builder: (_, constraint) {
+                          return InkWell(
+                            onTap: () {
+                              _onClickUpdateReanswer(
+                                  provider.reAnswerOfQuestions);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              color: AppColor.defaultPurpleColor,
+                              width: constraint.maxWidth,
+                              child: const Center(
+                                child: Text(
+                                  'Update Your Answer',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 19),
+                                ),
+                              ),
+                            ),
+                          );
+                        })
+                      : Container()
+                ])),
               ],
             )
           ],
         );
       }
     });
+  }
+
+  void _onClickUpdateReanswer(List<QuestionTopicModel> requestions) {
+    _loading!.show(context);
+    HomeWorkModel homework = widget.homeWorkModel;
+    _presenter!.updateMyAnswer(
+        testId: homework.testId,
+        activityId: homework.activityId.toString(),
+        reQuestions: requestions);
+  }
+
+  void _onFinishReanswer(QuestionTopicModel question) {
+    widget.provider.setReAnswerOfQuestions(question);
+    int index = widget.provider.myAnswerOfQuestions
+        .indexWhere((q) => q.id == question.id);
+    widget.provider.myAnswerOfQuestions[index] = question;
+    widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
+    widget.provider.setVisibleRecord(false);
+    widget.provider.setTimerCount('00:00');
+    widget.provider.countDownTimer!.cancel();
+    widget.provider.setCountDownTimer(null);
+    _record.stop();
   }
 
   _showAiResponse() {
@@ -258,7 +316,9 @@ class _MyTestTabState extends State<MyTestTab>
                           const SizedBox(width: 20),
                           (widget.homeWorkModel.canReanswer())
                               ? InkWell(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    _onClickReanswer(provider, question);
+                                  },
                                   child: const DefaultText(
                                       text: 'Reanswer',
                                       color: AppColor.defaultPurpleColor,
@@ -277,6 +337,12 @@ class _MyTestTabState extends State<MyTestTab>
         }),
       );
     });
+  }
+
+  void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
+    widget.provider.setCurrentQuestion(question);
+    widget.provider.setVisibleRecord(true);
+    _recordReanswer(provider.visibleRecord, question);
   }
 
   _showTips(QuestionTopicModel questionTopicModel) {
@@ -300,15 +366,23 @@ class _MyTestTabState extends State<MyTestTab>
         });
   }
 
-  Future _recordReanswer(bool visibleRecord) async {
+  Future _recordReanswer(
+      bool visibleRecord, QuestionTopicModel question) async {
     if (visibleRecord) {
+      String audioFile = await Utils.generateAudioFileName();
       if (await _record.hasPermission()) {
+        Timer timer = _presenter!.startCountDown(context, 30);
+        widget.provider.setCountDownTimer(timer);
         await _record.start(
-          path: await Utils.generateAudioFileName(),
+          path: '${await FileStorageHelper.getFolderPath(MediaType.audio)}'
+              '\\$audioFile',
           encoder: AudioEncoder.wav,
           bitRate: 128000,
           samplingRate: 44100,
         );
+        question.answers.last.url = audioFile;
+        question.reAnswerCount++;
+        widget.provider.setCurrentQuestion(question);
       }
     } else {
       _record.stop();
@@ -318,6 +392,7 @@ class _MyTestTabState extends State<MyTestTab>
   Future _preparePlayAudio(
       {required String fileName, required String questionId}) async {
     Utils.prepareAudioFile(fileName).then((value) {
+      print('_playAudio:${value.path.toString()}');
       _playAudio(value.path.toString(), questionId);
     });
   }
@@ -338,6 +413,16 @@ class _MyTestTabState extends State<MyTestTab>
 
   Future<void> _stopAudio() async {
     await _player!.stop();
+  }
+
+  @override
+  void finishCountDown() {
+    _onFinishReanswer(widget.provider.currentQuestion);
+  }
+
+  @override
+  void onCountDown(String time) {
+    widget.provider.setTimerCount(time);
   }
 
   @override
@@ -374,6 +459,37 @@ class _MyTestTabState extends State<MyTestTab>
     if (kDebugMode) {
       print('getMyTestFail: ${alertInfo.description.toString()}');
     }
+  }
+
+  @override
+  void updateAnswerFail(AlertInfo info) {
+    print(info.description.toString());
+    //AlertsDialog.init().showDialog(context, info, this);
+    _loading!.hide();
+  }
+
+  @override
+  void onAlertExit(String keyInfo) {
+    // TODO: implement onAlertExit
+  }
+
+  @override
+  void onAlertNextStep(String keyInfo) {
+    // TODO: implement onAlertNextStep
+  }
+
+  @override
+  void updateAnswersSuccess(String message) {
+    widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
+    widget.provider.setVisibleRecord(false);
+    widget.provider.setTimerCount('00:00');
+    widget.provider.countDownTimer!.cancel();
+    widget.provider.setCountDownTimer(null);
+    widget.provider.clearReAnswerOfQuestions();
+
+    MessageDialog.alertDialog(context, message);
+
+    _loading!.hide();
   }
 
   @override

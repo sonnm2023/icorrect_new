@@ -175,4 +175,10 @@ class AlertClass {
     'Error when load your test. Let contact to admin to support !',
     Alert.dataNotFound.type,
   );
+
+  static AlertInfo timeOutUpdateAnswer = AlertInfo(
+      'Warning', 'Timeout to update your changes. Please try again !');
+
+  static AlertInfo errorWhenUpdateAnswer = AlertInfo(
+      'Warning', 'An error when update your answers. Please try again !');
 }
