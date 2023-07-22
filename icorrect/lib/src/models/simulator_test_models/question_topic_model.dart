@@ -19,6 +19,8 @@ class QuestionTopicModel {
   int? _reAnswerCount = 0;
   List<FileTopicModel>? _answers;
   int? _numPart;
+  //0 - first answer  1 - second answer(repeat 1)  2 - third answer (repeat 2)
+  int? _repeatIndex = 0;
   List<FileTopicModel>? _files;
 
   QuestionTopicModel(
@@ -33,6 +35,7 @@ class QuestionTopicModel {
       int? reAnswerCount,
       List<FileTopicModel>? answers,
       int? numPart,
+      int? repeatIndex,
       List<FileTopicModel>? files}) {
     _id = id;
     _content = content;
@@ -45,6 +48,7 @@ class QuestionTopicModel {
     _reAnswerCount = reAnswerCount;
     _answers = answers;
     _numPart = numPart;
+    _repeatIndex = repeatIndex;
     _files = files;
   }
 
@@ -71,6 +75,8 @@ class QuestionTopicModel {
   set answers(List<FileTopicModel> answers) => _answers = answers;
   int get numPart => _numPart ?? 0;
   set numPart(int numPart) => _numPart = numPart;
+  int get repeatIndex => _repeatIndex ?? 0;
+  set repeatIndex(int repeatIndex) => _repeatIndex = repeatIndex;
 
   List<FileTopicModel> get files => _files ?? [];
   set files(List<FileTopicModel> files) => _files = files;
@@ -128,4 +134,24 @@ class QuestionTopicModel {
     }
     return data;
   }
+
+  @override
+  QuestionTopicModel copyWith({
+    required QuestionTopicModel questionTopicModel,
+  }) =>
+      QuestionTopicModel(
+        id: questionTopicModel.id,
+        content: questionTopicModel.content,
+        type: questionTopicModel.type,
+        topicId: questionTopicModel.topicId,
+        tips: questionTopicModel.tips,
+        tipType: questionTopicModel.tipType,
+        isFollowUp: questionTopicModel.isFollowUp,
+        cueCard: questionTopicModel.cueCard,
+        reAnswerCount: questionTopicModel.reAnswerCount,
+        answers: questionTopicModel.answers,
+        numPart: questionTopicModel.numPart,
+        repeatIndex: questionTopicModel.repeatIndex,
+        files: questionTopicModel.files,
+      );
 }
