@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
 
 class DownloadProgressingWidget extends StatelessWidget {

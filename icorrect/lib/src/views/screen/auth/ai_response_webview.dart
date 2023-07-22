@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

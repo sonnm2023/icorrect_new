@@ -502,12 +502,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         question.numPart = topicModel.numPart;
         _currentQuestion = question;
 
-        if (question.files!.isEmpty) {
+        if (question.files.isEmpty) {
           if (kDebugMode) {
             print("This is DATA ERROR");
           }
         } else {
-          FileTopicModel file = question.files!.first;
+          FileTopicModel file = question.files.first;
 
           //Start initialize video
           _initVideoController(

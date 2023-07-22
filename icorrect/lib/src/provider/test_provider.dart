@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:video_player/video_player.dart';

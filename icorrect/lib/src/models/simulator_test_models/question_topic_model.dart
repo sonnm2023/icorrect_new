@@ -135,7 +135,6 @@ class QuestionTopicModel {
     return data;
   }
 
-  @override
   QuestionTopicModel copyWith({
     required QuestionTopicModel questionTopicModel,
   }) =>

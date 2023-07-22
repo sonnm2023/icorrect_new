@@ -43,7 +43,7 @@ class _OtherTabState extends State<OtherTab>
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();
     _presenter!.getSpecialHomeWorks(
-        email: userDataModel.userInfoModel.email.toString() ?? '',
+        email: userDataModel.userInfoModel.email.toString(),
         activityId: widget.homeWorkModel.activityId.toString(),
         status: Status.allHomework.get,
         example: Status.others.get);

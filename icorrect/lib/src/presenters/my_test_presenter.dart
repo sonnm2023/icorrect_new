@@ -61,6 +61,7 @@ class MyTestPresenter {
         _view!.getMyTestFail(AlertClass.getTestDetailAlert);
       }
     }).catchError(
+        // ignore: invalid_return_type_for_catch_error
         (onError) => _view!.getMyTestFail(AlertClass.getTestDetailAlert));
   }
 
@@ -252,6 +253,7 @@ class MyTestPresenter {
           _view!.updateAnswersSuccess('Save your answers successfully!');
         }
       }).catchError((onError) =>
+          // ignore: invalid_return_type_for_catch_error
           _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer));
     } on TimeoutException {
       _view!.updateAnswerFail(AlertClass.timeOutUpdateAnswer);

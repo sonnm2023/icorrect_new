@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
