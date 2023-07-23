@@ -211,30 +211,33 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
     if (_testProvider!.isShowPlayVideoButton) {
-
       //Stop playing current question
       if (_audioPlayerController.state == PlayerState.playing) {
-        _audioPlayerController.stop();
-      }
-
-      //Check playing answers status
-      if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
-        if (selectedQuestionIndex !=
-            _playAnswerProvider!.selectedQuestionIndex) {
-          //Update UI of play answer button
-          _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
-
-          //Play selected question
-          String path = await Utils.getAudioPathToPlay(question);
-          _playAudio(path, question.id.toString());
-        } else {
-          _playAnswerProvider!.resetSelectedQuestionIndex();
-        }
+        await _audioPlayerController.stop().then((_){
+          //Check playing answers status
+          if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+            if (selectedQuestionIndex !=
+                _playAnswerProvider!.selectedQuestionIndex) {
+              _startPlayAudio(question: question, selectedQuestionIndex: selectedQuestionIndex);
+            } else {
+              _playAnswerProvider!.resetSelectedQuestionIndex();
+            }
+          } else {
+            _startPlayAudio(question: question, selectedQuestionIndex: selectedQuestionIndex);
+          }
+        });
       } else {
-        _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
-
-        String path = await Utils.getAudioPathToPlay(question);
-        _playAudio(path, question.id.toString());
+        //Check playing answers status
+        if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+          if (selectedQuestionIndex !=
+              _playAnswerProvider!.selectedQuestionIndex) {
+            _startPlayAudio(question: question, selectedQuestionIndex: selectedQuestionIndex);
+          } else {
+            _playAnswerProvider!.resetSelectedQuestionIndex();
+          }
+        } else {
+          _startPlayAudio(question: question, selectedQuestionIndex: selectedQuestionIndex);
+        }
       }
     } else {
       showToastMsg(
@@ -244,14 +247,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
+  void _startPlayAudio({
+    required QuestionTopicModel question,
+    required int selectedQuestionIndex,
+  }) async {
+    _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
+
+    String path = await Utils.getAudioPathToPlay(question);
+    _playAudio(path, question.id.toString());
+  }
+
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
       await _audioPlayerController.play(DeviceFileSource(audioPath));
       await _audioPlayerController.setVolume(2.5);
       _audioPlayerController.onPlayerComplete.listen((event) {
-        if (kDebugMode) {
-          print("Play audio complete");
-        }
         _playAnswerProvider!.resetSelectedQuestionIndex();
       });
     } on PlatformException catch (e) {
@@ -352,7 +362,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _countRepeat++;
 
     //Add question into List Question & show it
-    _testProvider!.addCurrentQuestionIntoList(questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+    _testProvider!.addCurrentQuestionIntoList(
+        questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
@@ -768,7 +779,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     String newFileName = await _createLocalAudioFileName(fileName);
     // String folderPath = await FileStorageHelper.getFolderPath(MediaType.audio);
     // String path = "$folderPath\\$newFileName";
-    String path = await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
+    String path =
+        await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
 
     if (await _recordController.hasPermission()) {
       await _recordController.start(
@@ -837,7 +849,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 //Has Cue Card case
                 _recordProvider!.setVisibleRecord(false);
                 _setVisibleCueCard(true, null);
-                _countDown = _testPresenter!.startCountDown(context, 10, false); //For test 10, product 60
+                _countDown = _testPresenter!.startCountDown(
+                    context, 10, false); //For test 10, product 60
               } else {
                 //Normal case
                 if (false == _recordProvider!.visibleRecord &&
@@ -1038,7 +1051,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _recordProvider!.setVisibleRecord(false);
 
         //Add question into List Question & show it
-        _testProvider!.addCurrentQuestionIntoList(questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+        _testProvider!.addCurrentQuestionIntoList(
+            questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
         _playNextQuestion();
       } else {
@@ -1050,7 +1064,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       }
     } else {
       //Add question or followup into List Question & show it
-      _testProvider!.addCurrentQuestionIntoList(questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+      _testProvider!.addCurrentQuestionIntoList(
+          questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
