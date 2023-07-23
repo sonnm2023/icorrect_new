@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/provider/record_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +23,8 @@ class TestRecordWidget extends StatelessWidget {
 
     bool isRepeat = false;
 
-    return Consumer<RecordProvider>(builder: (context, recordProvider, _) {
-      if (recordProvider.visibleRecord) {
+    return Consumer<TestProvider>(builder: (context, testProvider, _) {
+      if (testProvider.visibleRecord) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -60,13 +59,13 @@ class TestRecordWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildFinishButton(currentQuestion),
-                      Consumer2<TestProvider, RecordProvider>(
-                          builder: (context, testProvider, recordProvider, _) {
+                      Consumer<TestProvider>(
+                          builder: (context, testProvider, _) {
                             if (testProvider.topicsQueue.isNotEmpty) {
                               isRepeat = (testProvider.topicsQueue.first.numPart ==
                                   PartOfTest.part1.get ||
                                   testProvider.topicsQueue.first.numPart ==
-                                      PartOfTest.part3.get) && recordProvider.enableRepeatButton;
+                                      PartOfTest.part3.get) && testProvider.enableRepeatButton;
                             }
 
                             return Visibility(

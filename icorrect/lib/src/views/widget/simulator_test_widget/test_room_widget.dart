@@ -7,12 +7,13 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/video_player_widget.dart';
+import 'package:provider/provider.dart';
 
-class TestRoomWidget extends StatelessWidget {
+class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
     super.key,
     required this.testPresenter,
-    required this.testProvider,
+    // required this.testProvider,
     required this.playVideoCallBack,
     required this.finishAnswerCallBack,
     required this.repeatQuestionCallBack,
@@ -22,15 +23,42 @@ class TestRoomWidget extends StatelessWidget {
   });
 
   final TestPresenter testPresenter;
-  final TestProvider testProvider;
+  // final TestProvider testProvider;
 
   final Function playVideoCallBack;
   final Function(QuestionTopicModel questionTopicModel) finishAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) repeatQuestionCallBack;
 
-  final Function(QuestionTopicModel questionTopicModel, int selectedQuestionIndex) playAnswerCallBack;
+  final Function(
+      QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
+  playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) playReAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
+
+  @override
+  State<TestRoomWidget> createState() => _TestRoomWidgetState();
+}
+
+class _TestRoomWidgetState extends State<TestRoomWidget> {
+  TestProvider? testProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    testProvider = Provider.of<TestProvider>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    if (null != testProvider) {
+      if (!testProvider!.isDisposed) {
+        testProvider!.dispose();
+      }
+    }
+
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,41 +72,42 @@ class TestRoomWidget extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          child: VideoPlayerWidget(playVideo: playVideoCallBack),
+          child: const Text("VIDEO PLAYER"),//VideoPlayerWidget(playVideo: playVideoCallBack), //TODO
         ),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              SingleChildScrollView(
-                child: TestQuestionWidget(
-                  testPresenter: testPresenter,
-                  playAnswerCallBack: playAnswerCallBack,
-                  playReAnswerCallBack: playReAnswerCallBack,
-                  showTipCallBack: showTipCallBack,
-                ),
-              ),
-              CueCardWidget(question: testProvider.currentQuestion),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Expanded(child: SizedBox()),
-                  SizedBox(
-                    height: 200,
-                    child: Stack(
-                      children: [
-                        TestRecordWidget(
-                            finishAnswer: finishAnswerCallBack,
-                            repeatQuestion: repeatQuestionCallBack),
-                        SaveTheTestWidget(testPresenter: testPresenter),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )
+        // Expanded(
+        //   child: Stack(
+        //     alignment: Alignment.topCenter,
+        //     children: [
+        //       SingleChildScrollView(
+        //         child: TestQuestionWidget(
+        //           testPresenter: testPresenter,
+        //           playAnswerCallBack: playAnswerCallBack,
+        //           playReAnswerCallBack: playReAnswerCallBack,
+        //           showTipCallBack: showTipCallBack,
+        //         ),
+        //       ),
+        //       CueCardWidget(question: testProvider.currentQuestion),
+        //       Column(
+        //         crossAxisAlignment: CrossAxisAlignment.end,
+        //         children: [
+        //           const Expanded(child: SizedBox()),
+        //           SizedBox(
+        //             height: 200,
+        //             child: Stack(
+        //               children: [
+        //                 TestRecordWidget(
+        //                   finishAnswer: finishAnswerCallBack,
+        //                   repeatQuestion: repeatQuestionCallBack,
+        //                 ),
+        //                 SaveTheTestWidget(testPresenter: testPresenter),
+        //               ],
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ],
+        //   ),
+        // )
       ],
     );
   }

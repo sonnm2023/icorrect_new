@@ -58,19 +58,6 @@ enum PartOfTest {
   final int get;
 }
 
-// enum Question {
-//   FILE_INTRO(0),
-//   INTRODUCE(1),
-//   PART1(2),
-//   PART2(3),
-//   PART3(4),
-//   FOLLOW_UP(5),
-//   END_OF_QUESTION(6);
-
-//   const Question(this.part);
-//   final int part;
-// }
-
 enum Alert {
   networkError({
     Alert.cancelTitle: 'Exit',
