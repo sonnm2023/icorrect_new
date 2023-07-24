@@ -49,8 +49,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
   VideoPlayerController? _videoPlayerController;
-  final AudioPlayer _audioPlayerController = AudioPlayer();
-  final Record _recordController = Record();
+  AudioPlayer? _audioPlayerController;
+  Record? _recordController;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -68,6 +68,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _audioPlayerController = AudioPlayer();
+    _recordController = Record();
+
     _prepareSimulatorTestProvider =
         Provider.of<PrepareSimulatorTestProvider>(context, listen: false);
     _testProvider = Provider.of<TestProvider>(context, listen: false);
@@ -153,14 +156,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDownCueCard!.cancel();
     }
 
-    _countDown!.cancel();
+    if (null != _countDown) {
+      _countDown!.cancel();
+    }
 
     _stopRecording();
 
-    if (_audioPlayerController.state == PlayerState.playing) {
-      _audioPlayerController.stop();
+    if (_audioPlayerController!.state == PlayerState.playing) {
+      _audioPlayerController!.stop();
     }
-    await _audioPlayerController.dispose();
 
     if (null != _videoPlayerController) {
       if (_videoPlayerController!.value.isPlaying) {
@@ -180,20 +184,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _stopRecording() async {
-    bool isRecording = await _recordController.isRecording();
+    bool isRecording = await _recordController!.isRecording();
 
     if (isRecording) {
-      _recordController.stop();
+      _recordController!.stop();
     }
-    await _recordController.dispose();
+    await _recordController!.dispose();
   }
 
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
     if (_testProvider!.isShowPlayVideoButton) {
       //Stop playing current question
-      if (_audioPlayerController.state == PlayerState.playing) {
-        await _audioPlayerController.stop().then((_) {
+      if (_audioPlayerController!.state == PlayerState.playing) {
+        await _audioPlayerController!.stop().then((_) {
           //Check playing answers status
           if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
             if (selectedQuestionIndex !=
@@ -246,9 +250,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
-      await _audioPlayerController.play(DeviceFileSource(audioPath));
-      await _audioPlayerController.setVolume(2.5);
-      _audioPlayerController.onPlayerComplete.listen((event) {
+      await _audioPlayerController!.play(DeviceFileSource(audioPath));
+      await _audioPlayerController!.setVolume(2.5);
+      _audioPlayerController!.onPlayerComplete.listen((event) {
         _playAnswerProvider!.resetSelectedQuestionIndex();
       });
     } on PlatformException catch (e) {
@@ -299,8 +303,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           },
         );
       } else {
-        if (_audioPlayerController.state == PlayerState.playing) {
-          _audioPlayerController.stop();
+        if (_audioPlayerController!.state == PlayerState.playing) {
+          _audioPlayerController!.stop();
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
 
@@ -392,9 +396,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playNextQuestion() {
-    //Reset countdown
-    _countDown!.cancel();
-
     _setIndexOfNextQuestion();
     _startToPlayQuestion(needResetAnswerList: true);
   }
@@ -499,9 +500,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playNextFollowup() {
-    //Reset countdown
-    _countDown!.cancel();
-
     _setIndexOfNextFollowUp();
     _startToPlayFollowup(needResetAnswerList: true);
   }
@@ -511,8 +509,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Disable repeat button
       _testProvider!.setEnableRepeatButton(false);
     }
-    //Reset countdown
-    _countDown!.cancel();
 
     _startToPlayFollowup(needResetAnswerList: false);
   }
@@ -522,9 +518,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (needResetAnswerList) {
       // _answers.clear();//TODO
     }
-
-    //Reset countdown
-    _countDown!.cancel();
 
     TopicModel? topicModel = _getCurrentPart();
 
@@ -577,8 +570,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Disable repeat button
       _testProvider!.setEnableRepeatButton(false);
     }
-    //Reset countdown
-    _countDown!.cancel();
 
     _startToPlayQuestion(needResetAnswerList: false);
   }
@@ -603,7 +594,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onFinishAnswer(bool isPart2) {
     //Reset countdown
-    _countDown!.cancel();
+    if (null != _countDown) {
+      _countDown!.cancel();
+    }
 
     //Reset count repeat
     _countRepeat = 0;
@@ -703,7 +696,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onPlayEndOfTest(String fileName) {
-    // TODO: implement onPlayEndOfTest
+    _initVideoController(
+      fileName: fileName,
+      handleWhenFinishType: HandleWhenFinish.endOfTestVideoType,
+    );
   }
 
   @override
@@ -766,7 +762,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_testProvider!.visibleRecord) {
       _recordAnswer(fileName!);
     } else {
-      _recordController.stop();
+      _recordController!.stop();
     }
     _testProvider!.setCountDownTimer(count);
   }
@@ -782,8 +778,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     String path =
         await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
 
-    if (await _recordController.hasPermission()) {
-      await _recordController.start(
+    if (await _recordController!.hasPermission()) {
+      await _recordController!.start(
         path: path,
         encoder: AudioEncoder.wav,
         bitRate: 128000,
@@ -819,12 +815,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 //Has Cue Card case
                 _testProvider!.setVisibleRecord(false);
                 _testProvider!.setCurrentQuestion(_currentQuestion!);
-                _countDown!.cancel();
+
+                int time = 10;//For test 10, product 60 //TODO
+                String timeString = Utils.getTimeRecordString(time);
+                _testProvider!.setCountDownCueCard(timeString);
+
                 _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
                   context: context,
-                  count: 10,
+                  count: time,
                   isPart2: false,
-                ); //For test 10, product 60
+                );
                 _testProvider!.setVisibleCueCard(true);
               } else {
                 //Normal case
@@ -867,9 +867,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             {
               //TODO: Finish doing test
               _testProvider!.setIsShowPlayVideoButton(true);
-
-              //TODO: Submit test automatically
-              if (kDebugMode) print("Finish play end of test video!");
+              _recordController!.stop();
               break;
             }
         }
@@ -915,14 +913,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     Queue<TopicModel> queue = _testProvider!.topicsQueue;
     int timeRecord = Utils.getRecordTime(queue.first.numPart);
-
     String timeString = Utils.getTimeRecordString(timeRecord);
 
     //Record the answer
     _timerProvider!.setCountDown(timeString);
 
-    _countDown = _testRoomPresenter!
-        .startCountDown(context: context, count: timeRecord, isPart2: isPart2);
+    if (null != _countDown) {
+      _countDown!.cancel();
+    }
+    _countDown = _testRoomPresenter!.startCountDown(context: context, count: timeRecord, isPart2: isPart2);
     _setVisibleRecord(true, _countDown, fileName);
   }
 
