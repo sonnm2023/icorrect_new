@@ -56,7 +56,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Timer? _countDownCueCard;
   QuestionTopicModel? _currentQuestion;
   int _countRepeat = 0;
-  final List<String> _reviewingList = [];
+  final List<dynamic> _reviewingList = [];
 
   @override
   void didUpdateWidget(covariant TestRoomWidget oldWidget) {
@@ -160,7 +160,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
-    _stopRecording();
+    _disposeRecordController();
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -183,7 +183,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _stopRecording() async {
+  void _disposeRecordController() async {
     bool isRecording = await _recordController!.isRecording();
 
     if (isRecording) {
@@ -715,13 +715,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // TODO: implement onSaveTopicListIntoProvider
   }
 
+  bool _checkExist(QuestionTopicModel question) {
+    if (_reviewingList.isEmpty) return false;
+
+    for(int i = 0; i < _reviewingList.length; i++) {
+      dynamic item = _reviewingList[i];
+      if (item is QuestionTopicModel) {
+        if (item.id == question.id) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   Future<void> _initVideoController({
     required String fileName,
     required HandleWhenFinish handleWhenFinishType,
   }) async {
     _setVisibleRecord(false, null, null);
     _testProvider!.setIsLoadingVideo(true);
-    _reviewingList.add(fileName); //Add file
+
+    if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
+        handleWhenFinishType == HandleWhenFinish.endOfTestVideoType ||
+        handleWhenFinishType == HandleWhenFinish.cueCardVideoType) {
+      _reviewingList.add(fileName);
+    } else {
+      if (!_checkExist(_currentQuestion!)) {
+        _reviewingList.add(_currentQuestion!); //Add file
+      }
+    }
 
     Utils.prepareVideoFile(fileName).then((value) {
       if(kDebugMode) print("Playing: $fileName");
@@ -773,8 +797,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     String newFileName = await _createLocalAudioFileName(fileName);
-    // String folderPath = await FileStorageHelper.getFolderPath(MediaType.audio);
-    // String path = "$folderPath\\$newFileName";
     String path =
         await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
 
@@ -788,9 +810,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     List<FileTopicModel> temp = _currentQuestion!.answers;
-    temp.add(FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-    _currentQuestion!.answers = temp;
-    _testProvider!.setCurrentQuestion(_currentQuestion!);
+    if (!_checkAnswerFileExist(newFileName, temp)) {
+      temp.add(FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
+      _currentQuestion!.answers = temp;
+      _testProvider!.setCurrentQuestion(_currentQuestion!);
+    }
+  }
+
+  bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
+    if (list.isEmpty) return false;
+
+    for (int i = 0; i < list.length; i++) {
+      FileTopicModel item = list[i];
+      if (item.url == url) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   Future<String> _createLocalAudioFileName(String origin) async {
@@ -867,11 +904,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             {
               //TODO: Finish doing test
               _testProvider!.setIsShowPlayVideoButton(true);
-              _recordController!.stop();
+              _stopRecord();
               break;
             }
         }
       }
+    }
+  }
+
+  void _stopRecord() async {
+    bool isRecording = await _recordController!.isRecording();
+
+    if (isRecording) {
+      _recordController!.stop();
     }
   }
 

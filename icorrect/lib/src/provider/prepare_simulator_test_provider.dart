@@ -125,8 +125,15 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  String _activityType = '';
+  String get activityType => _activityType;
+  void setActivityType(String type) {
+    _activityType = type;
+  }
+
 
   void resetAll() {
+    _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;
     _isProcessing = false;

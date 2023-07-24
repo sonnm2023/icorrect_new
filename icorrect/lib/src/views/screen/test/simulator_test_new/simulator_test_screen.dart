@@ -255,6 +255,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _prepareSimulatorTestProvider!.setTotal(total);
     _prepareSimulatorTestProvider!.updateDownloadingIndex(index);
     _prepareSimulatorTestProvider!.updateDownloadingPercent(percent);
+    _prepareSimulatorTestProvider!.setActivityType(testDetail.activityType);
 
     //Enable Start Testing Button
     if (index >= 5) {
