@@ -610,8 +610,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Has cue card case
       if (isPart2) {
         //Finish record answer for part2
-        _setVisibleCueCard(false, null);
         _testProvider!.setVisibleRecord(false);
+        _testProvider!.setVisibleCueCard(false);
 
         //Add question into List Question & show it
         _testProvider!.addCurrentQuestionIntoList(
@@ -809,16 +809,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         switch (handleWhenFinishType) {
           case HandleWhenFinish.questionVideoType:
             {
-              if (_currentQuestion!.cueCard.trim().isNotEmpty &&
+              if (_currentQuestion!.cueCard.isNotEmpty &&
                   (false == _testProvider!.isVisibleCueCard)) {
                 //Has Cue Card case
                 _testProvider!.setVisibleRecord(false);
-                _setVisibleCueCard(true, null);
+                _testProvider!.setCurrentQuestion(_currentQuestion!);
                 _countDown = _testRoomPresenter!.startCountDown(
                   context: context,
                   count: 10,
                   isPart2: false,
                 ); //For test 10, product 60
+                _testProvider!.setVisibleCueCard(true);
               } else {
                 //Normal case
                 if (false == _testProvider!.visibleRecord &&
@@ -903,9 +904,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
-      if (kDebugMode) {
-        print("_startRecordAnswer: ERROR");
-      }
       return;
     }
 
@@ -924,9 +922,5 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _setVisibleSaveTest(bool isVisible) {
     _testProvider!.setVisibleSaveTheTest(isVisible);
-  }
-
-  void _setVisibleCueCard(bool visible, Timer? count) {
-    _testProvider!.setVisibleCueCard(visible, timer: count);
   }
 }

@@ -22,16 +22,10 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  //Cue card
-  Timer? _timerCueCard;
-  Timer get timerCueCard =>
-      _timerCueCard ?? Timer(const Duration(seconds: 0), () {});
-
   bool _isVisibleCueCard = false;
   bool get isVisibleCueCard => _isVisibleCueCard;
-  void setVisibleCueCard(bool visible, {required Timer? timer}) {
+  void setVisibleCueCard(bool visible) {
     _isVisibleCueCard = visible;
-    _timerCueCard = timer;
 
     if (!isDisposed) {
       notifyListeners();
@@ -263,7 +257,6 @@ class TestProvider with ChangeNotifier {
   void resetAll() {
     _enableRepeatButton = true;
     _visibleRecord = false;
-    _timeRecord = 0;
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
     _isLoadingVideo = false;
