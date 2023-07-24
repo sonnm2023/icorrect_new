@@ -1,4 +1,7 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
 class PrepareSimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;
@@ -91,8 +94,42 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _isDoingTest = isDoingTest;
   }
 
+  final List<TopicModel> _topicsList = [];
+  List<TopicModel> get topicsList => _topicsList;
+  void setTopicsList(List<TopicModel> list) {
+    _topicsList.clear();
+    _topicsList.addAll(list);
+  }
+
+  void resetTopicsList() {
+    _topicsList.clear();
+  }
+
+  final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
+  Queue<TopicModel> get topicsQueue => _topicsQueue;
+  void setTopicsQueue(Queue<TopicModel> queue) {
+    _topicsQueue.addAll(queue);
+  }
+
+  void resetTopicsQueue() {
+    _topicsQueue.clear();
+  }
+
+  bool _dialogShowing = false;
+  bool get dialogShowing => _dialogShowing;
+  void setDialogShowing(bool isShowing) {
+    _dialogShowing = isShowing;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
 
   void resetAll() {
+    _dialogShowing = false;
+    resetTopicsList();
+    resetTopicsQueue();
     _permissionDeniedTime = 0;
     _isProcessing = false;
     _isDownloading = false;

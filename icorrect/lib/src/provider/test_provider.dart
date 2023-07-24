@@ -62,13 +62,6 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  final List<TopicModel> _topicsList = [];
-  List<TopicModel> get topicsList => _topicsList;
-  void setTopicsList(List<TopicModel> list) {
-    _topicsQueue.clear();
-    _topicsQueue.addAll(list);
-  }
-
   final List<QuestionTopicModel> _questionList = [];
   List<QuestionTopicModel> get questionList => _questionList;
   void addCurrentQuestionIntoList({
@@ -103,20 +96,6 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
-  Queue<TopicModel> get topicsQueue => _topicsQueue;
-  void setTopicsQueue(Queue<TopicModel> queue) {
-    _topicsQueue.addAll(queue);
-  }
-
-  void removeTopicsQueueFirst() {
-    _topicsQueue.removeFirst();
-  }
-
-  void resetTopicsQueue() {
-    _topicsQueue.clear();
-  }
-
   Timer? _countDownTimer;
   Timer? get countDownTimer => _countDownTimer;
   void setCountDownTimer(Timer? timer) {
@@ -142,16 +121,6 @@ class TestProvider with ChangeNotifier {
   QuestionTopicModel get currentQuestion => _currentQuestion;
   void setCurrentQuestion(QuestionTopicModel question) {
     _currentQuestion = question;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  bool _dialogShowing = false;
-  bool get dialogShowing => _dialogShowing;
-  void setDialogShowing(bool isShowing) {
-    _dialogShowing = isShowing;
 
     if (!isDisposed) {
       notifyListeners();
@@ -276,17 +245,25 @@ class TestProvider with ChangeNotifier {
   }
   /*================================= Record =================================*/
 
+  final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
+  Queue<TopicModel> get topicsQueue => _topicsQueue;
+  void setTopicsQueue(Queue<TopicModel> queue) {
+    _topicsQueue.addAll(queue);
+  }
+
+  void removeTopicsQueueFirst() {
+    _topicsQueue.removeFirst();
+  }
+
+  void resetTopicsQueue() {
+    _topicsQueue.clear();
+  }
+
 
   void resetAll() {
     _enableRepeatButton = true;
     _visibleRecord = false;
     _timeRecord = 0;
-    // _isProcessing = false;
-    // _isDownloading = false;
-    // _canStartNow = false;
-    // _total = 0;
-    // _downloadingIndex = 1;
-    // _downloadingPercent = 0.0;
     resetTopicsQueue();
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
@@ -294,14 +271,11 @@ class TestProvider with ChangeNotifier {
     _isVisibleCueCard = false;
     _isRepeatVisible = true;
     _isVisibleSave = false;
-    setTopicsList([]);
     clearQuestions();
-    resetTopicsQueue();
     _countRepeat = 0;
     _countDownTimer = null;
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
-    _dialogShowing = false;
     _indexOfCurrentQuestion = 0;
     _isShowPlayVideoButton = true;
   }

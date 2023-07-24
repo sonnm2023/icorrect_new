@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
@@ -9,13 +10,13 @@ import 'package:provider/provider.dart';
 class TestQuestionWidget extends StatelessWidget {
   const TestQuestionWidget({
     super.key,
-    required this.testPresenter,
+    required this.testRoomPresenter,
     required this.playAnswerCallBack,
     required this.playReAnswerCallBack,
     required this.showTipCallBack,
   });
 
-  final TestPresenter testPresenter;
+  final TestRoomPresenter testRoomPresenter;
   final Function(
           QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
       playAnswerCallBack;
