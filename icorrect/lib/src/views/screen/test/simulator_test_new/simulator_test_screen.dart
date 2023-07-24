@@ -113,16 +113,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _okButtonTapped() {
-    //TODO: Call TestRoom stop to record
-    // _recordController.stop();
-
-    // if (null != _testProvider!.playController) {
-    //   _testProvider!.playController!.pause();
-    // }
-
-    // _playAnswerProvider!.resetAll(); //TODO: Call TestRoom resetAll
-    // _timerProvider!.resetAll(); //TODO: Call TestRoom resetAll
-    // _testProvider!.resetAll();
+    //Call child widget method
     setState(() {
       needUpdate = true;
     });
@@ -134,17 +125,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return Consumer<PrepareSimulatorTestProvider>(
       builder: (context, provider, child) {
         if (provider.isProcessing) {
-          if (kDebugMode) {
-            print("SimulatorTestScreen - DefaultLoadingIndicator");
-          }
-
           return const DefaultLoadingIndicator(
             color: AppColor.defaultPurpleColor,
           );
         }
 
         if (provider.isDownloading) {
-          if (kDebugMode) print("SimulatorTestScreen - isDownloading");
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -161,7 +147,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           );
         }
 
-        if (kDebugMode) print("SimulatorTestScreen - TestRoomWidget");
         return ChangeNotifierProvider(
           create: (_) => TestProvider(),
           child: TestRoomWidget(needUpdate: needUpdate,),

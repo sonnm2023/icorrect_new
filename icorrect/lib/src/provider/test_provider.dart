@@ -253,8 +253,19 @@ class TestProvider with ChangeNotifier {
     _topicsQueue.clear();
   }
 
+  String? _strCountCueCard;
+  String get strCountCueCard => _strCountCueCard ?? '00:00';
+  void setCountDownCueCard(String strCount) {
+    _strCountCueCard = strCount;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
 
   void resetAll() {
+    _strCountCueCard = null;
     _enableRepeatButton = true;
     _visibleRecord = false;
     _indexOfHeaderPart2 = 0;

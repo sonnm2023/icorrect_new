@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';

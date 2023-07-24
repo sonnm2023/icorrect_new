@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
-import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
 
 class CueCardWidget extends StatefulWidget {
@@ -16,8 +15,8 @@ class _CueCardWidgetState extends State<CueCardWidget> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
 
-    return Consumer2<TestProvider, TimerProvider>(
-      builder: (context, testProvider, timerProvider, child) {
+    return Consumer<TestProvider>(
+      builder: (context, testProvider, child) {
         if (testProvider.isVisibleCueCard && testProvider.currentQuestion.cueCard.isNotEmpty) {
           return Container(
             width: w,
@@ -42,7 +41,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                   const SizedBox(height: 10),
                   Center(
                     child: Text(
-                      timerProvider.strCount,
+                      testProvider.strCountCueCard,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,

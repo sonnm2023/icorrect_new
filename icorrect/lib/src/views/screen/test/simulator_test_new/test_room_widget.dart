@@ -53,6 +53,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   final Record _recordController = Record();
 
   Timer? _countDown;
+  Timer? _countDownCueCard;
   QuestionTopicModel? _currentQuestion;
   int _countRepeat = 0;
   final List<String> _reviewingList = [];
@@ -148,6 +149,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _doSomething() async {
     //Stop count down timer
+    if (null != _countDownCueCard) {
+      _countDownCueCard!.cancel();
+    }
+
     _countDown!.cancel();
 
     _stopRecording();
@@ -814,7 +819,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 //Has Cue Card case
                 _testProvider!.setVisibleRecord(false);
                 _testProvider!.setCurrentQuestion(_currentQuestion!);
-                _countDown = _testRoomPresenter!.startCountDown(
+                _countDown!.cancel();
+                _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
                   context: context,
                   count: 10,
                   isPart2: false,
@@ -922,5 +928,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _setVisibleSaveTest(bool isVisible) {
     _testProvider!.setVisibleSaveTheTest(isVisible);
+  }
+
+  @override
+  void onCountDownForCueCard(String countDownString) {
+    if (mounted) {
+      _testProvider!.setCountDownCueCard(countDownString);
+    }
   }
 }

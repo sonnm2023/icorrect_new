@@ -10,7 +10,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
 abstract class TestRoomViewContract {
-  void onPlayIntroduceFile(String fileName); //TODO: New
+  void onPlayIntroduceFile(String fileName);
   void onNothingFileIntroduce();
   void onNothingIntroduce();
   void onPlayEndOfTakeNoteFile(String fileName);
@@ -21,7 +21,7 @@ abstract class TestRoomViewContract {
   void onNothingQuestion();
   void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onCountDown(String countDownString);
-  // void onClickEndReAnswer(QuestionTopicModel question, String filePath);
+  void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onNothingFileEndOfTakeNote();
   void onNothingEndOfTakeNote();
@@ -29,11 +29,8 @@ abstract class TestRoomViewContract {
 
 class TestRoomPresenter {
   final TestRoomViewContract? _view;
-  // TestRepository? _testRepository;
 
-  TestRoomPresenter(this._view) {
-    // _testRepository = Injector().getTestRepository();
-  }
+  TestRoomPresenter(this._view);
 
   Future<void> startPart(Queue<TopicModel> topicsQueue) async {
     TopicModel currentPart = topicsQueue.first;
@@ -82,6 +79,31 @@ class TestRoomPresenter {
       dynamic secondStr = seconds.toString().padLeft(2, '0');
 
       _view!.onCountDown("$minuteStr:$secondStr");
+
+      if (count == 0 && !finishCountDown) {
+        finishCountDown = true;
+        _view!.onFinishAnswer(isPart2);
+      }
+    });
+  }
+
+  Timer startCountDownForCueCard({required BuildContext context, required int count, required bool isPart2}) {
+    bool finishCountDown = false;
+    const oneSec = Duration(seconds: 1);
+    return Timer.periodic(oneSec, (Timer timer) {
+      if (count < 1) {
+        timer.cancel();
+      } else {
+        count = count - 1;
+      }
+
+      dynamic minutes = count ~/ 60;
+      dynamic seconds = count % 60;
+
+      dynamic minuteStr = minutes.toString().padLeft(2, '0');
+      dynamic secondStr = seconds.toString().padLeft(2, '0');
+
+      _view!.onCountDownForCueCard("$minuteStr:$secondStr");
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
