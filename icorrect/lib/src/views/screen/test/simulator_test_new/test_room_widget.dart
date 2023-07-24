@@ -166,6 +166,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _testProvider!.setPlayController(null);
     }
 
+    _testProvider!.resetAll();
     if (null != _testProvider) {
       if (!_testProvider!.isDisposed) {
         _testProvider!.dispose();

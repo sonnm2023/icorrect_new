@@ -128,8 +128,6 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
 
   void resetAll() {
     _dialogShowing = false;
-    resetTopicsList();
-    resetTopicsQueue();
     _permissionDeniedTime = 0;
     _isProcessing = false;
     _isDownloading = false;
@@ -137,5 +135,7 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _total = 0;
     _downloadingIndex = 1;
     _downloadingPercent = 0.0;
+    resetTopicsList();
+    resetTopicsQueue();
   }
 }

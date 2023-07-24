@@ -81,7 +81,7 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  void setQuestionsList(List<QuestionTopicModel> list) {
+  void setQuestionList(List<QuestionTopicModel> list) {
     _questionList.clear();
     _questionList.addAll(list);
     if (!isDisposed) {
@@ -89,7 +89,7 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  void clearQuestions() {
+  void clearQuestionList() {
     _questionList.clear();
     if (!isDisposed) {
       notifyListeners();
@@ -264,19 +264,19 @@ class TestProvider with ChangeNotifier {
     _enableRepeatButton = true;
     _visibleRecord = false;
     _timeRecord = 0;
-    resetTopicsQueue();
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
     _isLoadingVideo = false;
     _isVisibleCueCard = false;
     _isRepeatVisible = true;
     _isVisibleSave = false;
-    clearQuestions();
     _countRepeat = 0;
     _countDownTimer = null;
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _isShowPlayVideoButton = true;
+    resetTopicsQueue();
+    clearQuestionList();
   }
 }

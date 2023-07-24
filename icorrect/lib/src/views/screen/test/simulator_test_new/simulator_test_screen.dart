@@ -55,6 +55,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void dispose() {
+    _prepareSimulatorTestProvider!.resetAll();
+
     if (!_prepareSimulatorTestProvider!.isDisposed) {
       _prepareSimulatorTestProvider!.dispose();
     }
