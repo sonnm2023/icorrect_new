@@ -9,6 +9,7 @@ import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -318,4 +319,22 @@ class Utils {
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
+
+  static Future<String> getAudioPathToPlay(QuestionTopicModel question) async {
+    String fileName = '';
+    if (question.answers.length > 1) {
+      if (question.repeatIndex == 0) {
+        fileName = question.answers.last.url;
+      } else {
+        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
+      }
+    } else {
+      fileName = question.answers.first.url;
+    }
+    String path =
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    return path;
+  }
+
+
 }

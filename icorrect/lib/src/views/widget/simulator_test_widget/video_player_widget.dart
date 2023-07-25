@@ -28,69 +28,61 @@ class VideoPlayerWidget extends StatelessWidget {
       }
     }
 
-    return Stack(
-      children: [
-      Consumer<TestProvider>(
-          builder: (context, testProvider, child) {
-            if (null == testProvider.playController) {
-              return SizedBox(width: w, height: h);
-            }
+    return Consumer<TestProvider>(
+      builder: (context, testProvider, child) {
+        if (null == testProvider.playController) {
+          return SizedBox(
+            width: w,
+            height: h,
+            child: Center(
+              child: testProvider.isLoadingVideo
+                  ? const DefaultLoadingIndicator(
+                      color: AppColor.defaultPurpleColor,
+                    )
+                  : const SizedBox(),
+            ),
+          );
+        }
 
-            return Stack(
-              children: [
-                //Video
-                Transform.scale(
-                  scale: getScale(testProvider.playController!),
-                  child: AspectRatio(
-                    aspectRatio: videoContainerRatio,
-                    child: VideoPlayer(testProvider.playController!),
-                  ),
-                ),
+        return Stack(
+          children: [
+            //Video
+            Transform.scale(
+              scale: getScale(testProvider.playController!),
+              child: AspectRatio(
+                aspectRatio: videoContainerRatio,
+                child: VideoPlayer(testProvider.playController!),
+              ),
+            ),
 
-                //Play video button
-                Visibility(
-                  visible: testProvider.isShowPlayVideoButton,
+            //Play video button
+            Visibility(
+              visible: testProvider.isShowPlayVideoButton,
+              child: SizedBox(
+                width: w,
+                height: h,
+                child: Center(
                   child: SizedBox(
-                    width: w,
-                    height: h,
-                    child: Center(
-                      child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: InkWell(
-                          onTap: () {
-                            testProvider.setIsShowPlayVideoButton(false);
-                            playVideo();
-                          },
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: AppColor.defaultAppColor,
-                            size: 50,
-                          ),
-                        ),
+                    width: 50,
+                    height: 50,
+                    child: InkWell(
+                      onTap: () {
+                        testProvider.setIsShowPlayVideoButton(false);
+                        playVideo();
+                      },
+                      child: const Icon(
+                        Icons.play_arrow,
+                        color: AppColor.defaultAppColor,
+                        size: 50,
                       ),
                     ),
                   ),
                 ),
-
-                //Loading video
-                Visibility(
-                  visible: testProvider.isLoadingVideo,
-                  child: SizedBox(
-                    width: w,
-                    height: h,
-                    child: const Center(
-                      child: DefaultLoadingIndicator(
-                        color: AppColor.defaultPurpleColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

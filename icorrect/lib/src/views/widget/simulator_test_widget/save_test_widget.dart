@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
 
 class SaveTheTestWidget extends StatelessWidget {
-  const SaveTheTestWidget({super.key, required this.testPresenter});
+  const SaveTheTestWidget({super.key, required this.testRoomPresenter});
 
-  final TestPresenter testPresenter;
+  final TestRoomPresenter testRoomPresenter;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class SaveTheTestWidget extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     //TODO
-                    testPresenter.clickSaveTheTest();
+                    // testRoomPresenter.clickSaveTheTest();
                   },
                   child: const Text("Save the test"),
                 ),

@@ -61,6 +61,7 @@ class MyTestPresenter {
         _view!.getMyTestFail(AlertClass.getTestDetailAlert);
       }
     }).catchError(
+        // ignore: invalid_return_type_for_catch_error
         (onError) => _view!.getMyTestFail(AlertClass.getTestDetailAlert));
   }
 
