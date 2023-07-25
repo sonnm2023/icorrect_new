@@ -40,7 +40,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
-  bool needUpdate = false;
 
   @override
   void initState() {
@@ -113,11 +112,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _okButtonTapped() {
-    //Call child widget method
-    setState(() {
-      needUpdate = true;
-    });
-
     Navigator.of(context).pop();
   }
 
@@ -149,7 +143,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
         return ChangeNotifierProvider(
           create: (_) => TestProvider(),
-          child: TestRoomWidget(needUpdate: needUpdate,),
+          child: const TestRoomWidget(),
         );
       },
     );

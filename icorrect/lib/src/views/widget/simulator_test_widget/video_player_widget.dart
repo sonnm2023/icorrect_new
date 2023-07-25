@@ -31,20 +31,17 @@ class VideoPlayerWidget extends StatelessWidget {
     return Consumer<TestProvider>(
       builder: (context, testProvider, child) {
         if (null == testProvider.playController) {
-          return
-            //Loading video
-            Visibility(
-              visible: testProvider.isLoadingVideo,
-              child: SizedBox(
-                width: w,
-                height: h,
-                child: const Center(
-                  child: DefaultLoadingIndicator(
-                    color: AppColor.defaultPurpleColor,
-                  ),
-                ),
-              ),
-            );
+          return SizedBox(
+            width: w,
+            height: h,
+            child: Center(
+              child: testProvider.isLoadingVideo
+                  ? const DefaultLoadingIndicator(
+                      color: AppColor.defaultPurpleColor,
+                    )
+                  : const SizedBox(),
+            ),
+          );
         }
 
         return Stack(

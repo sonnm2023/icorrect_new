@@ -31,9 +31,7 @@ import 'package:video_player/video_player.dart';
 import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
-  const TestRoomWidget({super.key, required this.needUpdate});
-
-  final bool needUpdate;
+  const TestRoomWidget({super.key});
 
   @override
   State<TestRoomWidget> createState() => _TestRoomWidgetState();
@@ -59,12 +57,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   final List<dynamic> _reviewingList = [];
 
   @override
-  void didUpdateWidget(covariant TestRoomWidget oldWidget) {
-    _doSomething();
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
@@ -86,6 +78,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _deallocateMemory();
     super.dispose();
   }
 
@@ -150,7 +143,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _doSomething() async {
+  void _deallocateMemory() async {
     //Stop count down timer
     if (null != _countDownCueCard) {
       _countDownCueCard!.cancel();
