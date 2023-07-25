@@ -1,13 +1,21 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/repositories/test_repository.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
 abstract class TestRoomViewContract {
   void onPlayIntroduceFile(String fileName);
@@ -25,12 +33,17 @@ abstract class TestRoomViewContract {
   void onFinishAnswer(bool isPart2);
   void onNothingFileEndOfTakeNote();
   void onNothingEndOfTakeNote();
+  void onSubmitTestSuccess(String msg);
+  void onSubmitTestFail(String msg);
 }
 
 class TestRoomPresenter {
   final TestRoomViewContract? _view;
+  TestRepository? _testRepository;
 
-  TestRoomPresenter(this._view);
+  TestRoomPresenter(this._view) {
+    _testRepository = Injector().getTestRepository();
+  }
 
   Future<void> startPart(Queue<TopicModel> topicsQueue) async {
     TopicModel currentPart = topicsQueue.first;
@@ -62,7 +75,10 @@ class TestRoomPresenter {
     return isExist;
   }
 
-  Timer startCountDown({required BuildContext context, required int count, required bool isPart2}) {
+  Timer startCountDown(
+      {required BuildContext context,
+      required int count,
+      required bool isPart2}) {
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -87,7 +103,10 @@ class TestRoomPresenter {
     });
   }
 
-  Timer startCountDownForCueCard({required BuildContext context, required int count, required bool isPart2}) {
+  Timer startCountDownForCueCard(
+      {required BuildContext context,
+      required int count,
+      required bool isPart2}) {
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -152,5 +171,111 @@ class TestRoomPresenter {
     }
   }
 
+  Future<void> submitTest({
+    required String testId,
+    required String activityId,
+    required List<QuestionTopicModel> reQuestions,
+  }) async {
+    assert(_view != null && _testRepository != null);
 
+    http.MultipartRequest multiRequest = await _formDataRequest(
+        testId: testId, activityId: activityId, questions: reQuestions);
+    try {
+      _testRepository!.submitTest(multiRequest).then((value) {
+        Map<String, dynamic> json = jsonDecode(value) ?? {};
+        if (json['error_code'] == 200 && json['status'] == 'success') {
+          _view!.onSubmitTestSuccess('Save your answers successfully!');
+        }
+      }).catchError((onError) =>
+          // ignore: invalid_return_type_for_catch_error
+          _view!.onSubmitTestFail("Has an error when submit this test!"));
+    } on TimeoutException {
+      _view!.onSubmitTestFail("Has an error when submit this test!");
+    } on SocketException {
+      _view!.onSubmitTestFail("Has an error when submit this test!");
+    } on http.ClientException {
+      _view!.onSubmitTestFail("Has an error when submit this test!");
+    }
+  }
+
+  Future<http.MultipartRequest> _formDataRequest(
+      {required String testId,
+      required String activityId,
+      required List<QuestionTopicModel> questions}) async {
+    String url = submitHomeWorkEP();
+    http.MultipartRequest request =
+        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+    });
+
+    Map<String, String> formData = {};
+
+    formData.addEntries([MapEntry('test_id', testId)]);
+    formData.addEntries([MapEntry('activity_id', activityId)]);
+
+    if (Platform.isAndroid) {
+      formData.addEntries([const MapEntry('os', "android")]);
+    } else {
+      formData.addEntries([const MapEntry('os', "ios")]);
+    }
+    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+    String format = '';
+    String reanswerFormat = '';
+    String endFormat = '';
+    for (QuestionTopicModel q in questions) {
+      String questionId = q.id.toString();
+      if (q.numPart == PartOfTest.introduce.get) {
+        format = 'introduce[$questionId]';
+        reanswerFormat = 'reanswer_introduce[$questionId]';
+      }
+
+      if (q.numPart == PartOfTest.part1.get) {
+        format = 'part1[$questionId]';
+        reanswerFormat = 'reanswer_part1[$questionId]';
+      }
+
+      if (q.numPart == PartOfTest.part2.get) {
+        format = 'part2[$questionId]';
+        reanswerFormat = 'reanswer_part2[$questionId]';
+      }
+
+      if (q.numPart == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
+        format = 'part3[$questionId]';
+        reanswerFormat = 'reanswer_part3[$questionId]';
+      }
+      if (q.numPart == PartOfTest.part3.get && q.isFollowUpQuestion()) {
+        format = 'followup[$questionId]';
+        reanswerFormat = 'reanswer_followup[$questionId]';
+      }
+
+      formData
+          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
+
+      for (int i = 0; i < q.answers.length; i++) {
+        endFormat = '$format[$i]';
+        File audioFile = File(await FileStorageHelper.getFilePath(
+            q.answers.elementAt(i).url.toString(), MediaType.audio));
+
+        if (kDebugMode) {
+          print('audioFile: ${audioFile.path.toString()}');
+        }
+
+        if (await audioFile.exists()) {
+          request.files.add(
+              await http.MultipartFile.fromPath(endFormat, audioFile.path));
+          formData.addEntries([MapEntry(endFormat, basename(audioFile.path))]);
+
+          if (kDebugMode) {
+            print(formData.toString());
+          }
+        }
+      }
+    }
+
+    request.fields.addAll(formData);
+
+    return request;
+  }
 }

@@ -263,7 +263,6 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-
   void resetAll() {
     _strCountCueCard = null;
     _enableRepeatButton = true;

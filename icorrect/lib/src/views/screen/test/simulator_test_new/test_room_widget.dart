@@ -78,8 +78,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _deallocateMemory();
     super.dispose();
+    _deallocateMemory();
   }
 
   @override
@@ -122,8 +122,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                           finishAnswer: _finishAnswerCallBack,
                           repeatQuestion: _repeatQuestionCallBack,
                         ),
-                        SaveTheTestWidget(
-                            testRoomPresenter: _testRoomPresenter!),
+                        _prepareSimulatorTestProvider!.activityType ==
+                                "homework"
+                            ? SaveTheTestWidget(
+                                testRoomPresenter: _testRoomPresenter!)
+                            : const SizedBox(),
                       ],
                     ),
                   ),
@@ -567,6 +570,279 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _startToPlayQuestion(needResetAnswerList: false);
   }
 
+  bool _checkExist(QuestionTopicModel question) {
+    if (_reviewingList.isEmpty) return false;
+
+    for (int i = 0; i < _reviewingList.length; i++) {
+      dynamic item = _reviewingList[i];
+      if (item is QuestionTopicModel) {
+        if (item.id == question.id) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  Future<void> _initVideoController({
+    required String fileName,
+    required HandleWhenFinish handleWhenFinishType,
+  }) async {
+    _setVisibleRecord(false, null, null);
+    _testProvider!.setIsLoadingVideo(true);
+
+    if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
+        handleWhenFinishType == HandleWhenFinish.endOfTestVideoType ||
+        handleWhenFinishType == HandleWhenFinish.cueCardVideoType) {
+      _reviewingList.add(fileName);
+    } else {
+      if (!_checkExist(_currentQuestion!)) {
+        _reviewingList.add(_currentQuestion!); //Add file
+      }
+    }
+
+    Utils.prepareVideoFile(fileName).then((value) {
+      if (kDebugMode) print("Playing: $fileName");
+
+      //Deallocate player memory
+      if (null != _videoPlayerController) {
+        _videoPlayerController!.dispose();
+        _testProvider!.setPlayController(null);
+      }
+
+      //Initialize new player for new video
+      _videoPlayerController = VideoPlayerController.file(value)
+        ..addListener(() => _checkVideo(fileName, handleWhenFinishType))
+        ..initialize().then((value) {
+          _testProvider!.setIsLoadingVideo(false);
+          _videoPlayerController!.setLooping(false);
+          if (_countRepeat != 0) {
+            _videoPlayerController!.setPlaybackSpeed(0.9);
+          }
+          _videoPlayerController!.play();
+
+          if (null != _videoPlayerController) {
+            _testProvider!.setPlayController(_videoPlayerController!);
+          }
+
+          if (true == _testProvider!.isShowPlayVideoButton) {
+            Future.delayed(const Duration(milliseconds: 1), () {
+              _videoPlayerController!.pause();
+            });
+          }
+        });
+    });
+  }
+
+  void _setVisibleRecord(bool visible, Timer? count, String? fileName) {
+    _testProvider!.setVisibleRecord(visible);
+
+    if (_testProvider!.visibleRecord) {
+      _recordAnswer(fileName!);
+    } else {
+      _recordController!.stop();
+    }
+    _testProvider!.setCountDownTimer(count);
+  }
+
+  Future<void> _recordAnswer(String fileName) async {
+    if (kDebugMode) {
+      print("RECORD AS FILE PATH: $fileName");
+    }
+
+    String newFileName = await _createLocalAudioFileName(fileName);
+    String path =
+        await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
+
+    if (await _recordController!.hasPermission()) {
+      await _recordController!.start(
+        path: path,
+        encoder: AudioEncoder.wav,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+    }
+
+    List<FileTopicModel> temp = _currentQuestion!.answers;
+    if (!_checkAnswerFileExist(newFileName, temp)) {
+      temp.add(
+          FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
+      _currentQuestion!.answers = temp;
+      _testProvider!.setCurrentQuestion(_currentQuestion!);
+    }
+  }
+
+  bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
+    if (list.isEmpty) return false;
+
+    for (int i = 0; i < list.length; i++) {
+      FileTopicModel item = list[i];
+      if (item.url == url) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Future<String> _createLocalAudioFileName(String origin) async {
+    String fileName = "";
+    if (_countRepeat > 0) {
+      fileName = 'repeat_${_countRepeat.toString()}_$origin';
+    } else {
+      fileName = 'answer_$origin';
+    }
+    return fileName;
+  }
+
+  void _checkVideo(String fileName, HandleWhenFinish handleWhenFinishType) {
+    if (null != _testProvider!.playController) {
+      if (_testProvider!.playController!.value.position ==
+          _testProvider!.playController!.value.duration) {
+        switch (handleWhenFinishType) {
+          case HandleWhenFinish.questionVideoType:
+            {
+              if (_currentQuestion!.cueCard.isNotEmpty &&
+                  (false == _testProvider!.isVisibleCueCard)) {
+                //Has Cue Card case
+                _testProvider!.setVisibleRecord(false);
+                _testProvider!.setCurrentQuestion(_currentQuestion!);
+
+                int time = 10; //For test 10, product 60 //TODO
+                String timeString = Utils.getTimeRecordString(time);
+                _testProvider!.setCountDownCueCard(timeString);
+
+                _countDownCueCard =
+                    _testRoomPresenter!.startCountDownForCueCard(
+                  context: context,
+                  count: time,
+                  isPart2: false,
+                );
+                _testProvider!.setVisibleCueCard(true);
+              } else {
+                //Normal case
+                if (false == _testProvider!.visibleRecord &&
+                    false == _testProvider!.isVisibleCueCard) {
+                  _startRecordAnswer(fileName: fileName, isPart2: false);
+                }
+              }
+
+              if (_countRepeat == 0) {
+                _calculateIndexOfHeader();
+              }
+
+              break;
+            }
+          case HandleWhenFinish.introVideoType:
+            {
+              TopicModel? topicModel = _getCurrentPart();
+              if (null != topicModel) {
+                if (topicModel.numPart == PartOfTest.part3.get) {
+                  _startToPlayFollowup(needResetAnswerList: true);
+                } else {
+                  _startToPlayQuestion(needResetAnswerList: true);
+                }
+              }
+              break;
+            }
+          case HandleWhenFinish.cueCardVideoType:
+            {
+              //Start count down & record answer for part 2 - 120 seconds
+              _testProvider!.setVisibleRecord(true);
+              _startRecordAnswer(fileName: fileName, isPart2: true);
+              break;
+            }
+          case HandleWhenFinish.followupVideoType:
+            {
+              _startRecordAnswer(fileName: fileName, isPart2: false);
+
+              if (_countRepeat == 0) {
+                _calculateIndexOfHeader();
+              }
+              break;
+            }
+          case HandleWhenFinish.endOfTestVideoType:
+            {
+              //Finish doing test
+              _testProvider!.setIsShowPlayVideoButton(true);
+              _stopRecord();
+
+              //TODO: Auto submit fot Test
+              // if (_prepareSimulatorTestProvider!.activityType == "test") {
+                _prepareSimulatorTestProvider!.setIsSubmitting(true);
+                _testRoomPresenter!.submitTest();
+              // }
+              break;
+            }
+        }
+      }
+    }
+  }
+
+  void _stopRecord() async {
+    bool isRecording = await _recordController!.isRecording();
+
+    if (isRecording) {
+      _recordController!.stop();
+    }
+  }
+
+  void _calculateIndexOfHeader() {
+    TopicModel? topicModel = _getCurrentPart();
+    if (null != topicModel) {
+      //Header of Part 2
+      if (topicModel.numPart == PartOfTest.part2.get) {
+        if (_testProvider!.indexOfCurrentQuestion == 0) {
+          _testProvider!
+              .setIndexOfHeaderPart2(_testProvider!.questionList.length);
+        }
+      }
+
+      //Header of Part 3
+      if (topicModel.numPart == PartOfTest.part3.get) {
+        if (topicModel.followUp.isNotEmpty) {
+          if (_testProvider!.indexOfCurrentFollowUp == 0) {
+            _testProvider!
+                .setIndexOfHeaderPart3(_testProvider!.questionList.length);
+          }
+        } else {
+          if (_testProvider!.indexOfCurrentQuestion == 0) {
+            _testProvider!
+                .setIndexOfHeaderPart3(_testProvider!.questionList.length);
+          }
+        }
+      }
+    }
+  }
+
+  void _startRecordAnswer(
+      {required String fileName, required bool isPart2}) async {
+    TopicModel? topicModel = _getCurrentPart();
+
+    if (null == topicModel) {
+      return;
+    }
+
+    Queue<TopicModel> queue = _testProvider!.topicsQueue;
+    int timeRecord = Utils.getRecordTime(queue.first.numPart);
+    String timeString = Utils.getTimeRecordString(timeRecord);
+
+    //Record the answer
+    _timerProvider!.setCountDown(timeString);
+
+    if (null != _countDown) {
+      _countDown!.cancel();
+    }
+    _countDown = _testRoomPresenter!
+        .startCountDown(context: context, count: timeRecord, isPart2: isPart2);
+    _setVisibleRecord(true, _countDown, fileName);
+  }
+
+  void _setVisibleSaveTest(bool isVisible) {
+    _testProvider!.setVisibleSaveTheTest(isVisible);
+  }
+
   @override
   void onAlertExit(String keyInfo) {
     // TODO: implement onAlertExit
@@ -708,274 +984,32 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // TODO: implement onSaveTopicListIntoProvider
   }
 
-  bool _checkExist(QuestionTopicModel question) {
-    if (_reviewingList.isEmpty) return false;
-
-    for(int i = 0; i < _reviewingList.length; i++) {
-      dynamic item = _reviewingList[i];
-      if (item is QuestionTopicModel) {
-        if (item.id == question.id) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  Future<void> _initVideoController({
-    required String fileName,
-    required HandleWhenFinish handleWhenFinishType,
-  }) async {
-    _setVisibleRecord(false, null, null);
-    _testProvider!.setIsLoadingVideo(true);
-
-    if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
-        handleWhenFinishType == HandleWhenFinish.endOfTestVideoType ||
-        handleWhenFinishType == HandleWhenFinish.cueCardVideoType) {
-      _reviewingList.add(fileName);
-    } else {
-      if (!_checkExist(_currentQuestion!)) {
-        _reviewingList.add(_currentQuestion!); //Add file
-      }
-    }
-
-    Utils.prepareVideoFile(fileName).then((value) {
-      if(kDebugMode) print("Playing: $fileName");
-
-      //Deallocate player memory
-      if (null != _videoPlayerController) {
-        _videoPlayerController!.dispose();
-        _testProvider!.setPlayController(null);
-      }
-
-      //Initialize new player for new video
-      _videoPlayerController = VideoPlayerController.file(value)
-        ..addListener(() => _checkVideo(fileName, handleWhenFinishType))
-        ..initialize().then((value) {
-          _testProvider!.setIsLoadingVideo(false);
-          _videoPlayerController!.setLooping(false);
-          if (_countRepeat != 0) {
-            _videoPlayerController!.setPlaybackSpeed(0.9);
-          }
-          _videoPlayerController!.play();
-
-          if (null != _videoPlayerController) {
-            _testProvider!.setPlayController(_videoPlayerController!);
-          }
-
-          if (true == _testProvider!.isShowPlayVideoButton) {
-            Future.delayed(const Duration(milliseconds: 1), () {
-              _videoPlayerController!.pause();
-            });
-          }
-        });
-    });
-  }
-
-  void _setVisibleRecord(bool visible, Timer? count, String? fileName) {
-    _testProvider!.setVisibleRecord(visible);
-
-    if (_testProvider!.visibleRecord) {
-      _recordAnswer(fileName!);
-    } else {
-      _recordController!.stop();
-    }
-    _testProvider!.setCountDownTimer(count);
-  }
-
-  Future<void> _recordAnswer(String fileName) async {
-    if (kDebugMode) {
-      print("RECORD AS FILE PATH: $fileName");
-    }
-
-    String newFileName = await _createLocalAudioFileName(fileName);
-    String path =
-        await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
-
-    if (await _recordController!.hasPermission()) {
-      await _recordController!.start(
-        path: path,
-        encoder: AudioEncoder.wav,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
-    }
-
-    List<FileTopicModel> temp = _currentQuestion!.answers;
-    if (!_checkAnswerFileExist(newFileName, temp)) {
-      temp.add(FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-      _currentQuestion!.answers = temp;
-      _testProvider!.setCurrentQuestion(_currentQuestion!);
-    }
-  }
-
-  bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
-    if (list.isEmpty) return false;
-
-    for (int i = 0; i < list.length; i++) {
-      FileTopicModel item = list[i];
-      if (item.url == url) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  Future<String> _createLocalAudioFileName(String origin) async {
-    String fileName = "";
-    if (_countRepeat > 0) {
-      fileName = 'repeat_${_countRepeat.toString()}_$origin';
-    } else {
-      fileName = 'answer_$origin';
-    }
-    return fileName;
-  }
-
-  void _checkVideo(String fileName, HandleWhenFinish handleWhenFinishType) {
-    if (null != _testProvider!.playController) {
-      if (_testProvider!.playController!.value.position ==
-          _testProvider!.playController!.value.duration) {
-        switch (handleWhenFinishType) {
-          case HandleWhenFinish.questionVideoType:
-            {
-              if (_currentQuestion!.cueCard.isNotEmpty &&
-                  (false == _testProvider!.isVisibleCueCard)) {
-                //Has Cue Card case
-                _testProvider!.setVisibleRecord(false);
-                _testProvider!.setCurrentQuestion(_currentQuestion!);
-
-                int time = 10;//For test 10, product 60 //TODO
-                String timeString = Utils.getTimeRecordString(time);
-                _testProvider!.setCountDownCueCard(timeString);
-
-                _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
-                  context: context,
-                  count: time,
-                  isPart2: false,
-                );
-                _testProvider!.setVisibleCueCard(true);
-              } else {
-                //Normal case
-                if (false == _testProvider!.visibleRecord &&
-                    false == _testProvider!.isVisibleCueCard) {
-                  _startRecordAnswer(fileName: fileName, isPart2: false);
-                }
-              }
-
-              if (_countRepeat == 0) {
-                _calculateIndexOfHeader();
-              }
-
-              break;
-            }
-          case HandleWhenFinish.introVideoType:
-            {
-              TopicModel? topicModel = _getCurrentPart();
-              if (null != topicModel) {
-                if (topicModel.numPart == PartOfTest.part3.get) {
-                  _startToPlayFollowup(needResetAnswerList: true);
-                } else {
-                  _startToPlayQuestion(needResetAnswerList: true);
-                }
-              }
-              break;
-            }
-          case HandleWhenFinish.cueCardVideoType:
-            {
-              //Start count down & record answer for part 2 - 120 seconds
-              _testProvider!.setVisibleRecord(true);
-              _startRecordAnswer(fileName: fileName, isPart2: true);
-              break;
-            }
-          case HandleWhenFinish.followupVideoType:
-            {
-              _startRecordAnswer(fileName: fileName, isPart2: false);
-
-              if (_countRepeat == 0) {
-                _calculateIndexOfHeader();
-              }
-              break;
-            }
-          case HandleWhenFinish.endOfTestVideoType:
-            {
-              //TODO: Finish doing test
-              _testProvider!.setIsShowPlayVideoButton(true);
-              _stopRecord();
-              break;
-            }
-        }
-      }
-    }
-  }
-
-  void _stopRecord() async {
-    bool isRecording = await _recordController!.isRecording();
-
-    if (isRecording) {
-      _recordController!.stop();
-    }
-  }
-
-  void _calculateIndexOfHeader() {
-    TopicModel? topicModel = _getCurrentPart();
-    if (null != topicModel) {
-      //Header of Part 2
-      if (topicModel.numPart == PartOfTest.part2.get) {
-        if (_testProvider!.indexOfCurrentQuestion == 0) {
-          _testProvider!
-              .setIndexOfHeaderPart2(_testProvider!.questionList.length);
-        }
-      }
-
-      //Header of Part 3
-      if (topicModel.numPart == PartOfTest.part3.get) {
-        if (topicModel.followUp.isNotEmpty) {
-          if (_testProvider!.indexOfCurrentFollowUp == 0) {
-            _testProvider!
-                .setIndexOfHeaderPart3(_testProvider!.questionList.length);
-          }
-        } else {
-          if (_testProvider!.indexOfCurrentQuestion == 0) {
-            _testProvider!
-                .setIndexOfHeaderPart3(_testProvider!.questionList.length);
-          }
-        }
-      }
-    }
-  }
-
-  void _startRecordAnswer(
-      {required String fileName, required bool isPart2}) async {
-    TopicModel? topicModel = _getCurrentPart();
-
-    if (null == topicModel) {
-      return;
-    }
-
-    Queue<TopicModel> queue = _testProvider!.topicsQueue;
-    int timeRecord = Utils.getRecordTime(queue.first.numPart);
-    String timeString = Utils.getTimeRecordString(timeRecord);
-
-    //Record the answer
-    _timerProvider!.setCountDown(timeString);
-
-    if (null != _countDown) {
-      _countDown!.cancel();
-    }
-    _countDown = _testRoomPresenter!.startCountDown(context: context, count: timeRecord, isPart2: isPart2);
-    _setVisibleRecord(true, _countDown, fileName);
-  }
-
-  void _setVisibleSaveTest(bool isVisible) {
-    _testProvider!.setVisibleSaveTheTest(isVisible);
-  }
-
   @override
   void onCountDownForCueCard(String countDownString) {
     if (mounted) {
       _testProvider!.setCountDownCueCard(countDownString);
     }
+  }
+
+  @override
+  void onSubmitTestFail(String msg) {
+    _prepareSimulatorTestProvider!.setIsSubmitting(false);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.error,
+    );
+  }
+
+  @override
+  void onSubmitTestSuccess(String msg) {
+    _prepareSimulatorTestProvider!.setIsSubmitting(false);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.error,
+    );
+
+    //Can reviewing
   }
 }

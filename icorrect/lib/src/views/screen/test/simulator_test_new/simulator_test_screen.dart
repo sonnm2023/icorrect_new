@@ -141,9 +141,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           );
         }
 
-        return ChangeNotifierProvider(
-          create: (_) => TestProvider(),
-          child: const TestRoomWidget(),
+        return Stack(
+          children: [
+            ChangeNotifierProvider(
+              create: (_) => TestProvider(),
+              child: const TestRoomWidget(),
+            ),
+            Visibility(
+              visible: provider.isSubmitting,
+              child: const DefaultLoadingIndicator(
+                color: AppColor.defaultPurpleColor,
+              ),
+            ),
+          ],
         );
       },
     );

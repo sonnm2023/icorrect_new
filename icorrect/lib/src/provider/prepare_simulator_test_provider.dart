@@ -131,8 +131,20 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _activityType = type;
   }
 
+  bool _isSubmitting = false;
+  bool get isSubmitting => _isSubmitting;
+  void setIsSubmitting(bool isSubmitting) {
+    _isSubmitting = isSubmitting;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+
 
   void resetAll() {
+    _isSubmitting = false;
     _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;

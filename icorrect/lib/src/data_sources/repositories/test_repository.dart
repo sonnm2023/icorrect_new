@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 abstract class TestRepository {
   Future<String> getTestDetail(String homeworkId, String distributeCode);
+  Future<String> submitTest(http.MultipartRequest multiRequest);
 }
 
 class TestRepositoryImpl implements TestRepository {
@@ -23,6 +24,25 @@ class TestRepositoryImpl implements TestRepository {
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
+    });
+  }
+
+  @override
+  Future<String> submitTest(http.MultipartRequest multiRequest) async {
+    return await multiRequest
+        .send()
+        .timeout(const Duration(seconds: 15))
+        .then((http.StreamedResponse streamResponse) async {
+      if (streamResponse.statusCode == 200) {
+        return await http.Response.fromStream(streamResponse)
+            .timeout(const Duration(seconds: 15))
+            .then((http.Response response) {
+          final String jsonBody = response.body;
+          return jsonBody;
+        });
+      } else {
+        return '';
+      }
     });
   }
 
