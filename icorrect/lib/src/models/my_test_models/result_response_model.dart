@@ -15,10 +15,10 @@ class ResultResponseModel {
   String? _createdAt;
   String? _deletedAt;
   int? _status;
-  List<SkillProblem>? _fluencyProblem;
-  List<SkillProblem>? _lexicalResourceProblem;
-  List<SkillProblem>? _grammaticalProblem;
-  List<SkillProblem>? _pronunciationProblem;
+  List<SkillProblem>? _fluencyProblem = [];
+  List<SkillProblem>? _lexicalResourceProblem = [];
+  List<SkillProblem>? _grammaticalProblem = [];
+  List<SkillProblem>? _pronunciationProblem = [];
   int? _orderType;
 
   ResultResponseModel(
@@ -70,7 +70,8 @@ class ResultResponseModel {
 
   set pronunciation(value) => this._pronunciation = value;
 
-  get overallComment => this._overallComment ?? 'Nothing overall comment in here';
+  get overallComment =>
+      this._overallComment ?? 'Nothing overall comment in here';
 
   set overallComment(value) => this._overallComment = value;
 

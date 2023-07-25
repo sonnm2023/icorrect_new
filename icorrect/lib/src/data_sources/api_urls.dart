@@ -18,6 +18,7 @@ const String updateInfoEP = 'auth/update-info';
 const String changePasswordEP = 'auth/change-password';
 const String getTestInfoEP = 'api/v1/ielts-test/syllabus/create';
 String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
+String fileEP(String name)=> '${icorrectDomain}file?filename=$name';
 
 String responseEP(String orderId) =>
     '${toolDomain}api/response?order_id=$orderId';

@@ -48,7 +48,7 @@ class _HighLightTabState extends State<HighLightTab>
     }
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString() ?? '',
-        activityId: widget.homeWorkModel.activityId.toString(),
+        activityId: widget.homeWorkModel.id.toString(),
         status: Status.allHomework.get,
         example: Status.hightLight.get);
   }
@@ -101,39 +101,45 @@ class _HighLightTabState extends State<HighLightTab>
             )
           ]),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const CircleAvatar(
-            foregroundImage: AssetImage(AppAsset.defaultAvt),
-            radius: 30,
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DefaultText(
-                  text: resultModel.students!.name.toString(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                  color: Colors.black,
+          Row(
+            children: [
+              const CircleAvatar(
+                foregroundImage: AssetImage(AppAsset.defaultAvt),
+                radius: 30,
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DefaultText(
+                      text: resultModel.students!.name.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(height: 10),
+                    DefaultText(
+                      text: resultModel.createdAt.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: AppColor.defaultGrayColor,
+                    )
+                  ],
                 ),
-                const SizedBox(height: 10),
-                DefaultText(
-                  text: resultModel.createdAt.toString(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
-                  color: AppColor.defaultGrayColor,
-                )
-              ],
-            ),
+              )
+            ],
           ),
           DefaultText(
-            text: resultModel.overallScore.toString(),
+            text: resultModel.aiScore.toString().isNotEmpty
+                ? resultModel.aiScore.toString()
+                : resultModel.overallScore.toString(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             fontWeight: FontWeight.bold,

@@ -191,7 +191,7 @@ class ActivityResult {
     _sendEmail = itemData['send_email'] ?? 0;
     _uuid = itemData['uuid'] ?? '';
     _activityBankMyBank = itemData['activity_bank_my_bank'] ?? '';
-    _packageId = itemData['package_id'] ?? '';
+    _packageId = itemData['package_id'] ?? 0;
     _bank = itemData['bank'] ?? 0;
     _bankName = itemData['bank_name'] ?? '';
     _question = itemData['question'] ?? 0;

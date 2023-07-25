@@ -39,7 +39,7 @@ enum Status {
   hightLight(1),
   others(0),
   hadScrore(1),
-  allHomework(-1);
+  allHomework(2);
 
   const Status(this.get);
 

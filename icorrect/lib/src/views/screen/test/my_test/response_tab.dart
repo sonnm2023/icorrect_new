@@ -2,11 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
 import 'package:icorrect/src/presenters/response_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/sample_video_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/stream_audio_dialog.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
@@ -259,7 +264,7 @@ class _ResponseTabState extends State<ResponseTab>
 
   Widget _overallDetail({required List<SkillProblem> problems}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       decoration: BoxDecoration(
           border: Border.all(color: AppColor.defaultPurpleColor, width: 1)),
       child: (problems.isNotEmpty)
@@ -268,12 +273,11 @@ class _ResponseTabState extends State<ResponseTab>
               shrinkWrap: true,
               itemCount: problems.length,
               itemBuilder: (_, item) {
-                SkillProblem problem = problems.elementAt(item);
+                SkillProblem problemModel = problems.elementAt(item);
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 10),
                     const Row(
                       children: [
                         Icon(Icons.warning_amber_outlined,
@@ -289,7 +293,7 @@ class _ResponseTabState extends State<ResponseTab>
                     ),
                     const SizedBox(height: 5),
                     DefaultText(
-                      text: problem.problem.toString(),
+                      text: problemModel.problem.toString(),
                       color: Colors.black,
                     ),
                     const SizedBox(height: 15),
@@ -305,12 +309,15 @@ class _ResponseTabState extends State<ResponseTab>
                           fontSize: 16,
                         ),
                         const SizedBox(width: 10),
-                        _viewSampleButton()
+                        (problemModel.fileName.toString().isNotEmpty)
+                            ? _viewSampleButton(
+                                problemModel.fileName.toString())
+                            : Container()
                       ],
                     ),
                     const SizedBox(height: 5),
                     DefaultText(
-                      text: problem.solution.toString(),
+                      text: problemModel.solution.toString(),
                       color: Colors.black,
                     )
                   ],
@@ -321,9 +328,11 @@ class _ResponseTabState extends State<ResponseTab>
     );
   }
 
-  Widget _viewSampleButton() {
+  Widget _viewSampleButton(String fileName) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        _onTapViewSample(fileName);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
         decoration: BoxDecoration(
@@ -337,6 +346,19 @@ class _ResponseTabState extends State<ResponseTab>
         ),
       ),
     );
+  }
+
+  void _onTapViewSample(String fileName) {
+    String url = fileEP(fileName);
+    String typeFile = Utils.fileType(fileName);
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (builder) {
+          return (typeFile == StringClass.audio)
+              ? SliderAudio(url: url)
+              : SampleVideo(url: url);
+        });
   }
 
   @override

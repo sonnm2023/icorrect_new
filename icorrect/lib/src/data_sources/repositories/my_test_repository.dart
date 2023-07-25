@@ -61,10 +61,14 @@ class MyTestImpl implements MyTestRepository {
             .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;
+        }).catchError((onError) {
+          return '';
         });
       } else {
         return '';
       }
+    }).catchError((onError) {
+      return '';
     });
   }
 }

@@ -248,11 +248,19 @@ class MyTestPresenter {
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
+        print('call back: ${value.toString()}');
         if (json['error_code'] == 200 && json['status'] == 'success') {
+          print('step 23 ${_view.toString()}');
+
           _view!.updateAnswersSuccess('Save your answers successfully!');
+        } else {
+          print('step 1');
+          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
         }
-      }).catchError((onError) =>
-          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer));
+      }).catchError((onError) {
+        print('catchError updateAnswerFail ${onError.toString()}');
+        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      });
     } on TimeoutException {
       _view!.updateAnswerFail(AlertClass.timeOutUpdateAnswer);
     } on SocketException {
@@ -295,46 +303,44 @@ class MyTestPresenter {
         reanswerFormat = 'reanswer_introduce[$questionId]';
       }
 
-      if (q.numPart == PartOfTest.part1.get) {
+      if (q.type == PartOfTest.part1.get) {
         format = 'part1[$questionId]';
         reanswerFormat = 'reanswer_part1[$questionId]';
       }
 
-      if (q.numPart == PartOfTest.part2.get) {
+      if (q.type == PartOfTest.part2.get) {
         format = 'part2[$questionId]';
         reanswerFormat = 'reanswer_part2[$questionId]';
       }
 
-      if (q.numPart == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
+      if (q.type == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
         format = 'part3[$questionId]';
         reanswerFormat = 'reanswer_part3[$questionId]';
       }
-      if (q.numPart == PartOfTest.part3.get && q.isFollowUpQuestion()) {
+      if (q.type == PartOfTest.part3.get && q.isFollowUpQuestion()) {
         format = 'followup[$questionId]';
         reanswerFormat = 'reanswer_followup[$questionId]';
       }
-
+      print('reanswer:${q.reAnswerCount.toString()}');
       formData
           .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
 
       for (int i = 0; i < q.answers.length; i++) {
         endFormat = '$format[$i]';
-        File audioFile = File(
-            '${await FileStorageHelper.getFilePath(q.answers.elementAt(i).url.toString(), MediaType.audio)}');
-        print('audioFile: ${audioFile.path.toString()}');
+        File audioFile = File(await FileStorageHelper.getFilePath(
+            q.answers.elementAt(i).url.toString(), MediaType.audio));
 
         if (await audioFile.exists()) {
           request.files.add(
               await http.MultipartFile.fromPath(endFormat, audioFile.path));
-          print('meomeo');
-          formData.addEntries([MapEntry(endFormat, basename(audioFile.path))]);
-          print(formData.toString());
         }
       }
     }
+    print('formData: ${formData.toString()}');
 
     request.fields.addAll(formData);
 
     return request;
   }
+
 }

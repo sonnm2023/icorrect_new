@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/presenters/my_test_presenter.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/screen/test/my_test/response_tab.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../data_sources/constant_strings.dart';
+import '../../../../data_sources/local/file_storage_helper.dart';
+import '../../../../models/simulator_test_models/question_topic_model.dart';
 import '../../../../provider/my_test_provider.dart';
+import '../../other_views/dialog/confirm_dialog.dart';
 import 'highlight_tab.dart';
 import 'others_tab.dart';
 
@@ -34,6 +39,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   void initState() {
     super.initState();
     _provider = Provider.of<MyTestProvider>(context, listen: false);
+    print('activity Id:${widget.homeWorkModel.activityId.toString()}');
     Future.delayed(Duration.zero, () {
       _provider!.clearData();
     });
@@ -54,6 +60,18 @@ class _MyTestScreenState extends State<MyTestScreen> {
             elevation: 0.0,
             iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
             centerTitle: true,
+            leading: Consumer<MyTestProvider>(
+                builder: (context, myTestprovider, child) {
+              return BackButton(
+                onPressed: () {
+                  if (myTestprovider.reAnswerOfQuestions.isNotEmpty) {
+                    _showDialogConfirmToOutScreen(provider: myTestprovider);
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            }),
             title: const Text(
               "ICORRECT",
               style: TextStyle(color: AppColor.defaultPurpleColor),
@@ -132,5 +150,29 @@ class _MyTestScreenState extends State<MyTestScreen> {
                 provider: _provider!, homeWorkModel: widget.homeWorkModel),
             OtherTab(provider: _provider!, homeWorkModel: widget.homeWorkModel),
           ];
+  }
+
+  void _showDialogConfirmToOutScreen({required MyTestProvider provider}) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return ConfirmDialogWidget(
+              title: "Are you sure to back ?",
+              message: "Your re-answers will not be saved ",
+              cancelButtonTitle: "Cancel",
+              okButtonTitle: "Back",
+              cancelButtonTapped: () {},
+              okButtonTapped: () {
+                deleteFileAnswers(provider.reAnswerOfQuestions);
+                Navigator.pop(context);
+              });
+        });
+  }
+
+  Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
+    for (var q in questions) {
+      String fileName = q.answers.last.url.toString();
+      FileStorageHelper.deleteFile(fileName, MediaType.audio);
+    }
   }
 }

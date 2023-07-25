@@ -13,7 +13,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
     Map<String, String> queryParameters = {'email': email, 'status': status};
     String url =
         '${publicDomain}api/list-activity-v2?${Uri(queryParameters: queryParameters).query}';
-
+    print('url :${url}');
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,

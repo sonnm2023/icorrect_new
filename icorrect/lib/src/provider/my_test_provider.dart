@@ -213,6 +213,42 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
+  void clearSampleAudioCache() {
+    _isSamplePlaying = false;
+    _durationSampleAudio = Duration.zero;
+    _positionSampleAudio = Duration.zero;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _isSamplePlaying = false;
+  bool get isSamplePlaying => _isSamplePlaying;
+  void setSampleAudioPlaying(bool playing) {
+    _isSamplePlaying = playing;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  Duration _durationSampleAudio = Duration.zero;
+  Duration get durationAudioSample => _durationSampleAudio;
+  void setDurationAudioSample(Duration duration) {
+    _durationSampleAudio = duration;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  Duration _positionSampleAudio = Duration.zero;
+  Duration get positionAudioSample => _positionSampleAudio;
+  void setPositionAudioSample(Duration duration) {
+    _positionSampleAudio = duration;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   /////////////Hightligh home work screen/////////////////////////////////
 
   List<StudentResultModel> _highLightHomeWorks = [];

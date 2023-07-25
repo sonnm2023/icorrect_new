@@ -131,7 +131,7 @@ class StudentResultModel {
     _updateAt = item['updated_at'] ?? '';
     _orderId = item['order_id'] ?? 0;
     _publishResponse = item['publish_response'] ?? 0;
-    _overallScore = item['overall_score'] ?? '';
+    _overallScore = item['overall_score'] ?? '0.0';
     _publish = item['pushlis'] ?? 0;
     _realActivityId = item['real_activity_id'] ?? 0;
     _example = item['example'] ?? 0;

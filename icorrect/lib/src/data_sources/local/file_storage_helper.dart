@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class FileStorageHelper {
   static Future<String> getExternalDocumentPath() async {
-    var status = await Permission.storage.status; 
+    var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
     }
@@ -77,5 +77,17 @@ class FileStorageHelper {
     final path = await getFolderPath(mediaType);
     String filePath = '$path\\$fileName';
     return filePath;
+  }
+
+  static Future deleteFile(String fileName, MediaType mediaType) async {
+    try {
+      String filePath = await getFilePath(fileName, mediaType);
+      File file = File(filePath);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      print('Error when delete file: ${e.toString()}');
+    }
   }
 }

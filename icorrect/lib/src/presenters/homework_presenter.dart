@@ -44,6 +44,7 @@ class HomeWorkPresenter {
 
     _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
+      print(jsonEncode(dataMap).toString());
       if (dataMap['error_code'] == 200) {
         List<HomeWorkModel> homeworks =
             await _generateListHomeWork(dataMap['result']);

@@ -22,6 +22,7 @@ class ResponsePresenter {
 
     _repository!.getResponse(orderId).then((value) {
       Map<String, dynamic> dataMap = jsonDecode(value) ?? {};
+      print(dataMap.toString());
       if (dataMap.isNotEmpty) {
         ResultResponseModel responseModel =
             ResultResponseModel.fromJson(dataMap);

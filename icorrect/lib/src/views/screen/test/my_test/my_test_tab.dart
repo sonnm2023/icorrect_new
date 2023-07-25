@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
@@ -16,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
@@ -128,8 +130,7 @@ class _MyTestTabState extends State<MyTestTab>
                       ? LayoutBuilder(builder: (_, constraint) {
                           return InkWell(
                             onTap: () {
-                              _onClickUpdateReanswer(
-                                  provider.reAnswerOfQuestions);
+                              _showDialogConfirmSaveChange(provider: provider);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -157,12 +158,28 @@ class _MyTestTabState extends State<MyTestTab>
     });
   }
 
+  void _showDialogConfirmSaveChange({required MyTestProvider provider}) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return ConfirmDialogWidget(
+              title: "Confirm",
+              message: "Are you sure to save change your answers?",
+              cancelButtonTitle: "Cancel",
+              okButtonTitle: "Save",
+              cancelButtonTapped: () {},
+              okButtonTapped: () {
+                _onClickUpdateReanswer(provider.reAnswerOfQuestions);
+              });
+        });
+  }
+
   void _onClickUpdateReanswer(List<QuestionTopicModel> requestions) {
     _loading!.show(context);
     HomeWorkModel homework = widget.homeWorkModel;
     _presenter!.updateMyAnswer(
         testId: homework.testId,
-        activityId: homework.activityId.toString(),
+        activityId: homework.id.toString(),
         reQuestions: requestions);
   }
 
@@ -369,7 +386,7 @@ class _MyTestTabState extends State<MyTestTab>
   Future _recordReanswer(
       bool visibleRecord, QuestionTopicModel question) async {
     if (visibleRecord) {
-      String audioFile = await Utils.generateAudioFileName();
+      String audioFile = '${await Utils.generateAudioFileName()}.wav';
       if (await _record.hasPermission()) {
         Timer timer = _presenter!.startCountDown(context, 30);
         widget.provider.setCountDownTimer(timer);
@@ -483,11 +500,15 @@ class _MyTestTabState extends State<MyTestTab>
     widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
-    widget.provider.countDownTimer!.cancel();
-    widget.provider.setCountDownTimer(null);
     widget.provider.clearReAnswerOfQuestions();
 
-    MessageDialog.alertDialog(context, message);
+    Fluttertoast.showToast(
+        msg: message,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: 18,
+        toastLength: Toast.LENGTH_LONG);
 
     _loading!.hide();
   }

@@ -83,7 +83,7 @@ class SkillProblem {
 
   set fileName(value) => this._fileName = value;
 
-  get fileDetail => this._fileDetail;
+ SkillFileDetail? get fileDetail => this._fileDetail;
 
   set fileDetail(value) => this._fileDetail = value;
 
@@ -91,14 +91,14 @@ class SkillProblem {
     _id = json['id'] ?? 0;
     _problem = json['problem'] ?? '';
     _solution = json['solution'] ?? '';
-    _type = json['type'] ?? '';
-    _orderId = json['order_id'] ?? '';
+    _type = json['type'] ?? 0;
+    _orderId = json['order_id'] ?? 0;
     _component = json['component'] ?? '';
     _fileId = json['file_id'] ?? 0;
     _exampleText = json['example_text'] ?? '';
     _updatedAt = json['updated_at'] ?? '';
     _createdAt = json['created_at'] ?? '';
-    _deletedAt = json['updated_at'] ?? '';
+    _deletedAt = json['deleted_at'] ?? '';
     _typeName = json['type_name'] ?? '';
     _fileName = json['file_name'] ?? '';
     _fileDetail = SkillFileDetail.fromJson(json['file'] ?? SkillFileDetail());

@@ -97,7 +97,7 @@ class QuestionTopicModel {
 
     _isFollowUp = json['is_follow_up'];
     _cueCard = json['cue_card'];
-    _reAnswerCount = json['re_answer_count'];
+    _reAnswerCount = json['reanswer'];
     _numPart = json['num_part'];
 
     if (json['answer'] != null) {
