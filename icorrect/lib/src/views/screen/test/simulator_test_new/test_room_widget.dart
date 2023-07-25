@@ -864,7 +864,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 }
               }
 
-              _calculateIndexOfHeader();
+              if (_countRepeat == 0) {
+                _calculateIndexOfHeader();
+              }
 
               break;
             }
@@ -890,7 +892,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           case HandleWhenFinish.followupVideoType:
             {
               _startRecordAnswer(fileName: fileName, isPart2: false);
-              _calculateIndexOfHeader();
+
+              if (_countRepeat == 0) {
+                _calculateIndexOfHeader();
+              }
               break;
             }
           case HandleWhenFinish.endOfTestVideoType:
