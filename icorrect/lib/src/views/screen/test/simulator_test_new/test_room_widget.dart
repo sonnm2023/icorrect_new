@@ -9,8 +9,10 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
@@ -21,6 +23,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
@@ -31,7 +34,9 @@ import 'package:video_player/video_player.dart';
 import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
-  const TestRoomWidget({super.key});
+  const TestRoomWidget({super.key, required this.homeWorkModel});
+
+  final HomeWorkModel homeWorkModel;
 
   @override
   State<TestRoomWidget> createState() => _TestRoomWidgetState();
@@ -769,15 +774,43 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _stopRecord();
 
               //TODO: Auto submit fot Test
-              // if (_prepareSimulatorTestProvider!.activityType == "test") {
-                _prepareSimulatorTestProvider!.setIsSubmitting(true);
-                _testRoomPresenter!.submitTest();
-              // }
+              //Activity Type = "test"
+              if (_prepareSimulatorTestProvider!.activityType == "test") {
+                _startSubmitTest();
+              } else {
+                //Activity Type = "homework"
+                _setVisibleSaveTest(true);
+              }
               break;
             }
         }
       }
     }
+  }
+
+  void _startSubmitTest() {
+    _prepareSimulatorTestProvider!.setIsSubmitting(true);
+    List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+    _testRoomPresenter!.submitTest(
+      testId:
+          _prepareSimulatorTestProvider!.currentTestDetail.testId.toString(),
+      activityId: widget.homeWorkModel.id.toString(),
+      questions: questions,
+    );
+  }
+
+  List<QuestionTopicModel> _prepareQuestionListForSubmit() {
+    if (_reviewingList.isEmpty) return [];
+    List<QuestionTopicModel> temp = [];
+
+    for (int i = 0; i < _reviewingList.length; i++) {
+      dynamic item = _reviewingList[i];
+      if (item is QuestionTopicModel) {
+        temp.add(item);
+      }
+    }
+
+    return temp;
   }
 
   void _stopRecord() async {
@@ -980,36 +1013,47 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onSaveTopicListIntoProvider(List<TopicModel> list) {
-    // TODO: implement onSaveTopicListIntoProvider
-  }
-
-  @override
   void onCountDownForCueCard(String countDownString) {
     if (mounted) {
       _testProvider!.setCountDownCueCard(countDownString);
     }
   }
 
-  @override
-  void onSubmitTestFail(String msg) {
+  void _finishSubmitTest(String msg) {
     _prepareSimulatorTestProvider!.setIsSubmitting(false);
 
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.error,
     );
+
+    //TODO: go to my_test screen
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => MyTestScreen(
+          homeWorkModel: widget.homeWorkModel,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void onSubmitTestFail(String msg) {
+    _finishSubmitTest(msg);
   }
 
   @override
   void onSubmitTestSuccess(String msg) {
-    _prepareSimulatorTestProvider!.setIsSubmitting(false);
-
-    showToastMsg(
-      msg: msg,
-      toastState: ToastStatesType.error,
-    );
-
-    //Can reviewing
+    _finishSubmitTest(msg);
   }
+
+  @override
+  void onClickSaveTheTest() {
+    if (false == _prepareSimulatorTestProvider!.isSubmitting) {
+      _startSubmitTest();
+    }
+  }
+
+
+
 }

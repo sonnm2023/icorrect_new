@@ -145,7 +145,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           children: [
             ChangeNotifierProvider(
               create: (_) => TestProvider(),
-              child: const TestRoomWidget(),
+              child: TestRoomWidget(homeWorkModel: widget.homeWorkModel),
             ),
             Visibility(
               visible: provider.isSubmitting,
@@ -274,6 +274,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
+    _prepareSimulatorTestProvider!.setCurrentTestDetail(testDetailModel);
     _prepareSimulatorTestProvider!.updateProcessingStatus();
     _prepareSimulatorTestProvider!.setDownloadingStatus(true);
     _prepareSimulatorTestProvider!.setTotal(total);

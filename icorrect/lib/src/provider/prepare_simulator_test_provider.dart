@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
 class PrepareSimulatorTestProvider with ChangeNotifier {
@@ -141,9 +142,16 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  TestDetailModel _currentTestDetail = TestDetailModel();
+  TestDetailModel get currentTestDetail => _currentTestDetail;
+  void setCurrentTestDetail(TestDetailModel testDetailModel) {
+    _currentTestDetail = testDetailModel;
+  }
+
 
 
   void resetAll() {
+    _currentTestDetail = TestDetailModel();
     _isSubmitting = false;
     _activityType = '';
     _dialogShowing = false;

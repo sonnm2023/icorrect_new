@@ -27,7 +27,6 @@ abstract class TestRoomViewContract {
   void onNothingEndOfTest();
   void onNothingFileQuestion();
   void onNothingQuestion();
-  void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onCountDown(String countDownString);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
@@ -35,6 +34,7 @@ abstract class TestRoomViewContract {
   void onNothingEndOfTakeNote();
   void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
+  void onClickSaveTheTest();
 }
 
 class TestRoomPresenter {
@@ -152,8 +152,7 @@ class TestRoomPresenter {
   }
 
   void clickSaveTheTest() {
-    //TODO: Submit homework
-    if (kDebugMode) print("clickSaveTheTest");
+    _view!.onClickSaveTheTest();
   }
 
   Future<void> playEndOfTestFile(TopicModel topic) async {
@@ -174,12 +173,16 @@ class TestRoomPresenter {
   Future<void> submitTest({
     required String testId,
     required String activityId,
-    required List<QuestionTopicModel> reQuestions,
+    required List<QuestionTopicModel> questions,
   }) async {
     assert(_view != null && _testRepository != null);
 
     http.MultipartRequest multiRequest = await _formDataRequest(
-        testId: testId, activityId: activityId, questions: reQuestions);
+      testId: testId,
+      activityId: activityId,
+      questions: questions,
+    );
+
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
@@ -196,6 +199,27 @@ class TestRoomPresenter {
     } on http.ClientException {
       _view!.onSubmitTestFail("Has an error when submit this test!");
     }
+  }
+
+  List<MapEntry<String, String>> _generateFormat(
+      QuestionTopicModel q, String suffix) {
+    List<MapEntry<String, String>> result = [];
+
+    if (q.answers.isEmpty) return [];
+
+    if (q.answers.length == 1) {
+      return [MapEntry("answer_$suffix[0]", q.answers.first.url)];
+    } else {
+      for (int i = 0; i < q.answers.length; i++) {
+        String prefix = "repeat";
+        if (i == q.answers.length - 1) {
+          prefix = "answer";
+        }
+        result.add(MapEntry("${prefix}_$suffix[$i]", q.answers[i].url));
+      }
+    }
+
+    return result;
   }
 
   Future<http.MultipartRequest> _formDataRequest(
@@ -221,55 +245,51 @@ class TestRoomPresenter {
       formData.addEntries([const MapEntry('os', "ios")]);
     }
     formData.addEntries([const MapEntry('app_version', '2.0.2')]);
-    String format = '';
-    String reanswerFormat = '';
-    String endFormat = '';
+
     for (QuestionTopicModel q in questions) {
-      String questionId = q.id.toString();
-      if (q.numPart == PartOfTest.introduce.get) {
-        format = 'introduce[$questionId]';
-        reanswerFormat = 'reanswer_introduce[$questionId]';
+      String part = '';
+      switch (q.numPart) {
+        case 0:
+          {
+            part = "introduce";
+            break;
+          }
+        case 1:
+          {
+            part = "part1";
+            break;
+          }
+        case 2:
+          {
+            part = "part2";
+            break;
+          }
+        case 3:
+          {
+            part = "part3";
+            if (q.isFollowUp == 1) {
+              part = "followup";
+            }
+            break;
+          }
       }
 
-      if (q.numPart == PartOfTest.part1.get) {
-        format = 'part1[$questionId]';
-        reanswerFormat = 'reanswer_part1[$questionId]';
-      }
+      String prefix = "$part[${q.id}]";
 
-      if (q.numPart == PartOfTest.part2.get) {
-        format = 'part2[$questionId]';
-        reanswerFormat = 'reanswer_part2[$questionId]';
+      List<MapEntry<String, String>> temp = _generateFormat(q, prefix);
+      if (temp.isNotEmpty) {
+        formData.addEntries(temp);
       }
-
-      if (q.numPart == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
-        format = 'part3[$questionId]';
-        reanswerFormat = 'reanswer_part3[$questionId]';
-      }
-      if (q.numPart == PartOfTest.part3.get && q.isFollowUpQuestion()) {
-        format = 'followup[$questionId]';
-        reanswerFormat = 'reanswer_followup[$questionId]';
-      }
-
-      formData
-          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
 
       for (int i = 0; i < q.answers.length; i++) {
-        endFormat = '$format[$i]';
         File audioFile = File(await FileStorageHelper.getFilePath(
-            q.answers.elementAt(i).url.toString(), MediaType.audio));
-
-        if (kDebugMode) {
-          print('audioFile: ${audioFile.path.toString()}');
-        }
+          q.answers.elementAt(i).url,
+          MediaType.audio,
+        ));
 
         if (await audioFile.exists()) {
-          request.files.add(
-              await http.MultipartFile.fromPath(endFormat, audioFile.path));
-          formData.addEntries([MapEntry(endFormat, basename(audioFile.path))]);
-
-          if (kDebugMode) {
-            print(formData.toString());
-          }
+          request.files
+              .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
         }
       }
     }

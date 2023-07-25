@@ -16,39 +16,21 @@ class SaveTheTestWidget extends StatelessWidget {
         return Visibility(
           visible: testProvider.isVisibleSaveTheTest,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Image(
-                image: AssetImage('assets/images/ic_completed.png'),
-                width: 100,
-              ),
-              const Text(
-                'Congratulations',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'You finished a speaking test',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: AppColor.defaultGrayColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 250,
-                height: 40,
+              const Expanded(child: SizedBox()),
+              Container(
+                width: double.infinity,
+                height: 60,
+                color: Colors.blueAccent,
                 child: ElevatedButton(
                   onPressed: () {
-                    //TODO
-                    // testRoomPresenter.clickSaveTheTest();
+                    testRoomPresenter.clickSaveTheTest();
                   },
-                  child: const Text("Save the test"),
+                  child: const Text(
+                    "SAVE THE TEST",
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               )
             ],
