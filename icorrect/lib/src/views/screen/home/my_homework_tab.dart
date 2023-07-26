@@ -298,14 +298,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   void _gotoHomeworkDetail() {
     if (_selectedHomeWorkModel!.completeStatus == Status.outOfDate.get ||
         _selectedHomeWorkModel!.completeStatus == Status.notComplete.get) {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => SimulatorTestNewScreen(
-      //       homeWorkModel: _selectedHomeWorkModel!,
-      //     ),
-      //   ),
-      // );
-
       Navigator.push(
         context,
         MaterialPageRoute(

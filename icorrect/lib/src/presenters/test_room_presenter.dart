@@ -183,11 +183,18 @@ class TestRoomPresenter {
       questions: questions,
     );
 
+    if (kDebugMode) {
+      print(multiRequest.fields[testId]);
+      print(multiRequest.fields[activityId]);
+    }
+
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        if (json['error_code'] == 200 && json['status'] == 'success') {
+        if (json['error_code'] == 200) {
           _view!.onSubmitTestSuccess('Save your answers successfully!');
+        } else {
+          _view!.onSubmitTestFail("Has an error when submit this test!");
         }
       }).catchError((onError) =>
           // ignore: invalid_return_type_for_catch_error
@@ -282,15 +289,27 @@ class TestRoomPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        File audioFile = File(await FileStorageHelper.getFilePath(
+        // File audioFile = File(
+        //   await FileStorageHelper.getFilePath(
+        //       q.answers.elementAt(i).url.toString(), MediaType.audio),
+        // );
+        //
+        // if (await audioFile.exists()) {
+        //   request.files
+        //       .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
+        // }
+
+        String fileName = await FileStorageHelper.getFilePath(
           q.answers.elementAt(i).url,
           MediaType.audio,
-        ));
+        );
 
-        if (await audioFile.exists()) {
-          request.files
-              .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
-        }
+        request.files.add(http.MultipartFile(
+          prefix,
+          File(fileName).readAsBytes().asStream(),
+          File(fileName).lengthSync(),
+          filename: fileName.split("/").last
+        ));
       }
     }
 

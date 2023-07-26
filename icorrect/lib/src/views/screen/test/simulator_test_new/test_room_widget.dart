@@ -12,7 +12,6 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
@@ -656,7 +655,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("RECORD AS FILE PATH: $fileName");
     }
 
-    String newFileName = await _createLocalAudioFileName(fileName);
+    String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
     String path =
         await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
 
@@ -693,10 +692,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   Future<String> _createLocalAudioFileName(String origin) async {
     String fileName = "";
+    final splitted = origin.split('.');
     if (_countRepeat > 0) {
-      fileName = 'repeat_${_countRepeat.toString()}_$origin';
+      fileName = 'repeat_${_countRepeat.toString()}_${splitted[0]}';
     } else {
-      fileName = 'answer_$origin';
+      fileName = 'answer_${splitted[0]}';
     }
     return fileName;
   }
@@ -771,16 +771,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             {
               //Finish doing test
               _testProvider!.setIsShowPlayVideoButton(true);
-              _stopRecord();
-
-              //TODO: Auto submit fot Test
-              //Activity Type = "test"
-              if (_prepareSimulatorTestProvider!.activityType == "test") {
-                _startSubmitTest();
-              } else {
-                //Activity Type = "homework"
-                _setVisibleSaveTest(true);
-              }
+              _stopRecord().then((_) {
+                //TODO: Auto submit fot Test
+                //Activity Type = "test"
+                if (_prepareSimulatorTestProvider!.activityType == "test") {
+                  _startSubmitTest();
+                } else {
+                  //Activity Type = "homework"
+                  _setVisibleSaveTest(true);
+                }
+              });
               break;
             }
         }
@@ -813,11 +813,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return temp;
   }
 
-  void _stopRecord() async {
+  Future<void> _stopRecord() async {
     bool isRecording = await _recordController!.isRecording();
 
     if (isRecording) {
       _recordController!.stop();
+      _recordController!.dispose();
     }
   }
 
