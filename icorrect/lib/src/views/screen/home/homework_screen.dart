@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -14,7 +15,9 @@ import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
+import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
 
 class HomeWorkScreen extends StatefulWidget {
@@ -36,11 +39,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
+  CircleLoading? _loading;
 
   @override
   void initState() {
     super.initState();
-
+    _loading = CircleLoading();
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
     _homeWorkPresenter = HomeWorkPresenter(this);
     _getListHomeWork();
@@ -62,45 +66,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
-    UserAccountsDrawerHeader drawerHeader = UserAccountsDrawerHeader(
-      accountName: Consumer<HomeWorkProvider>(builder: (context, homeWorkProvider, child) {
-        return Text(
-          homeWorkProvider.currentUser.profileModel.displayName,
-        );
-      }),
-      accountEmail: const SizedBox(),
-      currentAccountPicture: CircleAvatar(
-        child: Consumer<HomeWorkProvider>(builder: (context, homeWorkProvider, child) {
-          return CachedNetworkImage(
-            imageUrl: '$apiDomain${homeWorkProvider.currentUser.profileModel.avatar}',
-            imageBuilder: (context, imageProvider) => Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.red,
-                    BlendMode.colorBurn,
-                  ),
-                ),
-              ),
-            ),
-            placeholder: (context, url) => const CircularProgressIndicator(),
-            errorWidget: (context, url, error) => CircleAvatar(
-              child: Image.asset(
-                "assets/images/default_avatar.png",
-                width: 42.0,
-                height: 42.0,
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-
     final drawerItems = ListView(
       children: [
-        drawerHeader,
+        Consumer<HomeWorkProvider>(builder: (context, homeWorkProvider, child) {
+          return _drawHeader(homeWorkProvider.currentUser);
+        }),
         ListTile(
           title: const Text(
             "Home",
@@ -118,8 +88,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           onTap: () {
             toggleDrawer();
 
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const ChangePasswordScreen()));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const ChangePasswordScreen()));
           },
         ),
         ListTile(
@@ -179,15 +149,17 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             ),
             body: Stack(
               children: [
-                MyHomeWorkTab(homeWorkProvider: _homeWorkProvider, homeWorkPresenter: _homeWorkPresenter!),
+                MyHomeWorkTab(
+                    homeWorkProvider: _homeWorkProvider,
+                    homeWorkPresenter: _homeWorkPresenter!),
                 Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
                     if (homeWorkProvider.isProcessing) {
-                      return const DefaultLoadingIndicator(
-                          color: AppColor.defaultPurpleColor);
+                      _loading!.show(context);
                     } else {
-                      return Container();
+                      _loading!.hide();
                     }
+                    return Container();
                   },
                 ),
               ],
@@ -200,6 +172,95 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         ),
       ),
     );
+  }
+
+  static Widget _drawHeader(UserDataModel user) {
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+        color: AppColor.defaultPurpleColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 60,
+              height: 60,
+              child: CircleAvatar(
+                child: Consumer<HomeWorkProvider>(
+                    builder: (context, homeWorkProvider, child) {
+                  return CachedNetworkImage(
+                    imageUrl: fileEP(
+                        homeWorkProvider.currentUser.profileModel.avatar),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.transparent,
+                            BlendMode.colorBurn,
+                          ),
+                        ),
+                      ),
+                    ),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      child: Image.asset(
+                        AppAsset.defaultAvt,
+                        width: 42,
+                        height: 42,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            Container(
+                width: 200,
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DefaultText(
+                        text: user.profileModel.displayName.toString(),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        DefaultText(
+                          text:
+                              "Dimond: ${user.profileModel.wallet.usd.toString()}",
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            child: const Image(
+                                width: 20, image: AssetImage(AppAsset.dimond))),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text("Gold: ${user.profileModel.pointTotal.toString()}",
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                                fontSize: 15)),
+                        Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            child: const Image(
+                                width: 20, image: AssetImage(AppAsset.gold))),
+                      ],
+                    ),
+                  ],
+                ))
+          ],
+        ));
   }
 
   void toggleDrawer() async {
@@ -237,12 +298,16 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       title: const Text(
         "Notification",
         style: TextStyle(
             color: AppColor.defaultBlackColor, fontWeight: FontWeight.w800),
       ),
-      content: const Text("Do you want to logout?"),
+      content: const Text(
+        "Do you want to logout?",
+        style: TextStyle(fontSize: 17),
+      ),
       actions: [
         cancelButton,
         continueButton,
@@ -259,7 +324,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onGetListHomeworkComplete (
+  void onGetListHomeworkComplete(
       List<HomeWorkModel> homeworks, List<ClassModel> classes) async {
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(homeworks);

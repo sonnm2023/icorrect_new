@@ -8,4 +8,6 @@ class AppAsset {
   static const stop = 'assets/images/ic_play.png';
   static const play = 'assets/images/ic_pause.png';
   static const record = 'assets/images/ic_record_2.png';
+  static const dimond = 'assets/images/ic_diamond.png';
+  static const gold = 'assets/images/ic_gold.png';
 }

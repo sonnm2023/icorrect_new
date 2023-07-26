@@ -71,10 +71,10 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   Widget _buildTopFilter() {
     return Container(
       decoration: const BoxDecoration(
-          color: AppColor.defaultLightGrayColor,
+          color: AppColor.defaultGraySlightColor,
           border: Border(
-            top: BorderSide(color: AppColor.defaultPurpleColor, width: 2.0),
-            bottom: BorderSide(color: AppColor.defaultPurpleColor, width: 2.0),
+            top: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
+            bottom: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
           )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,13 +93,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           }),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.defaultLightGrayColor,
+              backgroundColor: AppColor.defaultGraySlightColor,
               elevation: 0.0,
             ),
             child: Image.asset(
               'assets/images/ic_filter.png',
-              height: 30,
-              width: 30,
+              height: 25,
+              width: 25,
             ),
             onPressed: () {
               showModalBottomSheet<void>(
@@ -143,9 +143,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           width: w,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: AppColor.defaultLightGrayColor, width: 1),
+              top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
               right:
-                  BorderSide(color: AppColor.defaultLightGrayColor, width: 1),
+                  BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
             ),
           ),
           child: InkWell(
@@ -157,7 +157,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 "Close",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: AppColor.defaultGrayColor,
+                  color: AppColor.defaultGraySlightColor,
                 ),
               ),
             ),
@@ -168,7 +168,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           width: w,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: AppColor.defaultLightGrayColor, width: 1),
+              top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
             ),
           ),
           child: InkWell(
@@ -203,7 +203,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   Widget _buildListHomeWork() {
     return Expanded(
       child: Container(
-        color: AppColor.defaultLightGrayColor,
+        color: AppColor.defaultGraySlightColor,
         child: Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&

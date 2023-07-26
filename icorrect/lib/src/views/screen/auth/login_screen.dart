@@ -10,6 +10,7 @@ import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
@@ -37,15 +38,12 @@ class _LoginScreenState extends State<LoginScreen>
 
   LoginPresenter? _loginPresenter;
   late AuthProvider _authProvider;
+  CircleLoading? _loading;
 
   @override
   void initState() {
     super.initState();
-
-    //TODO: For testing
-    emailController.text = 'luan@testing.com';
-    passwordController.text = '123456';
-
+    _loading = CircleLoading();
     _loginPresenter = LoginPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
@@ -124,11 +122,11 @@ class _LoginScreenState extends State<LoginScreen>
             Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 if (authProvider.isProcessing) {
-                  return const DefaultLoadingIndicator(
-                      color: AppColor.defaultPurpleColor);
+                  _loading!.show(context);
                 } else {
-                  return Container();
+                  _loading!.hide();
                 }
+                return Container();
               },
             ),
           ],
