@@ -214,17 +214,9 @@ class TestRoomPresenter {
 
     if (q.answers.isEmpty) return [];
 
-    // if (q.answers.length == 1) {
-    //   return [MapEntry("answer_$suffix[0]", q.answers.first.url)];
-    // } else {
-      for (int i = 0; i < q.answers.length; i++) {
-        // String prefix = "repeat";
-        // if (i == q.answers.length - 1) {
-        //   prefix = "answer";
-        // }
-        result.add(MapEntry("$suffix[$i]", q.answers[i].url));
-      }
-    //}
+    for (int i = 0; i < q.answers.length; i++) {
+      result.add(MapEntry("$suffix[$i]", q.answers[i].url));
+    }
 
     return result;
   }

@@ -184,11 +184,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _disposeRecordController() async {
-    bool isRecording = await _recordController!.isRecording();
-
-    if (isRecording) {
-      _recordController!.stop();
-    }
+    await _stopRecord();
     await _recordController!.dispose();
   }
 
@@ -424,10 +420,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _startToPlayQuestion({required bool needResetAnswerList}) async {
-    if (needResetAnswerList) {
-      // _answers.clear();//TODO
-    }
-
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -488,7 +480,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _testProvider!.removeTopicsQueueFirst();
     _testProvider!.resetIndexOfCurrentQuestion();
 
-    //TODO: No part for next play
+    //No part for next play
     //Finish the test
     if (_testProvider!.topicsQueue.isEmpty) {
       if (kDebugMode) {
@@ -514,11 +506,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _startToPlayFollowup({required bool needResetAnswerList}) async {
-    //TODO
-    if (needResetAnswerList) {
-      // _answers.clear();//TODO
-    }
-
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -593,7 +580,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required HandleWhenFinish handleWhenFinishType,
   }) async {
-    _setVisibleRecord(false, null, null);
     _testProvider!.setIsLoadingVideo(true);
 
     if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
@@ -639,14 +625,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     });
   }
 
-  void _setVisibleRecord(bool visible, Timer? count, String? fileName) {
-    _testProvider!.setVisibleRecord(visible);
+  Future<void> _stopRecord() async {
+    await _recordController!.stop();
+  }
 
-    if (_testProvider!.visibleRecord) {
-      _recordAnswer(fileName!);
-    } else {
-      _recordController!.stop();
+  void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
+    if (false == visible) {
+      await _stopRecord();
     }
+
+    _testProvider!.setVisibleRecord(visible);
     _testProvider!.setCountDownTimer(count);
   }
 
@@ -660,20 +648,21 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
 
     if (await _recordController!.hasPermission()) {
+      if (kDebugMode) print("Record start");
       await _recordController!.start(
         path: path,
         encoder: AudioEncoder.wav,
         bitRate: 128000,
         samplingRate: 44100,
       );
-    }
 
-    List<FileTopicModel> temp = _currentQuestion!.answers;
-    if (!_checkAnswerFileExist(newFileName, temp)) {
-      temp.add(
-          FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-      _currentQuestion!.answers = temp;
-      _testProvider!.setCurrentQuestion(_currentQuestion!);
+      List<FileTopicModel> temp = _currentQuestion!.answers;
+      if (!_checkAnswerFileExist(newFileName, temp)) {
+        temp.add(
+            FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
+        _currentQuestion!.answers = temp;
+        _testProvider!.setCurrentQuestion(_currentQuestion!);
+      }
     }
   }
 
@@ -701,7 +690,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return fileName;
   }
 
-  void _checkVideo(String fileName, HandleWhenFinish handleWhenFinishType) {
+  void _checkVideo(
+      String fileName, HandleWhenFinish handleWhenFinishType) async {
     if (null != _testProvider!.playController) {
       if (_testProvider!.playController!.value.position ==
           _testProvider!.playController!.value.duration) {
@@ -753,15 +743,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             }
           case HandleWhenFinish.cueCardVideoType:
             {
-              //Start count down & record answer for part 2 - 120 seconds
-              _testProvider!.setVisibleRecord(true);
               _startRecordAnswer(fileName: fileName, isPart2: true);
               break;
             }
           case HandleWhenFinish.followupVideoType:
             {
               _startRecordAnswer(fileName: fileName, isPart2: false);
-
               if (_countRepeat == 0) {
                 _calculateIndexOfHeader();
               }
@@ -771,16 +758,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             {
               //Finish doing test
               _testProvider!.setIsShowPlayVideoButton(true);
-              _stopRecord().then((_) {
-                //TODO: Auto submit fot Test
-                //Activity Type = "test"
-                if (_prepareSimulatorTestProvider!.activityType == "test") {
-                  _startSubmitTest();
-                } else {
-                  //Activity Type = "homework"
-                  _setVisibleSaveTest(true);
-                }
-              });
+
+              //TODO: Auto submit fot Test
+              //Activity Type = "test"
+              if (_prepareSimulatorTestProvider!.activityType == "test") {
+                _startSubmitTest();
+              } else {
+                //Activity Type = "homework"
+                _setVisibleSaveTest(true);
+              }
               break;
             }
         }
@@ -813,15 +799,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return temp;
   }
 
-  Future<void> _stopRecord() async {
-    bool isRecording = await _recordController!.isRecording();
-
-    if (isRecording) {
-      _recordController!.stop();
-      _recordController!.dispose();
-    }
-  }
-
   void _calculateIndexOfHeader() {
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
@@ -850,8 +827,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _startRecordAnswer(
+  void _startRecordAnswer (
       {required String fileName, required bool isPart2}) async {
+    //Stop old record
+    await _stopRecord();
+
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -870,7 +850,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
     _countDown = _testRoomPresenter!
         .startCountDown(context: context, count: timeRecord, isPart2: isPart2);
+
     _setVisibleRecord(true, _countDown, fileName);
+
+    _recordAnswer(fileName);
   }
 
   void _setVisibleSaveTest(bool isVisible) {
@@ -901,19 +884,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
-    _stopRecord();
-
     //Reset count repeat
     _countRepeat = 0;
 
     //Enable repeat button
     _testProvider!.setEnableRepeatButton(true);
 
+    //Stop record
+    _setVisibleRecord(false, null, null);
+
     if (_testProvider!.isVisibleCueCard) {
       //Has cue card case
       if (isPart2) {
-        //Finish record answer for part2
-        _testProvider!.setVisibleRecord(false);
         _testProvider!.setVisibleCueCard(false);
 
         //Add question into List Question & show it
@@ -993,26 +975,32 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onPlayEndOfTakeNoteFile(String fileName) {
-    _initVideoController(
-      fileName: fileName,
-      handleWhenFinishType: HandleWhenFinish.cueCardVideoType,
-    );
+    if (false == _testProvider!.isLoadingVideo) {
+      _initVideoController(
+        fileName: fileName,
+        handleWhenFinishType: HandleWhenFinish.cueCardVideoType,
+      );
+    }
   }
 
   @override
   void onPlayEndOfTest(String fileName) {
-    _initVideoController(
-      fileName: fileName,
-      handleWhenFinishType: HandleWhenFinish.endOfTestVideoType,
-    );
+    if (false == _testProvider!.isLoadingVideo) {
+      _initVideoController(
+        fileName: fileName,
+        handleWhenFinishType: HandleWhenFinish.endOfTestVideoType,
+      );
+    }
   }
 
   @override
   void onPlayIntroduceFile(String fileName) {
-    _initVideoController(
-      fileName: fileName,
-      handleWhenFinishType: HandleWhenFinish.introVideoType,
-    );
+    if (false == _testProvider!.isLoadingVideo) {
+      _initVideoController(
+        fileName: fileName,
+        handleWhenFinishType: HandleWhenFinish.introVideoType,
+      );
+    }
   }
 
   @override
