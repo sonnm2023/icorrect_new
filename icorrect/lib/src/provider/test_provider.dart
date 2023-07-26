@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:video_player/video_player.dart';
@@ -14,7 +13,6 @@ class TestProvider with ChangeNotifier {
   @override
   void dispose() {
     isDisposed = true;
-    super.dispose();
   }
 
   @override
@@ -24,16 +22,10 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  //Cue card
-  Timer? _timerCueCard;
-  Timer get timerCueCard =>
-      _timerCueCard ?? Timer(const Duration(seconds: 0), () {});
-
   bool _isVisibleCueCard = false;
   bool get isVisibleCueCard => _isVisibleCueCard;
-  void setVisibleCueCard(bool visible, {required Timer? timer}) {
+  void setVisibleCueCard(bool visible) {
     _isVisibleCueCard = visible;
-    _timerCueCard = timer;
 
     if (!isDisposed) {
       notifyListeners();
@@ -64,24 +56,26 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  final List<TopicModel> _topicsList = [];
-  List<TopicModel> get topicsList => _topicsList;
-  void setTopicsList(List<TopicModel> list) {
-    _topicsQueue.clear();
-    _topicsQueue.addAll(list);
-  }
-
   final List<QuestionTopicModel> _questionList = [];
   List<QuestionTopicModel> get questionList => _questionList;
-  void addCurrentQuestionIntoList(QuestionTopicModel questionTopic) {
-    _questionList.add(questionTopic);
+  void addCurrentQuestionIntoList({
+    required QuestionTopicModel questionTopic,
+    required int repeatIndex,
+  }) {
+    QuestionTopicModel temp =
+        QuestionTopicModel().copyWith(questionTopicModel: questionTopic);
+    if (repeatIndex != 0) {
+      temp.content = "Ask for repeating the question!";
+      temp.repeatIndex = repeatIndex;
+    }
+    _questionList.add(temp);
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
-  void setQuestionsList(List<QuestionTopicModel> list) {
+  void setQuestionList(List<QuestionTopicModel> list) {
     _questionList.clear();
     _questionList.addAll(list);
     if (!isDisposed) {
@@ -89,25 +83,11 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  void clearQuestions() {
+  void clearQuestionList() {
     _questionList.clear();
     if (!isDisposed) {
       notifyListeners();
     }
-  }
-
-  final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
-  Queue<TopicModel> get topicsQueue => _topicsQueue;
-  void setTopicsQueue(Queue<TopicModel> queue) {
-    _topicsQueue.addAll(queue);
-  }
-
-  void removeTopicsQueueFirst() {
-    _topicsQueue.removeFirst();
-  }
-
-  void resetTopicsQueue() {
-    _topicsQueue.clear();
   }
 
   Timer? _countDownTimer;
@@ -135,53 +115,6 @@ class TestProvider with ChangeNotifier {
   QuestionTopicModel get currentQuestion => _currentQuestion;
   void setCurrentQuestion(QuestionTopicModel question) {
     _currentQuestion = question;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  final List<FileTopicModel> _answers = [];
-  List<FileTopicModel> get answers => _answers;
-  void addAnswer(FileTopicModel answer) {
-    _answers.add(answer);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void setAnswers(List<FileTopicModel> list) {
-    _answers.clear();
-    _answers.addAll(list);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void clearAnswers() {
-    _answers.clear();
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  bool _dialogShowing = false;
-  bool get dialogShowing => _dialogShowing;
-  void setDialogShowing(bool isShowing) {
-    _dialogShowing = isShowing;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  int _permissionDeniedTime = 0;
-  int get permissionDeniedTime => _permissionDeniedTime;
-  void setPermissionDeniedTime() {
-    _permissionDeniedTime++;
 
     if (!isDisposed) {
       notifyListeners();
@@ -274,25 +207,79 @@ class TestProvider with ChangeNotifier {
     }
   }
 
+  /*================================= Record =================================*/
+  bool _visibleRecord = false;
+  bool get visibleRecord => _visibleRecord;
+  void setVisibleRecord(bool isVisible) {
+    _visibleRecord = isVisible;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _timeRecord = 0;
+  int get timeRecord => _timeRecord;
+  void setTimeRecord(int seconds) {
+    _timeRecord = seconds;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _enableRepeatButton = true;
+  bool get enableRepeatButton => _enableRepeatButton;
+  void setEnableRepeatButton(bool enable) {
+    _enableRepeatButton = enable;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+  /*================================= Record =================================*/
+
+  final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
+  Queue<TopicModel> get topicsQueue => _topicsQueue;
+  void setTopicsQueue(Queue<TopicModel> queue) {
+    _topicsQueue.addAll(queue);
+  }
+
+  void removeTopicsQueueFirst() {
+    _topicsQueue.removeFirst();
+  }
+
+  void resetTopicsQueue() {
+    _topicsQueue.clear();
+  }
+
+  String? _strCountCueCard;
+  String get strCountCueCard => _strCountCueCard ?? '00:00';
+  void setCountDownCueCard(String strCount) {
+    _strCountCueCard = strCount;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   void resetAll() {
-    resetTopicsQueue();
+    _strCountCueCard = null;
+    _enableRepeatButton = true;
+    _visibleRecord = false;
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
     _isLoadingVideo = false;
     _isVisibleCueCard = false;
     _isRepeatVisible = true;
     _isVisibleSave = false;
-    setTopicsList([]);
-    clearQuestions();
-    resetTopicsQueue();
     _countRepeat = 0;
     _countDownTimer = null;
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
-    clearAnswers();
-    _dialogShowing = false;
-    _permissionDeniedTime = 0;
     _indexOfCurrentQuestion = 0;
     _isShowPlayVideoButton = true;
+    resetTopicsQueue();
+    clearQuestionList();
   }
 }

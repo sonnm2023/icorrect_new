@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
+import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class TestQuestionWidget extends StatelessWidget {
   const TestQuestionWidget({
     super.key,
-    required this.testPresenter,
+    required this.testRoomPresenter,
     required this.playAnswerCallBack,
     required this.playReAnswerCallBack,
     required this.showTipCallBack,
   });
 
-  final TestPresenter testPresenter;
+  final TestRoomPresenter testRoomPresenter;
   final Function(
           QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
       playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) playReAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,127 +44,132 @@ class TestQuestionWidget extends StatelessWidget {
             ),
           );
         } else {
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-            itemCount: testProvider.questionList.length,
-            itemBuilder: (BuildContext context, int index) {
-              //Header part 1
-              if (index == 0) {
-                return Column(
-                  children: [
-                    Container(
-                      color: AppColor.defaultLightGrayColor,
-                      height: 44,
-                      child: const ListTile(
-                        title: Center(
-                          child: Text(
-                            'Practice Part 1',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.defaultPurpleColor,
+          return Column(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                itemCount: testProvider.questionList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  //Header part 1
+                  if (index == 0) {
+                    return Column(
+                      children: [
+                        Container(
+                          color: AppColor.defaultLightGrayColor,
+                          height: 44,
+                          child: const ListTile(
+                            title: Center(
+                              child: Text(
+                                'Practice Part 1',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.defaultPurpleColor,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // The fist list item
-                    Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      child: _buildTestQuestionItem(
-                        context,
-                        testProvider.questionList.elementAt(index),
-                        index,
-                      ),
-                    ),
-                  ],
-                );
-              }
+                        // The fist list item
+                        Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: _buildTestQuestionItem(
+                            context,
+                            testProvider.questionList.elementAt(index),
+                            index,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
 
-              //Header part 2
-              if (testProvider.indexOfHeaderPart2 != 0 &&
-                  index == testProvider.indexOfHeaderPart2) {
-                return Column(
-                  children: [
-                    Container(
-                      color: AppColor.defaultLightGrayColor,
-                      height: 44,
-                      child: const ListTile(
-                        title: Center(
-                          child: Text(
-                            'Practice Part 2',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.defaultPurpleColor,
+                  //Header part 2
+                  if (testProvider.indexOfHeaderPart2 != 0 &&
+                      index == testProvider.indexOfHeaderPart2) {
+                    return Column(
+                      children: [
+                        Container(
+                          color: AppColor.defaultLightGrayColor,
+                          height: 44,
+                          child: const ListTile(
+                            title: Center(
+                              child: Text(
+                                'Practice Part 2',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.defaultPurpleColor,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // The fist list item
-                    Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      child: _buildTestQuestionItem(
-                        context,
-                        testProvider.questionList.elementAt(index),
-                        index,
-                      ),
-                    ),
-                  ],
-                );
-              }
+                        // The fist list item
+                        Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: _buildTestQuestionItem(
+                            context,
+                            testProvider.questionList.elementAt(index),
+                            index,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
 
-              //Header part 3
-              if (testProvider.indexOfHeaderPart3 != 0 &&
-                  index == testProvider.indexOfHeaderPart3) {
-                return Column(
-                  children: [
-                    Container(
-                      color: AppColor.defaultLightGrayColor,
-                      height: 44,
-                      child: const ListTile(
-                        title: Center(
-                          child: Text(
-                            'Practice Part 3',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.defaultPurpleColor,
+                  //Header part 3
+                  if (testProvider.indexOfHeaderPart3 != 0 &&
+                      index == testProvider.indexOfHeaderPart3) {
+                    return Column(
+                      children: [
+                        Container(
+                          color: AppColor.defaultLightGrayColor,
+                          height: 44,
+                          child: const ListTile(
+                            title: Center(
+                              child: Text(
+                                'Practice Part 3',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.defaultPurpleColor,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // The fist list item
-                    Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      child: _buildTestQuestionItem(
-                        context,
-                        testProvider.questionList.elementAt(index),
-                        index,
-                      ),
-                    ),
-                  ],
-                );
-              }
+                        // The fist list item
+                        Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: _buildTestQuestionItem(
+                            context,
+                            testProvider.questionList.elementAt(index),
+                            index,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
 
-              return Container(
-                margin: const EdgeInsets.only(top: 15),
-                child: _buildTestQuestionItem(
-                  context,
-                  testProvider.questionList.elementAt(index),
-                  index,
-                ),
-              );
-            },
+                  return Container(
+                    margin: const EdgeInsets.only(top: 15),
+                    child: _buildTestQuestionItem(
+                      context,
+                      testProvider.questionList.elementAt(index),
+                      index,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 60),
+            ],
           );
         }
       },
@@ -172,10 +180,18 @@ class TestQuestionWidget extends StatelessWidget {
       BuildContext context, QuestionTopicModel question, int index) {
     bool hasCueCard = false;
     String questionStr = question.content;
+
     if (question.cueCard.trim().isNotEmpty) {
       hasCueCard = true;
       questionStr = 'Answer of Part 2';
     }
+
+    PrepareSimulatorTestProvider prepareSimulatorTestProvider = Provider.of<PrepareSimulatorTestProvider>(context, listen: false);
+    bool hasReAnswer = false;
+    if (prepareSimulatorTestProvider.activityType == "homework") {
+      hasReAnswer = true;
+    }
+
 
     return Card(
       child: Column(
@@ -249,7 +265,7 @@ class TestQuestionWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        InkWell(
+                        if (hasReAnswer) InkWell(
                           onTap: () {
                             playReAnswerCallBack(question);
                           },
@@ -261,7 +277,7 @@ class TestQuestionWidget extends StatelessWidget {
                               fontSize: 15,
                             ),
                           ),
-                        ),
+                        ) else const SizedBox(),
                         Visibility(
                           visible: question.tips.isNotEmpty,
                           child: Row(

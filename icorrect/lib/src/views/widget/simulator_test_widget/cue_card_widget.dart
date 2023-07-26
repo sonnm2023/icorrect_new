@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
 
-class CueCardWidget extends StatelessWidget {
-  const CueCardWidget({super.key, required this.question});
+class CueCardWidget extends StatefulWidget {
+  const CueCardWidget({super.key});
 
-  final QuestionTopicModel question;
+  @override
+  State<CueCardWidget> createState() => _CueCardWidgetState();
+}
 
+class _CueCardWidgetState extends State<CueCardWidget> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
@@ -15,7 +17,7 @@ class CueCardWidget extends StatelessWidget {
 
     return Consumer<TestProvider>(
       builder: (context, testProvider, child) {
-        if (testProvider.isVisibleCueCard) {
+        if (testProvider.isVisibleCueCard && testProvider.currentQuestion.cueCard.isNotEmpty) {
           return Container(
             width: w,
             height: h,
@@ -39,7 +41,7 @@ class CueCardWidget extends StatelessWidget {
                   const SizedBox(height: 10),
                   Center(
                     child: Text(
-                      "testProvider.strCount", //TODO
+                      testProvider.strCountCueCard,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -49,7 +51,7 @@ class CueCardWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    question.content,
+                    testProvider.currentQuestion.content,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -62,7 +64,7 @@ class CueCardWidget extends StatelessWidget {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: Text(
-                        question.cueCard.trim(),
+                        testProvider.currentQuestion.cueCard.trim(),
                         textAlign: TextAlign.left,
                         style: const TextStyle(
                           fontSize: 16,
@@ -77,7 +79,7 @@ class CueCardWidget extends StatelessWidget {
             ),
           );
         } else {
-          return Container();
+          return const SizedBox();
         }
       },
     );

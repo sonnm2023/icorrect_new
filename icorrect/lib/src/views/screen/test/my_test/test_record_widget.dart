@@ -2,10 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:provider/provider.dart';
 
 class TestRecordWidget extends StatelessWidget {

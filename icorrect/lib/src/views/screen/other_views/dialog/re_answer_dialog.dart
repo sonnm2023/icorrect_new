@@ -1,12 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/presenters/test_presenter.dart';
+import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
@@ -19,9 +16,10 @@ class ReAnswerDialog extends Dialog {
   int _timeRecord = 30;
   late Record _record;
   final String _filePath = '';
-  final TestPresenter _testPresenter;
+  final TestRoomPresenter _testPresenter;
 
-  ReAnswerDialog(this._context, this._question, this._testPresenter, {super.key});
+  ReAnswerDialog(this._context, this._question, this._testPresenter,
+      {super.key});
 
   @override
   double? get elevation => 0;
@@ -86,8 +84,7 @@ class ReAnswerDialog extends Dialog {
                 _finishReAnswer();
               },
               style: ButtonStyle(
-                backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.green),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -122,21 +119,16 @@ class ReAnswerDialog extends Dialog {
   }
 
   void _startRecord() async {
-    String fileName = _question.files.first.url;
-    String filePath = await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+    String path = await Utils.getAudioPathToPlay(_question);
 
     if (await _record.hasPermission()) {
       await _record.start(
-        path: filePath,
+        path: path,
         encoder: AudioEncoder.wav,
         bitRate: 128000,
         samplingRate: 44100,
       );
     }
-
-    _question.answers = [
-      FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0})
-    ];
   }
 
   Timer _countDownTimer(BuildContext context, int count, bool isPart2) {

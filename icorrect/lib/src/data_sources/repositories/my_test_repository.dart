@@ -1,4 +1,3 @@
-import '../../models/simulator_test_models/question_topic_model.dart';
 import '../api_urls.dart';
 import 'app_repository.dart';
 import 'package:http/http.dart' as http;
