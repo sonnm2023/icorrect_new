@@ -901,6 +901,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
+    _stopRecord();
+
     //Reset count repeat
     _countRepeat = 0;
 
@@ -1054,7 +1056,4 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _startSubmitTest();
     }
   }
-
-
-
 }

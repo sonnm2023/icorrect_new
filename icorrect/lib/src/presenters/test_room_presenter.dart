@@ -214,17 +214,17 @@ class TestRoomPresenter {
 
     if (q.answers.isEmpty) return [];
 
-    if (q.answers.length == 1) {
-      return [MapEntry("answer_$suffix[0]", q.answers.first.url)];
-    } else {
+    // if (q.answers.length == 1) {
+    //   return [MapEntry("answer_$suffix[0]", q.answers.first.url)];
+    // } else {
       for (int i = 0; i < q.answers.length; i++) {
-        String prefix = "repeat";
-        if (i == q.answers.length - 1) {
-          prefix = "answer";
-        }
-        result.add(MapEntry("${prefix}_$suffix[$i]", q.answers[i].url));
+        // String prefix = "repeat";
+        // if (i == q.answers.length - 1) {
+        //   prefix = "answer";
+        // }
+        result.add(MapEntry("$suffix[$i]", q.answers[i].url));
       }
-    }
+    //}
 
     return result;
   }
@@ -289,27 +289,26 @@ class TestRoomPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        // File audioFile = File(
-        //   await FileStorageHelper.getFilePath(
-        //       q.answers.elementAt(i).url.toString(), MediaType.audio),
-        // );
-        //
-        // if (await audioFile.exists()) {
-        //   request.files
-        //       .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
-        // }
-
-        String fileName = await FileStorageHelper.getFilePath(
-          q.answers.elementAt(i).url,
-          MediaType.audio,
+        File audioFile = File(
+          await FileStorageHelper.getFilePath(
+              q.answers.elementAt(i).url.toString(), MediaType.audio),
         );
 
-        request.files.add(http.MultipartFile(
-          prefix,
-          File(fileName).readAsBytes().asStream(),
-          File(fileName).lengthSync(),
-          filename: fileName.split("/").last
-        ));
+        if (await audioFile.exists()) {
+          request.files
+              .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
+        }
+
+        // String fileName = await FileStorageHelper.getFilePath(
+        //   q.answers.elementAt(i).url,
+        //   MediaType.audio,
+        // );
+
+        // request.files.add(http.MultipartFile(
+        //     prefix,
+        //     File(fileName).readAsBytes().asStream(),
+        //     File(fileName).lengthSync(),
+        //     filename: fileName.split("/").last));
       }
     }
 
