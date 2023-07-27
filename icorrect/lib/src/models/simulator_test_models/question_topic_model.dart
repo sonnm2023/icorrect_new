@@ -90,17 +90,8 @@ class QuestionTopicModel {
     _content = json['content'];
     _type = json['type'];
     _topicId = json['topic_id'];
-
-    //TODO: for test view tips
-    // if (json['id'] == 1936) {
-    //   _tips = "This is a tips for testing!";
-    // } else {
-    //   _tips = json['tips'];
-    // }
-
     _tips = json['tips'];
     _tipType = json['tip_type'];
-
     _isFollowUp = json['is_follow_up'];
     _cueCard = json['cue_card'];
     _reAnswerCount = json['reanswer'];

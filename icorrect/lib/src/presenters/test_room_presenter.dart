@@ -14,27 +14,29 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 
 abstract class TestRoomViewContract {
   void onPlayIntroduceFile(String fileName);
-  void onNothingFileIntroduce();
-  void onNothingIntroduce();
   void onPlayEndOfTakeNoteFile(String fileName);
   void onPlayEndOfTest(String fileName);
+  void onCountDown(String countDownString);
+  void onCountDownForCueCard(String countDownString);
+  void onFinishAnswer(bool isPart2);
+  void onSubmitTestSuccess(String msg);
+  void onSubmitTestFail(String msg);
+  void onClickSaveTheTest();
+  void onFinishTheTest();
+
   void onNothingFileEndOfTest();
   void onNothingEndOfTest();
   void onNothingFileQuestion();
   void onNothingQuestion();
-  void onCountDown(String countDownString);
-  void onCountDownForCueCard(String countDownString);
-  void onFinishAnswer(bool isPart2);
   void onNothingFileEndOfTakeNote();
   void onNothingEndOfTakeNote();
-  void onSubmitTestSuccess(String msg);
-  void onSubmitTestFail(String msg);
-  void onClickSaveTheTest();
+  void onNothingFileIntroduce();
+  void onNothingIntroduce();
 }
 
 class TestRoomPresenter {
@@ -60,12 +62,10 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayIntroduceFile(file.url);
       } else {
-        //TODO:
-        //Download again
+        //TODO: Download again
       }
     } else {
-      //TODO:
-      //Download again
+      if (kDebugMode) print("This topic has not introduce file");
     }
   }
 
@@ -142,7 +142,7 @@ class TestRoomPresenter {
         //TODO: download again
       }
     } else {
-      //TODO: download again
+      if (kDebugMode) print("This topic has not end of take note file");
     }
   }
 
@@ -166,7 +166,8 @@ class TestRoomPresenter {
         //TODO: Download again
       }
     } else {
-      //TODO: Download again
+      //The test has not End of test file
+      _view!.onFinishTheTest();
     }
   }
 
@@ -290,17 +291,6 @@ class TestRoomPresenter {
           request.files
               .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
         }
-
-        // String fileName = await FileStorageHelper.getFilePath(
-        //   q.answers.elementAt(i).url,
-        //   MediaType.audio,
-        // );
-
-        // request.files.add(http.MultipartFile(
-        //     prefix,
-        //     File(fileName).readAsBytes().asStream(),
-        //     File(fileName).lengthSync(),
-        //     filename: fileName.split("/").last));
       }
     }
 

@@ -77,24 +77,32 @@ class SimulatorTestPresenter {
   void _prepareTopicList(TestDetailModel testDetail) {
     List<TopicModel> topicsList = [];
     //Introduce
-    testDetail.introduce.numPart = PartOfTest.introduce.get;
-    topicsList.add(testDetail.introduce);
+    if (0 != testDetail.introduce.id && testDetail.introduce.title.isNotEmpty) {
+      testDetail.introduce.numPart = PartOfTest.introduce.get;
+      topicsList.add(testDetail.introduce);
+    }
 
     //Part 1
-    for (int i = 0; i < testDetail.part1.length; i++) {
-      testDetail.part1[i].numPart = PartOfTest.part1.get;
+    if (testDetail.part1.isNotEmpty) {
+      for (int i = 0; i < testDetail.part1.length; i++) {
+        testDetail.part1[i].numPart = PartOfTest.part1.get;
+      }
+      topicsList.addAll(testDetail.part1);
     }
-    topicsList.addAll(testDetail.part1);
 
     //Part 2
-    testDetail.part2.numPart = PartOfTest.part2.get;
-    topicsList.add(testDetail.part2);
+    if (0 != testDetail.part2.id && testDetail.part2.title.isNotEmpty) {
+      testDetail.part2.numPart = PartOfTest.part2.get;
+      topicsList.add(testDetail.part2);
+    }
 
     //Part 3
-    if (testDetail.part3.questionList.isNotEmpty ||
-        testDetail.part3.fileEndOfTest.url.isNotEmpty) {
-      testDetail.part3.numPart = PartOfTest.part3.get;
-      topicsList.add(testDetail.part3);
+    if (0 != testDetail.part3.id && testDetail.part3.title.isNotEmpty) {
+      if (testDetail.part3.questionList.isNotEmpty ||
+          testDetail.part3.fileEndOfTest.url.isNotEmpty) {
+        testDetail.part3.numPart = PartOfTest.part3.get;
+        topicsList.add(testDetail.part3);
+      }
     }
 
     _view!.onSaveTopicListIntoProvider(topicsList);

@@ -300,7 +300,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSaveTopicListIntoProvider(List<TopicModel> list) {
-    list.sort((a, b) => a.numPart.compareTo(b.numPart));
     _prepareSimulatorTestProvider!.setTopicsList(list);
     Queue<TopicModel> queue = Queue<TopicModel>();
     queue.addAll(list);

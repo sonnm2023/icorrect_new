@@ -34,7 +34,10 @@ import 'package:video_player/video_player.dart';
 import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
-  const TestRoomWidget({super.key, required this.homeWorkModel, required this.simulatorTestPresenter});
+  const TestRoomWidget(
+      {super.key,
+      required this.homeWorkModel,
+      required this.simulatorTestPresenter});
 
   final HomeWorkModel homeWorkModel;
   final SimulatorTestPresenter simulatorTestPresenter;
@@ -391,7 +394,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _playNextQuestion() {
     _setIndexOfNextQuestion();
-    _startToPlayQuestion(needResetAnswerList: true);
+    _startToPlayQuestion();
   }
 
   void _setIndexOfNextQuestion() {
@@ -417,7 +420,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return topicModel;
   }
 
-  Future<void> _startToPlayQuestion({required bool needResetAnswerList}) async {
+  Future<void> _startToPlayQuestion() async {
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -432,14 +435,34 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (kDebugMode) {
         print("This part hasn't any question to playing");
       }
-      //TODO: part introduce and part 1
-      //_gotoNextPart()
-
-      //TODO: part 2
-      //_playEndOfTakeNote()
-
-      //TODO: part 3
-      _testRoomPresenter!.playEndOfTestFile(topicModel);
+      switch (topicModel.numPart) {
+        case 0:
+          {
+            //For introduce part
+            _playNextPart();
+            break;
+          }
+        case 1:
+          {
+            //For part 1
+            _playNextQuestion();
+            break;
+          }
+        case 2:
+          {
+            //For part 2
+            if (kDebugMode) {
+              print("onPlayEndOfTakeNoteFile(fileName)");
+            }
+            break;
+          }
+        case 3:
+          {
+            //For part 3
+            _testRoomPresenter!.playEndOfTestFile(topicModel);
+            break;
+          }
+      }
     } else {
       int index = _testProvider!.indexOfCurrentQuestion;
       if (index >= questionList.length) {
@@ -483,17 +506,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //No part for next play
     //Finish the test
     if (_testProvider!.topicsQueue.isEmpty) {
+      //TODO: Finish the test
       if (kDebugMode) {
-        print("_playNextPart: No part for next play");
+        _prepareToEndTheTest();
       }
+    } else {
+      _testRoomPresenter!.startPart(_testProvider!.topicsQueue);
     }
-
-    _testRoomPresenter!.startPart(_testProvider!.topicsQueue);
   }
 
   void _playNextFollowup() {
     _setIndexOfNextFollowUp();
-    _startToPlayFollowup(needResetAnswerList: true);
+    _startToPlayFollowup();
   }
 
   void _repeatPlayCurrentFollowup() {
@@ -502,10 +526,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _testProvider!.setEnableRepeatButton(false);
     }
 
-    _startToPlayFollowup(needResetAnswerList: false);
+    _startToPlayFollowup();
   }
 
-  Future<void> _startToPlayFollowup({required bool needResetAnswerList}) async {
+  Future<void> _startToPlayFollowup() async {
     TopicModel? topicModel = _getCurrentPart();
 
     if (null == topicModel) {
@@ -522,14 +546,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         print("This part hasn't any followup to playing");
       }
       _testProvider!.setFinishPlayFollowUp(true);
-      _startToPlayQuestion(needResetAnswerList: true);
+      _startToPlayQuestion();
     } else {
       _testProvider!.resetIndexOfCurrentQuestion();
 
       int index = _testProvider!.indexOfCurrentFollowUp;
       if (index >= followUpList.length) {
         _testProvider!.setFinishPlayFollowUp(true);
-        _startToPlayQuestion(needResetAnswerList: true);
+        _startToPlayQuestion();
       } else {
         QuestionTopicModel question = followUpList.elementAt(index);
         question.numPart = topicModel.numPart;
@@ -558,7 +582,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _testProvider!.setEnableRepeatButton(false);
     }
 
-    _startToPlayQuestion(needResetAnswerList: false);
+    _startToPlayQuestion();
   }
 
   bool _checkExist(QuestionTopicModel question) {
@@ -734,9 +758,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               TopicModel? topicModel = _getCurrentPart();
               if (null != topicModel) {
                 if (topicModel.numPart == PartOfTest.part3.get) {
-                  _startToPlayFollowup(needResetAnswerList: true);
+                  _startToPlayFollowup();
                 } else {
-                  _startToPlayQuestion(needResetAnswerList: true);
+                  _startToPlayQuestion();
                 }
               }
               break;
@@ -756,20 +780,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             }
           case HandleWhenFinish.endOfTestVideoType:
             {
-              //Finish doing test
-              _testProvider!.setIsShowPlayVideoButton(true);
-
-              //Auto submit test for activity type = test
-              if (_prepareSimulatorTestProvider!.activityType == "test") {
-                _startSubmitTest();
-              } else {
-                //Activity Type = "homework"
-                _setVisibleSaveTest(true);
-              }
+              _prepareToEndTheTest();
               break;
             }
         }
       }
+    }
+  }
+
+  void _prepareToEndTheTest() {
+    //Finish doing test
+    _testProvider!.setIsShowPlayVideoButton(true);
+
+    //Auto submit test for activity type = test
+    if (_prepareSimulatorTestProvider!.activityType == "test") {
+      _startSubmitTest();
+    } else {
+      //Activity Type = "homework"
+      _setVisibleSaveTest(true);
     }
   }
 
@@ -1043,5 +1071,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (false == _prepareSimulatorTestProvider!.isSubmitting) {
       _startSubmitTest();
     }
+  }
+
+  @override
+  void onFinishTheTest() {
+    _prepareToEndTheTest();
   }
 }

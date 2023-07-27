@@ -274,16 +274,12 @@ class Utils {
   static int getRecordTime(int type) {
     switch (type) {
       case 0: //Answer for question in introduce
-        // return 1; //For test
         return 30;
       case 1: //Answer for question in part 1
-        // return 1; //For test
         return 30;
       case 2: //Answer for question in part 2
-        // return 10; //For test
         return 120;
       case 3: //Answer for question in part 3
-        // return 3; //For test
         return 45;
       default:
         return 0;
