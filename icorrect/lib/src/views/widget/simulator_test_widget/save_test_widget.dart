@@ -22,7 +22,7 @@ class SaveTheTestWidget extends StatelessWidget {
               Container(
                 width: double.infinity,
                 height: 60,
-                color: Colors.blueAccent,
+                color: AppColor.defaultPurpleColor,
                 child: ElevatedButton(
                   onPressed: () {
                     testRoomPresenter.clickSaveTheTest();

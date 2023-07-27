@@ -15,6 +15,7 @@ import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test_new/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
@@ -88,6 +89,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _backButtonTapped() {
+    //Disable back button when submitting test
+    if (_prepareSimulatorTestProvider!.isSubmitting) {
+      return;
+    }
+
     if (_prepareSimulatorTestProvider!.isDoingTest) {
       showDialog(
         context: context,
@@ -145,7 +151,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           children: [
             ChangeNotifierProvider(
               create: (_) => TestProvider(),
-              child: TestRoomWidget(homeWorkModel: widget.homeWorkModel),
+              child: TestRoomWidget(
+                homeWorkModel: widget.homeWorkModel,
+                simulatorTestPresenter: _simulatorTestPresenter!,
+              ),
             ),
             Visibility(
               visible: provider.isSubmitting,
@@ -306,5 +315,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onAlertNextStep(String keyInfo) {
     // TODO: implement onAlertNextStep
+  }
+
+  @override
+  void onGotoMyTestScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MyTestScreen(
+          homeWorkModel: widget.homeWorkModel,
+          isFromSimulatorTest: true,
+        ),
+      ),
+    );
   }
 }

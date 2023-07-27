@@ -13,6 +13,7 @@ import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
@@ -33,9 +34,10 @@ import 'package:video_player/video_player.dart';
 import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
-  const TestRoomWidget({super.key, required this.homeWorkModel});
+  const TestRoomWidget({super.key, required this.homeWorkModel, required this.simulatorTestPresenter});
 
   final HomeWorkModel homeWorkModel;
+  final SimulatorTestPresenter simulatorTestPresenter;
 
   @override
   State<TestRoomWidget> createState() => _TestRoomWidgetState();
@@ -99,7 +101,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               fit: BoxFit.cover,
             ),
           ),
-          child: VideoPlayerWidget(playVideo: _playVideo), //TODO
+          child: VideoPlayerWidget(playVideo: _playVideo),
         ),
         Expanded(
           child: Stack(
@@ -160,7 +162,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
-    _disposeRecordController();
+    await _stopRecord();
+    await _recordController!.dispose();
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -181,11 +184,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _testProvider!.dispose();
       }
     }
-  }
-
-  void _disposeRecordController() async {
-    await _stopRecord();
-    await _recordController!.dispose();
   }
 
   void _playAnswerCallBack(
@@ -445,9 +443,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     } else {
       int index = _testProvider!.indexOfCurrentQuestion;
       if (index >= questionList.length) {
-        //TODO: We played all questions of current part
-        //TODO: _playNextPart
-        //If current part is part 3 ==> to play end_of_test
+        /*
+        We played all questions of current part
+        _playNextPart
+        If current part is part 3 ==> to play end_of_test
+        */
         if (topicModel.numPart == PartOfTest.part3.get) {
           _testRoomPresenter!.playEndOfTestFile(topicModel);
         } else {
@@ -704,7 +704,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 _testProvider!.setVisibleRecord(false);
                 _testProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 10; //For test 10, product 60 //TODO
+                int time = 3; //3 for test, 60 for product
                 String timeString = Utils.getTimeRecordString(time);
                 _testProvider!.setCountDownCueCard(timeString);
 
@@ -759,8 +759,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               //Finish doing test
               _testProvider!.setIsShowPlayVideoButton(true);
 
-              //TODO: Auto submit fot Test
-              //Activity Type = "test"
+              //Auto submit test for activity type = test
               if (_prepareSimulatorTestProvider!.activityType == "test") {
                 _startSubmitTest();
               } else {
@@ -827,7 +826,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _startRecordAnswer (
+  void _startRecordAnswer(
       {required String fileName, required bool isPart2}) async {
     //Stop old record
     await _stopRecord();
@@ -858,6 +857,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _setVisibleSaveTest(bool isVisible) {
     _testProvider!.setVisibleSaveTheTest(isVisible);
+  }
+
+  void _finishSubmitTest(String msg) {
+    _prepareSimulatorTestProvider!.setIsSubmitting(false);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.error,
+    );
+
+    if (_prepareSimulatorTestProvider!.activityType == "test") {
+      _gotoMyTestScreen();
+    } else {
+      //TODO: Can reviewing
+    }
+  }
+
+  void _gotoMyTestScreen() {
+    widget.simulatorTestPresenter.gotoMyTestScreen();
   }
 
   @override
@@ -1008,24 +1026,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (mounted) {
       _testProvider!.setCountDownCueCard(countDownString);
     }
-  }
-
-  void _finishSubmitTest(String msg) {
-    _prepareSimulatorTestProvider!.setIsSubmitting(false);
-
-    showToastMsg(
-      msg: msg,
-      toastState: ToastStatesType.error,
-    );
-
-    //TODO: go to my_test screen
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => MyTestScreen(
-          homeWorkModel: widget.homeWorkModel,
-        ),
-      ),
-    );
   }
 
   @override

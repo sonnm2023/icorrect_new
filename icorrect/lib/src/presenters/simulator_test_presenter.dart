@@ -26,6 +26,7 @@ abstract class SimulatorTestViewContract {
       double percent, int index, int total);
   void onDownloadFailure(AlertInfo info);
   void onSaveTopicListIntoProvider(List<TopicModel> list);
+  void onGotoMyTestScreen();
 }
 
 class SimulatorTestPresenter {
@@ -227,5 +228,9 @@ class SimulatorTestPresenter {
   void clickSaveTheTest() {
     //TODO: Submit homework
     if (kDebugMode) print("clickSaveTheTest");
+  }
+
+  void gotoMyTestScreen() {
+    _view!.onGotoMyTestScreen();
   }
 }
