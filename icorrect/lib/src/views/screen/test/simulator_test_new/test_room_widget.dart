@@ -351,6 +351,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    //Stop record
+    _setVisibleRecord(false, null, null);
+    
     _countRepeat++;
 
     //Add question into List Question & show it
