@@ -148,9 +148,17 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _currentTestDetail = testDetailModel;
   }
 
+  final List<String> _answerList = [];
+  List<String> get answerList => _answerList;
+  void setAnswerList(List<String> list) {
+    _answerList.clear();
+    _answerList.addAll(list);
+  }
+
 
 
   void resetAll() {
+    _answerList.clear();
     _currentTestDetail = TestDetailModel();
     _isSubmitting = false;
     _activityType = '';

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -118,7 +119,31 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _okButtonTapped() {
-    Navigator.of(context).pop();
+    _deleteAllAnswer().then((value) {
+      Navigator.of(context).pop();
+    });
+  }
+
+  Future<void> _deleteAllAnswer() async {
+    List<String> answers = _prepareSimulatorTestProvider!.answerList;
+
+    if (answers.isEmpty) return;
+    
+    for (String answer in answers) {
+      FileStorageHelper.deleteFile(
+              answer,
+              MediaType.audio,
+              _prepareSimulatorTestProvider!.currentTestDetail.testId
+                  .toString())
+          .then((value) {
+        if (false == value) {
+          showToastMsg(
+            msg: "Can not delete files!",
+            toastState: ToastStatesType.warning,
+          );
+        }
+      });
+    }
   }
 
   Widget _buildBody() {

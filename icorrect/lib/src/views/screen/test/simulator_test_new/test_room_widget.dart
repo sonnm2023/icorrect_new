@@ -23,7 +23,6 @@ import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
-import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
@@ -241,7 +240,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }) async {
     _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-    String path = await Utils.getAudioPathToPlay(question);
+    String path = await Utils.getAudioPathToPlay(question,
+        _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
     _playAudio(path, question.id.toString());
   }
 
@@ -353,7 +353,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
     //Stop record
     _setVisibleRecord(false, null, null);
-    
+
     _countRepeat++;
 
     //Add question into List Question & show it
@@ -666,16 +666,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _recordAnswer(String fileName) async {
+    String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
+    String path = await FileStorageHelper.getFilePath(
+        newFileName,
+        MediaType.audio,
+        _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
+
     if (kDebugMode) {
-      print("RECORD AS FILE PATH: $fileName");
+      print("RECORD AS FILE PATH: $path");
     }
 
-    String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
-    String path =
-        await FileStorageHelper.getFilePath(newFileName, MediaType.audio);
-
     if (await _recordController!.hasPermission()) {
-      if (kDebugMode) print("Record start");
       await _recordController!.start(
         path: path,
         encoder: AudioEncoder.wav,
@@ -707,6 +708,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<String> _createLocalAudioFileName(String origin) async {
+    if (kDebugMode) {
+      print("Current Question: ${_currentQuestion!.content}");
+      print("Current Question id: ${_currentQuestion!.id}");
+    }
+
     String fileName = "";
     final splitted = origin.split('.');
     if (_countRepeat > 0) {
@@ -794,6 +800,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _prepareToEndTheTest() {
     //Finish doing test
     _testProvider!.setIsShowPlayVideoButton(true);
+
+    //Save answer list into prepare_simulator_test_provider
+    List<String> temp = _prepareAnswerListForDelete();
+    _prepareSimulatorTestProvider!.setAnswerList(temp);
 
     //Auto submit test for activity type = test
     if (_prepareSimulatorTestProvider!.activityType == "test") {
@@ -907,6 +917,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _gotoMyTestScreen() {
     widget.simulatorTestPresenter.gotoMyTestScreen();
+  }
+
+  //For test: Delete All Answer file
+  List<String> _prepareAnswerListForDelete() {
+    if (_reviewingList.isEmpty) return [];
+    List<String> temp = [];
+
+    for (int i = 0; i < _reviewingList.length; i++) {
+      dynamic item = _reviewingList[i];
+      if (item is QuestionTopicModel) {
+        for (int j = 0; j < item.answers.length; j++) {
+          String answerFileName = item.answers[j].url;
+          temp.add(answerFileName);
+        }
+      }
+    }
+
+    return temp;
   }
 
   @override

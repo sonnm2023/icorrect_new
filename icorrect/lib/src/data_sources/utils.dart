@@ -244,7 +244,7 @@ class Utils {
         await FileStorageHelper.readVideoFromFile(fileName, MediaType.video);
     Uint8List decodedBytes = base64.decode(bs4str);
     String filePath =
-        await FileStorageHelper.getFilePath(fileName, MediaType.video);
+        await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
 
     if (decodedBytes.isEmpty) {
       //From second time and before
@@ -256,13 +256,13 @@ class Utils {
     return decodedVideoFile;
   }
 
-  static Future<File> prepareAudioFile(String fileName) async {
+  static Future<File> prepareAudioFile(String fileName, String? testId) async {
     File decodedVideoFile;
     String bs4str =
         await FileStorageHelper.readVideoFromFile(fileName, MediaType.audio);
     Uint8List decodedBytes = base64.decode(bs4str);
     String filePath =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
     if (decodedBytes.isEmpty) {
       decodedVideoFile = File(filePath);
     } else {
@@ -316,7 +316,7 @@ class Utils {
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
 
-  static Future<String> getAudioPathToPlay(QuestionTopicModel question) async {
+  static Future<String> getAudioPathToPlay(QuestionTopicModel question, String? testId) async {
     String fileName = '';
     if (question.answers.length > 1) {
       if (question.repeatIndex == 0) {
@@ -328,7 +328,7 @@ class Utils {
       fileName = question.answers.first.url;
     }
     String path =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio);
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
     return path;
   }
 

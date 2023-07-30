@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
+import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -119,7 +121,9 @@ class ReAnswerDialog extends Dialog {
   }
 
   void _startRecord() async {
-    String path = await Utils.getAudioPathToPlay(_question);
+    String testId = Provider.of<PrepareSimulatorTestProvider>(_context, listen: false).currentTestDetail.testId.toString();
+
+    String path = await Utils.getAudioPathToPlay(_question, testId);
 
     if (await _record.hasPermission()) {
       await _record.start(

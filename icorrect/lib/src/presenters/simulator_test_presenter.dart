@@ -136,8 +136,8 @@ class SimulatorTestPresenter {
   }
 
   //Check file is exist using file_storage
-  Future<bool> _isExist(String fileName, MediaType mediaType) async {
-    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType);
+  Future<bool> _isExist(String fileName, MediaType mediaType, String? testId) async {
+    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType, testId);
     return isExist;
   }
 
@@ -192,7 +192,7 @@ class SimulatorTestPresenter {
       if (filesTopic.isNotEmpty) {
         String fileType = Utils.fileType(fileTopic);
         if (fileType.isNotEmpty &&
-            !await _isExist(fileTopic, MediaType.video)) {
+            !await _isExist(fileTopic, MediaType.video, null)) { //TODO
           try {
             http.Response response = await _sendRequest(fileNameForDownload);
 

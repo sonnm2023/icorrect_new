@@ -191,7 +191,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
     for (var q in questions) {
       String fileName = q.answers.last.url.toString();
-      FileStorageHelper.deleteFile(fileName, MediaType.audio);
+      FileStorageHelper.deleteFile(fileName, MediaType.audio, null); //TODO
     }
   }
 }
