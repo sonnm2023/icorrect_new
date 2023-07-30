@@ -800,10 +800,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _prepareToEndTheTest() {
     //Finish doing test
     _testProvider!.setIsShowPlayVideoButton(true);
+    _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
 
     //Save answer list into prepare_simulator_test_provider
     List<String> temp = _prepareAnswerListForDelete();
     _prepareSimulatorTestProvider!.setAnswerList(temp);
+    List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+    _prepareSimulatorTestProvider!.setQuestionList(questions);
 
     //Auto submit test for activity type = test
     if (_prepareSimulatorTestProvider!.activityType == "test") {
@@ -815,8 +818,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest() {
-    _prepareSimulatorTestProvider!.setIsSubmitting(true);
+    // _prepareSimulatorTestProvider!.setIsSubmitting(true);
+    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+
     _testRoomPresenter!.submitTest(
       testId:
           _prepareSimulatorTestProvider!.currentTestDetail.testId.toString(),
@@ -900,8 +906,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _testProvider!.setVisibleSaveTheTest(isVisible);
   }
 
-  void _finishSubmitTest(String msg) {
-    _prepareSimulatorTestProvider!.setIsSubmitting(false);
+  void _finishSubmitTest(String msg, SubmitStatus status) {
+    // _prepareSimulatorTestProvider!.setIsSubmitting(false);
+    _prepareSimulatorTestProvider!.updateSubmitStatus(status);
 
     showToastMsg(
       msg: msg,
@@ -1089,17 +1096,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onSubmitTestFail(String msg) {
-    _finishSubmitTest(msg);
+    _finishSubmitTest(msg, SubmitStatus.fail);
   }
 
   @override
   void onSubmitTestSuccess(String msg) {
-    _finishSubmitTest(msg);
+    _finishSubmitTest(msg, SubmitStatus.success);
   }
 
   @override
   void onClickSaveTheTest() {
-    if (false == _prepareSimulatorTestProvider!.isSubmitting) {
+    // if (false == _prepareSimulatorTestProvider!.isSubmitting) {
+    if (SubmitStatus.none == _prepareSimulatorTestProvider!.submitStatus) {
       _startSubmitTest();
     }
   }

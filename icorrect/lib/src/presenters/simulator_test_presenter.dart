@@ -27,6 +27,8 @@ abstract class SimulatorTestViewContract {
   void onDownloadFailure(AlertInfo info);
   void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onGotoMyTestScreen();
+  void onSubmitTestSuccess(String msg);
+  void onSubmitTestFail(String msg);
 }
 
 class SimulatorTestPresenter {
@@ -241,4 +243,137 @@ class SimulatorTestPresenter {
   void gotoMyTestScreen() {
     _view!.onGotoMyTestScreen();
   }
+
+  Future<void> submitTest({
+    required String testId,
+    required String activityId,
+    required List<QuestionTopicModel> questions,
+  }) async {
+    assert(_view != null && _testRepository != null);
+
+    http.MultipartRequest multiRequest = await _formDataRequest(
+      testId: testId,
+      activityId: activityId,
+      questions: questions,
+    );
+
+    if (kDebugMode) {
+      print(multiRequest.fields[testId]);
+      print(multiRequest.fields[activityId]);
+    }
+
+    try {
+      _testRepository!.submitTest(multiRequest).then((value) {
+        Map<String, dynamic> json = jsonDecode(value) ?? {};
+        if (json['error_code'] == 200) {
+          _view!.onSubmitTestSuccess('Save your answers successfully!');
+        } else {
+          _view!.onSubmitTestFail("Has an error when submit this test!");
+        }
+      }).catchError((onError) =>
+          // ignore: invalid_return_type_for_catch_error
+          _view!.onSubmitTestFail("Has an error when submit this test!"));
+    } on TimeoutException {
+      _view!.onSubmitTestFail("Has an error when submit this test!");
+    } on SocketException {
+      _view!.onSubmitTestFail("Has an error when submit this test!");
+    } on http.ClientException {
+      _view!.onSubmitTestFail("Has an error when submit this test!");
+    }
+  }
+
+
+  Future<http.MultipartRequest> _formDataRequest({
+    required String testId,
+    required String activityId,
+    required List<QuestionTopicModel> questions,
+  }) async {
+    String url = submitHomeWorkEP();
+    http.MultipartRequest request =
+        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+    });
+
+    Map<String, String> formData = {};
+
+    formData.addEntries([MapEntry('test_id', testId)]);
+    formData.addEntries([MapEntry('activity_id', activityId)]);
+
+    if (Platform.isAndroid) {
+      formData.addEntries([const MapEntry('os', "android")]);
+    } else {
+      formData.addEntries([const MapEntry('os', "ios")]);
+    }
+    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+
+    for (QuestionTopicModel q in questions) {
+      String part = '';
+      switch (q.numPart) {
+        case 0:
+          {
+            part = "introduce";
+            break;
+          }
+        case 1:
+          {
+            part = "part1";
+            break;
+          }
+        case 2:
+          {
+            part = "part2";
+            break;
+          }
+        case 3:
+          {
+            part = "part3";
+            if (q.isFollowUp == 1) {
+              part = "followup";
+            }
+            break;
+          }
+      }
+
+      String prefix = "$part[${q.id}]";
+
+      List<MapEntry<String, String>> temp = _generateFormat(q, prefix);
+      if (temp.isNotEmpty) {
+        formData.addEntries(temp);
+      }
+
+      for (int i = 0; i < q.answers.length; i++) {
+        File audioFile = File(
+          await FileStorageHelper.getFilePath(
+              q.answers.elementAt(i).url.toString(),
+              MediaType.audio,
+              testId),
+        );
+
+        if (await audioFile.exists()) {
+          request.files
+              .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
+        }
+      }
+    }
+
+    request.fields.addAll(formData);
+
+    return request;
+  }
+  
+  List<MapEntry<String, String>> _generateFormat(
+      QuestionTopicModel q, String suffix) {
+    List<MapEntry<String, String>> result = [];
+
+    if (q.answers.isEmpty) return [];
+
+    for (int i = 0; i < q.answers.length; i++) {
+      result.add(MapEntry("$suffix[$i]", q.answers[i].url));
+    }
+
+    return result;
+  }
+
 }

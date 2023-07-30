@@ -58,6 +58,25 @@ enum PartOfTest {
   final int get;
 }
 
+enum DoingStatus {
+  none(-1),
+  doing(0),
+  finish(1);
+
+  const DoingStatus(this.get);
+  final int get;
+}
+
+enum SubmitStatus {
+  none(-1),
+  success(0),
+  fail(1),
+  submitting(2);
+
+  const SubmitStatus(this.get);
+  final int get;
+}
+
 enum Alert {
   networkError({
     Alert.cancelTitle: 'Exit',

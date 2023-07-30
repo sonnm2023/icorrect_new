@@ -89,46 +89,111 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  void _backButtonTapped() {
+  void _backButtonTapped() async {
     //Disable back button when submitting test
-    if (_prepareSimulatorTestProvider!.isSubmitting) {
+    if (_prepareSimulatorTestProvider!.submitStatus ==
+        SubmitStatus.submitting) {
+      if (kDebugMode) {
+        print("Status is submitting!");
+      }
       return;
     }
 
-    if (_prepareSimulatorTestProvider!.isDoingTest) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return ConfirmDialogWidget(
-            title: "Notification",
-            message: "The test is not completed! Are you sure to quit?",
-            cancelButtonTitle: "Cancel",
-            okButtonTitle: "OK",
-            cancelButtonTapped: _cancelButtonTapped,
-            okButtonTapped: _okButtonTapped,
+    switch (_prepareSimulatorTestProvider!.doingStatus.get) {
+      case -1:
+        {
+          //None
+          if (kDebugMode) {
+            print("Status is not start to do the test!");
+          }
+          Navigator.of(context).pop();
+          break;
+        }
+      case 0:
+        {
+          //Doing
+          if (kDebugMode) {
+            print("Status is doing the test!");
+          }
+
+          bool okButtonTapped = false;
+
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ConfirmDialogWidget(
+                title: "Notification",
+                message: "The test is not completed! Are you sure to quit?",
+                cancelButtonTitle: "Cancel",
+                okButtonTitle: "OK",
+                cancelButtonTapped: () {
+                  if (kDebugMode) print("_cancelButtonTapped");
+                },
+                okButtonTapped: () {
+                  okButtonTapped = true;
+                  _deleteAllAnswer();
+                },
+              );
+            },
           );
-        },
-      );
-    } else {
-      Navigator.of(context).pop();
+
+          if (okButtonTapped) {
+            Navigator.of(context).pop();
+          }
+
+          break;
+        }
+      case 1:
+        {
+          //Finish
+          if (kDebugMode) {
+            print("Status is finish doing the test!");
+          }
+
+          bool cancelButtonTapped = false;
+
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ConfirmDialogWidget(
+                title: "Notification",
+                message: "Do you want to save this test before quit?",
+                cancelButtonTitle: "Don't Save",
+                okButtonTitle: "Save",
+                cancelButtonTapped: () {
+                  cancelButtonTapped = true;
+                  _deleteAllAnswer();
+                },
+                okButtonTapped: () {
+                  //Submit
+                  _prepareSimulatorTestProvider!
+                      .updateSubmitStatus(SubmitStatus.submitting);
+                  _simulatorTestPresenter!.submitTest(
+                    testId: _prepareSimulatorTestProvider!
+                        .currentTestDetail.testId
+                        .toString(),
+                    activityId: widget.homeWorkModel.id.toString(),
+                    questions: _prepareSimulatorTestProvider!.questionList,
+                  );
+                },
+              );
+            },
+          );
+
+          if (cancelButtonTapped) {
+            Navigator.of(context).pop();
+          }
+
+          break;
+        }
     }
-  }
-
-  void _cancelButtonTapped() {
-    if (kDebugMode) print("_cancelButtonTapped");
-  }
-
-  void _okButtonTapped() {
-    _deleteAllAnswer().then((value) {
-      Navigator.of(context).pop();
-    });
   }
 
   Future<void> _deleteAllAnswer() async {
     List<String> answers = _prepareSimulatorTestProvider!.answerList;
 
     if (answers.isEmpty) return;
-    
+
     for (String answer in answers) {
       FileStorageHelper.deleteFile(
               answer,
@@ -182,7 +247,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               ),
             ),
             Visibility(
-              visible: provider.isSubmitting,
+              visible: provider.submitStatus == SubmitStatus.submitting,
               child: const DefaultLoadingIndicator(
                 color: AppColor.defaultPurpleColor,
               ),
@@ -263,7 +328,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Hide Loading view
     _prepareSimulatorTestProvider!.setDownloadingStatus(false);
 
-    _prepareSimulatorTestProvider!.setIsDoingTest(true);
+    _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
   }
 
   @override
@@ -351,5 +416,31 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         ),
       ),
     );
+  }
+
+  @override
+  void onSubmitTestFail(String msg) {
+    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.error,
+    );
+
+    //Go to MyTest Screen
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void onSubmitTestSuccess(String msg) {
+    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.success,
+    );
+
+    //Go to MyTest Screen
+    _simulatorTestPresenter!.gotoMyTestScreen();
   }
 }

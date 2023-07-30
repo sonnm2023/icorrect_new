@@ -1,6 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
@@ -89,10 +91,14 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isDoingTest = false;
-  bool get isDoingTest => _isDoingTest;
-  void setIsDoingTest(bool isDoingTest) {
-    _isDoingTest = isDoingTest;
+  DoingStatus _doingStatus = DoingStatus.none;
+  DoingStatus get doingStatus => _doingStatus;
+  void updateDoingStatus(DoingStatus status) {
+    _doingStatus = status;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   final List<TopicModel> _topicsList = [];
@@ -132,10 +138,10 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _activityType = type;
   }
 
-  bool _isSubmitting = false;
-  bool get isSubmitting => _isSubmitting;
-  void setIsSubmitting(bool isSubmitting) {
-    _isSubmitting = isSubmitting;
+  SubmitStatus _submitStatus = SubmitStatus.none;
+  SubmitStatus get submitStatus => _submitStatus;
+  void updateSubmitStatus(SubmitStatus status) {
+    _submitStatus = status;
 
     if (!isDisposed) {
       notifyListeners();
@@ -155,12 +161,23 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _answerList.addAll(list);
   }
 
+final List<QuestionTopicModel> _questionList = [];
+  List<QuestionTopicModel> get questionList => _questionList;
+  void setQuestionList(List<QuestionTopicModel> list) {
+    _questionList.clear();
+    _questionList.addAll(list);
+  }
+
+  void clearQuestionList() {
+    _questionList.clear();
+  }
 
 
   void resetAll() {
     _answerList.clear();
     _currentTestDetail = TestDetailModel();
-    _isSubmitting = false;
+    _doingStatus = DoingStatus.none;
+    _submitStatus = SubmitStatus.none;
     _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;
@@ -172,5 +189,6 @@ class PrepareSimulatorTestProvider with ChangeNotifier {
     _downloadingPercent = 0.0;
     resetTopicsList();
     resetTopicsQueue();
+    clearQuestionList();
   }
 }
