@@ -26,7 +26,8 @@ enum HandleWhenFinish {
   questionVideoType,
   followupVideoType,
   endOfTestVideoType,
-  reviewingVideoType
+  reviewingVideoType,
+  reviewingPlayTheQuestionType,
 }
 
 enum Status {

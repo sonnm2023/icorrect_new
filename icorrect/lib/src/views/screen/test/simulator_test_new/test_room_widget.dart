@@ -63,6 +63,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   QuestionTopicModel? _currentQuestion;
   int _countRepeat = 0;
   final List<dynamic> _reviewingList = [];
+  List<dynamic> _reviewingQuestionList = [];
 
   @override
   void initState() {
@@ -247,28 +248,33 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.getAudioPathToPlay(question,
         _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
-    _playAudio(path, question.id.toString(), false);
+    _playAudio(path);
   }
 
-  Future<void> _playAudio(
-      String audioPath, String questionId, bool isReviewingProcess) async {
-    if (isReviewingProcess) {
+  Future<void> _playAnswerAudio(
+      String audioPath, QuestionTopicModel question) async {
+    if (kDebugMode) {
+      print(
+          "Reviewing current index = ${_testProvider!.reviewingCurrentIndex} -- play answer");
+    }
+
+    await _audioPlayerController!.play(DeviceFileSource(audioPath));
+    await _audioPlayerController!.setVolume(2.5);
+    _audioPlayerController!.onPlayerComplete.listen((event) {
+      _reviewingProcess();
+    });
+  }
+
+  Future<void> _playAudio(String audioPath) async {
+    try {
       await _audioPlayerController!.play(DeviceFileSource(audioPath));
-        await _audioPlayerController!.setVolume(2.5);
-        _audioPlayerController!.onPlayerComplete.listen((event) {
-          _continueReviewing();
-        });
-    } else {
-      try {
-        await _audioPlayerController!.play(DeviceFileSource(audioPath));
-        await _audioPlayerController!.setVolume(2.5);
-        _audioPlayerController!.onPlayerComplete.listen((event) {
-          _playAnswerProvider!.resetSelectedQuestionIndex();
-        });
-      } on PlatformException catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
+      await _audioPlayerController!.setVolume(2.5);
+      _audioPlayerController!.onPlayerComplete.listen((event) {
+        _playAnswerProvider!.resetSelectedQuestionIndex();
+      });
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print(e);
       }
     }
   }
@@ -404,40 +410,54 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _startReviewing() {
-    _testProvider!.resetReviewingCurrentIndex();
-    dynamic item = _reviewingList[_testProvider!.reviewingCurrentIndex];
+  void _startReviewing() async {
+    //Reset current question
+    _currentQuestion = null;
+
+    _reviewingQuestionList = _prepareQuestionListForReviewing();
+
+    dynamic item = _reviewingQuestionList[_testProvider!.reviewingCurrentIndex];
     if (item is String) {
       _testProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
           fileName: item,
           handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
-    } else if (item is QuestionTopicModel) {
-      _reviewingPlayAnswer(item);
     }
   }
 
-  void _reviewingPlayAnswer(QuestionTopicModel question) async {
-    //TODO: Update Video player UI when playing answer
+  void _playReviewingQuestionAndAnswer(QuestionTopicModel question) async {
+    String fileName = question.files.first.url;
+    _playTheQuestionBeforePlayTheAnswer(fileName);
+  }
+
+  void _playTheQuestionBeforePlayTheAnswer(String fileName) {
+    _initVideoController(
+        fileName: fileName,
+        handleWhenFinishType: HandleWhenFinish.reviewingPlayTheQuestionType);
+  }
+
+  void _playTheAnswerOfQuestion(QuestionTopicModel question) async {
     _testProvider!.setIsReviewingPlayAnswer(true);
 
-    String path = await Utils.getAudioPathToPlay(question,
-        _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
-    _playAudio(path, question.id.toString(), true);
+    String path = await Utils.getReviewingAudioPathToPlay(
+      question,
+      _prepareSimulatorTestProvider!.currentTestDetail.testId.toString(),
+    );
+    _playAnswerAudio(path, question);
   }
 
   void _continueReviewing() {
     int index = _testProvider!.reviewingCurrentIndex + 1;
     _testProvider!.updateReviewingCurrentIndex(index);
 
-    dynamic item = _reviewingList[_testProvider!.reviewingCurrentIndex];
+    dynamic item = _reviewingQuestionList[_testProvider!.reviewingCurrentIndex];
     if (item is String) {
       _testProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
           fileName: item,
           handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
     } else if (item is QuestionTopicModel) {
-      _reviewingPlayAnswer(item);
+      _playReviewingQuestionAndAnswer(item);
     }
   }
 
@@ -683,6 +703,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required HandleWhenFinish handleWhenFinishType,
   }) async {
+    if (kDebugMode) {
+      print(
+          "Reviewing current index = ${_testProvider!.reviewingCurrentIndex}");
+    }
     _testProvider!.setIsLoadingVideo(true);
 
     if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
@@ -690,8 +714,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         handleWhenFinishType == HandleWhenFinish.cueCardVideoType) {
       _reviewingList.add(fileName);
     } else {
-      if (!_checkExist(_currentQuestion!)) {
-        _reviewingList.add(_currentQuestion!); //Add file
+      if (null != _currentQuestion) {
+        if (!_checkExist(_currentQuestion!)) {
+          _reviewingList.add(_currentQuestion!); //Add file
+        }
       }
     }
 
@@ -873,18 +899,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _reviewingProcess();
               break;
             }
+          case HandleWhenFinish.reviewingPlayTheQuestionType:
+            {
+              QuestionTopicModel question =
+                  _reviewingList[_testProvider!.reviewingCurrentIndex];
+              _playTheAnswerOfQuestion(question);
+              break;
+            }
         }
       }
     }
   }
 
   void _reviewingProcess() {
-    //Check finish of reviewing process
-    if (_testProvider!.reviewingCurrentIndex < _reviewingList.length) {
+    if (_testProvider!.reviewingCurrentIndex < _reviewingQuestionList.length) {
       //Continue
       _continueReviewing();
     } else {
       //Finish reviewing
+      if (kDebugMode) print("Finish reviewing");
     }
   }
 
@@ -929,6 +962,40 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     for (int i = 0; i < _reviewingList.length; i++) {
       dynamic item = _reviewingList[i];
       if (item is QuestionTopicModel) {
+        temp.add(item);
+      }
+    }
+
+    return temp;
+  }
+
+  List<dynamic> _prepareQuestionListForReviewing() {
+    if (_reviewingList.isEmpty) return [];
+    List<dynamic> temp = [];
+
+    for (int i = 0; i < _reviewingList.length; i++) {
+      dynamic item = _reviewingList[i];
+      if (item is QuestionTopicModel) {
+        for (int j = 0; j < item.answers.length; j++) {
+          FileTopicModel answer = item.answers.elementAt(j);
+          QuestionTopicModel q = QuestionTopicModel().copyWith(
+            id: item.id,
+            content: item.content,
+            type: item.type,
+            topicId: item.topicId,
+            tips: item.tips,
+            tipType: item.tipType,
+            isFollowUp: item.isFollowUp,
+            cueCard: item.cueCard,
+            reAnswerCount: item.reAnswerCount,
+            answers: [answer],
+            numPart: item.numPart,
+            repeatIndex: item.repeatIndex,
+            files: item.files,
+          );
+          temp.add(q);
+        }
+      } else {
         temp.add(item);
       }
     }

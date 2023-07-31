@@ -332,5 +332,12 @@ class Utils {
     return path;
   }
 
+  static Future<String> getReviewingAudioPathToPlay(QuestionTopicModel question, String? testId) async {
+    String fileName = question.answers.first.url;
+    String path =
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
+    return path;
+  }
+
 
 }

@@ -73,8 +73,21 @@ class TestProvider with ChangeNotifier {
     required QuestionTopicModel questionTopic,
     required int repeatIndex,
   }) {
-    QuestionTopicModel temp =
-        QuestionTopicModel().copyWith(questionTopicModel: questionTopic);
+    QuestionTopicModel temp = QuestionTopicModel().copyWith(
+      id: questionTopic.id,
+      content: questionTopic.content,
+      type: questionTopic.type,
+      topicId: questionTopic.topicId,
+      tips: questionTopic.tips,
+      tipType: questionTopic.tipType,
+      isFollowUp: questionTopic.isFollowUp,
+      cueCard: questionTopic.cueCard,
+      reAnswerCount: questionTopic.reAnswerCount,
+      answers: questionTopic.answers,
+      numPart: questionTopic.numPart,
+      repeatIndex: questionTopic.repeatIndex,
+      files: questionTopic.files
+    );
     if (repeatIndex != 0) {
       temp.content = "Ask for repeating the question!";
       temp.repeatIndex = repeatIndex;
@@ -284,7 +297,14 @@ class TestProvider with ChangeNotifier {
     }
   }
 
+  // bool _isReviewingPlaying = false;
+  // bool get isReviewingPlaying => _isReviewingPlaying;
+  // void setIsReviewingPlaying(bool status) {
+  //   _isReviewingPlaying = status;
+  // }
+
   void resetAll() {
+    // _isReviewingPlaying = false;
     _isReviewingPlayAnswer = false;
     _strCountCueCard = null;
     _enableRepeatButton = true;
@@ -300,7 +320,6 @@ class TestProvider with ChangeNotifier {
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
-    // _isShowPlayVideoButton = true;
     _reviewingStatus = ReviewingStatus.none;
     resetTopicsQueue();
     clearQuestionList();
