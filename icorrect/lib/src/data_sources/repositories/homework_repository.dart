@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
@@ -13,7 +14,9 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
     Map<String, String> queryParameters = {'email': email, 'status': status};
     String url =
         '${publicDomain}api/list-activity-v2?${Uri(queryParameters: queryParameters).query}';
-    print('url :${url}');
+    if (kDebugMode) {
+      print('url :$url');
+    }
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,

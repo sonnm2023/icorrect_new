@@ -1,5 +1,6 @@
 import '../api_urls.dart';
 import 'app_repository.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 abstract class MyTestRepository {

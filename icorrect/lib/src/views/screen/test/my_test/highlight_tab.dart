@@ -50,7 +50,7 @@ class _HighLightTabState extends State<HighLightTab>
         email: userDataModel.userInfoModel.email.toString(),
         activityId: widget.homeWorkModel.activityId.toString(),
         status: Status.allHomework.get,
-        example: Status.hightLight.get);
+        example: Status.highLight.get);
   }
 
   @override

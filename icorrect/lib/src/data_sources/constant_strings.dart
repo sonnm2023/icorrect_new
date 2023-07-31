@@ -9,7 +9,7 @@ enum ToastStatesType {
 enum AuthType {
   login,
   register,
-  getUserInfor,
+  getUserInfo,
 }
 
 enum PasswordType {
@@ -38,9 +38,9 @@ enum Status {
   notComplete(0),
   trueStatus(1),
   falseStatus(0),
-  hightLight(1),
+  highLight(1),
   others(0),
-  hadScrore(1),
+  hadScore(1),
   allHomework(2);
 
   const Status(this.get);
