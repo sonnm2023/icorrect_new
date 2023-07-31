@@ -6,7 +6,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
-class PrepareSimulatorTestProvider with ChangeNotifier {
+class SimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;
 
   @override

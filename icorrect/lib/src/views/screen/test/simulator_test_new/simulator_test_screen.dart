@@ -12,8 +12,8 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
-import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
@@ -38,7 +38,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     implements SimulatorTestViewContract, ActionAlertListener {
   SimulatorTestPresenter? _simulatorTestPresenter;
 
-  PrepareSimulatorTestProvider? _prepareSimulatorTestProvider;
+  SimulatorTestProvider? _prepareSimulatorTestProvider;
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
@@ -48,7 +48,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     super.initState();
 
     _prepareSimulatorTestProvider =
-        Provider.of<PrepareSimulatorTestProvider>(context, listen: false);
+        Provider.of<SimulatorTestProvider>(context, listen: false);
 
     _simulatorTestPresenter = SimulatorTestPresenter(this);
     _getTestDetail();
@@ -212,7 +212,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Widget _buildBody() {
-    return Consumer<PrepareSimulatorTestProvider>(
+    return Consumer<SimulatorTestProvider>(
       builder: (context, provider, child) {
         if (provider.isProcessing) {
           return const DefaultLoadingIndicator(
@@ -240,7 +240,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         return Stack(
           children: [
             ChangeNotifierProvider(
-              create: (_) => TestProvider(),
+              create: (_) => TestRoomProvider(),
               child: TestRoomWidget(
                 homeWorkModel: widget.homeWorkModel,
                 simulatorTestPresenter: _simulatorTestPresenter!,

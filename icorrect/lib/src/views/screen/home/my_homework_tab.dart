@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -6,7 +5,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test_new/simulator_test_screen.dart';
@@ -71,26 +70,28 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   Widget _buildTopFilter() {
     return Container(
       decoration: const BoxDecoration(
-          color: AppColor.defaultGraySlightColor,
-          border: Border(
-            top: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
-            bottom: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
-          )),
+        color: AppColor.defaultGraySlightColor,
+        border: Border(
+          top: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
+          bottom: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const SizedBox(width: 80),
           Consumer<HomeWorkProvider>(
-              builder: (context, homeworkProvider, child) {
-            return Text(
-              homeworkProvider.filterString,
-              style: const TextStyle(
-                color: AppColor.defaultBlackColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 15.0,
-              ),
-            );
-          }),
+            builder: (context, homeworkProvider, child) {
+              return Text(
+                homeworkProvider.filterString,
+                style: const TextStyle(
+                  color: AppColor.defaultBlackColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
+                ),
+              );
+            },
+          ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColor.defaultGraySlightColor,
@@ -301,8 +302,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<PrepareSimulatorTestProvider>(
-            create: (_) => PrepareSimulatorTestProvider(),
+          builder: (_) => ChangeNotifierProvider<SimulatorTestProvider>(
+            create: (_) => SimulatorTestProvider(),
             child: SimulatorTestScreen(
               homeWorkModel: _selectedHomeWorkModel!,
             ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,14 +16,14 @@ class TestRecordWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
 
-    TestProvider testProvider =
-        Provider.of<TestProvider>(context, listen: false);
+    TestRoomProvider testProvider =
+        Provider.of<TestRoomProvider>(context, listen: false);
 
     QuestionTopicModel currentQuestion = testProvider.currentQuestion;
 
     bool isRepeat = false;
 
-    return Consumer<TestProvider>(builder: (context, testProvider, _) {
+    return Consumer<TestRoomProvider>(builder: (context, testProvider, _) {
       if (testProvider.visibleRecord) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -59,7 +59,7 @@ class TestRecordWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildFinishButton(currentQuestion),
-                      Consumer<TestProvider>(
+                      Consumer<TestRoomProvider>(
                           builder: (context, testProvider, _) {
                             if (testProvider.topicsQueue.isNotEmpty) {
                               isRepeat = (testProvider.topicsQueue.first.numPart ==

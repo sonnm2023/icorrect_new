@@ -8,7 +8,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:video_player/video_player.dart';
 
-class TestProvider with ChangeNotifier {
+class TestRoomProvider with ChangeNotifier {
   bool isDisposed = false;
 
   @override

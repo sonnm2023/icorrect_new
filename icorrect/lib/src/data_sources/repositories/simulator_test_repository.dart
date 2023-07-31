@@ -3,12 +3,12 @@ import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
-abstract class TestRepository {
+abstract class SimulatorTestRepository {
   Future<String> getTestDetail(String homeworkId, String distributeCode);
   Future<String> submitTest(http.MultipartRequest multiRequest);
 }
 
-class TestRepositoryImpl implements TestRepository {
+class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
   @override
   Future<String> getTestDetail(String homeworkId, String distributeCode) {
     String url = '$apiDomain$getTestInfoEP';

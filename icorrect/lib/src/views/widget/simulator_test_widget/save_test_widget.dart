@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:provider/provider.dart';
 
 class SaveTheTestWidget extends StatelessWidget {
@@ -11,7 +11,7 @@ class SaveTheTestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TestProvider>(
+    return Consumer<TestRoomProvider>(
       builder: (context, testProvider, child) {
         return Visibility(
           visible: testProvider.isVisibleSaveTheTest,

@@ -3,8 +3,8 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
-import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +27,7 @@ class TestQuestionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TestProvider>(
+    return Consumer<TestRoomProvider>(
       builder: (context, testProvider, child) {
         if (testProvider.questionList.isEmpty) {
           return Container(
@@ -186,7 +186,7 @@ class TestQuestionWidget extends StatelessWidget {
       questionStr = 'Answer of Part 2';
     }
 
-    PrepareSimulatorTestProvider prepareSimulatorTestProvider = Provider.of<PrepareSimulatorTestProvider>(context, listen: false);
+    SimulatorTestProvider prepareSimulatorTestProvider = Provider.of<SimulatorTestProvider>(context, listen: false);
     bool hasReAnswer = false;
     if (prepareSimulatorTestProvider.activityType == "homework") {
       hasReAnswer = true;

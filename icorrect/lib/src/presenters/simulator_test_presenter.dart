@@ -8,7 +8,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
-import 'package:icorrect/src/data_sources/repositories/test_repository.dart';
+import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -33,7 +33,7 @@ abstract class SimulatorTestViewContract {
 
 class SimulatorTestPresenter {
   final SimulatorTestViewContract? _view;
-  TestRepository? _testRepository;
+  SimulatorTestRepository? _testRepository;
 
   SimulatorTestPresenter(this._view) {
     _testRepository = Injector().getTestRepository();

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
-import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:provider/provider.dart';
@@ -41,12 +41,12 @@ class VideoPlayerWidget extends StatelessWidget {
       }
     }
 
-    PrepareSimulatorTestProvider prepareSimulatorTestProvider =
-        Provider.of<PrepareSimulatorTestProvider>(context, listen: false);
+    SimulatorTestProvider prepareSimulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
 
     CircleLoading? loading = CircleLoading();
 
-    return Consumer<TestProvider>(
+    return Consumer<TestRoomProvider>(
       builder: (context, testProvider, child) {
         if (null == testProvider.playController) {
           return SizedBox(

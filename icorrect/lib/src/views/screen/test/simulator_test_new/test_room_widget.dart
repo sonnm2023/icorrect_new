@@ -16,8 +16,8 @@ import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
-import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
@@ -49,8 +49,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     with WidgetsBindingObserver
     implements TestRoomViewContract, ActionAlertListener {
   TestRoomPresenter? _testRoomPresenter;
-  TestProvider? _testProvider;
-  PrepareSimulatorTestProvider? _prepareSimulatorTestProvider;
+  TestRoomProvider? _testProvider;
+  SimulatorTestProvider? _prepareSimulatorTestProvider;
 
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
@@ -73,8 +73,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _recordController = Record();
 
     _prepareSimulatorTestProvider =
-        Provider.of<PrepareSimulatorTestProvider>(context, listen: false);
-    _testProvider = Provider.of<TestProvider>(context, listen: false);
+        Provider.of<SimulatorTestProvider>(context, listen: false);
+    _testProvider = Provider.of<TestRoomProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
     _playAnswerProvider =
         Provider.of<PlayAnswerProvider>(context, listen: false);

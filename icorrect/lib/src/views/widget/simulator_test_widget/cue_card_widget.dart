@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/provider/test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:provider/provider.dart';
 
 class CueCardWidget extends StatefulWidget {
@@ -15,7 +15,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
 
-    return Consumer<TestProvider>(
+    return Consumer<TestRoomProvider>(
       builder: (context, testProvider, child) {
         if (testProvider.isVisibleCueCard && testProvider.currentQuestion.cueCard.isNotEmpty) {
           return Container(
