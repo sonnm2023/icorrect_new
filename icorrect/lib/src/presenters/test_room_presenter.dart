@@ -14,27 +14,29 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 
 abstract class TestRoomViewContract {
   void onPlayIntroduceFile(String fileName);
-  void onNothingFileIntroduce();
-  void onNothingIntroduce();
   void onPlayEndOfTakeNoteFile(String fileName);
   void onPlayEndOfTest(String fileName);
+  void onCountDown(String countDownString);
+  void onCountDownForCueCard(String countDownString);
+  void onFinishAnswer(bool isPart2);
+  void onSubmitTestSuccess(String msg);
+  void onSubmitTestFail(String msg);
+  void onClickSaveTheTest();
+  void onFinishTheTest();
+
   void onNothingFileEndOfTest();
   void onNothingEndOfTest();
   void onNothingFileQuestion();
   void onNothingQuestion();
-  void onCountDown(String countDownString);
-  void onCountDownForCueCard(String countDownString);
-  void onFinishAnswer(bool isPart2);
   void onNothingFileEndOfTakeNote();
   void onNothingEndOfTakeNote();
-  void onSubmitTestSuccess(String msg);
-  void onSubmitTestFail(String msg);
-  void onClickSaveTheTest();
+  void onNothingFileIntroduce();
+  void onNothingIntroduce();
 }
 
 class TestRoomPresenter {
@@ -56,22 +58,21 @@ class TestRoomPresenter {
     List<FileTopicModel> files = topicModel.files;
     if (files.isNotEmpty) {
       FileTopicModel file = files.first;
-      bool isExist = await _isExist(file.url, MediaType.video);
+      bool isExist = await _isExist(file.url, MediaType.video, null);
       if (isExist) {
         _view!.onPlayIntroduceFile(file.url);
       } else {
-        //TODO:
-        //Download again
+        //TODO: Download again
       }
     } else {
-      //TODO:
-      //Download again
+      if (kDebugMode) print("This topic has not introduce file");
     }
   }
 
   //Check file is exist using file_storage
-  Future<bool> _isExist(String fileName, MediaType mediaType) async {
-    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType);
+  Future<bool> _isExist(String fileName, MediaType mediaType, String? testId) async {
+    bool isExist = await FileStorageHelper.checkExistFile(
+        fileName, mediaType, testId);
     return isExist;
   }
 
@@ -135,14 +136,14 @@ class TestRoomPresenter {
     String fileName = topic.endOfTakeNote.url;
 
     if (fileName.isNotEmpty) {
-      bool isExist = await _isExist(fileName, MediaType.video);
+      bool isExist = await _isExist(fileName, MediaType.video, null);
       if (isExist) {
         _view!.onPlayEndOfTakeNoteFile(fileName);
       } else {
         //TODO: download again
       }
     } else {
-      //TODO: download again
+      if (kDebugMode) print("This topic has not end of take note file");
     }
   }
 
@@ -159,14 +160,15 @@ class TestRoomPresenter {
     String fileName = topic.fileEndOfTest.url;
 
     if (fileName.isNotEmpty) {
-      bool isExist = await _isExist(fileName, MediaType.video);
+      bool isExist = await _isExist(fileName, MediaType.video, null);
       if (isExist) {
         _view!.onPlayEndOfTest(fileName);
       } else {
         //TODO: Download again
       }
     } else {
-      //TODO: Download again
+      //The test has not End of test file
+      _view!.onFinishTheTest();
     }
   }
 
@@ -214,25 +216,18 @@ class TestRoomPresenter {
 
     if (q.answers.isEmpty) return [];
 
-    // if (q.answers.length == 1) {
-    //   return [MapEntry("answer_$suffix[0]", q.answers.first.url)];
-    // } else {
-      for (int i = 0; i < q.answers.length; i++) {
-        // String prefix = "repeat";
-        // if (i == q.answers.length - 1) {
-        //   prefix = "answer";
-        // }
-        result.add(MapEntry("$suffix[$i]", q.answers[i].url));
-      }
-    //}
+    for (int i = 0; i < q.answers.length; i++) {
+      result.add(MapEntry("$suffix[$i]", q.answers[i].url));
+    }
 
     return result;
   }
 
-  Future<http.MultipartRequest> _formDataRequest(
-      {required String testId,
-      required String activityId,
-      required List<QuestionTopicModel> questions}) async {
+  Future<http.MultipartRequest> _formDataRequest({
+    required String testId,
+    required String activityId,
+    required List<QuestionTopicModel> questions,
+  }) async {
     String url = submitHomeWorkEP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -291,24 +286,15 @@ class TestRoomPresenter {
       for (int i = 0; i < q.answers.length; i++) {
         File audioFile = File(
           await FileStorageHelper.getFilePath(
-              q.answers.elementAt(i).url.toString(), MediaType.audio),
+              q.answers.elementAt(i).url.toString(),
+              MediaType.audio,
+              testId),
         );
 
         if (await audioFile.exists()) {
           request.files
               .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
         }
-
-        // String fileName = await FileStorageHelper.getFilePath(
-        //   q.answers.elementAt(i).url,
-        //   MediaType.audio,
-        // );
-
-        // request.files.add(http.MultipartFile(
-        //     prefix,
-        //     File(fileName).readAsBytes().asStream(),
-        //     File(fileName).lengthSync(),
-        //     filename: fileName.split("/").last));
       }
     }
 

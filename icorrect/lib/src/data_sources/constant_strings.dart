@@ -26,6 +26,8 @@ enum HandleWhenFinish {
   questionVideoType,
   followupVideoType,
   endOfTestVideoType,
+  reviewingVideoType,
+  reviewingPlayTheQuestionType,
 }
 
 enum Status {
@@ -55,6 +57,35 @@ enum PartOfTest {
   endOfTest(5);
 
   const PartOfTest(this.get);
+  final int get;
+}
+
+enum DoingStatus {
+  none(-1),
+  doing(0),
+  finish(1);
+
+  const DoingStatus(this.get);
+  final int get;
+}
+
+enum SubmitStatus {
+  none(-1),
+  success(0),
+  fail(1),
+  submitting(2);
+
+  const SubmitStatus(this.get);
+  final int get;
+}
+
+enum ReviewingStatus {
+  none(-1),
+  playing(0),
+  pause(1),
+  restart(2);
+
+  const ReviewingStatus(this.get);
   final int get;
 }
 

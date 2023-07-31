@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -15,6 +16,7 @@ import 'package:icorrect/src/provider/prepare_simulator_test_provider.dart';
 import 'package:icorrect/src/provider/test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test_new/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
@@ -87,32 +89,126 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  void _backButtonTapped() {
-    if (_prepareSimulatorTestProvider!.isDoingTest) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return ConfirmDialogWidget(
-            title: "Notification",
-            message: "The test is not completed! Are you sure to quit?",
-            cancelButtonTitle: "Cancel",
-            okButtonTitle: "OK",
-            cancelButtonTapped: _cancelButtonTapped,
-            okButtonTapped: _okButtonTapped,
+  void _backButtonTapped() async {
+    //Disable back button when submitting test
+    if (_prepareSimulatorTestProvider!.submitStatus ==
+        SubmitStatus.submitting) {
+      if (kDebugMode) {
+        print("Status is submitting!");
+      }
+      return;
+    }
+
+    switch (_prepareSimulatorTestProvider!.doingStatus.get) {
+      case -1:
+        {
+          //None
+          if (kDebugMode) {
+            print("Status is not start to do the test!");
+          }
+          Navigator.of(context).pop();
+          break;
+        }
+      case 0:
+        {
+          //Doing
+          if (kDebugMode) {
+            print("Status is doing the test!");
+          }
+
+          bool okButtonTapped = false;
+
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ConfirmDialogWidget(
+                title: "Notification",
+                message: "The test is not completed! Are you sure to quit?",
+                cancelButtonTitle: "Cancel",
+                okButtonTitle: "OK",
+                cancelButtonTapped: () {
+                  if (kDebugMode) print("_cancelButtonTapped");
+                },
+                okButtonTapped: () {
+                  okButtonTapped = true;
+                  _deleteAllAnswer();
+                },
+              );
+            },
           );
-        },
-      );
-    } else {
-      Navigator.of(context).pop();
+
+          if (okButtonTapped) {
+            Navigator.of(context).pop();
+          }
+
+          break;
+        }
+      case 1:
+        {
+          //Finish
+          if (kDebugMode) {
+            print("Status is finish doing the test!");
+          }
+
+          bool cancelButtonTapped = false;
+
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ConfirmDialogWidget(
+                title: "Notification",
+                message: "Do you want to save this test before quit?",
+                cancelButtonTitle: "Don't Save",
+                okButtonTitle: "Save",
+                cancelButtonTapped: () {
+                  cancelButtonTapped = true;
+                  _deleteAllAnswer();
+                },
+                okButtonTapped: () {
+                  //Submit
+                  _prepareSimulatorTestProvider!
+                      .updateSubmitStatus(SubmitStatus.submitting);
+                  _simulatorTestPresenter!.submitTest(
+                    testId: _prepareSimulatorTestProvider!
+                        .currentTestDetail.testId
+                        .toString(),
+                    activityId: widget.homeWorkModel.id.toString(),
+                    questions: _prepareSimulatorTestProvider!.questionList,
+                  );
+                },
+              );
+            },
+          );
+
+          if (cancelButtonTapped) {
+            Navigator.of(context).pop();
+          }
+
+          break;
+        }
     }
   }
 
-  void _cancelButtonTapped() {
-    if (kDebugMode) print("_cancelButtonTapped");
-  }
+  Future<void> _deleteAllAnswer() async {
+    List<String> answers = _prepareSimulatorTestProvider!.answerList;
 
-  void _okButtonTapped() {
-    Navigator.of(context).pop();
+    if (answers.isEmpty) return;
+
+    for (String answer in answers) {
+      FileStorageHelper.deleteFile(
+              answer,
+              MediaType.audio,
+              _prepareSimulatorTestProvider!.currentTestDetail.testId
+                  .toString())
+          .then((value) {
+        if (false == value) {
+          showToastMsg(
+            msg: "Can not delete files!",
+            toastState: ToastStatesType.warning,
+          );
+        }
+      });
+    }
   }
 
   Widget _buildBody() {
@@ -145,10 +241,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           children: [
             ChangeNotifierProvider(
               create: (_) => TestProvider(),
-              child: TestRoomWidget(homeWorkModel: widget.homeWorkModel),
+              child: TestRoomWidget(
+                homeWorkModel: widget.homeWorkModel,
+                simulatorTestPresenter: _simulatorTestPresenter!,
+              ),
             ),
             Visibility(
-              visible: provider.isSubmitting,
+              visible: provider.submitStatus == SubmitStatus.submitting,
               child: const DefaultLoadingIndicator(
                 color: AppColor.defaultPurpleColor,
               ),
@@ -229,7 +328,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Hide Loading view
     _prepareSimulatorTestProvider!.setDownloadingStatus(false);
 
-    _prepareSimulatorTestProvider!.setIsDoingTest(true);
+    _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
   }
 
   @override
@@ -291,7 +390,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSaveTopicListIntoProvider(List<TopicModel> list) {
-    list.sort((a, b) => a.numPart.compareTo(b.numPart));
     _prepareSimulatorTestProvider!.setTopicsList(list);
     Queue<TopicModel> queue = Queue<TopicModel>();
     queue.addAll(list);
@@ -306,5 +404,43 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onAlertNextStep(String keyInfo) {
     // TODO: implement onAlertNextStep
+  }
+
+  @override
+  void onGotoMyTestScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MyTestScreen(
+          homeWorkModel: widget.homeWorkModel,
+          isFromSimulatorTest: true,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void onSubmitTestFail(String msg) {
+    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.error,
+    );
+
+    //Go to MyTest Screen
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void onSubmitTestSuccess(String msg) {
+    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.success,
+    );
+
+    //Go to MyTest Screen
+    _simulatorTestPresenter!.gotoMyTestScreen();
   }
 }

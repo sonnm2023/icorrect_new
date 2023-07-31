@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/presenters/my_test_presenter.dart';
+import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/screen/test/my_test/response_tab.dart';
 import 'package:provider/provider.dart';
@@ -15,9 +17,13 @@ import 'highlight_tab.dart';
 import 'others_tab.dart';
 
 class MyTestScreen extends StatefulWidget {
-  const MyTestScreen({super.key, required this.homeWorkModel});
+  const MyTestScreen(
+      {super.key,
+      required this.homeWorkModel,
+      required this.isFromSimulatorTest});
 
   final HomeWorkModel homeWorkModel;
+  final bool isFromSimulatorTest;
 
   @override
   State<MyTestScreen> createState() => _MyTestScreenState();
@@ -67,7 +73,20 @@ class _MyTestScreenState extends State<MyTestScreen> {
                   if (myTestprovider.reAnswerOfQuestions.isNotEmpty) {
                     _showDialogConfirmToOutScreen(provider: myTestprovider);
                   } else {
-                    Navigator.pop(context);
+                    if (widget.isFromSimulatorTest) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ChangeNotifierProvider<HomeWorkProvider>(
+                            create: (_) => HomeWorkProvider(),
+                            child: const HomeWorkScreen(),
+                          ),
+                        ),
+                        (route) => false,
+                      );
+                    } else {
+                      Navigator.pop(context);
+                    }
                   }
                 },
               );
@@ -172,7 +191,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
     for (var q in questions) {
       String fileName = q.answers.last.url.toString();
-      FileStorageHelper.deleteFile(fileName, MediaType.audio);
+      FileStorageHelper.deleteFile(fileName, MediaType.audio, null); //TODO
     }
   }
 }

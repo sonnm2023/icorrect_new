@@ -90,17 +90,8 @@ class QuestionTopicModel {
     _content = json['content'];
     _type = json['type'];
     _topicId = json['topic_id'];
-
-    //TODO: for test view tips
-    // if (json['id'] == 1936) {
-    //   _tips = "This is a tips for testing!";
-    // } else {
-    //   _tips = json['tips'];
-    // }
-
     _tips = json['tips'];
     _tipType = json['tip_type'];
-
     _isFollowUp = json['is_follow_up'];
     _cueCard = json['cue_card'];
     _reAnswerCount = json['reanswer'];
@@ -135,22 +126,37 @@ class QuestionTopicModel {
     return data;
   }
 
+  // QuestionTopicModel copyWith({
+  //   required QuestionTopicModel questionTopicModel,
+  // })
   QuestionTopicModel copyWith({
-    required QuestionTopicModel questionTopicModel,
+    int? id,
+    String? content,
+    int? type,
+    int? topicId,
+    String? tips,
+    int? tipType,
+    int? isFollowUp,
+    String? cueCard,
+    int? reAnswerCount,
+    List<FileTopicModel>? answers,
+    int? numPart,
+    int? repeatIndex,
+    List<FileTopicModel>? files,
   }) =>
       QuestionTopicModel(
-        id: questionTopicModel.id,
-        content: questionTopicModel.content,
-        type: questionTopicModel.type,
-        topicId: questionTopicModel.topicId,
-        tips: questionTopicModel.tips,
-        tipType: questionTopicModel.tipType,
-        isFollowUp: questionTopicModel.isFollowUp,
-        cueCard: questionTopicModel.cueCard,
-        reAnswerCount: questionTopicModel.reAnswerCount,
-        answers: questionTopicModel.answers,
-        numPart: questionTopicModel.numPart,
-        repeatIndex: questionTopicModel.repeatIndex,
-        files: questionTopicModel.files,
+        id: id ?? this.id,
+        content: content ?? this.content,
+        type: type ?? this.type,
+        topicId: topicId ?? this.topicId,
+        tips: tips ?? this.tips,
+        tipType: tipType ?? this.tipType,
+        isFollowUp: isFollowUp ?? this.isFollowUp,
+        cueCard: cueCard ?? this.cueCard,
+        reAnswerCount: reAnswerCount ?? this.reAnswerCount,
+        answers: answers ?? this.answers,
+        numPart: numPart ?? this.numPart,
+        repeatIndex: repeatIndex ?? this.repeatIndex,
+        files: files ?? this.files,
       );
 }

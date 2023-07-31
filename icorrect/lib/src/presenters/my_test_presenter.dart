@@ -102,7 +102,7 @@ class MyTestPresenter {
 
   //Check file is exist using file_storage
   Future<bool> _isExist(String fileName, MediaType mediaType) async {
-    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType);
+    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType, null); //TODO
     return isExist;
   }
 
@@ -325,7 +325,7 @@ class MyTestPresenter {
       for (int i = 0; i < q.answers.length; i++) {
         endFormat = '$format[$i]';
         File audioFile = File(await FileStorageHelper.getFilePath(
-            q.answers.elementAt(i).url.toString(), MediaType.audio));
+            q.answers.elementAt(i).url.toString(), MediaType.audio, null)); //TODO
 
         if (await audioFile.exists()) {
           request.files.add(

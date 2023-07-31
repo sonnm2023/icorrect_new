@@ -22,7 +22,6 @@ import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
-import 'package:icorrect/src/views/widget/my_test_widget/my_test_video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 import 'package:video_player/video_player.dart';
@@ -85,9 +84,7 @@ class _MyTestTabState extends State<MyTestTab>
       } else {
         return Column(
           children: [
-            Expanded(
-                flex: 4,
-                child:MyTestVideo()),
+          
             Expanded(
                 flex: 9,
                 child: ListView.builder(
@@ -392,7 +389,7 @@ class _MyTestTabState extends State<MyTestTab>
         Timer timer = _presenter!.startCountDown(context, 30);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
-          path: '${await FileStorageHelper.getFolderPath(MediaType.audio)}'
+          path: '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}' //TODO
               '\\$audioFile',
           encoder: AudioEncoder.wav,
           bitRate: 128000,
@@ -409,7 +406,7 @@ class _MyTestTabState extends State<MyTestTab>
 
   Future _preparePlayAudio(
       {required String fileName, required String questionId}) async {
-    Utils.prepareAudioFile(fileName).then((value) {
+    Utils.prepareAudioFile(fileName, null).then((value) { //TODO
       print('_playAudio:${value.path.toString()}');
       _playAudio(value.path.toString(), questionId);
     });

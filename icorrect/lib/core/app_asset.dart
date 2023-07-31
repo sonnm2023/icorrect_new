@@ -10,4 +10,5 @@ class AppAsset {
   static const record = 'assets/images/ic_record_2.png';
   static const dimond = 'assets/images/ic_diamond.png';
   static const gold = 'assets/images/ic_gold.png';
+  static const playAnswerBackground = 'assets/images/bg_recording.png';
 }
