@@ -103,7 +103,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               fit: BoxFit.cover,
             ),
           ),
-          child: VideoPlayerWidget(playVideo: _playVideo),
+          child: VideoPlayerWidget(
+            startToPlayVideo: _startToPlayVideo,
+            pauseToPlayVideo: _pauseToPlayVideo,
+            restartToPlayVideo: _restartToPlayVideo,
+            continueToPlayVideo: _continueToPlayVideo,
+          ),
         ),
         Expanded(
           child: Stack(
@@ -190,7 +195,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
-    if (_testProvider!.isShowPlayVideoButton) {
+    if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
         await _audioPlayerController!.stop().then((_) {
@@ -242,19 +247,28 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.getAudioPathToPlay(question,
         _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
-    _playAudio(path, question.id.toString());
+    _playAudio(path, question.id.toString(), false);
   }
 
-  Future<void> _playAudio(String audioPath, String questionId) async {
-    try {
+  Future<void> _playAudio(
+      String audioPath, String questionId, bool isReviewingProcess) async {
+    if (isReviewingProcess) {
       await _audioPlayerController!.play(DeviceFileSource(audioPath));
-      await _audioPlayerController!.setVolume(2.5);
-      _audioPlayerController!.onPlayerComplete.listen((event) {
-        _playAnswerProvider!.resetSelectedQuestionIndex();
-      });
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print(e);
+        await _audioPlayerController!.setVolume(2.5);
+        _audioPlayerController!.onPlayerComplete.listen((event) {
+          _continueReviewing();
+        });
+    } else {
+      try {
+        await _audioPlayerController!.play(DeviceFileSource(audioPath));
+        await _audioPlayerController!.setVolume(2.5);
+        _audioPlayerController!.onPlayerComplete.listen((event) {
+          _playAnswerProvider!.resetSelectedQuestionIndex();
+        });
+      } on PlatformException catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
       }
     }
   }
@@ -276,9 +290,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playReAnswerCallBack(QuestionTopicModel question) {
-    if (_testProvider!.isShowPlayVideoButton) {
-      //TODO: Check reviewing process
-      bool isReviewing = true;
+    if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
+      bool isReviewing =
+          _testProvider!.reviewingStatus == ReviewingStatus.playing;
+
       if (isReviewing) {
         showDialog(
           context: context,
@@ -320,7 +335,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
-    if (_testProvider!.isShowPlayVideoButton) {
+    if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
       Future.delayed(
         Duration.zero,
         () async {
@@ -389,9 +404,70 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _playVideo() {
-    if (null != _testProvider!.playController) {
-      _testProvider!.playController!.play();
+  void _startReviewing() {
+    _testProvider!.resetReviewingCurrentIndex();
+    dynamic item = _reviewingList[_testProvider!.reviewingCurrentIndex];
+    if (item is String) {
+      _testProvider!.setIsReviewingPlayAnswer(false);
+      _initVideoController(
+          fileName: item,
+          handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
+    } else if (item is QuestionTopicModel) {
+      _reviewingPlayAnswer(item);
+    }
+  }
+
+  void _reviewingPlayAnswer(QuestionTopicModel question) async {
+    //TODO: Update Video player UI when playing answer
+    _testProvider!.setIsReviewingPlayAnswer(true);
+
+    String path = await Utils.getAudioPathToPlay(question,
+        _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
+    _playAudio(path, question.id.toString(), true);
+  }
+
+  void _continueReviewing() {
+    int index = _testProvider!.reviewingCurrentIndex + 1;
+    _testProvider!.updateReviewingCurrentIndex(index);
+
+    dynamic item = _reviewingList[_testProvider!.reviewingCurrentIndex];
+    if (item is String) {
+      _testProvider!.setIsReviewingPlayAnswer(false);
+      _initVideoController(
+          fileName: item,
+          handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
+    } else if (item is QuestionTopicModel) {
+      _reviewingPlayAnswer(item);
+    }
+  }
+
+  void _startToPlayVideo() {
+    if (_prepareSimulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      //Start to review the test
+      _startReviewing();
+    } else {
+      //Start to do the test
+      if (null != _testProvider!.playController) {
+        _testProvider!.playController!.play();
+      }
+    }
+  }
+
+  void _pauseToPlayVideo() {
+    if (kDebugMode) {
+      print("_pauseToPlayVideo");
+    }
+  }
+
+  void _restartToPlayVideo() {
+    if (kDebugMode) {
+      print("_restartToPlayVideo");
+    }
+  }
+
+  void _continueToPlayVideo() {
+    if (kDebugMode) {
+      print("_continueToPlayVideo");
     }
   }
 
@@ -643,7 +719,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             _testProvider!.setPlayController(_videoPlayerController!);
           }
 
-          if (true == _testProvider!.isShowPlayVideoButton) {
+          if (ReviewingStatus.none == _testProvider!.reviewingStatus) {
             Future.delayed(const Duration(milliseconds: 1), () {
               _videoPlayerController!.pause();
             });
@@ -792,14 +868,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _prepareToEndTheTest();
               break;
             }
+          case HandleWhenFinish.reviewingVideoType:
+            {
+              _reviewingProcess();
+              break;
+            }
         }
       }
     }
   }
 
+  void _reviewingProcess() {
+    //Check finish of reviewing process
+    if (_testProvider!.reviewingCurrentIndex < _reviewingList.length) {
+      //Continue
+      _continueReviewing();
+    } else {
+      //Finish reviewing
+    }
+  }
+
   void _prepareToEndTheTest() {
     //Finish doing test
-    _testProvider!.setIsShowPlayVideoButton(true);
+    _testProvider!.updateReviewingStatus(ReviewingStatus.none);
     _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
 
     //Save answer list into prepare_simulator_test_provider

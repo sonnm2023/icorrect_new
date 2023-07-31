@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:video_player/video_player.dart';
@@ -54,6 +55,16 @@ class TestProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
+  }
+
+  int _reviewingCurrentIndex = 0;
+  int get reviewingCurrentIndex => _reviewingCurrentIndex;
+  void updateReviewingCurrentIndex(int index) {
+    _reviewingCurrentIndex = index;
+  }
+
+  void resetReviewingCurrentIndex() {
+    _reviewingCurrentIndex = 0;
   }
 
   final List<QuestionTopicModel> _questionList = [];
@@ -121,10 +132,10 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  bool _isShowPlayVideoButton = true;
-  bool get isShowPlayVideoButton => _isShowPlayVideoButton;
-  void setIsShowPlayVideoButton(bool isShow) {
-    _isShowPlayVideoButton = isShow;
+  ReviewingStatus _reviewingStatus = ReviewingStatus.none;
+  ReviewingStatus get reviewingStatus => _reviewingStatus;
+  void updateReviewingStatus(ReviewingStatus status) {
+    _reviewingStatus = status;
 
     if (!isDisposed) {
       notifyListeners();
@@ -263,7 +274,18 @@ class TestProvider with ChangeNotifier {
     }
   }
 
+  bool _isReviewingPlayAnswer = false;
+  bool get isReviewingPlayAnswer => _isReviewingPlayAnswer;
+  void setIsReviewingPlayAnswer(bool isReviewingPlayAnswer) {
+    _isReviewingPlayAnswer = isReviewingPlayAnswer;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   void resetAll() {
+    _isReviewingPlayAnswer = false;
     _strCountCueCard = null;
     _enableRepeatButton = true;
     _visibleRecord = false;
@@ -278,8 +300,10 @@ class TestProvider with ChangeNotifier {
     _playerController = null;
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
-    _isShowPlayVideoButton = true;
+    // _isShowPlayVideoButton = true;
+    _reviewingStatus = ReviewingStatus.none;
     resetTopicsQueue();
     clearQuestionList();
+    resetReviewingCurrentIndex();
   }
 }

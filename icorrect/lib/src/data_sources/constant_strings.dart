@@ -26,6 +26,7 @@ enum HandleWhenFinish {
   questionVideoType,
   followupVideoType,
   endOfTestVideoType,
+  reviewingVideoType
 }
 
 enum Status {
@@ -74,6 +75,16 @@ enum SubmitStatus {
   submitting(2);
 
   const SubmitStatus(this.get);
+  final int get;
+}
+
+enum ReviewingStatus {
+  none(-1),
+  playing(0),
+  pause(1),
+  restart(2);
+
+  const ReviewingStatus(this.get);
   final int get;
 }
 
