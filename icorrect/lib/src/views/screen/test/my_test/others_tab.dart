@@ -74,7 +74,7 @@ class _OtherTabState extends State<OtherTab>
               return _othersItem(provider.otherLightHomeWorks.elementAt(index));
             });
       } else {
-        return NothingWidget.init().buildNothingWidget(
+        return EmptyWidget.init().buildNothingWidget(
             'Nothing other homeworks in here',
             widthSize: 100,
             heightSize: 100);
@@ -148,7 +148,7 @@ class _OtherTabState extends State<OtherTab>
   }
 
   @override
-  void getSpecicalHomeWorksFail(String message) {
+  void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
     Fluttertoast.showToast(
         msg: message,

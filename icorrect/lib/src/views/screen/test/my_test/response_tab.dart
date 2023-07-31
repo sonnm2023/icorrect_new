@@ -323,7 +323,7 @@ class _ResponseTabState extends State<ResponseTab>
                   ],
                 );
               })
-          : NothingWidget.init().buildNothingWidget('Nothing Problem in here',
+          : EmptyWidget.init().buildNothingWidget('Nothing Problem in here',
               widthSize: 100, heightSize: 100),
     );
   }

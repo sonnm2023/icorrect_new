@@ -109,7 +109,7 @@ class TipQuestionDialog {
                               fontSize: 16,
                             ),
                           )
-                        : NothingWidget.init().buildNothingWidget(
+                        : EmptyWidget.init().buildNothingWidget(
                             'Nothing tips for you in here',
                             widthSize: 100,
                             heightSize: 100)

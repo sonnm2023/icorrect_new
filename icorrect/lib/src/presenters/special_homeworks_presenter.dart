@@ -7,7 +7,7 @@ import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 
 abstract class SpecialHomeworksContracts {
   void getSpecialHomeWork(List<StudentResultModel> studentsResults);
-  void getSpecicalHomeWorksFail(String message);
+  void getSpecialHomeWorksFail(String message);
 }
 
 class SpecialHomeworksPresenter {
@@ -37,14 +37,14 @@ class SpecialHomeworksPresenter {
               _getStudentResultsModel(dataMap['data'] ?? {});
           _view!.getSpecialHomeWork(results);
         } else {
-          _view!.getSpecicalHomeWorksFail('Loading result response fail !');
+          _view!.getSpecialHomeWorksFail('Loading result response fail !');
         }
       } else {
-        _view!.getSpecicalHomeWorksFail(
+        _view!.getSpecialHomeWorksFail(
             'Loading result response fail.Please check your internet and try again!');
       }
     }).catchError((onError) {
-      _view!.getSpecicalHomeWorksFail(
+      _view!.getSpecialHomeWorksFail(
           'Error when load homeworks : ${onError.toString()}');
       if (kDebugMode) {
         print(onError.toString());

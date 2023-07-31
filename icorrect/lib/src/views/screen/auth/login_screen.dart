@@ -12,7 +12,6 @@ import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
-import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/default_text_button.dart';
@@ -20,7 +19,6 @@ import 'package:icorrect/src/views/widget/email_input_widget.dart';
 import 'package:icorrect/src/views/widget/logo_text_widget.dart';
 import 'package:icorrect/src/views/widget/logo_widget.dart';
 import 'package:icorrect/src/views/widget/password_input_widget.dart';
-import 'package:icorrect/src/views/widget/space_widget.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -110,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen>
                           _buildSignInButton(),
                           _buildSignUpButton(),
                           _buildForgotPasswordButton(),
-                          const SpaceWidget(),
+                          Expanded(child: Container(),),
                           const ContactInfoWidget(),
                         ],
                       ),

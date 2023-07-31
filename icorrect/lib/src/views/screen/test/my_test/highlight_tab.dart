@@ -63,10 +63,10 @@ class _HighLightTabState extends State<HighLightTab>
             _getHighLightHomeWork();
           });
         },
-        child: _buildHighLishtList());
+        child: _buildHighLightList());
   }
 
-  Widget _buildHighLishtList() {
+  Widget _buildHighLightList() {
     return Consumer<MyTestProvider>(builder: (context, provider, child) {
       if (provider.highLightHomeworks.isNotEmpty) {
         return ListView.builder(
@@ -78,7 +78,7 @@ class _HighLightTabState extends State<HighLightTab>
                   provider.highLightHomeworks.elementAt(index));
             });
       } else {
-        return NothingWidget.init().buildNothingWidget(
+        return EmptyWidget.init().buildNothingWidget(
             'Nothing HighLight Homeworks in here',
             widthSize: 100,
             heightSize: 100);
@@ -161,7 +161,7 @@ class _HighLightTabState extends State<HighLightTab>
   }
 
   @override
-  void getSpecicalHomeWorksFail(String message) {
+  void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
     Fluttertoast.showToast(
         msg: message,
