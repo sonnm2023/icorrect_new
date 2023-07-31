@@ -22,8 +22,10 @@ import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
+import 'package:icorrect/src/views/widget/my_test_widget/my_test_video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/alert_dialog.dart';
@@ -52,6 +54,7 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void initState() {
     super.initState();
+   
     _loading = CircleLoading();
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
@@ -84,9 +87,7 @@ class _MyTestTabState extends State<MyTestTab>
           children: [
             Expanded(
                 flex: 4,
-                child: Container(
-                  color: AppColor.defaultAppColor,
-                )),
+                child:MyTestVideo()),
             Expanded(
                 flex: 9,
                 child: ListView.builder(

@@ -249,13 +249,9 @@ class MyTestPresenter {
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        print('call back: ${value.toString()}');
         if (json['error_code'] == 200 && json['status'] == 'success') {
-          print('step 23 ${_view.toString()}');
-
           _view!.updateAnswersSuccess('Save your answers successfully!');
         } else {
-          print('step 1');
           _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
         }
       }).catchError((onError) {
@@ -322,7 +318,7 @@ class MyTestPresenter {
         format = 'followup[$questionId]';
         reanswerFormat = 'reanswer_followup[$questionId]';
       }
-      print('reanswer:${q.reAnswerCount.toString()}');
+
       formData
           .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
 
@@ -337,7 +333,6 @@ class MyTestPresenter {
         }
       }
     }
-    print('formData: ${formData.toString()}');
 
     request.fields.addAll(formData);
 
