@@ -17,7 +17,7 @@ import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
-import 'package:icorrect/src/views/screen/test/simulator_test_new/back_button_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
@@ -38,7 +38,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     implements SimulatorTestViewContract, ActionAlertListener {
   SimulatorTestPresenter? _simulatorTestPresenter;
 
-  SimulatorTestProvider? _prepareSimulatorTestProvider;
+  SimulatorTestProvider? _simulatorTestProvider;
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
@@ -46,20 +46,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void initState() {
     super.initState();
-
-    _prepareSimulatorTestProvider =
+    _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
-
     _simulatorTestPresenter = SimulatorTestPresenter(this);
+
     _getTestDetail();
   }
 
   @override
   void dispose() {
-    _prepareSimulatorTestProvider!.resetAll();
+    _simulatorTestProvider!.resetAll();
 
-    if (!_prepareSimulatorTestProvider!.isDisposed) {
-      _prepareSimulatorTestProvider!.dispose();
+    if (!_simulatorTestProvider!.isDisposed) {
+      _simulatorTestProvider!.dispose();
     }
 
     super.dispose();
@@ -91,7 +90,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _backButtonTapped() async {
     //Disable back button when submitting test
-    if (_prepareSimulatorTestProvider!.submitStatus ==
+    if (_simulatorTestProvider!.submitStatus ==
         SubmitStatus.submitting) {
       if (kDebugMode) {
         print("Status is submitting!");
@@ -99,7 +98,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       return;
     }
 
-    switch (_prepareSimulatorTestProvider!.doingStatus.get) {
+    switch (_simulatorTestProvider!.doingStatus.get) {
       case -1:
         {
           //None
@@ -166,14 +165,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 },
                 okButtonTapped: () {
                   //Submit
-                  _prepareSimulatorTestProvider!
+                  _simulatorTestProvider!
                       .updateSubmitStatus(SubmitStatus.submitting);
                   _simulatorTestPresenter!.submitTest(
-                    testId: _prepareSimulatorTestProvider!
+                    testId: _simulatorTestProvider!
                         .currentTestDetail.testId
                         .toString(),
                     activityId: widget.homeWorkModel.id.toString(),
-                    questions: _prepareSimulatorTestProvider!.questionList,
+                    questions: _simulatorTestProvider!.questionList,
                   );
                 },
               );
@@ -190,7 +189,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Future<void> _deleteAllAnswer() async {
-    List<String> answers = _prepareSimulatorTestProvider!.answerList;
+    List<String> answers = _simulatorTestProvider!.answerList;
 
     if (answers.isEmpty) return;
 
@@ -198,7 +197,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       FileStorageHelper.deleteFile(
               answer,
               MediaType.audio,
-              _prepareSimulatorTestProvider!.currentTestDetail.testId
+              _simulatorTestProvider!.currentTestDetail.testId
                   .toString())
           .then((value) {
         if (false == value) {
@@ -270,7 +269,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Future<void> _requestPermission(
       Permission permission, BuildContext context) async {
-    _prepareSimulatorTestProvider!.setPermissionDeniedTime();
+    _simulatorTestProvider!.setPermissionDeniedTime();
     // ignore: unused_local_variable
     final status = await permission.request();
     _listenForPermissionStatus(context);
@@ -285,7 +284,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       _microPermissionStatus = await _microPermission!.status;
 
       if (_microPermissionStatus == PermissionStatus.denied) {
-        if (_prepareSimulatorTestProvider!.permissionDeniedTime > 2) {
+        if (_simulatorTestProvider!.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
       } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
@@ -297,7 +296,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _showConfirmDialog() {
-    if (false == _prepareSimulatorTestProvider!.dialogShowing) {
+    if (false == _simulatorTestProvider!.dialogShowing) {
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -309,7 +308,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               keyInfo: StringClass.permissionDenied,
             );
           });
-      _prepareSimulatorTestProvider!.setDialogShowing(true);
+      _simulatorTestProvider!.setDialogShowing(true);
     }
   }
 
@@ -317,24 +316,24 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.id.toString());
 
     Future.delayed(Duration.zero, () {
-      _prepareSimulatorTestProvider!.updateProcessingStatus();
+      _simulatorTestProvider!.updateProcessingStatus();
     });
   }
 
   void _startToDoTest() {
     //Hide StartNow button
-    _prepareSimulatorTestProvider!.setStartNowButtonStatus(false);
+    _simulatorTestProvider!.setStartNowButtonStatus(false);
 
     //Hide Loading view
-    _prepareSimulatorTestProvider!.setDownloadingStatus(false);
+    _simulatorTestProvider!.setDownloadingStatus(false);
 
-    _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
+    _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
   }
 
   @override
   void onDownloadFailure(AlertInfo info) {
     if (mounted) {
-      if (!_prepareSimulatorTestProvider!.dialogShowing) {
+      if (!_simulatorTestProvider!.dialogShowing) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -347,7 +346,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             );
           },
         );
-        _prepareSimulatorTestProvider!.setDialogShowing(true);
+        _simulatorTestProvider!.setDialogShowing(true);
       }
     }
   }
@@ -355,14 +354,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total) {
-    _prepareSimulatorTestProvider!.setTotal(total);
-    _prepareSimulatorTestProvider!.updateDownloadingIndex(index);
-    _prepareSimulatorTestProvider!.updateDownloadingPercent(percent);
-    _prepareSimulatorTestProvider!.setActivityType(testDetail.activityType);
+    _simulatorTestProvider!.setTotal(total);
+    _simulatorTestProvider!.updateDownloadingIndex(index);
+    _simulatorTestProvider!.updateDownloadingPercent(percent);
+    _simulatorTestProvider!.setActivityType(testDetail.activityType);
 
     //Enable Start Testing Button
     if (index >= 5) {
-      _prepareSimulatorTestProvider!.setStartNowButtonStatus(true);
+      _simulatorTestProvider!.setStartNowButtonStatus(true);
     }
 
     if (index == total) {
@@ -373,10 +372,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
-    _prepareSimulatorTestProvider!.setCurrentTestDetail(testDetailModel);
-    _prepareSimulatorTestProvider!.updateProcessingStatus();
-    _prepareSimulatorTestProvider!.setDownloadingStatus(true);
-    _prepareSimulatorTestProvider!.setTotal(total);
+    _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
+    _simulatorTestProvider!.updateProcessingStatus();
+    _simulatorTestProvider!.setDownloadingStatus(true);
+    _simulatorTestProvider!.setTotal(total);
   }
 
   @override
@@ -390,10 +389,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSaveTopicListIntoProvider(List<TopicModel> list) {
-    _prepareSimulatorTestProvider!.setTopicsList(list);
+    _simulatorTestProvider!.setTopicsList(list);
     Queue<TopicModel> queue = Queue<TopicModel>();
     queue.addAll(list);
-    _prepareSimulatorTestProvider!.setTopicsQueue(queue);
+    _simulatorTestProvider!.setTopicsQueue(queue);
   }
 
   @override
@@ -420,7 +419,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestFail(String msg) {
-    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
 
     showToastMsg(
       msg: msg,
@@ -433,7 +432,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestSuccess(String msg) {
-    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
 
     showToastMsg(
       msg: msg,

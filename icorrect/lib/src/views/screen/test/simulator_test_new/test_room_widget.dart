@@ -19,7 +19,6 @@ import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
@@ -47,10 +46,10 @@ class TestRoomWidget extends StatefulWidget {
 
 class _TestRoomWidgetState extends State<TestRoomWidget>
     with WidgetsBindingObserver
-    implements TestRoomViewContract, ActionAlertListener {
+    implements TestRoomViewContract {
   TestRoomPresenter? _testRoomPresenter;
   TestRoomProvider? _testProvider;
-  SimulatorTestProvider? _prepareSimulatorTestProvider;
+  SimulatorTestProvider? _simulatorTestProvider;
 
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
@@ -72,7 +71,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _audioPlayerController = AudioPlayer();
     _recordController = Record();
 
-    _prepareSimulatorTestProvider =
+    _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _testProvider = Provider.of<TestRoomProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -87,8 +86,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
     _deallocateMemory();
+    super.dispose();
   }
 
   @override
@@ -136,7 +135,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                           finishAnswer: _finishAnswerCallBack,
                           repeatQuestion: _repeatQuestionCallBack,
                         ),
-                        _prepareSimulatorTestProvider!.activityType ==
+                        _simulatorTestProvider!.activityType ==
                                 "homework"
                             ? SaveTheTestWidget(
                                 testRoomPresenter: _testRoomPresenter!)
@@ -154,9 +153,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startToDoTest() {
-    if (_prepareSimulatorTestProvider!.topicsQueue.isNotEmpty) {
-      _testProvider!.setTopicsQueue(_prepareSimulatorTestProvider!.topicsQueue);
-      _testRoomPresenter!.startPart(_prepareSimulatorTestProvider!.topicsQueue);
+    if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
+      _testProvider!.setTopicsQueue(_simulatorTestProvider!.topicsQueue);
+      _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
 
@@ -247,7 +246,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
     String path = await Utils.getAudioPathToPlay(question,
-        _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
+        _simulatorTestProvider!.currentTestDetail.testId.toString());
     _playAudio(path);
   }
 
@@ -441,7 +440,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.getReviewingAudioPathToPlay(
       question,
-      _prepareSimulatorTestProvider!.currentTestDetail.testId.toString(),
+      _simulatorTestProvider!.currentTestDetail.testId.toString(),
     );
     _playAnswerAudio(path, question);
   }
@@ -462,7 +461,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startToPlayVideo() {
-    if (_prepareSimulatorTestProvider!.doingStatus == DoingStatus.finish) {
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Start to review the test
       _startReviewing();
     } else {
@@ -772,7 +771,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     String path = await FileStorageHelper.getFilePath(
         newFileName,
         MediaType.audio,
-        _prepareSimulatorTestProvider!.currentTestDetail.testId.toString());
+        _simulatorTestProvider!.currentTestDetail.testId.toString());
 
     if (kDebugMode) {
       print("RECORD AS FILE PATH: $path");
@@ -816,11 +815,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     String fileName = "";
-    final splitted = origin.split('.');
+    final split = origin.split('.');
     if (_countRepeat > 0) {
-      fileName = 'repeat_${_countRepeat.toString()}_${splitted[0]}';
+      fileName = 'repeat_${_countRepeat.toString()}_${split[0]}';
     } else {
-      fileName = 'answer_${splitted[0]}';
+      fileName = 'answer_${split[0]}';
     }
     return fileName;
   }
@@ -924,16 +923,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _prepareToEndTheTest() {
     //Finish doing test
     _testProvider!.updateReviewingStatus(ReviewingStatus.none);
-    _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
+    _simulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
 
     //Save answer list into prepare_simulator_test_provider
     List<String> temp = _prepareAnswerListForDelete();
-    _prepareSimulatorTestProvider!.setAnswerList(temp);
+    _simulatorTestProvider!.setAnswerList(temp);
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
-    _prepareSimulatorTestProvider!.setQuestionList(questions);
+    _simulatorTestProvider!.setQuestionList(questions);
 
     //Auto submit test for activity type = test
-    if (_prepareSimulatorTestProvider!.activityType == "test") {
+    if (_simulatorTestProvider!.activityType == "test") {
       _startSubmitTest();
     } else {
       //Activity Type = "homework"
@@ -943,13 +942,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _startSubmitTest() {
     // _prepareSimulatorTestProvider!.setIsSubmitting(true);
-    _prepareSimulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
     _testRoomPresenter!.submitTest(
       testId:
-          _prepareSimulatorTestProvider!.currentTestDetail.testId.toString(),
+          _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.id.toString(),
       questions: questions,
     );
@@ -1006,33 +1005,40 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _calculateIndexOfHeader() {
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
-      //Header of Part 2
-      if (topicModel.numPart == PartOfTest.part2.get) {
-        if (_testProvider!.indexOfCurrentQuestion == 0) {
-          _testProvider!
-              .setIndexOfHeaderPart2(_testProvider!.questionList.length);
-        }
-      }
-
-      //Header of Part 3
-      if (topicModel.numPart == PartOfTest.part3.get) {
-        if (topicModel.followUp.isNotEmpty) {
-          if (_testProvider!.indexOfCurrentFollowUp == 0) {
-            _testProvider!
-                .setIndexOfHeaderPart3(_testProvider!.questionList.length);
+      switch (topicModel.numPart) {
+        case 2:
+          {
+            //PART 2
+            if (_testProvider!.indexOfCurrentQuestion == 0) {
+              _testProvider!
+                  .setIndexOfHeaderPart2(_testProvider!.questionList.length);
+            }
+            break;
           }
-        } else {
-          if (_testProvider!.indexOfCurrentQuestion == 0) {
-            _testProvider!
-                .setIndexOfHeaderPart3(_testProvider!.questionList.length);
+        case 3:
+          {
+            //PART 3
+            if (topicModel.followUp.isNotEmpty) {
+              if (_testProvider!.indexOfCurrentFollowUp == 0) {
+                _testProvider!
+                    .setIndexOfHeaderPart3(_testProvider!.questionList.length);
+              }
+            } else {
+              if (_testProvider!.indexOfCurrentQuestion == 0) {
+                _testProvider!
+                    .setIndexOfHeaderPart3(_testProvider!.questionList.length);
+              }
+            }
+            break;
           }
-        }
       }
     }
   }
 
-  void _startRecordAnswer(
-      {required String fileName, required bool isPart2}) async {
+  void _startRecordAnswer({
+    required String fileName,
+    required bool isPart2,
+  }) async {
     //Stop old record
     await _stopRecord();
 
@@ -1066,14 +1072,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _finishSubmitTest(String msg, SubmitStatus status) {
     // _prepareSimulatorTestProvider!.setIsSubmitting(false);
-    _prepareSimulatorTestProvider!.updateSubmitStatus(status);
+    _simulatorTestProvider!.updateSubmitStatus(status);
 
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.error,
     );
 
-    if (_prepareSimulatorTestProvider!.activityType == "test") {
+    if (_simulatorTestProvider!.activityType == "test") {
       _gotoMyTestScreen();
     } else {
       //TODO: Can reviewing
@@ -1100,16 +1106,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     return temp;
-  }
-
-  @override
-  void onAlertExit(String keyInfo) {
-    // TODO: implement onAlertExit
-  }
-
-  @override
-  void onAlertNextStep(String keyInfo) {
-    // TODO: implement onAlertNextStep
   }
 
   @override
@@ -1265,7 +1261,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onClickSaveTheTest() {
     // if (false == _prepareSimulatorTestProvider!.isSubmitting) {
-    if (SubmitStatus.none == _prepareSimulatorTestProvider!.submitStatus) {
+    if (SubmitStatus.none == _simulatorTestProvider!.submitStatus) {
       _startSubmitTest();
     }
   }
