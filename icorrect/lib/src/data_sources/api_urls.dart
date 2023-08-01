@@ -23,7 +23,7 @@ String fileEP(String name)=> '${icorrectDomain}file?filename=$name';
 String responseEP(String orderId) =>
     '${toolDomain}api/response?order_id=$orderId';
 
-Future<String> aiResponseEP(String orderId) async =>
+Future<String> AiResponseEP(String orderId) async =>
     '${icorrectDomain}ai-response/index.html?order_id=$orderId&token=${await Utils.getAccessToken()}';
 
 String specialHomeWorksEP(

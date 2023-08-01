@@ -6,6 +6,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -18,8 +19,9 @@ class ReAnswerDialog extends Dialog {
   late Record _record;
   final String _filePath = '';
   final TestRoomPresenter _testPresenter;
+  final String _currentTestId;
 
-  ReAnswerDialog(this._context, this._question, this._testPresenter,
+  ReAnswerDialog(this._context, this._question, this._testPresenter, this._currentTestId,
       {super.key});
 
   @override
@@ -120,9 +122,7 @@ class ReAnswerDialog extends Dialog {
   }
 
   void _startRecord() async {
-    String testId = Provider.of<SimulatorTestProvider>(_context, listen: false).currentTestDetail.testId.toString();
-
-    String path = await Utils.getAudioPathToPlay(_question, testId);
+    String path = await Utils.getAudioPathToPlay(_question, _currentTestId);
 
     if (await _record.hasPermission()) {
       await _record.start(

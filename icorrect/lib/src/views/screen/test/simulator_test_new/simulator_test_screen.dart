@@ -61,9 +61,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("Debug: SimulatorTest --- build");
-    }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -88,8 +85,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _backButtonTapped() async {
     //Disable back button when submitting test
-    if (_simulatorTestProvider!.submitStatus ==
-        SubmitStatus.submitting) {
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
       if (kDebugMode) {
         print("Status is submitting!");
       }
@@ -166,8 +162,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                   _simulatorTestProvider!
                       .updateSubmitStatus(SubmitStatus.submitting);
                   _simulatorTestPresenter!.submitTest(
-                    testId: _simulatorTestProvider!
-                        .currentTestDetail.testId
+                    testId: _simulatorTestProvider!.currentTestDetail.testId
                         .toString(),
                     activityId: widget.homeWorkModel.id.toString(),
                     questions: _simulatorTestProvider!.questionList,
@@ -192,11 +187,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (answers.isEmpty) return;
 
     for (String answer in answers) {
-      FileStorageHelper.deleteFile(
-              answer,
-              MediaType.audio,
-              _simulatorTestProvider!.currentTestDetail.testId
-                  .toString())
+      FileStorageHelper.deleteFile(answer, MediaType.audio,
+              _simulatorTestProvider!.currentTestDetail.testId.toString())
           .then((value) {
         if (false == value) {
           showToastMsg(
@@ -209,54 +201,52 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Widget _buildBody() {
-    return Consumer<SimulatorTestProvider>(
-      builder: (context, provider, child) {
-        if (kDebugMode) {
-          print("Debug: SimulatorTest --- build -- buildBody");
-        }
+    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
+      if (kDebugMode) {
+        print("Debug: SimulatorTest --- build -- buildBody");
+      }
 
-        if (provider.isDownloading) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const DownloadProgressingWidget(),
-              Visibility(
-                visible: provider.canStartNow,
-                child: StartNowButtonWidget(
-                  startNowButtonTapped: () {
-                    _checkPermission();
-                  },
-                ),
+      if (provider.isDownloading) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const DownloadProgressingWidget(),
+            Visibility(
+              visible: provider.canStartNow,
+              child: StartNowButtonWidget(
+                startNowButtonTapped: () {
+                  _checkPermission();
+                },
               ),
-            ],
-          );
-        }
+            ),
+          ],
+        );
+      }
 
-        if (provider.isProcessing) {
-          return const DefaultLoadingIndicator(
-            color: AppColor.defaultPurpleColor,
-          );
-        } else {
-          return Stack(
-            children: [
-              ChangeNotifierProvider(
-                create: (_) => TestRoomProvider(),
-                child: TestRoomWidget(
-                  homeWorkModel: widget.homeWorkModel,
-                  simulatorTestPresenter: _simulatorTestPresenter!,
-                ),
+      if (provider.isProcessing) {
+        return const DefaultLoadingIndicator(
+          color: AppColor.defaultPurpleColor,
+        );
+      } else {
+        return Stack(
+          children: [
+            ChangeNotifierProvider(
+              create: (_) => TestRoomProvider(),
+              child: TestRoomWidget(
+                homeWorkModel: widget.homeWorkModel,
+                simulatorTestPresenter: _simulatorTestPresenter!,
               ),
-              Visibility(
-                visible: provider.submitStatus == SubmitStatus.submitting,
-                child: const DefaultLoadingIndicator(
-                  color: AppColor.defaultPurpleColor,
-                ),
+            ),
+            Visibility(
+              visible: provider.submitStatus == SubmitStatus.submitting,
+              child: const DefaultLoadingIndicator(
+                color: AppColor.defaultPurpleColor,
               ),
-            ],
-          );
-        }
-      },
-    );
+            ),
+          ],
+        );
+      }
+    });
   }
 
   void _checkPermission() async {

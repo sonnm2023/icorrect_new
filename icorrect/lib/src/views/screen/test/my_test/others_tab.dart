@@ -15,7 +15,6 @@ import '../../../widget/default_text.dart';
 import '../../../widget/empty_widget.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
-// ignore: must_be_immutable
 class OtherTab extends StatefulWidget {
   MyTestProvider provider;
   HomeWorkModel homeWorkModel;

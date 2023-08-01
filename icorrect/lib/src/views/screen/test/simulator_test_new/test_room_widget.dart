@@ -93,10 +93,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print("Debug: TestRoom --- build");
-    }
-
+    if (kDebugMode) print("TestRoom-Build");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -292,6 +289,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             context,
             question,
             _testRoomPresenter!,
+            _simulatorTestProvider!.currentTestDetail.testId.toString(),
           );
         },
       );
@@ -347,7 +345,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _showTipCallBack(QuestionTopicModel question) {
     // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
-      _showTips(question);
+      _showTip(question);
     } else {
       showToastMsg(
         msg: "Please wait until the test is finished!",
@@ -356,7 +354,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  _showTips(QuestionTopicModel questionTopicModel) {
+  void _showTip(QuestionTopicModel questionTopicModel) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -427,7 +425,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _currentQuestion = null;
 
     _reviewingQuestionList = _prepareQuestionListForReviewing();
-
     dynamic item =
         _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
     if (item is String) {
@@ -462,7 +459,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _continueReviewing() {
     int index = _testRoomProvider!.reviewingCurrentIndex + 1;
     _testRoomProvider!.updateReviewingCurrentIndex(index);
-
     dynamic item =
         _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
     if (item is String) {
@@ -859,7 +855,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 _testRoomProvider!.setVisibleRecord(false);
                 _testRoomProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 3; //3 for test, 60 for product
+                int time = 60; //3 for test, 60 for product
                 String timeString = Utils.getTimeRecordString(time);
                 _testRoomProvider!.setCountDownCueCard(timeString);
 
@@ -963,7 +959,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest() {
-    // _simulatorTestProvider!.setIsSubmitting(true);
+    // _prepareSimulatorTestProvider!.setIsSubmitting(true);
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
@@ -1092,7 +1088,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _finishSubmitTest(String msg, SubmitStatus status) {
-    // _simulatorTestProvider!.setIsSubmitting(false);
+    // _prepareSimulatorTestProvider!.setIsSubmitting(false);
     _simulatorTestProvider!.updateSubmitStatus(status);
 
     showToastMsg(
@@ -1281,7 +1277,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onClickSaveTheTest() {
-    // if (false == _simulatorTestProvider!.isSubmitting) {
+    // if (false == _prepareSimulatorTestProvider!.isSubmitting) {
     if (SubmitStatus.none == _simulatorTestProvider!.submitStatus) {
       _startSubmitTest();
     }

@@ -38,8 +38,10 @@ class MyApp extends StatelessWidget {
           create: (_) => ReAnswerProvider(),
         ),
         ChangeNotifierProvider(
+
           create: (_) => SimulatorTestProvider(),
-        ),
+        )
+
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
