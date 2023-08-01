@@ -49,7 +49,7 @@ class _HighLightTabState extends State<HighLightTab>
     }
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString(),
-        activityId: widget.homeWorkModel.activityId.toString(),
+        activityId: widget.homeWorkModel.id.toString(),
         status: Status.allHomework.get,
         example: Status.highLight.get);
   }

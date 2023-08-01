@@ -306,6 +306,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             homeWorkModel: _selectedHomeWorkModel!,
           ),
         ),
+        // MaterialPageRoute(
+        //   builder: (_) => ChangeNotifierProvider<PrepareSimulatorTestProvider>(
+        //     create: (_) => PrepareSimulatorTestProvider(),
+        //     child: SimulatorTestScreen(
+        //       homeWorkModel: _selectedHomeWorkModel!,
+        //     ),
+        //   ),
+        // ),
       );
     } else {
       Navigator.of(context).push(
