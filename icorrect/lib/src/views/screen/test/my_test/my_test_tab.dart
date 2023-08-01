@@ -21,6 +21,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
+import 'package:icorrect/src/views/screen/test/my_test/video_my_test.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
@@ -52,7 +53,7 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void initState() {
     super.initState();
-   
+
     _loading = CircleLoading();
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
@@ -83,7 +84,7 @@ class _MyTestTabState extends State<MyTestTab>
       } else {
         return Column(
           children: [
-          
+            Expanded(flex: 5, child: VideoMyTest()),
             Expanded(
                 flex: 9,
                 child: ListView.builder(
@@ -321,11 +322,13 @@ class _MyTestTabState extends State<MyTestTab>
                             onTap: () {
                               _showTips(question);
                             },
-                            child: const DefaultText(
-                                text: 'View Tips',
-                                color: AppColor.defaultPurpleColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
+                            child: (question.tips.isNotEmpty)
+                                ? const DefaultText(
+                                    text: 'View Tips',
+                                    color: AppColor.defaultPurpleColor,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold)
+                                : Container(),
                           ),
                           const SizedBox(width: 20),
                           (widget.homeWorkModel.canReanswer())
@@ -388,7 +391,8 @@ class _MyTestTabState extends State<MyTestTab>
         Timer timer = _presenter!.startCountDown(context, 30);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
-          path: '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}' //TODO
+          path:
+              '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}' //TODO
               '\\$audioFile',
           encoder: AudioEncoder.wav,
           bitRate: 128000,
@@ -405,7 +409,8 @@ class _MyTestTabState extends State<MyTestTab>
 
   Future _preparePlayAudio(
       {required String fileName, required String questionId}) async {
-    Utils.prepareAudioFile(fileName, null).then((value) { //TODO
+    Utils.prepareAudioFile(fileName, null).then((value) {
+      //TODO
       print('_playAudio:${value.path.toString()}');
       _playAudio(value.path.toString(), questionId);
     });
