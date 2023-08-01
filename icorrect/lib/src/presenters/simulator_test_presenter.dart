@@ -235,11 +235,6 @@ class SimulatorTestPresenter {
     }
   }
 
-  void clickSaveTheTest() {
-    //TODO: Submit homework
-    if (kDebugMode) print("clickSaveTheTest");
-  }
-
   void gotoMyTestScreen() {
     _view!.onGotoMyTestScreen();
   }
@@ -256,11 +251,6 @@ class SimulatorTestPresenter {
       activityId: activityId,
       questions: questions,
     );
-
-    if (kDebugMode) {
-      print(multiRequest.fields[testId]);
-      print(multiRequest.fields[activityId]);
-    }
 
     try {
       _testRepository!.submitTest(multiRequest).then((value) {

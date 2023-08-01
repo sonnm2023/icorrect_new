@@ -28,9 +28,7 @@ class SpecialHomeworksPresenter {
         .getSpecialHomeWorks(email, activityId, status, example)
         .then((value) {
       Map<String, dynamic> dataMap = jsonDecode(value) ?? [];
-      if (kDebugMode) {
-        print(dataMap.toString());
-      }
+
       if (dataMap.isNotEmpty) {
         if (dataMap['error_code'] == 200) {
           List<StudentResultModel> results =
@@ -47,14 +45,14 @@ class SpecialHomeworksPresenter {
       _view!.getSpecialHomeWorksFail(
           'Error when load homeworks : ${onError.toString()}');
       if (kDebugMode) {
-        print(onError.toString());
+        print("DEBUG: getSpecialHomeWorks ${onError.toString()}");
       }
     });
   }
 
   List<StudentResultModel> _getStudentResultsModel(List<dynamic> data) {
     if (kDebugMode) {
-      print(data.toString());
+      print("DEBUG: _getStudentResultsModel ${data.toString()}");
     }
     List<StudentResultModel> results = [];
     for (int i = 0; i < data.length; i++) {

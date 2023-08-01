@@ -44,7 +44,7 @@ class _HighLightTabState extends State<HighLightTab>
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();
     if (kDebugMode) {
-      print(widget.homeWorkModel.activityId.toString());
+      print("DEBUG: _getHighLightHomeWork ${widget.homeWorkModel.activityId.toString()}");
     }
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString(),
@@ -154,7 +154,7 @@ class _HighLightTabState extends State<HighLightTab>
   @override
   void getSpecialHomeWork(List<StudentResultModel> studentsResults) {
     if (kDebugMode) {
-      print('meomoe : ${studentsResults.length}');
+      print('DEBUG: getSpecialHomeWork ${studentsResults.length}');
     }
     _loading?.hide();
     widget.provider.setHighLightHomeworks(studentsResults);

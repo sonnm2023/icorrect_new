@@ -18,7 +18,7 @@ class TestRecordWidget extends StatelessWidget {
     return Consumer<MyTestProvider>(builder: (context, testProvider, child) {
       QuestionTopicModel currentQuestion = testProvider.currentQuestion;
       if (kDebugMode) {
-        print(currentQuestion.content);
+        print("DEBUG: TestRecordWidget ${currentQuestion.content}");
       }
 
       return Visibility(

@@ -65,14 +65,17 @@ class TestRoomPresenter {
         //TODO: Download again
       }
     } else {
-      if (kDebugMode) print("This topic has not introduce file");
+      if (kDebugMode) {
+        print("DEBUG: This topic has not introduce file");
+      }
     }
   }
 
   //Check file is exist using file_storage
-  Future<bool> _isExist(String fileName, MediaType mediaType, String? testId) async {
-    bool isExist = await FileStorageHelper.checkExistFile(
-        fileName, mediaType, testId);
+  Future<bool> _isExist(
+      String fileName, MediaType mediaType, String? testId) async {
+    bool isExist =
+        await FileStorageHelper.checkExistFile(fileName, mediaType, testId);
     return isExist;
   }
 
@@ -143,13 +146,17 @@ class TestRoomPresenter {
         //TODO: download again
       }
     } else {
-      if (kDebugMode) print("This topic has not end of take note file");
+      if (kDebugMode) {
+        print("DEBUG: This topic has not end of take note file");
+      }
     }
   }
 
   void clickEndReAnswer(QuestionTopicModel question, String filePath) {
     //TODO:
-    if (kDebugMode) print("clickEndReAnswer");
+    if (kDebugMode) {
+      print("DEBUG: clickEndReAnswer");
+    }
   }
 
   void clickSaveTheTest() {
@@ -184,11 +191,6 @@ class TestRoomPresenter {
       activityId: activityId,
       questions: questions,
     );
-
-    if (kDebugMode) {
-      print(multiRequest.fields[testId]);
-      print(multiRequest.fields[activityId]);
-    }
 
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
@@ -286,9 +288,7 @@ class TestRoomPresenter {
       for (int i = 0; i < q.answers.length; i++) {
         File audioFile = File(
           await FileStorageHelper.getFilePath(
-              q.answers.elementAt(i).url.toString(),
-              MediaType.audio,
-              testId),
+              q.answers.elementAt(i).url.toString(), MediaType.audio, testId),
         );
 
         if (await audioFile.exists()) {

@@ -93,7 +93,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) print("TestRoom-Build");
+    if (kDebugMode) {
+      print("DEBUG: TestRoomWidget --- build");
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -255,7 +258,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       String audioPath, QuestionTopicModel question) async {
     if (kDebugMode) {
       print(
-          "Reviewing current index = ${_testRoomProvider!.reviewingCurrentIndex} -- play answer");
+          "DEBUG: Reviewing current index = ${_testRoomProvider!.reviewingCurrentIndex} -- play answer");
     }
 
     await _audioPlayerController!.play(DeviceFileSource(audioPath));
@@ -274,7 +277,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       });
     } on PlatformException catch (e) {
       if (kDebugMode) {
-        print(e);
+        print("DEBUG: $e");
       }
     }
   }
@@ -339,7 +342,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _cancelButtonTapped() {
-    if (kDebugMode) print("_cancelButtonTapped");
+    if (kDebugMode) {
+      print("DEBUG: _cancelButtonTapped");
+    }
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
@@ -416,7 +421,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     } else {
-      if (kDebugMode) print("onFinishAnswer: ERROR-Current Part is NULL!");
+      if (kDebugMode) {
+        print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
+      }
     }
   }
 
@@ -483,27 +490,27 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       );
     } else {
       //Start to do the test
-      if (null != _testRoomProvider!.playController) {
-        _testRoomProvider!.playController!.play();
+      if (null != _testRoomProvider!.videoPlayController) {
+        _testRoomProvider!.videoPlayController!.play();
       }
     }
   }
 
   void _pauseToPlayVideo() {
     if (kDebugMode) {
-      print("_pauseToPlayVideo");
+      print("DEBUG: _pauseToPlayVideo");
     }
   }
 
   void _restartToPlayVideo() {
     if (kDebugMode) {
-      print("_restartToPlayVideo");
+      print("DEBUG: _restartToPlayVideo");
     }
   }
 
   void _continueToPlayVideo() {
     if (kDebugMode) {
-      print("_continueToPlayVideo");
+      print("DEBUG: _continueToPlayVideo");
     }
   }
 
@@ -540,7 +547,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (null == topicModel) {
       if (kDebugMode) {
-        print("Hasn't any part to playing");
+        print("DEBUG: Hasn't any part to playing");
       }
       return;
     }
@@ -548,7 +555,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     List<QuestionTopicModel> questionList = topicModel.questionList;
     if (questionList.isEmpty) {
       if (kDebugMode) {
-        print("This part hasn't any question to playing");
+        print("DEBUG: This part hasn't any question to playing");
       }
       switch (topicModel.numPart) {
         case 0:
@@ -567,7 +574,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           {
             //For part 2
             if (kDebugMode) {
-              print("onPlayEndOfTakeNoteFile(fileName)");
+              print("DEBUG: onPlayEndOfTakeNoteFile(fileName)");
             }
             break;
           }
@@ -598,7 +605,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         if (question.files.isEmpty) {
           if (kDebugMode) {
-            print("This is DATA ERROR");
+            print("DEBUG: This is DATA ERROR");
           }
         } else {
           FileTopicModel file = question.files.first;
@@ -622,9 +629,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Finish the test
     if (_testRoomProvider!.topicsQueue.isEmpty) {
       //TODO: Finish the test
-      if (kDebugMode) {
-        _prepareToEndTheTest();
-      }
+      _prepareToEndTheTest();
     } else {
       _testRoomPresenter!.startPart(_testRoomProvider!.topicsQueue);
     }
@@ -649,7 +654,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (null == topicModel) {
       if (kDebugMode) {
-        print("Hasn't any part to playing");
+        print("DEBUG: Hasn't any part to playing");
       }
       return;
     }
@@ -658,7 +663,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (followUpList.isEmpty) {
       if (kDebugMode) {
-        print("This part hasn't any followup to playing");
+        print("DEBUG: This part hasn't any followup to playing");
       }
       _testRoomProvider!.setFinishPlayFollowUp(true);
       _startToPlayQuestion();
@@ -676,7 +681,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         if (question.files.isEmpty) {
           if (kDebugMode) {
-            print("This is DATA ERROR");
+            print("DEBUG: This is DATA ERROR");
           }
         } else {
           FileTopicModel file = question.files.first;
@@ -719,10 +724,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required HandleWhenFinish handleWhenFinishType,
   }) async {
-    if (kDebugMode) {
-      print(
-          "Reviewing current index = ${_testRoomProvider!.reviewingCurrentIndex}");
-    }
     _testRoomProvider!.setIsLoadingVideo(true);
 
     if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
@@ -737,13 +738,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    Utils.prepareVideoFile(fileName).then((value) {
-      if (kDebugMode) print("Playing: $fileName");
+    //Dispose old video play controller before create new one
+    if (null != _testRoomProvider!.videoPlayController) {
+      _videoPlayerController!.dispose();
+      _testRoomProvider!.videoPlayController!.dispose();
+      _testRoomProvider!.setPlayController(null);
+    }
 
-      //Deallocate player memory
-      if (null != _videoPlayerController) {
-        _videoPlayerController!.dispose();
-        _testRoomProvider!.setPlayController(null);
+    Utils.prepareVideoFile(fileName).then((value) {
+      if (kDebugMode) {
+        print("DEBUG: Playing ---- $fileName");
       }
 
       //Initialize new player for new video
@@ -791,7 +795,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _simulatorTestProvider!.currentTestDetail.testId.toString());
 
     if (kDebugMode) {
-      print("RECORD AS FILE PATH: $path");
+      print("DEBUG: RECORD AS FILE PATH: $path");
     }
 
     if (await _recordController!.hasPermission()) {
@@ -826,11 +830,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<String> _createLocalAudioFileName(String origin) async {
-    if (kDebugMode) {
-      print("Current Question: ${_currentQuestion!.content}");
-      print("Current Question id: ${_currentQuestion!.id}");
-    }
-
     String fileName = "";
     final split = origin.split('.');
     if (_countRepeat > 0) {
@@ -843,9 +842,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _checkVideo(
       String fileName, HandleWhenFinish handleWhenFinishType) async {
-    if (null != _testRoomProvider!.playController) {
-      if (_testRoomProvider!.playController!.value.position ==
-          _testRoomProvider!.playController!.value.duration) {
+    if (null != _testRoomProvider!.videoPlayController) {
+      if (_testRoomProvider!.videoPlayController!.value.position ==
+          _testRoomProvider!.videoPlayController!.value.duration) {
+        _testRoomProvider!.videoPlayController!.pause();
         switch (handleWhenFinishType) {
           case HandleWhenFinish.questionVideoType:
             {
@@ -855,7 +855,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 _testRoomProvider!.setVisibleRecord(false);
                 _testRoomProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 60; //3 for test, 60 for product
+                int time = 3; //3 for test, 60 for product
                 String timeString = Utils.getTimeRecordString(time);
                 _testRoomProvider!.setCountDownCueCard(timeString);
 
@@ -930,11 +930,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _reviewingProcess() {
     if (_testRoomProvider!.reviewingCurrentIndex <
         _reviewingQuestionList.length) {
-      //Continue
       _continueReviewing();
     } else {
       //Finish reviewing
-      if (kDebugMode) print("Finish reviewing");
+      if (kDebugMode) print("DEBUG: Finish reviewing");
     }
   }
 
@@ -1183,7 +1182,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _playNextQuestion();
         }
       } else {
-        if (kDebugMode) print("onFinishAnswer: ERROR-Current Part is NULL!");
+        if (kDebugMode) {
+          print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
+        }
       }
     }
   }

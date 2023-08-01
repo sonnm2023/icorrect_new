@@ -1,10 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/test_room_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -44,11 +44,13 @@ class VideoPlayerWidget extends StatelessWidget {
     SimulatorTestProvider prepareSimulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
 
-    CircleLoading? loading = CircleLoading();
-
     return Consumer<TestRoomProvider>(
       builder: (context, testProvider, child) {
-        if (null == testProvider.playController) {
+        if (kDebugMode) {
+          print("DEBUG: VideoPlayerWidget --- build");
+        }
+
+        if (null == testProvider.videoPlayController) {
           return SizedBox(
             width: w,
             height: h,
@@ -197,10 +199,10 @@ class VideoPlayerWidget extends StatelessWidget {
           children: [
             //Video
             Transform.scale(
-              scale: getScale(testProvider.playController!),
+              scale: getScale(testProvider.videoPlayController!),
               child: AspectRatio(
                 aspectRatio: videoContainerRatio,
-                child: VideoPlayer(testProvider.playController!),
+                child: VideoPlayer(testProvider.videoPlayController!),
               ),
             ),
             //Play video controller buttons

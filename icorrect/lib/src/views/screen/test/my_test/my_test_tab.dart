@@ -425,7 +425,7 @@ class _MyTestTabState extends State<MyTestTab>
       });
     } on PlatformException catch (e) {
       if (kDebugMode) {
-        print(e);
+        print("DEBUG:  _playAudio $e");
       }
     }
   }
@@ -468,7 +468,7 @@ class _MyTestTabState extends State<MyTestTab>
   void downloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
     if (kDebugMode) {
-      print('downloadFilesFail: ${alertInfo.description.toString()}');
+      print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
     }
   }
 
@@ -476,7 +476,7 @@ class _MyTestTabState extends State<MyTestTab>
   void getMyTestFail(AlertInfo alertInfo) {
     _loading!.hide();
     if (kDebugMode) {
-      print('getMyTestFail: ${alertInfo.description.toString()}');
+      print('DEBUG: getMyTestFail: ${alertInfo.description.toString()}');
     }
   }
 

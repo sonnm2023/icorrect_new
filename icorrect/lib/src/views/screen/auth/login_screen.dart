@@ -46,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //TODO: For test
-    // emailController.text = "hocsinh03@testing.com";
-    // passwordController.text = "123456";
+    emailController.text = "hocsinh03@testing.com";
+    passwordController.text = "123456";
 
     _autoLogin();
   }
@@ -166,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen>
           if (_authProvider.isProcessing == false) {
             //TODO
             if (kDebugMode) {
-              print("Goto Sign up screen");
+              print("DEBUG: Goto Sign up screen");
             }
 
             //TODO
@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen>
           if (_authProvider.isProcessing == false) {
             //TODO
             if (kDebugMode) {
-              print("Goto Forgot password screen");
+              print("DEBUG: Goto Forgot password screen");
             }
           }
         },

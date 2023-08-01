@@ -203,7 +203,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildBody() {
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
       if (kDebugMode) {
-        print("Debug: SimulatorTest --- build -- buildBody");
+        print("DEBUG: SimulatorTest --- build -- buildBody");
       }
 
       if (provider.isDownloading) {

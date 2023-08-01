@@ -15,7 +15,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
     String url =
         '${publicDomain}api/list-activity-v2?${Uri(queryParameters: queryParameters).query}';
     if (kDebugMode) {
-      print('url :$url');
+      print('DEBUG: HomeWorkRepositoryImpl - url :$url');
     }
     return AppRepository.init()
         .sendRequest(

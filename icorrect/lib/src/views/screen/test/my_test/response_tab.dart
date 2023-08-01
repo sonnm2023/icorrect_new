@@ -38,7 +38,7 @@ class _ResponseTabState extends State<ResponseTab>
     super.initState();
     _presenter = ResponsePresenter(this);
     if (kDebugMode) {
-      print('meomeo: ${widget.homeWorkModel.activityId.toString()}');
+      print('DEBUG: ResponseTab ${widget.homeWorkModel.activityId.toString()}');
     }
     _loading = CircleLoading();
     _loading?.show(context);
@@ -366,7 +366,7 @@ class _ResponseTabState extends State<ResponseTab>
     _loading!.hide();
     widget.provider.setResultResponseModel(responseModel);
     if (kDebugMode) {
-      print('responseModel: ${responseModel.fluency.toString()}');
+      print('DEBUG: getSuccessResponse: ${responseModel.fluency.toString()}');
     }
   }
 

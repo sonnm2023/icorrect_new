@@ -16,7 +16,9 @@ class FileStorageHelper {
     directory = await getApplicationDocumentsDirectory();
 
     final exPath = directory.path;
-    if (kDebugMode) print("Saved Path: $exPath");
+    if (kDebugMode) {
+      print("DEBUG: Saved Path: $exPath");
+    }
     await Directory(exPath).create(recursive: true);
     return exPath;
   }
@@ -56,7 +58,9 @@ class FileStorageHelper {
       String bytes, String name, MediaType mediaType) async {
     final path = await getFolderPath(mediaType, null);
     File file = File('$path\\$name');
-    if (kDebugMode) print('SAVE VIDEO FILE: $path\\$name');
+    if (kDebugMode) {
+      print('DEBUG: SAVE VIDEO FILE: $path\\$name');
+    }
     return file.writeAsString(bytes);
   }
 
@@ -98,7 +102,7 @@ class FileStorageHelper {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Error when delete file: ${e.toString()}');
+        print('DEBUG: Error when delete file: ${e.toString()}');
       }
       return false;
     }

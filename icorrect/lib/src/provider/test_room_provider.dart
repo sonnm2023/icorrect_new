@@ -120,11 +120,11 @@ class TestRoomProvider with ChangeNotifier {
     }
   }
 
-  VideoPlayerController? _playerController;
-  VideoPlayerController? get playController => _playerController;
-  void setPlayController(VideoPlayerController? playerController) {
-    _playerController = null;
-    _playerController = playerController;
+  VideoPlayerController? _videoPlayerController;
+  VideoPlayerController? get videoPlayController => _videoPlayerController;
+  void setPlayController(VideoPlayerController? videoPlayerController) {
+    _videoPlayerController = null;
+    _videoPlayerController = videoPlayerController;
 
     if (!isDisposed) {
       notifyListeners();
@@ -307,7 +307,7 @@ class TestRoomProvider with ChangeNotifier {
     _isVisibleSave = false;
     _countRepeat = 0;
     _countDownTimer = null;
-    _playerController = null;
+    _videoPlayerController = null;
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
