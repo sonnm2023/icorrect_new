@@ -196,7 +196,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
-    if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
+      
+    //Change condition for spint 1
+    if (_prepareSimulatorTestProvider!.doingStatus == DoingStatus.doing) {
+      showToastMsg(
+        msg: "Please wait until the test is finished!",
+        toastState: ToastStatesType.warning,
+      );
+    } else {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
         await _audioPlayerController!.stop().then((_) {
@@ -232,12 +239,51 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               question: question, selectedQuestionIndex: selectedQuestionIndex);
         }
       }
-    } else {
-      showToastMsg(
-        msg: "Please wait until the test is finished!",
-        toastState: ToastStatesType.warning,
-      );
     }
+
+    //Comment for spint 1
+    // if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
+    //   //Stop playing current question
+    //   if (_audioPlayerController!.state == PlayerState.playing) {
+    //     await _audioPlayerController!.stop().then((_) {
+    //       //Check playing answers status
+    //       if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+    //         if (selectedQuestionIndex !=
+    //             _playAnswerProvider!.selectedQuestionIndex) {
+    //           _startPlayAudio(
+    //               question: question,
+    //               selectedQuestionIndex: selectedQuestionIndex);
+    //         } else {
+    //           _playAnswerProvider!.resetSelectedQuestionIndex();
+    //         }
+    //       } else {
+    //         _startPlayAudio(
+    //             question: question,
+    //             selectedQuestionIndex: selectedQuestionIndex);
+    //       }
+    //     });
+    //   } else {
+    //     //Check playing answers status
+    //     if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+    //       if (selectedQuestionIndex !=
+    //           _playAnswerProvider!.selectedQuestionIndex) {
+    //         _startPlayAudio(
+    //             question: question,
+    //             selectedQuestionIndex: selectedQuestionIndex);
+    //       } else {
+    //         _playAnswerProvider!.resetSelectedQuestionIndex();
+    //       }
+    //     } else {
+    //       _startPlayAudio(
+    //           question: question, selectedQuestionIndex: selectedQuestionIndex);
+    //     }
+    //   }
+    // } else {
+    //   showToastMsg(
+    //     msg: "Please wait until the test is finished!",
+    //     toastState: ToastStatesType.warning,
+    //   );
+    // }
   }
 
   void _startPlayAudio({
@@ -296,44 +342,60 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playReAnswerCallBack(QuestionTopicModel question) {
-    if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
-      bool isReviewing =
-          _testProvider!.reviewingStatus == ReviewingStatus.playing;
-
-      if (isReviewing) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return ConfirmDialogWidget(
-              title: "Notification",
-              message:
-                  "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
-              cancelButtonTitle: "Cancel",
-              okButtonTitle: "OK",
-              cancelButtonTapped: _cancelButtonTapped,
-              okButtonTapped: () {
-                //TODO: Pause reviewing process
-
-                //Show re-answer dialog
-                _showReAnswerDialog(question);
-              },
-            );
-          },
-        );
-      } else {
-        if (_audioPlayerController!.state == PlayerState.playing) {
+    //Change condition for spint 1
+    if (_prepareSimulatorTestProvider!.doingStatus == DoingStatus.doing) {
+      showToastMsg(
+        msg: "Please wait until the test is finished!",
+        toastState: ToastStatesType.warning,
+      );
+    } else {
+      if (_audioPlayerController!.state == PlayerState.playing) {
           _audioPlayerController!.stop();
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
 
         _showReAnswerDialog(question);
-      }
-    } else {
-      showToastMsg(
-        msg: "Please wait until the test is finished!",
-        toastState: ToastStatesType.warning,
-      );
     }
+
+    //Comment for spint 1
+    // if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
+    //   bool isReviewing =
+    //       _testProvider!.reviewingStatus == ReviewingStatus.playing;
+
+    //   if (isReviewing) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (BuildContext context) {
+    //         return ConfirmDialogWidget(
+    //           title: "Notification",
+    //           message:
+    //               "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
+    //           cancelButtonTitle: "Cancel",
+    //           okButtonTitle: "OK",
+    //           cancelButtonTapped: _cancelButtonTapped,
+    //           okButtonTapped: () {
+    //             //TODO: Pause reviewing process
+
+    //             //Show re-answer dialog
+    //             _showReAnswerDialog(question);
+    //           },
+    //         );
+    //       },
+    //     );
+    //   } else {
+    //     if (_audioPlayerController!.state == PlayerState.playing) {
+    //       _audioPlayerController!.stop();
+    //       _playAnswerProvider!.resetSelectedQuestionIndex();
+    //     }
+
+    //     _showReAnswerDialog(question);
+    //   }
+    // } else {
+    //   showToastMsg(
+    //     msg: "Please wait until the test is finished!",
+    //     toastState: ToastStatesType.warning,
+    //   );
+    // }
   }
 
   void _cancelButtonTapped() {
@@ -341,7 +403,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
-    if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
+    //Change condition for spint 1
+    if (_prepareSimulatorTestProvider!.doingStatus == DoingStatus.none) {
       Future.delayed(
         Duration.zero,
         () async {
@@ -363,6 +426,30 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         toastState: ToastStatesType.warning,
       );
     }
+
+    //Comment for spint 1
+    // if (_testProvider!.reviewingStatus == ReviewingStatus.none) {
+    //   Future.delayed(
+    //     Duration.zero,
+    //     () async {
+    //       showDialog(
+    //         context: context,
+    //         barrierDismissible: false,
+    //         builder: (context) {
+    //           return TipQuestionDialog.tipQuestionDialog(
+    //             context,
+    //             question,
+    //           );
+    //         },
+    //       );
+    //     },
+    //   );
+    // } else {
+    //   showToastMsg(
+    //     msg: "Please wait until the test is finished!",
+    //     toastState: ToastStatesType.warning,
+    //   );
+    // }
   }
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
@@ -839,7 +926,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 _testProvider!.setVisibleRecord(false);
                 _testProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 3; //3 for test, 60 for product
+                int time = 60;
                 String timeString = Utils.getTimeRecordString(time);
                 _testProvider!.setCountDownCueCard(timeString);
 
@@ -923,7 +1010,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _prepareToEndTheTest() {
     //Finish doing test
-    _testProvider!.updateReviewingStatus(ReviewingStatus.none);
+    // _testProvider!.updateReviewingStatus(ReviewingStatus.none);
     _prepareSimulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
 
     //Save answer list into prepare_simulator_test_provider
