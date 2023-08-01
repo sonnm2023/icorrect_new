@@ -63,10 +63,6 @@ class TestProvider with ChangeNotifier {
     _reviewingCurrentIndex = index;
   }
 
-  void resetReviewingCurrentIndex() {
-    _reviewingCurrentIndex = 0;
-  }
-
   final List<QuestionTopicModel> _questionList = [];
   List<QuestionTopicModel> get questionList => _questionList;
   void addCurrentQuestionIntoList({
@@ -297,12 +293,6 @@ class TestProvider with ChangeNotifier {
     }
   }
 
-  // bool _isReviewingPlaying = false;
-  // bool get isReviewingPlaying => _isReviewingPlaying;
-  // void setIsReviewingPlaying(bool status) {
-  //   _isReviewingPlaying = status;
-  // }
-
   void resetAll() {
     // _isReviewingPlaying = false;
     _isReviewingPlayAnswer = false;
@@ -323,6 +313,5 @@ class TestProvider with ChangeNotifier {
     _reviewingStatus = ReviewingStatus.none;
     resetTopicsQueue();
     clearQuestionList();
-    resetReviewingCurrentIndex();
   }
 }
