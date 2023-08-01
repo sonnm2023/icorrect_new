@@ -11,7 +11,7 @@ const toolDomain = "http://tool.ielts-correction.com/";
 ///// api endpoints
 const String registerEP = 'auth/register';
 const String loginEP = 'auth/login';
-const String getUserInforEP = 'me';
+const String getUserInfoEP = 'me';
 const String logoutEP = 'auth/logout';
 const String profileInfoEP = 'auth/profile-info';
 const String updateInfoEP = 'auth/update-info';

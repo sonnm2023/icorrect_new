@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
           create: (_) => ReAnswerProvider(),
         ),
         ChangeNotifierProvider(
-
           create: (_) => SimulatorTestProvider(),
         )
 

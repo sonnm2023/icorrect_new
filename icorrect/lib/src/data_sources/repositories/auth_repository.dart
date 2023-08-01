@@ -32,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<String> getUserInfo(String deviceId, String appVersion, String os) {
-    String url = '$apiDomain$getUserInforEP';
+    String url = '$apiDomain$getUserInfoEP';
 
     return AppRepository.init()
         .sendRequest(
