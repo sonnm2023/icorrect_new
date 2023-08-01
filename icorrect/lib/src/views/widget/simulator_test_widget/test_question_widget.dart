@@ -230,26 +230,22 @@ class TestQuestionWidget extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
             leading:
                 Consumer<PlayAnswerProvider>(builder: (context, playAnswerProvider, _) {
-                  Widget child;
+                  String iconPath;
               if (index == playAnswerProvider.selectedQuestionIndex) {
-                child = const Image(
-                  image: AssetImage("assets/images/ic_pause.png"),
-                  width: 50,
-                  height: 50,
-                );
+                iconPath = "assets/images/ic_pause.png";
               } else {
-                child = const Image(
-                  image: AssetImage("assets/images/ic_play.png"),
-                  width: 50,
-                  height: 50,
-                );
+                iconPath = "assets/images/ic_play.png";
               }
 
               return InkWell(
                 onTap: () {
                   playAnswerCallBack(question, index);
                 },
-                child: child,
+                child: Image(
+                  image: AssetImage(iconPath),
+                  width: 50,
+                  height: 50,
+                ),
               );
             }),
             title: Column(
