@@ -958,7 +958,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest() {
-    // _prepareSimulatorTestProvider!.setIsSubmitting(true);
+    // _simulatorTestProvider!.setIsSubmitting(true);
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
@@ -1087,7 +1087,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _finishSubmitTest(String msg, SubmitStatus status) {
-    // _prepareSimulatorTestProvider!.setIsSubmitting(false);
+    // _simulatorTestProvider!.setIsSubmitting(false);
     _simulatorTestProvider!.updateSubmitStatus(status);
 
     showToastMsg(
@@ -1278,7 +1278,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onClickSaveTheTest() {
-    // if (false == _prepareSimulatorTestProvider!.isSubmitting) {
+    // if (false == _simulatorTestProvider!.isSubmitting) {
     if (SubmitStatus.none == _simulatorTestProvider!.submitStatus) {
       _startSubmitTest();
     }
