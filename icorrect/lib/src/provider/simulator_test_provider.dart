@@ -22,10 +22,10 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isProcessing = false;
+  bool _isProcessing = true;
   bool get isProcessing => _isProcessing;
-  void updateProcessingStatus() {
-    _isProcessing = !_isProcessing;
+  void updateProcessingStatus(bool isProcessing) {
+    _isProcessing = isProcessing;
 
     if (!isDisposed) {
       notifyListeners();
@@ -162,7 +162,7 @@ class SimulatorTestProvider with ChangeNotifier {
     _answerList.addAll(list);
   }
 
-final List<QuestionTopicModel> _questionList = [];
+  final List<QuestionTopicModel> _questionList = [];
   List<QuestionTopicModel> get questionList => _questionList;
   void setQuestionList(List<QuestionTopicModel> list) {
     _questionList.clear();
@@ -182,7 +182,7 @@ final List<QuestionTopicModel> _questionList = [];
     _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;
-    _isProcessing = false;
+    _isProcessing = true;
     _isDownloading = false;
     _canStartNow = false;
     _total = 0;

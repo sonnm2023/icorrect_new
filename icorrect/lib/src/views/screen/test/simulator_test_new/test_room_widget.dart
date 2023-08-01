@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -138,8 +139,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                           finishAnswer: _finishAnswerCallBack,
                           repeatQuestion: _repeatQuestionCallBack,
                         ),
-                        _simulatorTestProvider!.activityType ==
-                                "homework"
+                        _simulatorTestProvider!.activityType == "homework"
                             ? SaveTheTestWidget(
                                 testRoomPresenter: _testRoomPresenter!)
                             : const SizedBox(),
@@ -198,7 +198,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
-    if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) {
+    // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
         await _audioPlayerController!.stop().then((_) {
@@ -248,8 +249,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }) async {
     _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-    String path = await Utils.getAudioPathToPlay(question,
-        _simulatorTestProvider!.currentTestDetail.testId.toString());
+    String path = await Utils.getAudioPathToPlay(
+        question, _simulatorTestProvider!.currentTestDetail.testId.toString());
     _playAudio(path);
   }
 
@@ -298,7 +299,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playReAnswerCallBack(QuestionTopicModel question) {
-    if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) {
+    // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _testRoomProvider!.reviewingStatus == ReviewingStatus.playing;
 
@@ -343,28 +345,36 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
-    if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) {
-      Future.delayed(
-        Duration.zero,
-        () async {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return TipQuestionDialog.tipQuestionDialog(
-                context,
-                question,
-              );
-            },
-          );
-        },
-      );
+    // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _showTips(question);
     } else {
       showToastMsg(
         msg: "Please wait until the test is finished!",
         toastState: ToastStatesType.warning,
       );
     }
+  }
+
+  _showTips(QuestionTopicModel questionTopicModel) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      enableDrag: false,
+      barrierColor: AppColor.defaultGrayColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+      builder: (_) {
+        return TipQuestionDialog.tipQuestionDialog(context, questionTopicModel);
+      },
+    );
   }
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
@@ -418,7 +428,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _reviewingQuestionList = _prepareQuestionListForReviewing();
 
-    dynamic item = _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
+    dynamic item =
+        _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
     if (item is String) {
       _testRoomProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
@@ -452,7 +463,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     int index = _testRoomProvider!.reviewingCurrentIndex + 1;
     _testRoomProvider!.updateReviewingCurrentIndex(index);
 
-    dynamic item = _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
+    dynamic item =
+        _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
     if (item is String) {
       _testRoomProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
@@ -466,7 +478,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _startToPlayVideo() {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Start to review the test
-      _startReviewing();
+
+      //Comment for spin 1
+      // _startReviewing();
+      showToastMsg(
+        msg: "This feature is not available!",
+        toastState: ToastStatesType.warning,
+      );
     } else {
       //Start to do the test
       if (null != _testRoomProvider!.playController) {
@@ -914,7 +932,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _reviewingProcess() {
-    if (_testRoomProvider!.reviewingCurrentIndex < _reviewingQuestionList.length) {
+    if (_testRoomProvider!.reviewingCurrentIndex <
+        _reviewingQuestionList.length) {
       //Continue
       _continueReviewing();
     } else {
@@ -950,8 +969,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
     _testRoomPresenter!.submitTest(
-      testId:
-          _simulatorTestProvider!.currentTestDetail.testId.toString(),
+      testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.id.toString(),
       questions: questions,
     );
@@ -1013,8 +1031,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           {
             //PART 2
             if (_testRoomProvider!.indexOfCurrentQuestion == 0) {
-              _testRoomProvider!
-                  .setIndexOfHeaderPart2(_testRoomProvider!.questionList.length);
+              _testRoomProvider!.setIndexOfHeaderPart2(
+                  _testRoomProvider!.questionList.length);
             }
             break;
           }
@@ -1023,13 +1041,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             //PART 3
             if (topicModel.followUp.isNotEmpty) {
               if (_testRoomProvider!.indexOfCurrentFollowUp == 0) {
-                _testRoomProvider!
-                    .setIndexOfHeaderPart3(_testRoomProvider!.questionList.length);
+                _testRoomProvider!.setIndexOfHeaderPart3(
+                    _testRoomProvider!.questionList.length);
               }
             } else {
               if (_testRoomProvider!.indexOfCurrentQuestion == 0) {
-                _testRoomProvider!
-                    .setIndexOfHeaderPart3(_testRoomProvider!.questionList.length);
+                _testRoomProvider!.setIndexOfHeaderPart3(
+                    _testRoomProvider!.questionList.length);
               }
             }
             break;

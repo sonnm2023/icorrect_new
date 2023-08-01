@@ -56,11 +56,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void dispose() {
     _simulatorTestProvider!.resetAll();
-
-    if (!_simulatorTestProvider!.isDisposed) {
-      _simulatorTestProvider!.dispose();
-    }
-
     super.dispose();
   }
 
@@ -219,11 +214,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (kDebugMode) {
           print("Debug: SimulatorTest --- build -- buildBody");
         }
-        if (provider.isProcessing) {
-          return const DefaultLoadingIndicator(
-            color: AppColor.defaultPurpleColor,
-          );
-        }
 
         if (provider.isDownloading) {
           return Column(
@@ -242,23 +232,29 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           );
         }
 
-        return Stack(
-          children: [
-            ChangeNotifierProvider(
-              create: (_) => TestRoomProvider(),
-              child: TestRoomWidget(
-                homeWorkModel: widget.homeWorkModel,
-                simulatorTestPresenter: _simulatorTestPresenter!,
+        if (provider.isProcessing) {
+          return const DefaultLoadingIndicator(
+            color: AppColor.defaultPurpleColor,
+          );
+        } else {
+          return Stack(
+            children: [
+              ChangeNotifierProvider(
+                create: (_) => TestRoomProvider(),
+                child: TestRoomWidget(
+                  homeWorkModel: widget.homeWorkModel,
+                  simulatorTestPresenter: _simulatorTestPresenter!,
+                ),
               ),
-            ),
-            Visibility(
-              visible: provider.submitStatus == SubmitStatus.submitting,
-              child: const DefaultLoadingIndicator(
-                color: AppColor.defaultPurpleColor,
+              Visibility(
+                visible: provider.submitStatus == SubmitStatus.submitting,
+                child: const DefaultLoadingIndicator(
+                  color: AppColor.defaultPurpleColor,
+                ),
               ),
-            ),
-          ],
-        );
+            ],
+          );
+        }
       },
     );
   }
@@ -320,10 +316,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _getTestDetail() {
     _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.id.toString());
-
-    Future.delayed(Duration.zero, () {
-      _simulatorTestProvider!.updateProcessingStatus();
-    });
   }
 
   void _startToDoTest() {
@@ -334,6 +326,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setDownloadingStatus(false);
 
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
+
+    _simulatorTestProvider!.updateProcessingStatus(false);
   }
 
   @override
@@ -379,7 +373,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
     _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
-    _simulatorTestProvider!.updateProcessingStatus();
     _simulatorTestProvider!.setDownloadingStatus(true);
     _simulatorTestProvider!.setTotal(total);
   }
