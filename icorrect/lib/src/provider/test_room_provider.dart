@@ -14,7 +14,6 @@ class TestRoomProvider with ChangeNotifier {
   @override
   void dispose() {
     isDisposed = true;
-    super.dispose();
   }
 
   @override

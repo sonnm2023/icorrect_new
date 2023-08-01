@@ -302,8 +302,11 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => SimulatorTestScreen(
-            homeWorkModel: _selectedHomeWorkModel!,
+          builder: (_) => ChangeNotifierProvider<SimulatorTestProvider>(
+            create: (_) => SimulatorTestProvider(),
+            child: SimulatorTestScreen(
+              homeWorkModel: _selectedHomeWorkModel!,
+            ),
           ),
         ),
         // MaterialPageRoute(

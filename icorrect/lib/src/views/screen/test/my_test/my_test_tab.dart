@@ -24,6 +24,8 @@ import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:video_player/video_player.dart';
+
 import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/alert_dialog.dart';
 import '../../other_views/dialog/circle_loading.dart';
@@ -208,7 +210,7 @@ class _MyTestTabState extends State<MyTestTab>
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
         builder: (_) {
           return FutureBuilder(
-              future: aiResponseEP(widget.homeWorkModel.aiOrder.toString()),
+              future: AiResponseEP(widget.homeWorkModel.aiOrder.toString()),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return Stack(
