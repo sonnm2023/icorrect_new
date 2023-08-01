@@ -12,12 +12,8 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
   @override
   Future<String> getListHomeWork(String email, String status) {
     Map<String, String> queryParameters = {'email': email, 'status': status};
-    //TODO: New api
-    //apidomain
-    //String url =
-    //         '${apiDomain}api/v1/syllabus/activities-of-class/index?${Uri(queryParameters: queryParameters).query}';
     String url =
-        '${publicDomain}api/list-activity-v2?${Uri(queryParameters: queryParameters).query}';
+            '${apiDomain}api/v1/syllabus/activities-of-class/index?${Uri(queryParameters: queryParameters).query}';
     if (kDebugMode) {
       print('DEBUG: HomeWorkRepositoryImpl - url :$url');
     }

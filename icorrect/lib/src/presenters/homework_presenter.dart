@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
@@ -44,11 +45,13 @@ class HomeWorkPresenter {
 
     _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
-      print(jsonEncode(dataMap).toString());
+      if (kDebugMode) {
+        print(jsonEncode(dataMap).toString());
+      }
       if (dataMap['error_code'] == 200) {
         List<HomeWorkModel> homeworks =
-            await _generateListHomeWork(dataMap['result']);
-        List<ClassModel> classes = await _generateListClass(dataMap['classes']);
+            await _generateListHomeWork(dataMap['data']);
+        // List<ClassModel> classes = await _generateListClass(dataMap['classes']);
         _view!.onGetListHomeworkComplete(homeworks, classes);
       } else {
         _view!.onGetListHomeworkError(

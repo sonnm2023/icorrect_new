@@ -172,8 +172,19 @@ class SimulatorTestProvider with ChangeNotifier {
     _questionList.clear();
   }
 
+  bool _isLoadingVideo = false;
+  bool get isLoadingVideo => _isLoadingVideo;
+  void setIsLoadingVideo(bool isLoading) {
+    _isLoadingVideo = isLoading;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
 
   void resetAll() {
+    _isLoadingVideo = false;
     _answerList.clear();
     _currentTestDetail = TestDetailModel();
     _doingStatus = DoingStatus.none;

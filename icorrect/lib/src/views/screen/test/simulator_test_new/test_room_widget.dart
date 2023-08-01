@@ -724,7 +724,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required HandleWhenFinish handleWhenFinishType,
   }) async {
-    _testRoomProvider!.setIsLoadingVideo(true);
+    _simulatorTestProvider!.setIsLoadingVideo(true);
 
     if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
         handleWhenFinishType == HandleWhenFinish.endOfTestVideoType ||
@@ -752,25 +752,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
       //Initialize new player for new video
       _videoPlayerController = VideoPlayerController.file(value)
-        ..addListener(() => _checkVideo(fileName, handleWhenFinishType))
         ..initialize().then((value) {
-          _testRoomProvider!.setIsLoadingVideo(false);
-          _videoPlayerController!.setLooping(false);
+          _simulatorTestProvider!.setIsLoadingVideo(false);
           if (_countRepeat != 0) {
             _videoPlayerController!.setPlaybackSpeed(0.9);
           }
           _videoPlayerController!.play();
-
-          if (null != _videoPlayerController) {
-            _testRoomProvider!.setPlayController(_videoPlayerController!);
-          }
 
           if (ReviewingStatus.none == _testRoomProvider!.reviewingStatus) {
             Future.delayed(const Duration(milliseconds: 1), () {
               _videoPlayerController!.pause();
             });
           }
-        });
+
+          if (null != _videoPlayerController) {
+            _testRoomProvider!.setPlayController(_videoPlayerController!);
+          }
+
+          _videoPlayerController!.addListener((() => _checkVideo(fileName, handleWhenFinishType)));
+        })..setLooping(false);
     });
   }
 
@@ -1231,7 +1231,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onPlayEndOfTakeNoteFile(String fileName) {
-    if (false == _testRoomProvider!.isLoadingVideo) {
+    if (false == _simulatorTestProvider!.isLoadingVideo) {
       _initVideoController(
         fileName: fileName,
         handleWhenFinishType: HandleWhenFinish.cueCardVideoType,
@@ -1241,7 +1241,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onPlayEndOfTest(String fileName) {
-    if (false == _testRoomProvider!.isLoadingVideo) {
+    if (false == _simulatorTestProvider!.isLoadingVideo) {
       _initVideoController(
         fileName: fileName,
         handleWhenFinishType: HandleWhenFinish.endOfTestVideoType,
@@ -1251,7 +1251,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onPlayIntroduceFile(String fileName) {
-    if (false == _testRoomProvider!.isLoadingVideo) {
+    if (false == _simulatorTestProvider!.isLoadingVideo) {
       _initVideoController(
         fileName: fileName,
         handleWhenFinishType: HandleWhenFinish.introVideoType,

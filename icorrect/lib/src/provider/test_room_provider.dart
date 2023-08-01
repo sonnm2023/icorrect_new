@@ -151,16 +151,6 @@ class TestRoomProvider with ChangeNotifier {
     }
   }
 
-  bool _isLoadingVideo = false;
-  bool get isLoadingVideo => _isLoadingVideo;
-  void setIsLoadingVideo(bool isLoading) {
-    _isLoadingVideo = isLoading;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   int _indexOfHeaderPart2 = 0;
   int get indexOfHeaderPart2 => _indexOfHeaderPart2;
   void setIndexOfHeaderPart2(int i) {
@@ -301,7 +291,6 @@ class TestRoomProvider with ChangeNotifier {
     _visibleRecord = false;
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
-    _isLoadingVideo = false;
     _isVisibleCueCard = false;
     _isRepeatVisible = true;
     _isVisibleSave = false;

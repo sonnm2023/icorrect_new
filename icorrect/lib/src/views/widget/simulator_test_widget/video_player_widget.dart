@@ -44,18 +44,18 @@ class VideoPlayerWidget extends StatelessWidget {
     SimulatorTestProvider prepareSimulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
 
-    return Consumer<TestRoomProvider>(
-      builder: (context, testProvider, child) {
+    return Consumer2<SimulatorTestProvider, TestRoomProvider>(
+      builder: (context, simulatorTestProvider, testRoomProvider, child) {
         if (kDebugMode) {
           print("DEBUG: VideoPlayerWidget --- build");
         }
 
-        if (null == testProvider.videoPlayController) {
+        if (null == testRoomProvider.videoPlayController) {
           return SizedBox(
             width: w,
             height: h,
             child: Center(
-              child: testProvider.isLoadingVideo
+              child: simulatorTestProvider.isLoadingVideo
                   ? const DefaultLoadingIndicator(
                       color: AppColor.defaultPurpleColor,
                     )
@@ -66,7 +66,7 @@ class VideoPlayerWidget extends StatelessWidget {
 
         Widget buttonsControllerSubView = Container();
 
-        switch (testProvider.reviewingStatus.get) {
+        switch (testRoomProvider.reviewingStatus.get) {
           case -1: //None
             {
               buttonsControllerSubView = SizedBox(
@@ -79,7 +79,7 @@ class VideoPlayerWidget extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         //Update reviewing status from none -> playing
-                        testProvider
+                        testRoomProvider
                             .updateReviewingStatus(ReviewingStatus.playing);
 
                         //Start to do the test
@@ -106,9 +106,9 @@ class VideoPlayerWidget extends StatelessWidget {
                   //show/hide pause button
                   if (prepareSimulatorTestProvider.doingStatus !=
                       DoingStatus.doing) {
-                    if (testProvider.reviewingStatus ==
+                    if (testRoomProvider.reviewingStatus ==
                         ReviewingStatus.playing) {
-                      testProvider.updateReviewingStatus(ReviewingStatus.pause);
+                      testRoomProvider.updateReviewingStatus(ReviewingStatus.pause);
                     }
                   }
                 }),
@@ -119,8 +119,8 @@ class VideoPlayerWidget extends StatelessWidget {
             {
               buttonsControllerSubView = InkWell(
                 onTap: () {
-                  if (testProvider.reviewingStatus == ReviewingStatus.pause) {
-                    testProvider.updateReviewingStatus(ReviewingStatus.playing);
+                  if (testRoomProvider.reviewingStatus == ReviewingStatus.pause) {
+                    testRoomProvider.updateReviewingStatus(ReviewingStatus.playing);
                   }
                 },
                 child: SizedBox(
@@ -133,7 +133,7 @@ class VideoPlayerWidget extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           //Update reviewing status from pause -> restart
-                          testProvider
+                          testRoomProvider
                               .updateReviewingStatus(ReviewingStatus.restart);
                           pauseToPlayVideo();
                         },
@@ -199,17 +199,17 @@ class VideoPlayerWidget extends StatelessWidget {
           children: [
             //Video
             Transform.scale(
-              scale: getScale(testProvider.videoPlayController!),
+              scale: getScale(testRoomProvider.videoPlayController!),
               child: AspectRatio(
                 aspectRatio: videoContainerRatio,
-                child: VideoPlayer(testProvider.videoPlayController!),
+                child: VideoPlayer(testRoomProvider.videoPlayController!),
               ),
             ),
             //Play video controller buttons
             buttonsControllerSubView,
 
             Visibility(
-              visible: testProvider.isReviewingPlayAnswer,
+              visible: testRoomProvider.isReviewingPlayAnswer,
               child: playAudioBackground(w, h),
             )
           ],
