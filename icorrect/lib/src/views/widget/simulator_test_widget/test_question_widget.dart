@@ -226,26 +226,31 @@ class TestQuestionWidget extends StatelessWidget {
             ),
           ),
           ListTile(
-            onTap: () {
-              playAnswerCallBack(question, index);
-            },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
             leading:
                 Consumer<PlayAnswerProvider>(builder: (context, playAnswerProvider, _) {
+                  Widget child;
               if (index == playAnswerProvider.selectedQuestionIndex) {
-                return const Image(
+                child = const Image(
                   image: AssetImage("assets/images/ic_pause.png"),
                   width: 50,
                   height: 50,
                 );
               } else {
-                return const Image(
+                child = const Image(
                   image: AssetImage("assets/images/ic_play.png"),
                   width: 50,
                   height: 50,
                 );
               }
+
+              return InkWell(
+                onTap: () {
+                  playAnswerCallBack(question, index);
+                },
+                child: child,
+              );
             }),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
