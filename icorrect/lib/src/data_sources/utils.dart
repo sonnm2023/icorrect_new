@@ -8,7 +8,8 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
@@ -124,8 +125,8 @@ class Utils {
     }
   }
 
-  static Map<String, dynamic> getHomeWorkStatus(HomeWorkModel homeWorkModel) {
-    switch (homeWorkModel.completeStatus) {
+  static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel) {
+    switch (homeWorkModel.activityStatus) {
       case 1:
         return {
           'title': 'Submitted',
@@ -155,9 +156,9 @@ class Utils {
         return {};
     }
   }
-
-  static String haveAiResponse(HomeWorkModel homeWorkModel) {
-    return (homeWorkModel.haveAiReponse == Status.trueStatus.get)
+  
+  static String haveAiResponse(ActivitiesModel homeWorkModel) {
+    return homeWorkModel.activityAnswer.aiResponseLink.isNotEmpty
         ? '& AI Scored'
         : '';
   }
@@ -337,6 +338,19 @@ class Utils {
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
     return path;
+  }
+
+  static String getClassNameWithId(String id, List<NewClassModel> list) {
+    if (list.isEmpty) return "";
+
+    for (int i = 0; i < list.length; i++) {
+      NewClassModel c = list[i];
+      if (c.id.toString() == id) {
+        return c.name;
+      }
+    }
+
+    return "";
   }
 
 

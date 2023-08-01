@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 
 class HomeWorkWidget extends StatelessWidget {
   const HomeWorkWidget({super.key, required this.homeWorkModel, required this.callBack});
 
-  final HomeWorkModel homeWorkModel;
+  // final HomeWorkModel homeWorkModel;
+  final ActivitiesModel homeWorkModel;
   final Function callBack;
 
   @override
@@ -43,7 +44,8 @@ class HomeWorkWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  Utils.getPartOfTest(homeWorkModel.testOption),
+                  // Utils.getPartOfTest(homeWorkModel.testOption), //TODO
+                  "PART",
                   style: const TextStyle(
                     color: AppColor.defaultPurpleColor,
                     fontWeight: FontWeight.bold,
@@ -58,7 +60,8 @@ class HomeWorkWidget extends StatelessWidget {
             children: [
               SizedBox(
                 child: Text(
-                  homeWorkModel.name,
+                  // homeWorkModel.name,
+                  homeWorkModel.activityName,
                   maxLines: 2,
                   style: const TextStyle(
                     fontSize: 17,
@@ -71,8 +74,8 @@ class HomeWorkWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    (homeWorkModel.end.isNotEmpty)
-                        ? homeWorkModel.end
+                    (homeWorkModel.activityEndTime.isNotEmpty)
+                        ? homeWorkModel.activityEndTime
                         : '0000-00-00 00:00',
                     style: const TextStyle(
                       fontSize: 12,

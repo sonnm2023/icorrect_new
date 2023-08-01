@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
@@ -214,29 +216,31 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           }
           return CustomScrollView(
             slivers: [
-              SliverGroupedListView<HomeWorkModel, String>(
+              SliverGroupedListView<ActivitiesModel, String>(
                 elements: homeworkProvider.listFilteredHomeWorks,
-                groupBy: (element) => element.className,
+                groupBy: (element) => element.classId.toString(),
                 groupComparator: (value1, value2) => value2.compareTo(value1),
-                itemComparator: (item1, item2) =>
-                    item1.name.compareTo(item2.name),
                 order: GroupedListOrder.ASC,
-                groupSeparatorBuilder: (String value) => Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                    top: 5,
-                    right: 10,
-                    bottom: 5,
-                  ),
-                  child: Text(
-                    value,
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                groupSeparatorBuilder: (String classId) {
+                  String className = Utils.getClassNameWithId(classId, homeworkProvider.listClassForFilter);
+                  
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10,
+                      top: 5,
+                      right: 10,
+                      bottom: 5,
                     ),
-                  ),
-                ),
+                    child: Text(
+                      className,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
                 itemBuilder: (c, element) {
                   return HomeWorkWidget(
                     homeWorkModel: element,

@@ -7,8 +7,8 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
-import 'package:icorrect/src/models/homework_models/class_model.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
@@ -152,8 +152,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             body: Stack(
               children: [
                 MyHomeWorkTab(
-                    homeWorkProvider: _homeWorkProvider,
-                    homeWorkPresenter: _homeWorkPresenter!),
+                  homeWorkProvider: _homeWorkProvider,
+                  homeWorkPresenter: _homeWorkPresenter!,
+                ),
                 Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
                     if (homeWorkProvider.isProcessing) {
@@ -342,14 +343,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onGetListHomeworkComplete(
-      List<HomeWorkModel> homeworks, List<ClassModel> classes) async {
-    await _homeWorkProvider.setListClassForFilter(classes);
-    await _homeWorkProvider.setListHomeWorks(homeworks);
-    await _homeWorkProvider.initializeListFilter();
-  }
-
-  @override
   void onGetListHomeworkError(String message) {
     _homeWorkProvider.updateProcessingStatus();
 
@@ -384,5 +377,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
     _homeWorkProvider.setCurrentUser(userDataModel);
+  }
+
+  @override
+  void onNewGetListHomeworkComplete( List<ActivitiesModel> activities, List<NewClassModel> classes) async {
+    await _homeWorkProvider.setListClassForFilter(classes);
+    await _homeWorkProvider.setListHomeWorks(activities);
+    await _homeWorkProvider.initializeListFilter();
   }
 }

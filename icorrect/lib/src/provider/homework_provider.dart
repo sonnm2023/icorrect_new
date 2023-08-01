@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
-import 'package:icorrect/src/models/homework_models/class_model.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 class HomeWorkProvider with ChangeNotifier {
@@ -41,10 +41,9 @@ class HomeWorkProvider with ChangeNotifier {
     _filterString = newValue;
   }
 
-  //Original list homeworks
-  final List<HomeWorkModel> _listHomeWorks = [];
-  List<HomeWorkModel> get listHomeWorks => _listHomeWorks;
-  Future<void> setListHomeWorks(List<HomeWorkModel> list) async {
+  final List<ActivitiesModel> _listHomeWorks = [];
+  List<ActivitiesModel> get listHomeWorks => _listHomeWorks;
+  Future<void> setListHomeWorks(List<ActivitiesModel> list) async {
     if (_listHomeWorks.isNotEmpty) _listHomeWorks.clear();
     _listHomeWorks.addAll(list);
 
@@ -54,9 +53,9 @@ class HomeWorkProvider with ChangeNotifier {
   }
 
   //List homework after filter
-  final List<HomeWorkModel> _listFilteredHomeWorks = [];
-  List<HomeWorkModel> get listFilteredHomeWorks => _listFilteredHomeWorks;
-  void setListFilteredHomeWorks(List<HomeWorkModel> list) {
+  final List<ActivitiesModel> _listFilteredHomeWorks = [];
+  List<ActivitiesModel> get listFilteredHomeWorks => _listFilteredHomeWorks;
+  void setListFilteredHomeWorks(List<ActivitiesModel> list) {
     _listFilteredHomeWorks.clear();
     _listFilteredHomeWorks.addAll(list);
 
@@ -65,12 +64,11 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  //List class (original) for filtering
-  final List<ClassModel> _listClassForFilter = [];
-  List<ClassModel> get listClassForFilter => _listClassForFilter;
-  Future<void> setListClassForFilter(List<ClassModel> list) async {
+  final List<NewClassModel> _listClassForFilter = [];
+  List<NewClassModel> get listClassForFilter => _listClassForFilter;
+  Future<void> setListClassForFilter(List<NewClassModel> list) async {
     if (_listClassForFilter.isNotEmpty) _listClassForFilter.clear();
-    _listClassForFilter.add(ClassModel.fromJson(FilterJsonData.selectAll));
+    _listClassForFilter.add(NewClassModel.fromJson(FilterJsonData.selectAll));
     _listClassForFilter.addAll(list);
 
     if (!isDisposed) {
@@ -90,9 +88,9 @@ class HomeWorkProvider with ChangeNotifier {
   List<HomeWorkStatusModel> get listStatusForFilter => _listStatusForFilter;
 
   //List selected class
-  final List<ClassModel> _listSelectedClassFilter = [];
-  List<ClassModel> get listSelectedClassFilter => _listSelectedClassFilter;
-  void setListSelectedClassFilter(List<ClassModel> list) {
+  final List<NewClassModel> _listSelectedClassFilter = [];
+  List<NewClassModel> get listSelectedClassFilter => _listSelectedClassFilter;
+  void setListSelectedClassFilter(List<NewClassModel> list) {
     _listSelectedClassFilter.clear();
     _listSelectedClassFilter.addAll(list);
 
@@ -112,7 +110,7 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  void addSelectedClass(ClassModel c) {
+  void addSelectedClass(NewClassModel c) {
     if (!_checkClassExits(c)) {
       _listSelectedClassFilter.add(c);
 
@@ -122,7 +120,7 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  void removeSelectedClass(ClassModel c) {
+  void removeSelectedClass(NewClassModel c) {
     _listSelectedClassFilter.remove(c);
 
     if (!isDisposed) {
@@ -130,7 +128,7 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  bool _checkClassExits(ClassModel c) {
+  bool _checkClassExits(NewClassModel c) {
     if (_listSelectedClassFilter.isEmpty) return false;
 
     bool hasSelectAll = _listSelectedClassFilter.map((e) => e.id).contains(listClassForFilter.first.id);
@@ -222,7 +220,8 @@ class HomeWorkProvider with ChangeNotifier {
     String jsonString1 = await AppSharedPref.instance().getString(key: AppSharedKeys.listClassFilter);
     if (jsonString1.isNotEmpty) {
       Iterable temp = jsonDecode(jsonString1);
-      List<ClassModel> temp1 = List<ClassModel>.from(temp.map((e) => ClassModel.fromJson(e)));
+      // List<ClassModel> temp1 = List<ClassModel>.from(temp.map((e) => ClassModel.fromJson(e)));
+      List<NewClassModel> temp1 = List<NewClassModel>.from(temp.map((e) => NewClassModel.fromJson(e)));
       setListSelectedClassFilter(temp1);
     }
 
@@ -270,11 +269,11 @@ class HomeWorkProvider with ChangeNotifier {
 
       setListFilteredHomeWorks(listHomeWorks);
     } else {
-      List<HomeWorkModel> temp1 = listHomeWorks.where((e1) => listSelectedClassFilter.map((e2) => e2.id)
+      List<ActivitiesModel> temp1 = listHomeWorks.where((e1) => listSelectedClassFilter.map((e2) => e2.id)
           .contains(e1.classId)).toList();
 
-      List<HomeWorkModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
-          .contains(e1.completeStatus)).toList();
+      List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
+          .contains(e1.activityStatus)).toList(); //completeStatus //TODO
       setListFilteredHomeWorks(temp2);
     }
 

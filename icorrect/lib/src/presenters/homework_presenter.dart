@@ -6,13 +6,13 @@ import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
 import 'package:icorrect/src/data_sources/repositories/homework_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/class_model.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
-  void onGetListHomeworkComplete(
-      List<HomeWorkModel> homeworks, List<ClassModel> classes);
+  void onNewGetListHomeworkComplete(
+      List<ActivitiesModel> homeworks, List<NewClassModel> classes);
   void onGetListHomeworkError(String message);
   void onLogoutComplete();
   void onLogoutError(String message);
@@ -49,10 +49,10 @@ class HomeWorkPresenter {
         print(jsonEncode(dataMap).toString());
       }
       if (dataMap['error_code'] == 200) {
-        List<HomeWorkModel> homeworks =
-            await _generateListHomeWork(dataMap['data']);
-        // List<ClassModel> classes = await _generateListClass(dataMap['classes']);
-        _view!.onGetListHomeworkComplete(homeworks, classes);
+        List<NewClassModel> classes = await _generateListNewClass(dataMap['data']);
+        List<ActivitiesModel> homeworks =
+            await _generateListHomeWork(classes);
+        _view!.onNewGetListHomeworkComplete(homeworks, classes);
       } else {
         _view!.onGetListHomeworkError(
             "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}");
@@ -63,20 +63,20 @@ class HomeWorkPresenter {
     );
   }
 
-  Future<List<HomeWorkModel>> _generateListHomeWork(List<dynamic> data) async {
-    List<HomeWorkModel> temp = [];
+  Future<List<NewClassModel>> _generateListNewClass(List<dynamic> data) async {
+    List<NewClassModel> temp = [];
     for (int i = 0; i < data.length; i++) {
-      HomeWorkModel item = HomeWorkModel.fromJson(data[i]);
+      NewClassModel item = NewClassModel.fromJson(data[i]);
       temp.add(item);
     }
     return temp;
   }
 
-  Future<List<ClassModel>> _generateListClass(List<dynamic> data) async {
-    List<ClassModel> temp = [];
+  Future<List<ActivitiesModel>> _generateListHomeWork(List<NewClassModel> data) async {
+    List<ActivitiesModel> temp = [];
     for (int i = 0; i < data.length; i++) {
-      ClassModel item = ClassModel.fromJson(data[i]);
-      temp.add(item);
+      NewClassModel classModel = data[i];
+      temp.addAll(classModel.activities);
     }
     return temp;
   }

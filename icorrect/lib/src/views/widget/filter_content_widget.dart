@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
-import 'package:icorrect/src/models/homework_models/class_model.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 
 class FilterContentWidget extends StatefulWidget {
@@ -23,7 +23,8 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
         ],
       );
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  late List<ClassModel> _listSelectedClass = [];
+  // late List<ClassModel> _listSelectedClass = [];
+  late List<NewClassModel> _listSelectedClass = [];
   late List<HomeWorkStatusModel> _listSelectedStatus = [];
 
   @override
@@ -68,7 +69,8 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     );
   }
 
-  Widget _buildClassFilterRow(ClassModel subject) {
+  // Widget _buildClassFilterRow(ClassModel subject) {
+  Widget _buildClassFilterRow(NewClassModel subject) {
     bool isSelected = _checkSelectedClass(subject);
     IconData icon = isSelected ? Icons.check_box_outlined : Icons.square_outlined;
 
@@ -117,7 +119,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     );
   }
 
-  void _removeSelectedClass(ClassModel subject) {
+  void _removeSelectedClass(NewClassModel subject) {
     //Remove select all
     bool hasSelectAll = _listSelectedClass.map((e) => e.id).contains(widget.homeWorkProvider.listClassForFilter.first.id);
     if (hasSelectAll) {
@@ -178,7 +180,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     setState(() {});
   }
 
-  bool _checkSelectedClass(ClassModel subject) {
+  bool _checkSelectedClass(NewClassModel subject) {
     if (_listSelectedClass.isEmpty) return false;
 
     bool hasSelectAll = _listSelectedClass.map((e) => e.id).contains(widget.homeWorkProvider.listClassForFilter.first.id);
