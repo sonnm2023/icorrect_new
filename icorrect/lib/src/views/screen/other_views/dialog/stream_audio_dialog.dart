@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../data_sources/utils.dart';
 
+// ignore: must_be_immutable
 class SliderAudio extends StatefulWidget {
   String url;
   SliderAudio({super.key, required this.url});

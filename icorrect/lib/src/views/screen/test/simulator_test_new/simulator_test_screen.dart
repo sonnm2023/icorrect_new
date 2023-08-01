@@ -66,6 +66,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("Debug: SimulatorTest --- build");
+    }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -213,6 +216,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildBody() {
     return Consumer<SimulatorTestProvider>(
       builder: (context, provider, child) {
+        if (kDebugMode) {
+          print("Debug: SimulatorTest --- build -- buildBody");
+        }
         if (provider.isProcessing) {
           return const DefaultLoadingIndicator(
             color: AppColor.defaultPurpleColor,

@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 import '../../../../../core/app_color.dart';
 import '../../../../provider/my_test_provider.dart';
 
+// ignore: must_be_immutable
 class SampleVideo extends StatefulWidget {
   String url;
   SampleVideo({super.key, required this.url});

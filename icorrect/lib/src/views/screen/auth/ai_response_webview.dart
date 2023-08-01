@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+// ignore: must_be_immutable
 class AIResponse extends StatefulWidget {
   String url;
   AIResponse({super.key, required this.url});

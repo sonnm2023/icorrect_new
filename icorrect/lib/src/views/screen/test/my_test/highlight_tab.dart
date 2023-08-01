@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/app_color.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
+// ignore: must_be_immutable
 class HighLightTab extends StatefulWidget {
   MyTestProvider provider;
   HomeWorkModel homeWorkModel;

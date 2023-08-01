@@ -6,7 +6,6 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 

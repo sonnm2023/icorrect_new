@@ -3,6 +3,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ReAnswerProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SimulatorTestProvider(),
         ),
       ],
       child: MaterialApp(
