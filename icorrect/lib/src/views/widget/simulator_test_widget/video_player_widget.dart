@@ -62,161 +62,136 @@ class VideoPlayerWidget extends StatelessWidget {
           );
         }
 
-        Widget buttonsControllerSubView = SizedBox(
-          width: w,
-          height: h,
-          child: Center(
-            child: SizedBox(
-              width: 50,
-              height: 50,
-              child: InkWell(
-                onTap: () {
-                  //Update reviewing status from none -> playing
-                  testProvider.updateReviewingStatus(ReviewingStatus.playing);
+        Widget buttonsControllerSubView = Container();
 
-                  //Start to do the test
-                  startToPlayVideo();
-                },
-                child: const Icon(
-                  Icons.play_arrow,
-                  color: AppColor.defaultAppColor,
-                  size: 50,
+        switch (testProvider.reviewingStatus.get) {
+          case -1: //None
+            {
+              buttonsControllerSubView = SizedBox(
+                width: w,
+                height: h,
+                child: Center(
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: InkWell(
+                      onTap: () {
+                        //Update reviewing status from none -> playing
+                        testProvider
+                            .updateReviewingStatus(ReviewingStatus.playing);
+
+                        //Start to do the test
+                        startToPlayVideo();
+                      },
+                      child: const Icon(
+                        Icons.play_arrow,
+                        color: AppColor.defaultAppColor,
+                        size: 50,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-        );
-        //For spint 1
-        // Widget buttonsControllerSubView = Container();
-
-        // switch (testProvider.reviewingStatus.get) {
-        //   case -1: //None
-        //     {
-        //       buttonsControllerSubView = SizedBox(
-        //         width: w,
-        //         height: h,
-        //         child: Center(
-        //           child: SizedBox(
-        //             width: 50,
-        //             height: 50,
-        //             child: InkWell(
-        //               onTap: () {
-        //                 //Update reviewing status from none -> playing
-        //                 testProvider
-        //                     .updateReviewingStatus(ReviewingStatus.playing);
-
-        //                 //Start to do the test
-        //                 startToPlayVideo();
-        //               },
-        //               child: const Icon(
-        //                 Icons.play_arrow,
-        //                 color: AppColor.defaultAppColor,
-        //                 size: 50,
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       );
-        //       break;
-        //     }
-        //   case 0: //Playing
-        //     {
-        //       buttonsControllerSubView = SizedBox(
-        //         width: w,
-        //         height: h,
-        //         child: GestureDetector(onTap: () {
-        //           //Update reviewing status from playing -> pause
-        //           //show/hide pause button
-        //           if (prepareSimulatorTestProvider.doingStatus !=
-        //               DoingStatus.doing) {
-        //             if (testProvider.reviewingStatus ==
-        //                 ReviewingStatus.playing) {
-        //               testProvider.updateReviewingStatus(ReviewingStatus.pause);
-        //             }
-        //           }
-        //         }),
-        //       );
-        //       break;
-        //     }
-        //   case 1: //Pause
-        //     {
-        //       buttonsControllerSubView = InkWell(
-        //         onTap: () {
-        //           if (testProvider.reviewingStatus == ReviewingStatus.pause) {
-        //             testProvider.updateReviewingStatus(ReviewingStatus.playing);
-        //           }
-        //         },
-        //         child: SizedBox(
-        //           width: w,
-        //           height: h,
-        //           child: Center(
-        //             child: SizedBox(
-        //               width: 50,
-        //               height: 50,
-        //               child: InkWell(
-        //                 onTap: () {
-        //                   //Update reviewing status from pause -> restart
-        //                   testProvider
-        //                       .updateReviewingStatus(ReviewingStatus.restart);
-        //                   pauseToPlayVideo();
-        //                 },
-        //                 child: const Icon(
-        //                   Icons.pause,
-        //                   color: AppColor.defaultAppColor,
-        //                   size: 50,
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       );
-        //       break;
-        //     }
-        //   case 2: //Restart
-        //     {
-        //       buttonsControllerSubView = SizedBox(
-        //         width: w,
-        //         height: h,
-        //         child: Center(
-        //           child: Row(
-        //             mainAxisAlignment: MainAxisAlignment.center,
-        //             children: [
-        //               SizedBox(
-        //                 width: 50,
-        //                 height: 50,
-        //                 child: InkWell(
-        //                   onTap: () {
-        //                     restartToPlayVideo();
-        //                   },
-        //                   child: const Icon(
-        //                     Icons.restart_alt,
-        //                     color: AppColor.defaultAppColor,
-        //                     size: 50,
-        //                   ),
-        //                 ),
-        //               ),
-        //               const SizedBox(width: 10),
-        //               SizedBox(
-        //                 width: 50,
-        //                 height: 50,
-        //                 child: InkWell(
-        //                   onTap: () {
-        //                     continueToPlayVideo();
-        //                   },
-        //                   child: const Icon(
-        //                     Icons.play_arrow,
-        //                     color: AppColor.defaultAppColor,
-        //                     size: 50,
-        //                   ),
-        //                 ),
-        //               )
-        //             ],
-        //           ),
-        //         ),
-        //       );
-        //       break;
-        //     }
-        // }
+              );
+              break;
+            }
+          case 0: //Playing
+            {
+              buttonsControllerSubView = SizedBox(
+                width: w,
+                height: h,
+                child: GestureDetector(onTap: () {
+                  //Update reviewing status from playing -> pause
+                  //show/hide pause button
+                  if (prepareSimulatorTestProvider.doingStatus !=
+                      DoingStatus.doing) {
+                    if (testProvider.reviewingStatus ==
+                        ReviewingStatus.playing) {
+                      testProvider.updateReviewingStatus(ReviewingStatus.pause);
+                    }
+                  }
+                }),
+              );
+              break;
+            }
+          case 1: //Pause
+            {
+              buttonsControllerSubView = InkWell(
+                onTap: () {
+                  if (testProvider.reviewingStatus == ReviewingStatus.pause) {
+                    testProvider.updateReviewingStatus(ReviewingStatus.playing);
+                  }
+                },
+                child: SizedBox(
+                  width: w,
+                  height: h,
+                  child: Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: InkWell(
+                        onTap: () {
+                          //Update reviewing status from pause -> restart
+                          testProvider
+                              .updateReviewingStatus(ReviewingStatus.restart);
+                          pauseToPlayVideo();
+                        },
+                        child: const Icon(
+                          Icons.pause,
+                          color: AppColor.defaultAppColor,
+                          size: 50,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+              break;
+            }
+          case 2: //Restart
+            {
+              buttonsControllerSubView = SizedBox(
+                width: w,
+                height: h,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: InkWell(
+                          onTap: () {
+                            restartToPlayVideo();
+                          },
+                          child: const Icon(
+                            Icons.restart_alt,
+                            color: AppColor.defaultAppColor,
+                            size: 50,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: InkWell(
+                          onTap: () {
+                            continueToPlayVideo();
+                          },
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: AppColor.defaultAppColor,
+                            size: 50,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+              break;
+            }
+        }
 
         return Stack(
           children: [
@@ -228,11 +203,8 @@ class VideoPlayerWidget extends StatelessWidget {
                 child: VideoPlayer(testProvider.playController!),
               ),
             ),
-
             //Play video controller buttons
-            Visibility(
-              visible: testProvider.reviewingStatus == ReviewingStatus.none,
-              child: buttonsControllerSubView),
+            buttonsControllerSubView,
 
             Visibility(
               visible: testProvider.isReviewingPlayAnswer,

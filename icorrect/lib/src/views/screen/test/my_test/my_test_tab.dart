@@ -317,7 +317,7 @@ class _MyTestTabState extends State<MyTestTab>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          (question.tips.isNotEmpty)?InkWell(
+                          InkWell(
                             onTap: () {
                               _showTips(question);
                             },
@@ -326,7 +326,7 @@ class _MyTestTabState extends State<MyTestTab>
                                 color: AppColor.defaultPurpleColor,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold),
-                          ):Container(),
+                          ),
                           const SizedBox(width: 20),
                           (widget.homeWorkModel.canReanswer())
                               ? InkWell(
