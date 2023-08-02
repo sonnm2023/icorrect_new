@@ -773,7 +773,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     _simulatorTestProvider!.setVisibleRecord(visible);
-    _simulatorTestProvider!.setCountDownTimer(count);
+    // _simulatorTestProvider!.setCountDownTimer(count); //TODO
   }
 
   Future<void> _recordAnswer(String fileName) async {
@@ -1161,46 +1161,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
-  }
-
-  @override
-  void onNothingEndOfTakeNote() {
-    // TODO: implement onNothingEndOfTakeNote
-  }
-
-  @override
-  void onNothingEndOfTest() {
-    // TODO: implement onNothingEndOfTest
-  }
-
-  @override
-  void onNothingFileEndOfTakeNote() {
-    // TODO: implement onNothingFileEndOfTakeNote
-  }
-
-  @override
-  void onNothingFileEndOfTest() {
-    // TODO: implement onNothingFileEndOfTest
-  }
-
-  @override
-  void onNothingFileIntroduce() {
-    // TODO: implement onNothingFileIntroduce
-  }
-
-  @override
-  void onNothingFileQuestion() {
-    // TODO: implement onNothingFileQuestion
-  }
-
-  @override
-  void onNothingIntroduce() {
-    // TODO: implement onNothingIntroduce
-  }
-
-  @override
-  void onNothingQuestion() {
-    // TODO: implement onNothingQuestion
   }
 
   @override

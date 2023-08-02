@@ -29,15 +29,6 @@ abstract class TestRoomViewContract {
   void onClickSaveTheTest();
   void onFinishTheTest();
   void onReDownload();
-
-  void onNothingFileEndOfTest();
-  void onNothingEndOfTest();
-  void onNothingFileQuestion();
-  void onNothingQuestion();
-  void onNothingFileEndOfTakeNote();
-  void onNothingEndOfTakeNote();
-  void onNothingFileIntroduce();
-  void onNothingIntroduce();
 }
 
 class TestRoomPresenter {

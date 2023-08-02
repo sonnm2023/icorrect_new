@@ -233,13 +233,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         print("DEBUG: SimulatorTest --- build -- buildBody");
       }
 
-      if (provider.isDownloading) {
+      if (provider.isDownloadingVideoFiles) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const DownloadProgressingWidget(),
             Visibility(
-              visible: provider.canStartNow,
+              visible: provider.startNowAvailable,
               child: StartNowButtonWidget(
                 startNowButtonTapped: () {
                   _checkPermission();
@@ -250,7 +250,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         );
       }
 
-      if (provider.isProcessing) {
+      if (provider.isGettingTestDetail) {
         return const DefaultLoadingIndicator(
           color: AppColor.defaultPurpleColor,
         );
@@ -346,14 +346,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _startToDoTest() {
     //Hide StartNow button
-    _simulatorTestProvider!.setStartNowButtonStatus(false);
+    _simulatorTestProvider!.setStartNowStatus(false);
 
     //Hide Loading view
-    _simulatorTestProvider!.setDownloadingStatus(false);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(false);
 
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
 
-    _simulatorTestProvider!.updateProcessingStatus(false);
+    _simulatorTestProvider!.setGettingTestDetailStatus(false);
   }
 
   @override
@@ -390,7 +390,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     //Enable Start Testing Button
     if (index >= 5) {
-      _simulatorTestProvider!.setStartNowButtonStatus(true);
+      _simulatorTestProvider!.setStartNowStatus(true);
     }
 
     if (index == total) {
@@ -402,7 +402,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
     _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
-    _simulatorTestProvider!.setDownloadingStatus(true);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(true);
     _simulatorTestProvider!.setTotal(total);
   }
 
@@ -477,8 +477,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onReDownload() {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
-    _simulatorTestProvider!.setDownloadingStatus(false);
-    _simulatorTestProvider!.updateProcessingStatus(false);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(false);
+    _simulatorTestProvider!.setGettingTestDetailStatus(false);
   }
 
   void showCheckNetworkDialog() async {
@@ -503,8 +503,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void updateStatusForReDownload() {
     _simulatorTestProvider!.setNeedDownloadAgain(false);
-    _simulatorTestProvider!.setStartNowButtonStatus(false);
-    _simulatorTestProvider!.setDownloadingStatus(true);
+    _simulatorTestProvider!.setStartNowStatus(false);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(true);
   }
 
   @override

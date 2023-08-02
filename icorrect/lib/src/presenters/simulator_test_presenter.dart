@@ -31,9 +31,6 @@ abstract class SimulatorTestViewContract {
   void onSubmitTestFail(String msg);
   void onReDownload();
   void onTryAgainToDownload();
-
-  // void onShowCheckNetworkDialog();
-  // void onUpdateStatusForReDownload();
 }
 
 class SimulatorTestPresenter {

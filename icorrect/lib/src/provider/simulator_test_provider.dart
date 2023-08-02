@@ -24,36 +24,37 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isProcessing = true;
-  bool get isProcessing => _isProcessing;
-  void updateProcessingStatus(bool isProcessing) {
-    _isProcessing = isProcessing;
+  bool _isGettingTestDetail = true;
+  bool get isGettingTestDetail => _isGettingTestDetail;
+  void setGettingTestDetailStatus(bool isProcessing) {
+    _isGettingTestDetail = isProcessing;
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
-  bool _isDownloading = false;
-  bool get isDownloading => _isDownloading;
-  void setDownloadingStatus(bool isDownloading) {
-    _isDownloading = isDownloading;
+  bool _isDownloadingVideoFiles = false;
+  bool get isDownloadingVideoFiles => _isDownloadingVideoFiles;
+  void setDownloadingVideoFilesStatus(bool isDownloading) {
+    _isDownloadingVideoFiles = isDownloading;
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
-  bool _canStartNow = false;
-  bool get canStartNow => _canStartNow;
-  void setStartNowButtonStatus(bool available) {
-    _canStartNow = available;
+  bool _startNowAvailable = false;
+  bool get startNowAvailable => _startNowAvailable;
+  void setStartNowStatus(bool available) {
+    _startNowAvailable = available;
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
+  //=========================== Downloading video info==========================
   int _total = 0;
   int get total => _total;
   void setTotal(int total) {
@@ -94,16 +95,6 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  DoingStatus _doingStatus = DoingStatus.none;
-  DoingStatus get doingStatus => _doingStatus;
-  void updateDoingStatus(DoingStatus status) {
-    _doingStatus = status;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   final List<TopicModel> _topicsList = [];
   List<TopicModel> get topicsList => _topicsList;
   void setTopicsList(List<TopicModel> list) {
@@ -119,6 +110,17 @@ class SimulatorTestProvider with ChangeNotifier {
   bool get dialogShowing => _dialogShowing;
   void setDialogShowing(bool isShowing) {
     _dialogShowing = isShowing;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  //Status of doing the test
+  DoingStatus _doingStatus = DoingStatus.none;
+  DoingStatus get doingStatus => _doingStatus;
+  void updateDoingStatus(DoingStatus status) {
+    _doingStatus = status;
 
     if (!isDisposed) {
       notifyListeners();
@@ -173,7 +175,6 @@ class SimulatorTestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   bool _isVisibleCueCard = false;
   bool get isVisibleCueCard => _isVisibleCueCard;
@@ -259,15 +260,16 @@ class SimulatorTestProvider with ChangeNotifier {
     _questionList.clear();
   }
 
-  Timer? _countDownTimer;
-  Timer? get countDownTimer => _countDownTimer;
-  void setCountDownTimer(Timer? timer) {
-    _countDownTimer = timer;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
+  //TODO
+  // Timer? _countDownTimer;
+  // Timer? get countDownTimer => _countDownTimer;
+  // void setCountDownTimer(Timer? timer) {
+  //   _countDownTimer = timer;
+  //
+  //   if (!isDisposed) {
+  //     notifyListeners();
+  //   }
+  // }
 
   VideoPlayerController? _videoPlayerController;
   VideoPlayerController? get videoPlayController => _videoPlayerController;
@@ -446,9 +448,9 @@ class SimulatorTestProvider with ChangeNotifier {
     _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;
-    _isProcessing = true;
-    _isDownloading = false;
-    _canStartNow = false;
+    _isGettingTestDetail = true;
+    _isDownloadingVideoFiles = false;
+    _startNowAvailable = false;
     _total = 0;
     _downloadingIndex = 1;
     _downloadingPercent = 0.0;
@@ -462,7 +464,7 @@ class SimulatorTestProvider with ChangeNotifier {
     _isRepeatVisible = true;
     _isVisibleSave = false;
     _countRepeat = 0;
-    _countDownTimer = null;
+    // _countDownTimer = null; //TODO
     _videoPlayerController = null;
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
