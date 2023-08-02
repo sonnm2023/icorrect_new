@@ -229,22 +229,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           color: AppColor.defaultPurpleColor,
         );
       } else {
-        return Stack(
-          children: [
-            ChangeNotifierProvider(
-              create: (_) => TestRoomProvider(),
-              child: TestRoomWidget(
+        return SizedBox(
+          child: Stack(
+            children: [
+              TestRoomWidget(
                 homeWorkModel: widget.homeWorkModel,
                 simulatorTestPresenter: _simulatorTestPresenter!,
               ),
-            ),
-            Visibility(
-              visible: provider.submitStatus == SubmitStatus.submitting,
-              child: const DefaultLoadingIndicator(
-                color: AppColor.defaultPurpleColor,
+              Visibility(
+                visible: provider.submitStatus == SubmitStatus.submitting,
+                child: const DefaultLoadingIndicator(
+                  color: AppColor.defaultPurpleColor,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }
     });
@@ -323,23 +322,26 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onDownloadFailure(AlertInfo info) {
-    if (mounted) {
-      if (!_simulatorTestProvider!.dialogShowing) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertsDialog.init().showDialog(
-              context,
-              info,
-              this,
-              keyInfo: StringClass.failDownloadVideo,
-            );
-          },
-        );
-        _simulatorTestProvider!.setDialogShowing(true);
-      }
+    if (kDebugMode) {
+      print("DEBUG: onDownloadFailure");
     }
+    // if (mounted) {
+    //   if (!_simulatorTestProvider!.dialogShowing) {
+    //     showDialog(
+    //       context: context,
+    //       barrierDismissible: false,
+    //       builder: (context) {
+    //         return AlertsDialog.init().showDialog(
+    //           context,
+    //           info,
+    //           this,
+    //           keyInfo: StringClass.failDownloadVideo,
+    //         );
+    //       },
+    //     );
+    //     _simulatorTestProvider!.setDialogShowing(true);
+    //   }
+    // }
   }
 
   @override

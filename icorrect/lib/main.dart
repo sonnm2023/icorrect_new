@@ -4,6 +4,7 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +40,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => SimulatorTestProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => TestRoomProvider(),
         )
-
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

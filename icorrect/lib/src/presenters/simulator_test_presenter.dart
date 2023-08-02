@@ -137,12 +137,6 @@ class SimulatorTestPresenter {
         .timeout(const Duration(seconds: 10));
   }
 
-  //Check file is exist using file_storage
-  Future<bool> _isExist(String fileName, MediaType mediaType, String? testId) async {
-    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType, testId);
-    return isExist;
-  }
-
   double _getPercent(int downloaded, int total) {
     return (downloaded / total);
   }
@@ -174,11 +168,6 @@ class SimulatorTestPresenter {
     return allFiles;
   }
 
-  void downloadSuccess(TestDetailModel testDetail, String nameFile,
-      double percent, int index, int total) {
-    _view!.onDownloadSuccess(testDetail, nameFile, percent, index, total);
-  }
-
   void downloadFailure(AlertInfo alertInfo) {
     _view!.onDownloadFailure(alertInfo);
   }
@@ -193,9 +182,14 @@ class SimulatorTestPresenter {
 
       if (filesTopic.isNotEmpty) {
         String fileType = Utils.fileType(fileTopic);
+        bool isExist = await FileStorageHelper.checkExistFile(fileTopic, MediaType.video, null);
         if (fileType.isNotEmpty &&
-            !await _isExist(fileTopic, MediaType.video, null)) { //TODO
+            !isExist) {
           try {
+            if (kDebugMode) {
+              print("DEBUG: Downloading file at index = $index");
+            }
+
             http.Response response = await _sendRequest(fileNameForDownload);
 
             if (response.statusCode == 200) {
@@ -203,33 +197,33 @@ class SimulatorTestPresenter {
               String contentString = await Utils.convertVideoToBase64(response);
               await FileStorageHelper.writeVideo(
                   contentString, fileTopic, MediaType.video);
-
-              downloadSuccess(
-                testDetail,
-                fileTopic,
-                _getPercent(index + 1, filesTopic.length),
-                index + 1,
-                filesTopic.length,
-              );
+              double percent = _getPercent(index + 1, filesTopic.length);
+              _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
             } else {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              //Download again
+              downloadFiles(testDetail, filesTopic);
               break loop;
             }
           } on TimeoutException {
             _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+            //Download again
+            downloadFiles(testDetail, filesTopic);
+            break loop;
           } on SocketException {
             _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+            //Download again
+            downloadFiles(testDetail, filesTopic);
+            break loop;
           } on http.ClientException {
             _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+            //Download again
+            downloadFiles(testDetail, filesTopic);
+            break loop;
           }
         } else {
-          downloadSuccess(
-            testDetail,
-            fileTopic,
-            _getPercent(index + 1, filesTopic.length),
-            index + 1,
-            filesTopic.length,
-          );
+          double percent = _getPercent(index + 1, filesTopic.length);
+          _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
         }
       }
     }
@@ -272,6 +266,11 @@ class SimulatorTestPresenter {
     }
   }
 
+  void tryAgainToDownload() {
+    if (kDebugMode) {
+      print("DEBUG: tryAgainToDownload");
+    }
+  }
 
   Future<http.MultipartRequest> _formDataRequest({
     required String testId,
