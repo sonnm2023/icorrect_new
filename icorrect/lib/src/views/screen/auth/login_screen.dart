@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
@@ -46,6 +44,10 @@ class _LoginScreenState extends State<LoginScreen>
     _loginPresenter = LoginPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    //TODO: For test
+    emailController.text = "luan@testing.com";
+    passwordController.text = "123456";
+
     _autoLogin();
   }
 
@@ -60,10 +62,7 @@ class _LoginScreenState extends State<LoginScreen>
         _authProvider.updateProcessingStatus();
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider<HomeWorkProvider>(
-              create: (_) => HomeWorkProvider(),
-              child: const HomeWorkScreen(),
-            ),
+            builder: (_) => const HomeWorkScreen(),
           ),
           ModalRoute.withName('/'),
         );
@@ -207,13 +206,7 @@ class _LoginScreenState extends State<LoginScreen>
   void onLoginComplete() {
     _authProvider.updateProcessingStatus();
     Navigator.of(context).push(
-      // MaterialPageRoute(builder: (context) => const HomeWorkScreen()),
-      MaterialPageRoute(
-        builder: (_) => ChangeNotifierProvider<HomeWorkProvider>(
-          create: (_) => HomeWorkProvider(),
-          child: const HomeWorkScreen(),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => const HomeWorkScreen()),
     );
   }
 

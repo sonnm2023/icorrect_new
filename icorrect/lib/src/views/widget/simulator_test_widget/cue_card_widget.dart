@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/provider/test_room_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
 
 class CueCardWidget extends StatefulWidget {
@@ -15,9 +15,9 @@ class _CueCardWidgetState extends State<CueCardWidget> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
 
-    return Consumer<TestRoomProvider>(
-      builder: (context, testProvider, child) {
-        if (testProvider.isVisibleCueCard && testProvider.currentQuestion.cueCard.isNotEmpty) {
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, simulatorTestProvider, child) {
+        if (simulatorTestProvider.isVisibleCueCard && simulatorTestProvider.currentQuestion.cueCard.isNotEmpty) {
           return Container(
             width: w,
             height: h,
@@ -41,7 +41,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                   const SizedBox(height: 10),
                   Center(
                     child: Text(
-                      testProvider.strCountCueCard,
+                      simulatorTestProvider.strCountCueCard,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -51,7 +51,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    testProvider.currentQuestion.content,
+                    simulatorTestProvider.currentQuestion.content,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -64,7 +64,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: Text(
-                        testProvider.currentQuestion.cueCard.trim(),
+                        simulatorTestProvider.currentQuestion.cueCard.trim(),
                         textAlign: TextAlign.left,
                         style: const TextStyle(
                           fontSize: 16,

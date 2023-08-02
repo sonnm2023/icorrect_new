@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
@@ -29,8 +30,11 @@ class AuthRepositoryImpl implements AuthRepository {
           final String jsonBody = response.body;
           return jsonBody;
         })
+        // ignore: body_might_complete_normally_catch_error
         .catchError((onError) {
-          print("error: ${onError.toString()}");
+          if (kDebugMode) {
+            print("DEBUG: error: ${onError.toString()}");
+          }
         });
   }
 

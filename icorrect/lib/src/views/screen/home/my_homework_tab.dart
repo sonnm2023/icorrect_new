@@ -3,11 +3,9 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test_new/simulator_test_screen.dart';
@@ -160,7 +158,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 "Close",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: AppColor.defaultGraySlightColor,
+                  color: AppColor.defaultGrayColor,
                 ),
               ),
             ),
@@ -301,6 +299,15 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() {
+    //TODO: For test
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => SimulatorTestScreen(
+    //       homeWorkModel: _selectedHomeWorkModel!,
+    //     ),
+    //   ),
+    // );
     if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
         _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
       Navigator.push(

@@ -8,7 +8,6 @@ import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-import 'package:path/path.dart';
 
 import '../data_sources/api_urls.dart';
 import '../data_sources/constant_strings.dart';

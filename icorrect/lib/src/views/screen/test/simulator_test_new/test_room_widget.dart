@@ -18,7 +18,6 @@ import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
@@ -50,7 +49,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     with WidgetsBindingObserver
     implements TestRoomViewContract {
   TestRoomPresenter? _testRoomPresenter;
-  TestRoomProvider? _testRoomProvider;
   SimulatorTestProvider? _simulatorTestProvider;
 
   TimerProvider? _timerProvider;
@@ -75,7 +73,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
-    _testRoomProvider = Provider.of<TestRoomProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
     _playAnswerProvider =
         Provider.of<PlayAnswerProvider>(context, listen: false);
@@ -158,7 +155,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _startToDoTest() {
     if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
-      _testRoomProvider!.setTopicsQueue(_simulatorTestProvider!.topicsQueue);
+      // _simulatorTestProvider!.setTopicsQueue(_simulatorTestProvider!.topicsQueue);
       _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
@@ -186,20 +183,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       await _videoPlayerController!.dispose();
-      _testRoomProvider!.setPlayController(null);
-    }
-
-    _testRoomProvider!.resetAll();
-    if (null != _testRoomProvider) {
-      if (!_testRoomProvider!.isDisposed) {
-        _testRoomProvider!.dispose();
-      }
+      _simulatorTestProvider!.setPlayController(null);
     }
   }
 
   void _playAnswerCallBack(
       QuestionTopicModel question, int selectedQuestionIndex) async {
-    // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
@@ -259,7 +248,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       String audioPath, QuestionTopicModel question) async {
     if (kDebugMode) {
       print(
-          "DEBUG: Reviewing current index = ${_testRoomProvider!.reviewingCurrentIndex} -- play answer");
+          "DEBUG: Reviewing current index = ${_simulatorTestProvider!.reviewingCurrentIndex} -- play answer");
     }
 
     await _audioPlayerController!.play(DeviceFileSource(audioPath));
@@ -301,10 +290,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playReAnswerCallBack(QuestionTopicModel question) {
-    // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
-          _testRoomProvider!.reviewingStatus == ReviewingStatus.playing;
+          _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
 
       if (isReviewing) {
         showDialog(
@@ -349,7 +337,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
-    // if (_testRoomProvider!.reviewingStatus == ReviewingStatus.none) { //Comment for spin 1
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _showTip(question);
     } else {
@@ -383,7 +370,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
     bool isPart2 =
-        _testRoomProvider!.topicsQueue.first.numPart == PartOfTest.part2.get;
+        _simulatorTestProvider!.topicsQueue.first.numPart == PartOfTest.part2.get;
     onFinishAnswer(isPart2);
   }
 
@@ -394,13 +381,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _countRepeat++;
 
     //Add question into List Question & show it
-    _testRoomProvider!.addCurrentQuestionIntoList(
+    _simulatorTestProvider!.addCurrentQuestionIntoList(
         questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
       if (topicModel.numPart == PartOfTest.part3.get) {
-        bool finishFollowUp = _testRoomProvider!.finishPlayFollowUp;
+        bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
         if (finishFollowUp == true) {
           if (_countRepeat > 0 && _countRepeat <= 2) {
             _repeatPlayCurrentQuestion();
@@ -434,9 +421,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _reviewingQuestionList = _prepareQuestionListForReviewing();
     dynamic item =
-        _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
+        _reviewingQuestionList[_simulatorTestProvider!.reviewingCurrentIndex];
     if (item is String) {
-      _testRoomProvider!.setIsReviewingPlayAnswer(false);
+      _simulatorTestProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
           fileName: item,
           handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
@@ -455,7 +442,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playTheAnswerOfQuestion(QuestionTopicModel question) async {
-    _testRoomProvider!.setIsReviewingPlayAnswer(true);
+    _simulatorTestProvider!.setIsReviewingPlayAnswer(true);
 
     String path = await Utils.getReviewingAudioPathToPlay(
       question,
@@ -465,12 +452,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _continueReviewing() {
-    int index = _testRoomProvider!.reviewingCurrentIndex + 1;
-    _testRoomProvider!.updateReviewingCurrentIndex(index);
+    int index = _simulatorTestProvider!.reviewingCurrentIndex + 1;
+    _simulatorTestProvider!.updateReviewingCurrentIndex(index);
     dynamic item =
-        _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
+        _reviewingQuestionList[_simulatorTestProvider!.reviewingCurrentIndex];
     if (item is String) {
-      _testRoomProvider!.setIsReviewingPlayAnswer(false);
+      _simulatorTestProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
           fileName: item,
           handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
@@ -491,8 +478,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       );
     } else {
       //Start to do the test
-      if (null != _testRoomProvider!.videoPlayController) {
-        _testRoomProvider!.videoPlayController!.play();
+      if (null != _simulatorTestProvider!.videoPlayController) {
+        _simulatorTestProvider!.videoPlayController!.play();
       }
     }
   }
@@ -521,17 +508,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _setIndexOfNextQuestion() {
-    int i = _testRoomProvider!.indexOfCurrentQuestion;
-    _testRoomProvider!.setIndexOfCurrentQuestion(i + 1);
+    int i = _simulatorTestProvider!.indexOfCurrentQuestion;
+    _simulatorTestProvider!.setIndexOfCurrentQuestion(i + 1);
   }
 
   void _setIndexOfNextFollowUp() {
-    int i = _testRoomProvider!.indexOfCurrentFollowUp;
-    _testRoomProvider!.setIndexOfCurrentFollowUp(i + 1);
+    int i = _simulatorTestProvider!.indexOfCurrentFollowUp;
+    _simulatorTestProvider!.setIndexOfCurrentFollowUp(i + 1);
   }
 
   TopicModel? _getCurrentPart() {
-    Queue<TopicModel> topicsQueue = _testRoomProvider!.topicsQueue;
+    Queue<TopicModel> topicsQueue = _simulatorTestProvider!.topicsQueue;
 
     if (topicsQueue.isEmpty) {
       return null;
@@ -587,7 +574,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           }
       }
     } else {
-      int index = _testRoomProvider!.indexOfCurrentQuestion;
+      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
       if (index >= questionList.length) {
         /*
         We played all questions of current part
@@ -623,16 +610,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _playNextPart() {
     //Remove part which played
-    _testRoomProvider!.removeTopicsQueueFirst();
-    _testRoomProvider!.resetIndexOfCurrentQuestion();
+    _simulatorTestProvider!.removeTopicsQueueFirst();
+    _simulatorTestProvider!.resetIndexOfCurrentQuestion();
 
     //No part for next play
     //Finish the test
-    if (_testRoomProvider!.topicsQueue.isEmpty) {
+    if (_simulatorTestProvider!.topicsQueue.isEmpty) {
       //TODO: Finish the test
       _prepareToEndTheTest();
     } else {
-      _testRoomPresenter!.startPart(_testRoomProvider!.topicsQueue);
+      _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
 
@@ -644,7 +631,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _repeatPlayCurrentFollowup() {
     if (_countRepeat == 2) {
       //Disable repeat button
-      _testRoomProvider!.setEnableRepeatButton(false);
+      _simulatorTestProvider!.setEnableRepeatButton(false);
     }
 
     _startToPlayFollowup();
@@ -666,14 +653,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (kDebugMode) {
         print("DEBUG: This part hasn't any followup to playing");
       }
-      _testRoomProvider!.setFinishPlayFollowUp(true);
+      _simulatorTestProvider!.setFinishPlayFollowUp(true);
       _startToPlayQuestion();
     } else {
-      _testRoomProvider!.resetIndexOfCurrentQuestion();
+      _simulatorTestProvider!.resetIndexOfCurrentQuestion();
 
-      int index = _testRoomProvider!.indexOfCurrentFollowUp;
+      int index = _simulatorTestProvider!.indexOfCurrentFollowUp;
       if (index >= followUpList.length) {
-        _testRoomProvider!.setFinishPlayFollowUp(true);
+        _simulatorTestProvider!.setFinishPlayFollowUp(true);
         _startToPlayQuestion();
       } else {
         QuestionTopicModel question = followUpList.elementAt(index);
@@ -700,7 +687,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _repeatPlayCurrentQuestion() {
     if (_countRepeat == 2) {
       //Disable repeat button
-      _testRoomProvider!.setEnableRepeatButton(false);
+      _simulatorTestProvider!.setEnableRepeatButton(false);
     }
 
     _startToPlayQuestion();
@@ -740,9 +727,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     //Dispose old video play controller before create new one
-    if (null != _testRoomProvider!.videoPlayController) {
-      _testRoomProvider!.videoPlayController!.dispose();
-      _testRoomProvider!.setPlayController(null);
+    if (null != _simulatorTestProvider!.videoPlayController) {
+      _simulatorTestProvider!.videoPlayController!.dispose();
+      _simulatorTestProvider!.setPlayController(null);
     }
 
     Utils.prepareVideoFile(fileName).then((value) {
@@ -759,14 +746,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           }
           _videoPlayerController!.play();
 
-          if (ReviewingStatus.none == _testRoomProvider!.reviewingStatus) {
+          if (ReviewingStatus.none == _simulatorTestProvider!.reviewingStatus) {
             Future.delayed(const Duration(milliseconds: 1), () {
               _videoPlayerController!.pause();
             });
           }
 
           if (null != _videoPlayerController) {
-            _testRoomProvider!.setPlayController(_videoPlayerController!);
+            _simulatorTestProvider!.setPlayController(_videoPlayerController!);
           }
 
           _videoPlayerController!
@@ -785,8 +772,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       await _stopRecord();
     }
 
-    _testRoomProvider!.setVisibleRecord(visible);
-    _testRoomProvider!.setCountDownTimer(count);
+    _simulatorTestProvider!.setVisibleRecord(visible);
+    // _simulatorTestProvider!.setCountDownTimer(count); //TODO
   }
 
   Future<void> _recordAnswer(String fileName) async {
@@ -813,7 +800,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         temp.add(
             FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
         _currentQuestion!.answers = temp;
-        _testRoomProvider!.setCurrentQuestion(_currentQuestion!);
+        _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
       }
     }
   }
@@ -844,23 +831,23 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _checkVideo(
       String fileName, HandleWhenFinish handleWhenFinishType) async {
-    if (null != _testRoomProvider!.videoPlayController) {
-      if (_testRoomProvider!.videoPlayController!.value.position ==
-          _testRoomProvider!.videoPlayController!.value.duration) {
-        _testRoomProvider!.videoPlayController!.pause();
+    if (null != _simulatorTestProvider!.videoPlayController) {
+      if (_simulatorTestProvider!.videoPlayController!.value.position ==
+          _simulatorTestProvider!.videoPlayController!.value.duration) {
+        _simulatorTestProvider!.videoPlayController!.pause();
 
         switch (handleWhenFinishType) {
           case HandleWhenFinish.questionVideoType:
             {
               if (_currentQuestion!.cueCard.isNotEmpty &&
-                  (false == _testRoomProvider!.isVisibleCueCard)) {
+                  (false == _simulatorTestProvider!.isVisibleCueCard)) {
                 //Has Cue Card case
-                _testRoomProvider!.setVisibleRecord(false);
-                _testRoomProvider!.setCurrentQuestion(_currentQuestion!);
+                _simulatorTestProvider!.setVisibleRecord(false);
+                _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 3; //3 for test, 60 for product
+                int time = 60; //3 for test, 60 for product
                 String timeString = Utils.getTimeRecordString(time);
-                _testRoomProvider!.setCountDownCueCard(timeString);
+                _simulatorTestProvider!.setCountDownCueCard(timeString);
 
                 _countDownCueCard =
                     _testRoomPresenter!.startCountDownForCueCard(
@@ -868,11 +855,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   count: time,
                   isPart2: false,
                 );
-                _testRoomProvider!.setVisibleCueCard(true);
+                _simulatorTestProvider!.setVisibleCueCard(true);
               } else {
                 //Normal case
-                if (false == _testRoomProvider!.visibleRecord &&
-                    false == _testRoomProvider!.isVisibleCueCard) {
+                if (false == _simulatorTestProvider!.visibleRecord &&
+                    false == _simulatorTestProvider!.isVisibleCueCard) {
                   _startRecordAnswer(fileName: fileName, isPart2: false);
                 }
               }
@@ -921,7 +908,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           case HandleWhenFinish.reviewingPlayTheQuestionType:
             {
               QuestionTopicModel question =
-                  _reviewingList[_testRoomProvider!.reviewingCurrentIndex];
+                  _reviewingList[_simulatorTestProvider!.reviewingCurrentIndex];
               _playTheAnswerOfQuestion(question);
               break;
             }
@@ -931,7 +918,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _reviewingProcess() {
-    if (_testRoomProvider!.reviewingCurrentIndex <
+    if (_simulatorTestProvider!.reviewingCurrentIndex <
         _reviewingQuestionList.length) {
       _continueReviewing();
     } else {
@@ -942,14 +929,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _prepareToEndTheTest() {
     //Finish doing test
-    _testRoomProvider!.updateReviewingStatus(ReviewingStatus.none);
+    _simulatorTestProvider!.updateReviewingStatus(ReviewingStatus.none);
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
 
-    //Save answer list into prepare_simulator_test_provider
     List<String> temp = _prepareAnswerListForDelete();
     _simulatorTestProvider!.setAnswerList(temp);
-    List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
-    _simulatorTestProvider!.setQuestionList(questions);
 
     //Auto submit test for activity type = test
     if (_simulatorTestProvider!.activityType == "test") {
@@ -961,7 +945,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest() {
-    // _simulatorTestProvider!.setIsSubmitting(true);
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
@@ -1028,9 +1011,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         case 2:
           {
             //PART 2
-            if (_testRoomProvider!.indexOfCurrentQuestion == 0) {
-              _testRoomProvider!.setIndexOfHeaderPart2(
-                  _testRoomProvider!.questionList.length);
+            if (_simulatorTestProvider!.indexOfCurrentQuestion == 0) {
+              _simulatorTestProvider!.setIndexOfHeaderPart2(
+                  _simulatorTestProvider!.questionList.length);
             }
             break;
           }
@@ -1038,14 +1021,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           {
             //PART 3
             if (topicModel.followUp.isNotEmpty) {
-              if (_testRoomProvider!.indexOfCurrentFollowUp == 0) {
-                _testRoomProvider!.setIndexOfHeaderPart3(
-                    _testRoomProvider!.questionList.length);
+              if (_simulatorTestProvider!.indexOfCurrentFollowUp == 0) {
+                _simulatorTestProvider!.setIndexOfHeaderPart3(
+                    _simulatorTestProvider!.questionList.length);
               }
             } else {
-              if (_testRoomProvider!.indexOfCurrentQuestion == 0) {
-                _testRoomProvider!.setIndexOfHeaderPart3(
-                    _testRoomProvider!.questionList.length);
+              if (_simulatorTestProvider!.indexOfCurrentQuestion == 0) {
+                _simulatorTestProvider!.setIndexOfHeaderPart3(
+                    _simulatorTestProvider!.questionList.length);
               }
             }
             break;
@@ -1067,7 +1050,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       return;
     }
 
-    Queue<TopicModel> queue = _testRoomProvider!.topicsQueue;
+    Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
     int timeRecord = Utils.getRecordTime(queue.first.numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
 
@@ -1086,7 +1069,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _setVisibleSaveTest(bool isVisible) {
-    _testRoomProvider!.setVisibleSaveTheTest(isVisible);
+    _simulatorTestProvider!.setVisibleSaveTheTest(isVisible);
   }
 
   void _gotoMyTestScreen() {
@@ -1129,37 +1112,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _countRepeat = 0;
 
     //Enable repeat button
-    _testRoomProvider!.setEnableRepeatButton(true);
+    _simulatorTestProvider!.setEnableRepeatButton(true);
 
     //Stop record
     _setVisibleRecord(false, null, null);
 
-    if (_testRoomProvider!.isVisibleCueCard) {
+    if (_simulatorTestProvider!.isVisibleCueCard) {
       //Has cue card case
       if (isPart2) {
-        _testRoomProvider!.setVisibleCueCard(false);
+        _simulatorTestProvider!.setVisibleCueCard(false);
 
         //Add question into List Question & show it
-        _testRoomProvider!.addCurrentQuestionIntoList(
+        _simulatorTestProvider!.addCurrentQuestionIntoList(
             questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
         _playNextQuestion();
       } else {
         //Start to play end_of_take_note video
-        Queue<TopicModel> topicQueue = _testRoomProvider!.topicsQueue;
+        Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
         TopicModel topic = topicQueue.first;
 
         _testRoomPresenter!.playEndOfTakeNoteFile(topic);
       }
     } else {
       //Add question or followup into List Question & show it
-      _testRoomProvider!.addCurrentQuestionIntoList(
+      _simulatorTestProvider!.addCurrentQuestionIntoList(
           questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
         if (topicModel.numPart == PartOfTest.part3.get) {
-          bool finishFollowUp = _testRoomProvider!.finishPlayFollowUp;
+          bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
           if (finishFollowUp == true) {
             _playNextQuestion();
           } else {
@@ -1174,46 +1157,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
-  }
-
-  @override
-  void onNothingEndOfTakeNote() {
-    // TODO: implement onNothingEndOfTakeNote
-  }
-
-  @override
-  void onNothingEndOfTest() {
-    // TODO: implement onNothingEndOfTest
-  }
-
-  @override
-  void onNothingFileEndOfTakeNote() {
-    // TODO: implement onNothingFileEndOfTakeNote
-  }
-
-  @override
-  void onNothingFileEndOfTest() {
-    // TODO: implement onNothingFileEndOfTest
-  }
-
-  @override
-  void onNothingFileIntroduce() {
-    // TODO: implement onNothingFileIntroduce
-  }
-
-  @override
-  void onNothingFileQuestion() {
-    // TODO: implement onNothingFileQuestion
-  }
-
-  @override
-  void onNothingIntroduce() {
-    // TODO: implement onNothingIntroduce
-  }
-
-  @override
-  void onNothingQuestion() {
-    // TODO: implement onNothingQuestion
   }
 
   @override
@@ -1249,7 +1192,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onCountDownForCueCard(String countDownString) {
     if (mounted) {
-      _testRoomProvider!.setCountDownCueCard(countDownString);
+      _simulatorTestProvider!.setCountDownCueCard(countDownString);
     }
   }
 
@@ -1262,7 +1205,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const CustomAlertDialog(title: "Notify", description: "An error occur, please try again later!");
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur, please try again later!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }
@@ -1286,16 +1240,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return ConfirmDialogWidget(
+          return CustomAlertDialog(
             title: "Notify",
-            message: "Do you want to save this test?",
-            cancelButtonTitle: "Don't Save",
+            description: "Do you want to save this test?",
             okButtonTitle: "Save",
-            cancelButtonTapped: () {
-              if (kDebugMode) print("_cancelButtonTapped");
-            },
+            cancelButtonTitle: "Don't Save",
+            borderRadius: 8,
+            hasCloseButton: true,
             okButtonTapped: () {
               _startSubmitTest();
+            },
+            cancelButtonTapped: () {
+              Navigator.of(context).pop();
             },
           );
         },
@@ -1306,5 +1262,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onFinishTheTest() {
     _prepareToEndTheTest();
+  }
+
+  @override
+  void onReDownload() {
+    _simulatorTestProvider!.setNeedDownloadAgain(true);
   }
 }

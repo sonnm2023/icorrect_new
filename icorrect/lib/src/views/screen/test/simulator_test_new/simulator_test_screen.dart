@@ -1,23 +1,24 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
+import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
@@ -44,8 +45,30 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
 
+  StreamSubscription? connection;
+  bool isOffline = false;
+
   @override
   void initState() {
+    connection = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      // whenevery connection status is changed.
+      if(result == ConnectivityResult.none) {
+        isOffline = true;
+      } else if(result == ConnectivityResult.mobile) {
+        isOffline = false;
+      } else if(result == ConnectivityResult.wifi) {
+        isOffline = false;
+      } else if(result == ConnectivityResult.ethernet) {
+        isOffline = false;
+      } else if(result == ConnectivityResult.bluetooth) {
+        isOffline = false;
+      }
+
+      if (kDebugMode) {
+        print("DEBUG: NO INTERNET === $isOffline");
+      }
+    });
+
     super.initState();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -56,6 +79,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void dispose() {
+    connection!.cancel();
+    _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
     _simulatorTestProvider!.resetAll();
     super.dispose();
   }
@@ -75,6 +100,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             child: Stack(
               children: [
                 _buildBody(),
+                _buildDownloadAgain(),
                 BackButtonWidget(backButtonTapped: _backButtonTapped),
               ],
             ),
@@ -207,13 +233,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         print("DEBUG: SimulatorTest --- build -- buildBody");
       }
 
-      if (provider.isDownloading) {
+      if (provider.isDownloadingVideoFiles) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const DownloadProgressingWidget(),
             Visibility(
-              visible: provider.canStartNow,
+              visible: provider.startNowAvailable,
               child: StartNowButtonWidget(
                 startNowButtonTapped: () {
                   _checkPermission();
@@ -224,7 +250,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         );
       }
 
-      if (provider.isProcessing) {
+      if (provider.isGettingTestDetail) {
         return const DefaultLoadingIndicator(
           color: AppColor.defaultPurpleColor,
         );
@@ -245,6 +271,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             ],
           ),
         );
+      }
+    });
+  }
+
+  Widget _buildDownloadAgain() {
+    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
+      if (provider.needDownloadAgain) {
+        return DownloadAgainWidget(simulatorTestPresenter: _simulatorTestPresenter!);
+      } else {
+        return const SizedBox();
       }
     });
   }
@@ -310,14 +346,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _startToDoTest() {
     //Hide StartNow button
-    _simulatorTestProvider!.setStartNowButtonStatus(false);
+    _simulatorTestProvider!.setStartNowStatus(false);
 
     //Hide Loading view
-    _simulatorTestProvider!.setDownloadingStatus(false);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(false);
 
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
 
-    _simulatorTestProvider!.updateProcessingStatus(false);
+    _simulatorTestProvider!.setGettingTestDetailStatus(false);
   }
 
   @override
@@ -354,7 +390,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     //Enable Start Testing Button
     if (index >= 5) {
-      _simulatorTestProvider!.setStartNowButtonStatus(true);
+      _simulatorTestProvider!.setStartNowStatus(true);
     }
 
     if (index == total) {
@@ -366,7 +402,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
     _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
-    _simulatorTestProvider!.setDownloadingStatus(true);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(true);
     _simulatorTestProvider!.setTotal(total);
   }
 
@@ -436,5 +472,51 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     //Go to MyTest Screen
     _simulatorTestPresenter!.gotoMyTestScreen();
+  }
+
+  @override
+  void onReDownload() {
+    _simulatorTestProvider!.setNeedDownloadAgain(true);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(false);
+    _simulatorTestProvider!.setGettingTestDetailStatus(false);
+  }
+
+  void showCheckNetworkDialog() async {
+    await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CustomAlertDialog(
+        title: "Notify",
+        description: "An error occur. Please check your connection!",
+        okButtonTitle: "OK",
+        cancelButtonTitle: null,
+        borderRadius: 8,
+        hasCloseButton: false,
+        okButtonTapped: () {
+          Navigator.of(context).pop();
+        },
+        cancelButtonTapped: null,
+      );
+    },
+    );
+  }
+
+  void updateStatusForReDownload() {
+    _simulatorTestProvider!.setNeedDownloadAgain(false);
+    _simulatorTestProvider!.setStartNowStatus(false);
+    _simulatorTestProvider!.setDownloadingVideoFilesStatus(true);
+  }
+
+  @override
+  void onTryAgainToDownload() {
+    //Check internet connection status
+    if (isOffline) {
+      showCheckNetworkDialog();
+    } else {
+      if (null != _simulatorTestPresenter!.testDetail && null != _simulatorTestPresenter!.filesTopic) {
+        updateStatusForReDownload();
+        _simulatorTestPresenter!.reDownloadFiles();
+      }
+    }
   }
 }

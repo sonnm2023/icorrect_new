@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/provider/test_room_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +17,15 @@ class TestRecordWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
 
-    TestRoomProvider testProvider =
-        Provider.of<TestRoomProvider>(context, listen: false);
+    SimulatorTestProvider simulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
 
-    QuestionTopicModel currentQuestion = testProvider.currentQuestion;
+    QuestionTopicModel currentQuestion = simulatorTestProvider.currentQuestion;
 
     bool isRepeat = false;
 
-    return Consumer<TestRoomProvider>(builder: (context, testProvider, _) {
-      if (testProvider.visibleRecord) {
+    return Consumer<SimulatorTestProvider>(builder: (context, simulatorTestProvider, _) {
+      if (simulatorTestProvider.visibleRecord) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -60,13 +60,13 @@ class TestRecordWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildFinishButton(currentQuestion),
-                      Consumer<TestRoomProvider>(
-                          builder: (context, testProvider, _) {
-                            if (testProvider.topicsQueue.isNotEmpty) {
-                              isRepeat = (testProvider.topicsQueue.first.numPart ==
+                      Consumer<SimulatorTestProvider>(
+                          builder: (context, simulatorTestProvider, _) {
+                            if (simulatorTestProvider.topicsQueue.isNotEmpty) {
+                              isRepeat = (simulatorTestProvider.topicsQueue.first.numPart ==
                                   PartOfTest.part1.get ||
-                                  testProvider.topicsQueue.first.numPart ==
-                                      PartOfTest.part3.get) && testProvider.enableRepeatButton;
+                                  simulatorTestProvider.topicsQueue.first.numPart ==
+                                      PartOfTest.part3.get) && simulatorTestProvider.enableRepeatButton;
                             }
 
                             return Visibility(
