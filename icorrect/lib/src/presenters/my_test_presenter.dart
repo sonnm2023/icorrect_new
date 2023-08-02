@@ -102,7 +102,8 @@ class MyTestPresenter {
 
   //Check file is exist using file_storage
   Future<bool> _isExist(String fileName, MediaType mediaType) async {
-    bool isExist = await FileStorageHelper.checkExistFile(fileName, mediaType, null); //TODO
+    bool isExist = await FileStorageHelper.checkExistFile(
+        fileName, mediaType, null); //TODO
     return isExist;
   }
 
@@ -330,6 +331,7 @@ class MyTestPresenter {
         if (await audioFile.exists()) {
           request.files.add(
               await http.MultipartFile.fromPath(endFormat, audioFile.path));
+          formData.addEntries([ MapEntry(endFormat, audioFile.path)]);
         }
       }
     }
@@ -338,5 +340,4 @@ class MyTestPresenter {
 
     return request;
   }
-
 }

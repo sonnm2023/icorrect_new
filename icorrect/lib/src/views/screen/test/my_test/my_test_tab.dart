@@ -59,7 +59,8 @@ class _MyTestTabState extends State<MyTestTab>
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
-    _presenter!.getMyTest(widget.homeWorkModel.activityAnswer.testId.toString());
+    _presenter!
+        .getMyTest(widget.homeWorkModel.activityAnswer.testId.toString());
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
@@ -85,7 +86,7 @@ class _MyTestTabState extends State<MyTestTab>
       } else {
         return Column(
           children: [
-           // Expanded(flex: 5, child: VideoMyTest()),
+            // Expanded(flex: 5, child: VideoMyTest()),
             Expanded(
                 flex: 9,
                 child: ListView.builder(
@@ -212,7 +213,8 @@ class _MyTestTabState extends State<MyTestTab>
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
         builder: (_) {
           return FutureBuilder(
-              future: AiResponseEP(widget.homeWorkModel.activityAnswer.aiOrder.toString()),
+              future: AiResponseEP(
+                  widget.homeWorkModel.activityAnswer.aiOrder.toString()),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return Stack(
@@ -319,6 +321,19 @@ class _MyTestTabState extends State<MyTestTab>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          (widget.homeWorkModel.canReanswer())
+                              ? InkWell(
+                                  onTap: () async {
+                                    _onClickReanswer(provider, question);
+                                  },
+                                  child: const DefaultText(
+                                      text: 'Reanswer',
+                                      color: AppColor.defaultPurpleColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              : Container(),
+                          const SizedBox(width: 20),
                           InkWell(
                             onTap: () {
                               _showTips(question);
@@ -331,19 +346,6 @@ class _MyTestTabState extends State<MyTestTab>
                                     fontWeight: FontWeight.bold)
                                 : Container(),
                           ),
-                          const SizedBox(width: 20),
-                          (widget.homeWorkModel.canReanswer())
-                              ? InkWell(
-                                  onTap: () async {
-                                    _onClickReanswer(provider, question);
-                                  },
-                                  child: const DefaultText(
-                                      text: 'Reanswer',
-                                      color: AppColor.defaultPurpleColor,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              : Container()
                         ],
                       )
                     ],
