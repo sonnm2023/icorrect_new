@@ -107,8 +107,8 @@ class _LoginScreenState extends State<LoginScreen>
                             type: PasswordType.password,
                           ),
                           _buildSignInButton(),
-                          _buildSignUpButton(),
-                          _buildForgotPasswordButton(),
+                          // _buildSignUpButton(),
+                          // _buildForgotPasswordButton(),
                           Expanded(
                             child: Container(),
                           ),
