@@ -13,6 +13,7 @@ class ActivitiesModel {
   String? _activityReleaseTime;
   String? _activityType;
   int? _activityStatus;
+  String? _activityTestOption;
   ActivityAnswer? _activityAnswer;
 
   ActivitiesModel(
@@ -24,6 +25,7 @@ class ActivitiesModel {
       String? activityReleaseTime,
       String? activityType,
       int? activityStatus,
+        String? activityTestOption,
       ActivityAnswer? activityAnswer}) {
     _classId = classId;
     _syllabusId = syllabusId;
@@ -33,6 +35,7 @@ class ActivitiesModel {
     _activityReleaseTime = activityReleaseTime;
     _activityType = activityType;
     _activityStatus = activityStatus;
+    _activityTestOption = activityTestOption;
     _activityAnswer = activityAnswer;
   }
 
@@ -54,6 +57,9 @@ class ActivitiesModel {
   set activityType(String activityType) => _activityType = activityType;
   int get activityStatus => _activityStatus ?? 0;
   set activityStatus(int activityStatus) => _activityStatus = activityStatus;
+  String get activityTestOption => _activityTestOption ?? "";
+  set activityTestOption(String activityTestOption) =>
+      _activityTestOption = activityTestOption;
   ActivityAnswer get activityAnswer => _activityAnswer ?? ActivityAnswer();
   set activityAnswer(ActivityAnswer activityAnswer) =>
       _activityAnswer = activityAnswer;
@@ -67,6 +73,7 @@ class ActivitiesModel {
     _activityReleaseTime = json['activity_release_time'];
     _activityType = json['activity_type'];
     _activityStatus = json['activity_status'];
+    _activityTestOption = json['activity_test_option'];
     _activityAnswer = json['activity_answer'] != null
         ? ActivityAnswer.fromJson(json['activity_answer'])
         : null;
@@ -82,6 +89,7 @@ class ActivitiesModel {
     data['activity_release_time'] = _activityReleaseTime;
     data['activity_type'] = _activityType;
     data['activity_status'] = _activityStatus;
+    data['activity_test_option'] = _activityTestOption;
     if (_activityAnswer != null) {
       data['activity_answer'] = _activityAnswer!.toJson();
     }

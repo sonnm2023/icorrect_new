@@ -125,6 +125,25 @@ class Utils {
     }
   }
 
+  static String getPartOfTestWithString(String option) {
+    switch (option) {
+      case 'part1':
+        return 'I';
+      case 'part2':
+        return 'II';
+      case "part3":
+        return 'III';
+      case "part23":
+        return 'II&III';
+      case 'full':
+        return 'FULL';
+      case "part12":
+        return 'I&II';
+      default:
+        return 'NULL';
+    }
+  }
+
   static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel) {
     switch (homeWorkModel.activityStatus) {
       case 1:
@@ -156,7 +175,7 @@ class Utils {
         return {};
     }
   }
-  
+
   static String haveAiResponse(ActivitiesModel homeWorkModel) {
     return homeWorkModel.activityAnswer.aiResponseLink.isNotEmpty
         ? '& AI Scored'
@@ -317,7 +336,8 @@ class Utils {
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
 
-  static Future<String> getAudioPathToPlay(QuestionTopicModel question, String? testId) async {
+  static Future<String> getAudioPathToPlay(
+      QuestionTopicModel question, String? testId) async {
     String fileName = '';
     if (question.answers.length > 1) {
       if (question.repeatIndex == 0) {
@@ -333,7 +353,8 @@ class Utils {
     return path;
   }
 
-  static Future<String> getReviewingAudioPathToPlay(QuestionTopicModel question, String? testId) async {
+  static Future<String> getReviewingAudioPathToPlay(
+      QuestionTopicModel question, String? testId) async {
     String fileName = question.answers.first.url;
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
@@ -352,6 +373,4 @@ class Utils {
 
     return "";
   }
-
-
 }
