@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/student_test_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/app_asset.dart';
@@ -72,7 +73,19 @@ class _OtherTabState extends State<OtherTab>
             padding: const EdgeInsets.all(8),
             itemCount: provider.otherLightHomeWorks.length,
             itemBuilder: (BuildContext context, int index) {
-              return _othersItem(provider.otherLightHomeWorks.elementAt(index));
+              return InkWell(
+                onTap: () {
+                  StudentResultModel resultModel =
+                      provider.highLightHomeworks.elementAt(index);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => StudentTestDetail(
+                              studentResultModel: resultModel)));
+                },
+                child:
+                    _othersItem(provider.otherLightHomeWorks.elementAt(index)),
+              );
             });
       } else {
         return EmptyWidget.init().buildNothingWidget(
@@ -154,7 +167,9 @@ class _OtherTabState extends State<OtherTab>
     Fluttertoast.showToast(
         msg: message,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black);
+        textColor: Colors.black,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM);
   }
 
   @override

@@ -10,6 +10,7 @@ import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/special_homeworks_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/student_test_screen.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,8 @@ class _HighLightTabState extends State<HighLightTab>
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();
     if (kDebugMode) {
-      print("DEBUG: _getHighLightHomeWork ${widget.homeWorkModel.activityId.toString()}");
+      print(
+          "DEBUG: _getHighLightHomeWork ${widget.homeWorkModel.activityId.toString()}");
     }
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString(),
@@ -75,8 +77,19 @@ class _HighLightTabState extends State<HighLightTab>
             padding: const EdgeInsets.all(8),
             itemCount: provider.highLightHomeworks.length,
             itemBuilder: (BuildContext context, int index) {
-              return _highlightItem(
-                  provider.highLightHomeworks.elementAt(index));
+              return InkWell(
+                onTap: () {
+                  StudentResultModel resultModel =
+                      provider.highLightHomeworks.elementAt(index);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => StudentTestDetail(
+                              studentResultModel: resultModel)));
+                },
+                child: _highlightItem(
+                    provider.highLightHomeworks.elementAt(index)),
+              );
             });
       } else {
         return EmptyWidget.init().buildNothingWidget(

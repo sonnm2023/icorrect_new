@@ -1,36 +1,36 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
-import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
-import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
-import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
-import 'package:icorrect/src/presenters/response_presenter.dart';
-import 'package:icorrect/src/provider/my_test_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/sample_video_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/stream_audio_dialog.dart';
-import 'package:icorrect/src/views/widget/default_text.dart';
-import 'package:icorrect/src/views/widget/empty_widget.dart';
+import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../provider/student_test_detail_provider.dart';
-import '../../other_views/dialog/circle_loading.dart';
+import '../../../../../../core/app_color.dart';
+import '../../../../../data_sources/api_urls.dart';
+import '../../../../../data_sources/constant_strings.dart';
+import '../../../../../data_sources/utils.dart';
+import '../../../../../models/my_test_models/result_response_model.dart';
+import '../../../../../models/my_test_models/skill_problem_model.dart';
+import '../../../../../presenters/response_presenter.dart';
+import '../../../../widget/default_text.dart';
+import '../../../../widget/empty_widget.dart';
+import '../../../other_views/dialog/circle_loading.dart';
+import '../../../other_views/dialog/sample_video_dialog.dart';
+import '../../../other_views/dialog/stream_audio_dialog.dart';
 
-class ResponseTab extends StatefulWidget {
-  ActivitiesModel homeWorkModel;
-  MyTestProvider provider;
-  ResponseTab({super.key, required this.homeWorkModel, required this.provider});
+class StudentCorrection extends StatefulWidget {
+  StudentTestProvider provider;
+  StudentResultModel studentResultModel;
+  StudentCorrection(
+      {super.key, required this.provider, required this.studentResultModel});
 
   @override
-  State<ResponseTab> createState() => _ResponseTabState();
+  State<StudentCorrection> createState() => _StudentCorrectionState();
 }
 
-class _ResponseTabState extends State<ResponseTab>
-    with AutomaticKeepAliveClientMixin<ResponseTab>
+class _StudentCorrectionState extends State<StudentCorrection>
+    with AutomaticKeepAliveClientMixin<StudentCorrection>
     implements ResponseContracts {
   CircleLoading? _loading;
   ResponsePresenter? _presenter;
@@ -40,13 +40,14 @@ class _ResponseTabState extends State<ResponseTab>
     super.initState();
     _presenter = ResponsePresenter(this);
     if (kDebugMode) {
-      print('DEBUG: ResponseTab ${widget.homeWorkModel.activityId.toString()}');
+      print(
+          'DEBUG: ResponseTab ${widget.studentResultModel.activityId.toString()}');
     }
     _loading = CircleLoading();
     _loading?.show(context);
-    if (widget.homeWorkModel.activityAnswer.orderId.toString().isNotEmpty) {
-      _presenter!
-          .getResponse(widget.homeWorkModel.activityAnswer.orderId.toString());
+    String orderId = widget.studentResultModel.orderId.toString();
+    if (orderId.isNotEmpty) {
+      _presenter!.getResponse(orderId);
     }
   }
 
@@ -63,7 +64,8 @@ class _ResponseTabState extends State<ResponseTab>
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
             _loading?.show(context);
-            _presenter!.getResponse(widget.homeWorkModel.activityAnswer.orderId.toString());
+            _presenter!
+                .getResponse(widget.studentResultModel.orderId.toString());
           });
         },
         child: _buildResponseTab());
@@ -86,7 +88,7 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   Widget _buildOverview() {
-    return Consumer<MyTestProvider>(builder: (context, appState, child) {
+    return Consumer<StudentTestProvider>(builder: (context, appState, child) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -152,7 +154,7 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   Widget _buildOverallScore() {
-    return Consumer<MyTestProvider>(builder: (context, appState, child) {
+    return Consumer<StudentTestProvider>(builder: (context, appState, child) {
       ResultResponseModel result = appState.responseModel;
       return Column(
         children: [
@@ -378,10 +380,9 @@ class _ResponseTabState extends State<ResponseTab>
     _loading!.hide();
     Fluttertoast.showToast(
         msg: message,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+        gravity: ToastGravity.BOTTOM,
+        fontSize: 16.0);
   }
 
   @override

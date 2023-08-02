@@ -18,8 +18,7 @@ class DownloadProgressingWidget extends StatelessWidget {
           Image.asset(AppAsset.empty, width: 100, height: 100),
           const SizedBox(height: 8),
           //percent
-          Consumer<MyTestProvider>(
-              builder: (context, testProvider, child) {
+          Consumer<StudentTestProvider>(builder: (context, testProvider, child) {
             double p = testProvider.downloadingPercent * 100;
             return Text("${p.toStringAsFixed(0)}%");
           }),
@@ -31,7 +30,7 @@ class DownloadProgressingWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           //part of total
-          Consumer<MyTestProvider>(builder: (context, testProvider, child) {
+          Consumer<StudentTestProvider>(builder: (context, testProvider, child) {
             return Text(
                 "${testProvider.downloadingIndex}/${testProvider.total}");
           }),
@@ -44,8 +43,7 @@ class DownloadProgressingWidget extends StatelessWidget {
   }
 
   Widget _buildProgressBar() {
-    return Consumer<MyTestProvider>(
-        builder: (context, testProvider, child) {
+    return Consumer<StudentTestProvider>(builder: (context, testProvider, child) {
       return LinearProgressIndicator(
         backgroundColor: AppColor.defaultLightGrayColor,
         valueColor:

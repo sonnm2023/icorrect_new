@@ -9,6 +9,7 @@ abstract class MyTestRepository {
   Future<String> getSpecialHomeWorks(
       String email, String activityId, int status, int example);
   Future<String> updateAnswers(http.MultipartRequest multiRequest);
+  Future<String> getTestDetailWithId(String testId);
 }
 
 class MyTestImpl implements MyTestRepository {
@@ -69,6 +70,18 @@ class MyTestImpl implements MyTestRepository {
       }
     }).catchError((onError) {
       return '';
+    });
+  }
+
+  @override
+  Future<String> getTestDetailWithId(String testId) {
+    String url = getTestDetailWithIdEP(testId);
+    return AppRepository.init()
+        .sendRequest(RequestMethod.get, url, true)
+        .timeout(const Duration(seconds: 15))
+        .then((http.Response response) {
+      final String jsonBody = response.body;
+      return jsonBody;
     });
   }
 }

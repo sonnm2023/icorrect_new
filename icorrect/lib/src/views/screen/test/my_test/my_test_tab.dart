@@ -13,6 +13,7 @@ import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
@@ -395,13 +396,19 @@ class _MyTestTabState extends State<MyTestTab>
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:
-              '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}' //TODO
+              '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
               '\\$audioFile',
           encoder: AudioEncoder.wav,
           bitRate: 128000,
           samplingRate: 44100,
         );
-        question.answers.last.url = audioFile;
+        if (question.answers.isNotEmpty) {
+          question.answers.last.url = audioFile;
+        } else {
+          FileTopicModel fileTopicModel = FileTopicModel();
+          fileTopicModel.url = audioFile;
+          question.answers.add(fileTopicModel);
+        }
         question.reAnswerCount++;
         widget.provider.setCurrentQuestion(question);
       }
@@ -470,6 +477,12 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void downloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
+    Fluttertoast.showToast(
+        msg: alertInfo.description,
+        backgroundColor: AppColor.defaultGrayColor,
+        textColor: Colors.black,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM);
     if (kDebugMode) {
       print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
     }
@@ -478,16 +491,15 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void getMyTestFail(AlertInfo alertInfo) {
     _loading!.hide();
+    Fluttertoast.showToast(
+        msg: alertInfo.description,
+        backgroundColor: AppColor.defaultGrayColor,
+        textColor: Colors.black,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM);
     if (kDebugMode) {
       print('DEBUG: getMyTestFail: ${alertInfo.description.toString()}');
     }
-  }
-
-  @override
-  void updateAnswerFail(AlertInfo info) {
-    print(info.description.toString());
-    //AlertsDialog.init().showDialog(context, info, this);
-    _loading!.hide();
   }
 
   @override
@@ -516,6 +528,19 @@ class _MyTestTabState extends State<MyTestTab>
         toastLength: Toast.LENGTH_LONG);
 
     _loading!.hide();
+  }
+
+  @override
+  void updateAnswerFail(AlertInfo info) {
+    print(info.description.toString());
+    //AlertsDialog.init().showDialog(context, info, this);
+    _loading!.hide();
+    Fluttertoast.showToast(
+        msg: info.description,
+        backgroundColor: AppColor.defaultGrayColor,
+        textColor: Colors.black,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM);
   }
 
   @override

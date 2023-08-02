@@ -55,8 +55,8 @@ class _MyTestScreenState extends State<MyTestScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop();
-        return false;
+        Navigator.pop(context, false);
+return Future.value(false);
       },
       child: DefaultTabController(
         length: widget.homeWorkModel.activityAnswer.hasTeacherResponse() ? 4 : 3,
@@ -151,7 +151,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   }
 
   _tabBarView() {
-    print('has response: ${widget.homeWorkModel.activityAnswer.hasTeacherResponse()}');
+    print('test id: ${widget.homeWorkModel.activityAnswer.testId.toString()}');
     return widget.homeWorkModel.activityAnswer.hasTeacherResponse()
         ? [
             MyTestTab(
@@ -190,8 +190,10 @@ class _MyTestScreenState extends State<MyTestScreen> {
 
   Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
     for (var q in questions) {
-      String fileName = q.answers.last.url.toString();
-      FileStorageHelper.deleteFile(fileName, MediaType.audio, null);
+      if(q.answers.isNotEmpty){
+        String fileName = q.answers.last.url.toString();
+        FileStorageHelper.deleteFile(fileName, MediaType.audio, null);
+      }
     }
   }
 }

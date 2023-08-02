@@ -291,7 +291,7 @@ class TestQuestionWidget extends StatelessWidget {
                                 child: const Text(
                                   "View tips",
                                   style: TextStyle(
-                                    color: Colors.amber,
+                                    color: AppColor.defaultPurpleColor,
                                     fontSize: 14,
                                   ),
                                 ),

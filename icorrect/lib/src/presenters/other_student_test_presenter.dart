@@ -2,48 +2,71 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
-import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-import 'package:path/path.dart';
 
 import '../data_sources/api_urls.dart';
 import '../data_sources/constant_strings.dart';
 import '../data_sources/local/file_storage_helper.dart';
 import '../data_sources/repositories/app_repository.dart';
 import '../data_sources/utils.dart';
+import '../models/simulator_test_models/file_topic_model.dart';
+import '../models/simulator_test_models/question_topic_model.dart';
+import '../models/simulator_test_models/test_detail_model.dart';
 import '../models/simulator_test_models/topic_model.dart';
 import '../models/ui_models/alert_info.dart';
 import 'package:http/http.dart' as http;
 
-abstract class MyTestConstract {
+abstract class OtherStudentTestContract {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
+  void getMyTestFail(AlertInfo alertInfo);
   void downloadFilesSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
   void downloadFilesFail(AlertInfo alertInfo);
-  void getMyTestFail(AlertInfo alertInfo);
-  void onCountDown(String time);
-  void finishCountDown();
-  void updateAnswersSuccess(String message);
-  void updateAnswerFail(AlertInfo info);
 }
 
-class MyTestPresenter {
-  final MyTestConstract? _view;
+class OtherStudentTestPresenter {
+  final OtherStudentTestContract? _view;
   MyTestRepository? _repository;
 
-  MyTestPresenter(this._view) {
+  OtherStudentTestPresenter(this._view) {
     _repository = Injector().getMyTestRepository();
   }
 
   void getMyTest(String testId) {
     assert(_view != null && _repository != null);
 
-    print('testId: ${testId.toString()}');
-    _repository!.getMyTestDetail(testId).then((value) {
+    // print('testId: ${testId.toString()}');
+    // _repository!.getMyTestDetail(testId).then((value) {
+    //   if (value != null) {
+    //     print('dadas: ${value.toString()}');
+    //     Map<String, dynamic> json = jsonDecode(value) ?? {};
+    //     if (json.isNotEmpty) {
+    //       if (json['error_code'] == 200) {
+    //         TestDetailModel testDetailModel =
+    //             TestDetailModel.fromMyTestJson(json['data']);
+    //         List<FileTopicModel> filesTopic =
+    //             _prepareFileTopicListForDownload(testDetailModel);
+
+    //         downloadFiles(testDetailModel, filesTopic);
+
+    //         _view!.getMyTestSuccess(_getQuestionsAnswer(testDetailModel));
+    //       } else {
+    //         _view!.getMyTestFail(AlertClass.notResponseLoadTestAlert);
+    //       }
+    //     } else {
+    //       _view!.getMyTestFail(AlertClass.getTestDetailAlert);
+    //     }
+    //   }
+    // }).catchError(
+    //     // ignore: invalid_return_type_for_catch_error
+
+    //     (onError) {
+    //   print("fail meomoe : ${onError.toString()}");
+    //   _view!.getMyTestFail(AlertClass.getTestDetailAlert);
+    // });
+
+    _repository!.getTestDetailWithId(testId).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
       if (json.isNotEmpty) {
         if (json['error_code'] == 200) {
@@ -62,12 +85,7 @@ class MyTestPresenter {
         _view!.getMyTestFail(AlertClass.getTestDetailAlert);
       }
     }).catchError(
-        // ignore: invalid_return_type_for_catch_error
-
-        (onError) {
-      print("fail meomoe");
-      _view!.getMyTestFail(AlertClass.getTestDetailAlert);
-    });
+        (onError) => _view!.getMyTestFail(AlertClass.getTestDetailAlert));
   }
 
   List<QuestionTopicModel> _getQuestionsAnswer(
@@ -149,6 +167,7 @@ class MyTestPresenter {
 
   void downloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total) {
+    print("success : ${nameFile}");
     _view!.downloadFilesSuccess(testDetail, nameFile, percent, index, total);
   }
 
@@ -225,133 +244,5 @@ class MyTestPresenter {
         }
       }
     }
-  }
-
-  Timer startCountDown(BuildContext context, int count) {
-    bool finishCountDown = false;
-    const oneSec = Duration(seconds: 1);
-    return Timer.periodic(oneSec, (Timer timer) {
-      if (count < 1) {
-        timer.cancel();
-      } else {
-        count = count - 1;
-      }
-
-      dynamic minutes = count ~/ 60;
-      dynamic seconds = count % 60;
-
-      dynamic minuteStr = minutes.toString().padLeft(2, '0');
-      dynamic secondStr = seconds.toString().padLeft(2, '0');
-
-      _view!.onCountDown("$minuteStr:$secondStr");
-
-      if (count == 0 && !finishCountDown) {
-        finishCountDown = true;
-        _view!.finishCountDown();
-      }
-    });
-  }
-
-  Future updateMyAnswer(
-      {required String testId,
-      required String activityId,
-      required List<QuestionTopicModel> reQuestions}) async {
-    assert(_view != null && _repository != null);
-
-    http.MultipartRequest multiRequest = await _formDataRequest(
-        testId: testId, activityId: activityId, questions: reQuestions);
-    try {
-      _repository!.updateAnswers(multiRequest).then((value) {
-        Map<String, dynamic> json = jsonDecode(value) ?? {};
-        if (json['error_code'] == 200 && json['status'] == 'success') {
-          _view!.updateAnswersSuccess('Save your answers successfully!');
-        } else {
-          print("error form: ${json.toString()}");
-          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
-        }
-      }).catchError((onError) {
-        print('catchError updateAnswerFail ${onError.toString()}');
-        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
-      });
-    } on TimeoutException {
-      _view!.updateAnswerFail(AlertClass.timeOutUpdateAnswer);
-    } on SocketException {
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
-    } on http.ClientException {
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
-    }
-  }
-
-  Future<http.MultipartRequest> _formDataRequest(
-      {required String testId,
-      required String activityId,
-      required List<QuestionTopicModel> questions}) async {
-    String url = submitHomeWorkEP();
-    http.MultipartRequest request =
-        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
-    request.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
-    });
-
-    Map<String, String> formData = {};
-
-    formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries([MapEntry('activity_id', activityId)]);
-
-    if (Platform.isAndroid) {
-      formData.addEntries([const MapEntry('os', "android")]);
-    } else {
-      formData.addEntries([const MapEntry('os', "ios")]);
-    }
-    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
-    String format = '';
-    String reanswerFormat = '';
-    String endFormat = '';
-    for (QuestionTopicModel q in questions) {
-      String questionId = q.id.toString();
-      print("num part : ${q.numPart.toString()}");
-      if (q.numPart == PartOfTest.introduce.get) {
-        format = 'introduce[$questionId]';
-        reanswerFormat = 'reanswer_introduce[$questionId]';
-      }
-
-      if (q.type == PartOfTest.part1.get) {
-        format = 'part1[$questionId]';
-        reanswerFormat = 'reanswer_part1[$questionId]';
-      }
-
-      if (q.type == PartOfTest.part2.get) {
-        format = 'part2[$questionId]';
-        reanswerFormat = 'reanswer_part2[$questionId]';
-      }
-
-      if (q.type == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
-        format = 'part3[$questionId]';
-        reanswerFormat = 'reanswer_part3[$questionId]';
-      }
-      if (q.type == PartOfTest.part3.get && q.isFollowUpQuestion()) {
-        format = 'followup[$questionId]';
-        reanswerFormat = 'reanswer_followup[$questionId]';
-      }
-
-      formData
-          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
-
-      for (int i = 0; i < q.answers.length; i++) {
-        endFormat = '$format[$i]';
-        File audioFile = File(await FileStorageHelper.getFilePath(
-            q.answers.elementAt(i).url.toString(), MediaType.audio, null));
-
-        if (await audioFile.exists()) {
-          request.files.add(
-              await http.MultipartFile.fromPath(endFormat, audioFile.path));
-        }
-      }
-    }
-
-    request.fields.addAll(formData);
-
-    return request;
   }
 }
