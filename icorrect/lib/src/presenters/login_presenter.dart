@@ -40,9 +40,9 @@ class LoginPresenter {
       }
     }).catchError((onError) {
       if (onError is http.ClientException || onError is SocketException) {
-        _view!.onLoginError('Please check your Internet and try again !');
+        _view!.onLoginError('Please check your Internet and try again!');
       } else {
-        _view!.onLoginError("An error occur.Please try again !");
+        _view!.onLoginError("An error occur. Please try again!");
       }
     });
   }
