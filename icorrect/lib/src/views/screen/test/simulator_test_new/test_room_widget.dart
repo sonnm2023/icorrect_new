@@ -10,7 +10,6 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -22,6 +21,7 @@ import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
@@ -741,7 +741,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Dispose old video play controller before create new one
     if (null != _testRoomProvider!.videoPlayController) {
-      _videoPlayerController!.dispose();
       _testRoomProvider!.videoPlayController!.dispose();
       _testRoomProvider!.setPlayController(null);
     }
@@ -770,8 +769,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             _testRoomProvider!.setPlayController(_videoPlayerController!);
           }
 
-          _videoPlayerController!.addListener((() => _checkVideo(fileName, handleWhenFinishType)));
-        })..setLooping(false);
+          _videoPlayerController!
+              .addListener((() => _checkVideo(fileName, handleWhenFinishType)));
+        })
+        ..setLooping(false);
     });
   }
 
@@ -847,6 +848,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (_testRoomProvider!.videoPlayController!.value.position ==
           _testRoomProvider!.videoPlayController!.value.duration) {
         _testRoomProvider!.videoPlayController!.pause();
+
         switch (handleWhenFinishType) {
           case HandleWhenFinish.questionVideoType:
             {
@@ -1268,8 +1270,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onSubmitTestFail(String msg) {
-    _finishSubmitTest(msg, SubmitStatus.fail);
+  void onSubmitTestFail(String msg) async {
+    //Update indicator process status
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+
+    //TODO: show submit error popup
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const CustomAlertDialog(title: "Notify", description: "An error occur, please try again later!");
+      },
+    );
+    //Still show SAVE THE TEST button
   }
 
   @override
@@ -1278,10 +1290,26 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onClickSaveTheTest() {
-    // if (false == _simulatorTestProvider!.isSubmitting) {
-    if (SubmitStatus.none == _simulatorTestProvider!.submitStatus) {
-      _startSubmitTest();
+  void onClickSaveTheTest() async {
+    if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
+        SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return ConfirmDialogWidget(
+            title: "Notify",
+            message: "Do you want to save this test?",
+            cancelButtonTitle: "Don't Save",
+            okButtonTitle: "Save",
+            cancelButtonTapped: () {
+              if (kDebugMode) print("_cancelButtonTapped");
+            },
+            okButtonTapped: () {
+              _startSubmitTest();
+            },
+          );
+        },
+      );
     }
   }
 

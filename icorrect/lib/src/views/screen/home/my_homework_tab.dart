@@ -21,8 +21,8 @@ import 'package:grouped_list/sliver_grouped_list.dart';
 class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
       {Key? key,
-      required this.homeWorkProvider,
-      required this.homeWorkPresenter})
+        required this.homeWorkProvider,
+        required this.homeWorkPresenter})
       : super(key: key);
 
   final HomeWorkProvider homeWorkProvider;
@@ -148,7 +148,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             border: Border(
               top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
               right:
-                  BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
+              BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
             ),
           ),
           child: InkWell(
@@ -209,49 +209,48 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         color: AppColor.defaultGraySlightColor,
         child: Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
-          if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
-              !homeworkProvider.isProcessing) {
-            return const NoDataWidget(
-                msg: 'No data, please choose other filter!');
-          }
-          return CustomScrollView(
-            slivers: [
-              SliverGroupedListView<ActivitiesModel, String>(
-                elements: homeworkProvider.listFilteredHomeWorks,
-                groupBy: (element) => element.classId.toString(),
-                groupComparator: (value1, value2) => value2.compareTo(value1),
-                order: GroupedListOrder.ASC,
-                groupSeparatorBuilder: (String classId) {
-                  String className = Utils.getClassNameWithId(
-                      classId, homeworkProvider.listClassForFilter);
+              if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
+                  !homeworkProvider.isProcessing) {
+                return const NoDataWidget(
+                    msg: 'No data, please choose other filter!');
+              }
+              return CustomScrollView(
+                slivers: [
+                  SliverGroupedListView<ActivitiesModel, String>(
+                    elements: homeworkProvider.listFilteredHomeWorks,
+                    groupBy: (element) => element.classId.toString(),
+                    groupComparator: (value1, value2) => value2.compareTo(value1),
+                    order: GroupedListOrder.ASC,
+                    groupSeparatorBuilder: (String classId) {
+                      String className = Utils.getClassNameWithId(classId, homeworkProvider.listClassForFilter);
 
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      left: 10,
-                      top: 5,
-                      right: 10,
-                      bottom: 5,
-                    ),
-                    child: Text(
-                      className,
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                },
-                itemBuilder: (c, element) {
-                  return HomeWorkWidget(
-                    homeWorkModel: element,
-                    callBack: clickOnHomeWorkItem,
-                  );
-                },
-              ),
-            ],
-          );
-        }),
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                          top: 5,
+                          right: 10,
+                          bottom: 5,
+                        ),
+                        child: Text(
+                          className,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
+                    itemBuilder: (c, element) {
+                      return HomeWorkWidget(
+                        homeWorkModel: element,
+                        callBack: clickOnHomeWorkItem,
+                      );
+                    },
+                  ),
+                ],
+              );
+            }),
       ),
     );
   }
@@ -307,11 +306,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<SimulatorTestProvider>(
-            create: (_) => SimulatorTestProvider(),
-            child: SimulatorTestScreen(
-              homeWorkModel: _selectedHomeWorkModel!,
-            ),
+          builder: (_) => SimulatorTestScreen(
+            homeWorkModel: _selectedHomeWorkModel!,
           ),
         ),
       );

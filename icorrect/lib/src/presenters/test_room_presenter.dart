@@ -58,7 +58,7 @@ class TestRoomPresenter {
     List<FileTopicModel> files = topicModel.files;
     if (files.isNotEmpty) {
       FileTopicModel file = files.first;
-      bool isExist = await _isExist(file.url, MediaType.video, null);
+      bool isExist = await FileStorageHelper.checkExistFile(file.url, MediaType.video, null);
       if (isExist) {
         _view!.onPlayIntroduceFile(file.url);
       } else {
@@ -69,14 +69,6 @@ class TestRoomPresenter {
         print("DEBUG: This topic has not introduce file");
       }
     }
-  }
-
-  //Check file is exist using file_storage
-  Future<bool> _isExist(
-      String fileName, MediaType mediaType, String? testId) async {
-    bool isExist =
-        await FileStorageHelper.checkExistFile(fileName, mediaType, testId);
-    return isExist;
   }
 
   Timer startCountDown(
@@ -139,7 +131,7 @@ class TestRoomPresenter {
     String fileName = topic.endOfTakeNote.url;
 
     if (fileName.isNotEmpty) {
-      bool isExist = await _isExist(fileName, MediaType.video, null);
+      bool isExist = await FileStorageHelper.checkExistFile(fileName, MediaType.video, null);
       if (isExist) {
         _view!.onPlayEndOfTakeNoteFile(fileName);
       } else {
@@ -167,7 +159,7 @@ class TestRoomPresenter {
     String fileName = topic.fileEndOfTest.url;
 
     if (fileName.isNotEmpty) {
-      bool isExist = await _isExist(fileName, MediaType.video, null);
+      bool isExist = await FileStorageHelper.checkExistFile(fileName, MediaType.video, null);
       if (isExist) {
         _view!.onPlayEndOfTest(fileName);
       } else {

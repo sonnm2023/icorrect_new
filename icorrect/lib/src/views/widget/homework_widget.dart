@@ -44,8 +44,7 @@ class HomeWorkWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  // Utils.getPartOfTest(homeWorkModel.testOption), //TODO
-                  "PART",
+                  Utils.getPartOfTestWithString(homeWorkModel.activityTestOption),
                   style: const TextStyle(
                     color: AppColor.defaultPurpleColor,
                     fontWeight: FontWeight.bold,

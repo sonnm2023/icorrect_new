@@ -88,7 +88,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Disable back button when submitting test
     if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
       if (kDebugMode) {
-        print("Status is submitting!");
+        print("DEBUG: Status is submitting!");
       }
       return;
     }
@@ -98,7 +98,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         {
           //None
           if (kDebugMode) {
-            print("Status is not start to do the test!");
+            print("DEBUG: Status is not start to do the test!");
           }
           Navigator.of(context).pop();
           break;
@@ -107,7 +107,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         {
           //Doing
           if (kDebugMode) {
-            print("Status is doing the test!");
+            print("DEBUG: Status is doing the test!");
           }
 
           bool okButtonTapped = false;
@@ -141,7 +141,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         {
           //Finish
           if (kDebugMode) {
-            print("Status is finish doing the test!");
+            print("DEBUG: Status is finish doing the test!");
           }
 
           bool cancelButtonTapped = false;
@@ -150,7 +150,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             context: context,
             builder: (BuildContext context) {
               return ConfirmDialogWidget(
-                title: "Notification",
+                title: "Notify",
                 message: "Do you want to save this test before quit?",
                 cancelButtonTitle: "Don't Save",
                 okButtonTitle: "Save",
@@ -189,7 +189,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     for (String answer in answers) {
       FileStorageHelper.deleteFile(answer, MediaType.audio,
-              _simulatorTestProvider!.currentTestDetail.testId.toString())
+          _simulatorTestProvider!.currentTestDetail.testId.toString())
           .then((value) {
         if (false == value) {
           showToastMsg(
@@ -229,22 +229,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           color: AppColor.defaultPurpleColor,
         );
       } else {
-        return Stack(
-          children: [
-            ChangeNotifierProvider(
-              create: (_) => TestRoomProvider(),
-              child: TestRoomWidget(
+        return SizedBox(
+          child: Stack(
+            children: [
+              TestRoomWidget(
                 homeWorkModel: widget.homeWorkModel,
                 simulatorTestPresenter: _simulatorTestPresenter!,
               ),
-            ),
-            Visibility(
-              visible: provider.submitStatus == SubmitStatus.submitting,
-              child: const DefaultLoadingIndicator(
-                color: AppColor.defaultPurpleColor,
+              Visibility(
+                visible: provider.submitStatus == SubmitStatus.submitting,
+                child: const DefaultLoadingIndicator(
+                  color: AppColor.defaultPurpleColor,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }
     });
@@ -323,23 +322,26 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onDownloadFailure(AlertInfo info) {
-    if (mounted) {
-      if (!_simulatorTestProvider!.dialogShowing) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertsDialog.init().showDialog(
-              context,
-              info,
-              this,
-              keyInfo: StringClass.failDownloadVideo,
-            );
-          },
-        );
-        _simulatorTestProvider!.setDialogShowing(true);
-      }
+    if (kDebugMode) {
+      print("DEBUG: onDownloadFailure");
     }
+    // if (mounted) {
+    //   if (!_simulatorTestProvider!.dialogShowing) {
+    //     showDialog(
+    //       context: context,
+    //       barrierDismissible: false,
+    //       builder: (context) {
+    //         return AlertsDialog.init().showDialog(
+    //           context,
+    //           info,
+    //           this,
+    //           keyInfo: StringClass.failDownloadVideo,
+    //         );
+    //       },
+    //     );
+    //     _simulatorTestProvider!.setDialogShowing(true);
+    //   }
+    // }
   }
 
   @override
@@ -397,14 +399,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onGotoMyTestScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MyTestScreen(
-          homeWorkModel: widget.homeWorkModel,
-          isFromSimulatorTest: true,
-        ),
-      ),
-    );
+    if (kDebugMode) {
+      print("DEBUG: onGotoMyTestScreen");
+    }
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => MyTestScreen(
+    //       homeWorkModel: widget.homeWorkModel,
+    //       isFromSimulatorTest: true,
+    //     ),
+    //   ),
+    // );
   }
 
   @override
