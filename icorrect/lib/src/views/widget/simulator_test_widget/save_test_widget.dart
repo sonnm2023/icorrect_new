@@ -21,15 +21,21 @@ class SaveTheTestWidget extends StatelessWidget {
               const Expanded(child: SizedBox()),
               Container(
                 width: double.infinity,
-                height: 60,
+                height: 44,
                 color: AppColor.defaultPurpleColor,
-                child: ElevatedButton(
-                  onPressed: () {
+                child: InkWell(
+                  onTap: () {
                     testRoomPresenter.clickSaveTheTest();
                   },
-                  child: const Text(
-                    "SAVE THE TEST",
-                    style: TextStyle(fontSize: 16),
+                  child: const Center(
+                    child: Text(
+                      "SAVE THE TEST",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               )
