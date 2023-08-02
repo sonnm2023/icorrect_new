@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -35,10 +36,10 @@ import 'package:record/record.dart';
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
       {super.key,
-      required this.homeWorkModel,
-      required this.simulatorTestPresenter});
+        required this.homeWorkModel,
+        required this.simulatorTestPresenter});
 
-  final HomeWorkModel homeWorkModel;
+  final ActivitiesModel homeWorkModel;
   final SimulatorTestPresenter simulatorTestPresenter;
 
   @override
@@ -141,7 +142,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                         ),
                         _simulatorTestProvider!.activityType == "homework"
                             ? SaveTheTestWidget(
-                                testRoomPresenter: _testRoomPresenter!)
+                            testRoomPresenter: _testRoomPresenter!)
                             : const SizedBox(),
                       ],
                     ),
@@ -312,7 +313,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             return ConfirmDialogWidget(
               title: "Notification",
               message:
-                  "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
+              "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
               cancelButtonTitle: "Cancel",
               okButtonTitle: "OK",
               cancelButtonTapped: _cancelButtonTapped,
@@ -373,7 +374,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         ),
       ),
       constraints:
-          BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+      BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
       builder: (_) {
         return TipQuestionDialog.tipQuestionDialog(context, questionTopicModel);
       },
@@ -433,7 +434,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _reviewingQuestionList = _prepareQuestionListForReviewing();
     dynamic item =
-        _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
+    _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
     if (item is String) {
       _testRoomProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
@@ -467,7 +468,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     int index = _testRoomProvider!.reviewingCurrentIndex + 1;
     _testRoomProvider!.updateReviewingCurrentIndex(index);
     dynamic item =
-        _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
+    _reviewingQuestionList[_testRoomProvider!.reviewingCurrentIndex];
     if (item is String) {
       _testRoomProvider!.setIsReviewingPlayAnswer(false);
       _initVideoController(
@@ -861,10 +862,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
                 _countDownCueCard =
                     _testRoomPresenter!.startCountDownForCueCard(
-                  context: context,
-                  count: time,
-                  isPart2: false,
-                );
+                      context: context,
+                      count: time,
+                      isPart2: false,
+                    );
                 _testRoomProvider!.setVisibleCueCard(true);
               } else {
                 //Normal case
@@ -918,7 +919,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           case HandleWhenFinish.reviewingPlayTheQuestionType:
             {
               QuestionTopicModel question =
-                  _reviewingList[_testRoomProvider!.reviewingCurrentIndex];
+              _reviewingList[_testRoomProvider!.reviewingCurrentIndex];
               _playTheAnswerOfQuestion(question);
               break;
             }
@@ -965,7 +966,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _testRoomPresenter!.submitTest(
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      activityId: widget.homeWorkModel.id.toString(),
+      activityId: widget.homeWorkModel.activityId.toString(),
       questions: questions,
     );
   }

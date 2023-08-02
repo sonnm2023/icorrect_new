@@ -8,6 +8,7 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
@@ -28,7 +29,7 @@ import 'package:provider/provider.dart';
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({super.key, required this.homeWorkModel});
 
-  final HomeWorkModel homeWorkModel;
+  final ActivitiesModel homeWorkModel;
 
   @override
   State<SimulatorTestScreen> createState() => _SimulatorTestScreenState();
@@ -164,7 +165,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                   _simulatorTestPresenter!.submitTest(
                     testId: _simulatorTestProvider!.currentTestDetail.testId
                         .toString(),
-                    activityId: widget.homeWorkModel.id.toString(),
+                    activityId: widget.homeWorkModel.activityId.toString(),
                     questions: _simulatorTestProvider!.questionList,
                   );
                 },
@@ -188,7 +189,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     for (String answer in answers) {
       FileStorageHelper.deleteFile(answer, MediaType.audio,
-              _simulatorTestProvider!.currentTestDetail.testId.toString())
+          _simulatorTestProvider!.currentTestDetail.testId.toString())
           .then((value) {
         if (false == value) {
           showToastMsg(
@@ -305,7 +306,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _getTestDetail() {
-    _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.id.toString());
+    _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -396,14 +397,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onGotoMyTestScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MyTestScreen(
-          homeWorkModel: widget.homeWorkModel,
-          isFromSimulatorTest: true,
-        ),
-      ),
-    );
+    if (kDebugMode) {
+      print("DEBUG: onGotoMyTestScreen");
+    }
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => MyTestScreen(
+    //       homeWorkModel: widget.homeWorkModel,
+    //       isFromSimulatorTest: true,
+    //     ),
+    //   ),
+    // );
   }
 
   @override
