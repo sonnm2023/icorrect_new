@@ -402,14 +402,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (kDebugMode) {
       print("DEBUG: onGotoMyTestScreen");
     }
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => MyTestScreen(
-    //       homeWorkModel: widget.homeWorkModel,
-    //       isFromSimulatorTest: true,
-    //     ),
-    //   ),
-    // );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MyTestScreen(
+          homeWorkModel: widget.homeWorkModel,
+          isFromSimulatorTest: true,
+        ),
+      ),
+    );
   }
 
   @override

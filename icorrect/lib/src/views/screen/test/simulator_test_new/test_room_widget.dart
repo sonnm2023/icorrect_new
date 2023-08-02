@@ -1089,22 +1089,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _testRoomProvider!.setVisibleSaveTheTest(isVisible);
   }
 
-  void _finishSubmitTest(String msg, SubmitStatus status) {
-    // _simulatorTestProvider!.setIsSubmitting(false);
-    _simulatorTestProvider!.updateSubmitStatus(status);
-
-    showToastMsg(
-      msg: msg,
-      toastState: ToastStatesType.error,
-    );
-
-    if (_simulatorTestProvider!.activityType == "test") {
-      _gotoMyTestScreen();
-    } else {
-      //TODO: Can reviewing
-    }
-  }
-
   void _gotoMyTestScreen() {
     widget.simulatorTestPresenter.gotoMyTestScreen();
   }
@@ -1274,19 +1258,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Update indicator process status
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
 
-    //TODO: show submit error popup
+    //Show submit error popup
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return const CustomAlertDialog(title: "Notify", description: "An error occur, please try again later!");
       },
     );
-    //Still show SAVE THE TEST button
   }
 
   @override
   void onSubmitTestSuccess(String msg) {
-    _finishSubmitTest(msg, SubmitStatus.success);
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+
+    showToastMsg(
+      msg: msg,
+      toastState: ToastStatesType.success,
+    );
+
+    _gotoMyTestScreen();
   }
 
   @override
