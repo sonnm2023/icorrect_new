@@ -1291,7 +1291,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onClickSaveTheTest() async {
-    // if (false == _simulatorTestProvider!.isSubmitting) {
     if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
         SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
       await showDialog(

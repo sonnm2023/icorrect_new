@@ -88,7 +88,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Disable back button when submitting test
     if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
       if (kDebugMode) {
-        print("Status is submitting!");
+        print("DEBUG: Status is submitting!");
       }
       return;
     }
@@ -98,7 +98,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         {
           //None
           if (kDebugMode) {
-            print("Status is not start to do the test!");
+            print("DEBUG: Status is not start to do the test!");
           }
           Navigator.of(context).pop();
           break;
@@ -107,7 +107,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         {
           //Doing
           if (kDebugMode) {
-            print("Status is doing the test!");
+            print("DEBUG: Status is doing the test!");
           }
 
           bool okButtonTapped = false;
@@ -141,7 +141,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         {
           //Finish
           if (kDebugMode) {
-            print("Status is finish doing the test!");
+            print("DEBUG: Status is finish doing the test!");
           }
 
           bool cancelButtonTapped = false;
@@ -150,7 +150,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             context: context,
             builder: (BuildContext context) {
               return ConfirmDialogWidget(
-                title: "Notification",
+                title: "Notify",
                 message: "Do you want to save this test before quit?",
                 cancelButtonTitle: "Don't Save",
                 okButtonTitle: "Save",
