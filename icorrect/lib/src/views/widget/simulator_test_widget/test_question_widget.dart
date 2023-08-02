@@ -4,8 +4,6 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_room_provider.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class TestQuestionWidget extends StatelessWidget {
@@ -27,9 +25,9 @@ class TestQuestionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TestRoomProvider>(
-      builder: (context, testProvider, child) {
-        if (testProvider.questionList.isEmpty) {
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, simulatorTestProvider, child) {
+        if (simulatorTestProvider.questionList.isEmpty) {
           return Container(
             alignment: Alignment.center,
             margin: const EdgeInsets.all(20),
@@ -49,7 +47,7 @@ class TestQuestionWidget extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const ScrollPhysics(),
-                itemCount: testProvider.questionList.length,
+                itemCount: simulatorTestProvider.questionList.length,
                 itemBuilder: (BuildContext context, int index) {
                   //Header part 1
                   if (index == 0) {
@@ -78,7 +76,7 @@ class TestQuestionWidget extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 15),
                           child: _buildTestQuestionItem(
                             context,
-                            testProvider.questionList.elementAt(index),
+                            simulatorTestProvider.questionList.elementAt(index),
                             index,
                           ),
                         ),
@@ -87,8 +85,8 @@ class TestQuestionWidget extends StatelessWidget {
                   }
 
                   //Header part 2
-                  if (testProvider.indexOfHeaderPart2 != 0 &&
-                      index == testProvider.indexOfHeaderPart2) {
+                  if (simulatorTestProvider.indexOfHeaderPart2 != 0 &&
+                      index == simulatorTestProvider.indexOfHeaderPart2) {
                     return Column(
                       children: [
                         Container(
@@ -114,7 +112,7 @@ class TestQuestionWidget extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 15),
                           child: _buildTestQuestionItem(
                             context,
-                            testProvider.questionList.elementAt(index),
+                            simulatorTestProvider.questionList.elementAt(index),
                             index,
                           ),
                         ),
@@ -123,8 +121,8 @@ class TestQuestionWidget extends StatelessWidget {
                   }
 
                   //Header part 3
-                  if (testProvider.indexOfHeaderPart3 != 0 &&
-                      index == testProvider.indexOfHeaderPart3) {
+                  if (simulatorTestProvider.indexOfHeaderPart3 != 0 &&
+                      index == simulatorTestProvider.indexOfHeaderPart3) {
                     return Column(
                       children: [
                         Container(
@@ -150,7 +148,7 @@ class TestQuestionWidget extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 15),
                           child: _buildTestQuestionItem(
                             context,
-                            testProvider.questionList.elementAt(index),
+                            simulatorTestProvider.questionList.elementAt(index),
                             index,
                           ),
                         ),
@@ -162,7 +160,7 @@ class TestQuestionWidget extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 15),
                     child: _buildTestQuestionItem(
                       context,
-                      testProvider.questionList.elementAt(index),
+                      simulatorTestProvider.questionList.elementAt(index),
                       index,
                     ),
                   );

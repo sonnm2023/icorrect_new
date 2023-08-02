@@ -160,7 +160,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 "Close",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: AppColor.defaultGraySlightColor,
+                  color: AppColor.defaultGrayColor,
                 ),
               ),
             ),
@@ -301,26 +301,35 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() {
-    if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
-        _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SimulatorTestScreen(
-            homeWorkModel: _selectedHomeWorkModel!,
-          ),
+    //TODO: For test
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SimulatorTestScreen(
+          homeWorkModel: _selectedHomeWorkModel!,
         ),
-      );
-    } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MyTestScreen(
-            homeWorkModel: _selectedHomeWorkModel!,
-            isFromSimulatorTest: false,
-          ),
-        ),
-      );
-    }
+      ),
+    );
+    // if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
+    //     _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (_) => SimulatorTestScreen(
+    //         homeWorkModel: _selectedHomeWorkModel!,
+    //       ),
+    //     ),
+    //   );
+    // } else {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(
+    //       builder: (context) => MyTestScreen(
+    //         homeWorkModel: _selectedHomeWorkModel!,
+    //         isFromSimulatorTest: false,
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
   @override

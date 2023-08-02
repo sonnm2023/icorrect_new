@@ -29,6 +29,11 @@ abstract class SimulatorTestViewContract {
   void onGotoMyTestScreen();
   void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
+  void onReDownload();
+  void onTryAgainToDownload();
+
+  // void onShowCheckNetworkDialog();
+  // void onUpdateStatusForReDownload();
 }
 
 class SimulatorTestPresenter {
@@ -38,6 +43,19 @@ class SimulatorTestPresenter {
   SimulatorTestPresenter(this._view) {
     _testRepository = Injector().getTestRepository();
   }
+
+  int _autoRequestDownloadTimes = 0;
+  int get autoRequestDownloadTimes => _autoRequestDownloadTimes;
+  void increaseAutoRequestDownloadTimes() {
+    _autoRequestDownloadTimes += 1;
+  }
+
+  void resetAutoRequestDownloadTimes() {
+    _autoRequestDownloadTimes = 0;
+  }
+
+  TestDetailModel? testDetail;
+  List<FileTopicModel>? filesTopic;
 
   void getTestDetail(String homeworkId) async {
     UserDataModel? currentUser = await Utils.getCurrentUser();
@@ -54,17 +72,21 @@ class SimulatorTestPresenter {
       Map<String, dynamic> map = jsonDecode(value);
       if (map['error_code'] == 200) {
         Map<String, dynamic> dataMap = map['data'];
-        TestDetailModel testDetail = TestDetailModel(testId: 0);
+        TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
+        tempTestDetailModel = TestDetailModel.fromJson(dataMap);
         testDetail = TestDetailModel.fromJson(dataMap);
 
-        _prepareTopicList(testDetail);
+        _prepareTopicList(tempTestDetailModel);
 
-        List<FileTopicModel> filesTopic =
-            _prepareFileTopicListForDownload(testDetail);
+        List<FileTopicModel> tempFilesTopic =
+            _prepareFileTopicListForDownload(tempTestDetailModel);
 
-        downloadFiles(testDetail, filesTopic);
+        filesTopic =
+            _prepareFileTopicListForDownload(tempTestDetailModel);
 
-        _view!.onGetTestDetailComplete(testDetail, filesTopic.length);
+        downloadFiles(tempTestDetailModel, tempFilesTopic);
+
+        _view!.onGetTestDetailComplete(tempTestDetailModel, tempFilesTopic.length);
       } else {
         _view!.onGetTestDetailError(
             "Loading homework detail error: ${map['error_code']}${map['status']}");
@@ -207,18 +229,17 @@ class SimulatorTestPresenter {
             }
           } on TimeoutException {
             _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
-            //Download again
-            downloadFiles(testDetail, filesTopic);
+            reDownload(testDetail, filesTopic);
             break loop;
           } on SocketException {
             _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
             //Download again
-            downloadFiles(testDetail, filesTopic);
+            reDownload(testDetail, filesTopic);
             break loop;
           } on http.ClientException {
             _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
             //Download again
-            downloadFiles(testDetail, filesTopic);
+            reDownload(testDetail, filesTopic);
             break loop;
           }
         } else {
@@ -226,6 +247,19 @@ class SimulatorTestPresenter {
           _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
         }
       }
+    }
+  }
+
+  void reDownload(TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+    //Download again
+    if (autoRequestDownloadTimes <= 3) {
+      if (kDebugMode) {
+        print("DEBUG: request to download in times: $autoRequestDownloadTimes");
+      }
+      downloadFiles(testDetail, filesTopic);
+      increaseAutoRequestDownloadTimes();
+    } else {
+      _view!.onReDownload();
     }
   }
 
@@ -266,10 +300,16 @@ class SimulatorTestPresenter {
     }
   }
 
-  void tryAgainToDownload() {
+  void reDownloadFiles() {
+    downloadFiles(testDetail!, filesTopic!);
+  }
+
+  void tryAgainToDownload() async {
     if (kDebugMode) {
       print("DEBUG: tryAgainToDownload");
     }
+
+    _view!.onTryAgainToDownload();
   }
 
   Future<http.MultipartRequest> _formDataRequest({

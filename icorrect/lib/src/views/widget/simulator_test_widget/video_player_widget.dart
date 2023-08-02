@@ -4,7 +4,6 @@ import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/provider/test_room_provider.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -44,8 +43,8 @@ class VideoPlayerWidget extends StatelessWidget {
     SimulatorTestProvider prepareSimulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
 
-    return Consumer2<SimulatorTestProvider, TestRoomProvider>(
-        builder: (context, simulatorTestProvider, testRoomProvider, child) {
+    return Consumer<SimulatorTestProvider>(
+        builder: (context, simulatorTestProvider, child) {
       if (kDebugMode) {
         print("DEBUG: VideoPlayerWidget --- build");
       }
@@ -61,10 +60,10 @@ class VideoPlayerWidget extends StatelessWidget {
           ),
         );
       } else {
-        if (null != testRoomProvider.videoPlayController) {
+        if (null != simulatorTestProvider.videoPlayController) {
           Widget buttonsControllerSubView = Container();
 
-          switch (testRoomProvider.reviewingStatus.get) {
+          switch (simulatorTestProvider.reviewingStatus.get) {
             case -1: //None
               {
                 buttonsControllerSubView = SizedBox(
@@ -77,7 +76,7 @@ class VideoPlayerWidget extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           //Update reviewing status from none -> playing
-                          testRoomProvider
+                          simulatorTestProvider
                               .updateReviewingStatus(ReviewingStatus.playing);
 
                           //Start to do the test
@@ -104,9 +103,9 @@ class VideoPlayerWidget extends StatelessWidget {
                     //show/hide pause button
                     if (prepareSimulatorTestProvider.doingStatus !=
                         DoingStatus.doing) {
-                      if (testRoomProvider.reviewingStatus ==
+                      if (simulatorTestProvider.reviewingStatus ==
                           ReviewingStatus.playing) {
-                        testRoomProvider
+                        simulatorTestProvider
                             .updateReviewingStatus(ReviewingStatus.pause);
                       }
                     }
@@ -118,9 +117,9 @@ class VideoPlayerWidget extends StatelessWidget {
               {
                 buttonsControllerSubView = InkWell(
                   onTap: () {
-                    if (testRoomProvider.reviewingStatus ==
+                    if (simulatorTestProvider.reviewingStatus ==
                         ReviewingStatus.pause) {
-                      testRoomProvider
+                      simulatorTestProvider
                           .updateReviewingStatus(ReviewingStatus.playing);
                     }
                   },
@@ -134,7 +133,7 @@ class VideoPlayerWidget extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             //Update reviewing status from pause -> restart
-                            testRoomProvider
+                            simulatorTestProvider
                                 .updateReviewingStatus(ReviewingStatus.restart);
                             pauseToPlayVideo();
                           },
@@ -200,17 +199,17 @@ class VideoPlayerWidget extends StatelessWidget {
             children: [
               //Video
               Transform.scale(
-                scale: getScale(testRoomProvider.videoPlayController!),
+                scale: getScale(simulatorTestProvider.videoPlayController!),
                 child: AspectRatio(
                   aspectRatio: videoContainerRatio,
-                  child: VideoPlayer(testRoomProvider.videoPlayController!),
+                  child: VideoPlayer(simulatorTestProvider.videoPlayController!),
                 ),
               ),
               //Play video controller buttons
               buttonsControllerSubView,
 
               Visibility(
-                visible: testRoomProvider.isReviewingPlayAnswer,
+                visible: simulatorTestProvider.isReviewingPlayAnswer,
                 child: playAudioBackground(w, h),
               )
             ],

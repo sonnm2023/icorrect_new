@@ -70,6 +70,7 @@ class LoginPresenter {
             "Login error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError(
+      // ignore: invalid_return_type_for_catch_error
       (onError) => _view!.onLoginError(onError.toString()),
     );
   }

@@ -28,6 +28,7 @@ abstract class TestRoomViewContract {
   void onSubmitTestFail(String msg);
   void onClickSaveTheTest();
   void onFinishTheTest();
+  void onReDownload();
 
   void onNothingFileEndOfTest();
   void onNothingEndOfTest();
@@ -63,6 +64,7 @@ class TestRoomPresenter {
         _view!.onPlayIntroduceFile(file.url);
       } else {
         //TODO: Download again
+        _view!.onReDownload();
       }
     } else {
       if (kDebugMode) {
@@ -136,6 +138,7 @@ class TestRoomPresenter {
         _view!.onPlayEndOfTakeNoteFile(fileName);
       } else {
         //TODO: download again
+        _view!.onReDownload();
       }
     } else {
       if (kDebugMode) {
@@ -164,6 +167,7 @@ class TestRoomPresenter {
         _view!.onPlayEndOfTest(fileName);
       } else {
         //TODO: Download again
+        _view!.onReDownload();
       }
     } else {
       //The test has not End of test file
