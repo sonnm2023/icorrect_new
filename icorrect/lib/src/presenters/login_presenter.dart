@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -7,6 +8,8 @@ import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/auth_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+
+import 'package:http/http.dart' as http;
 
 abstract class LoginViewContract {
   void onLoginComplete();
@@ -30,13 +33,18 @@ class LoginPresenter {
         _getUserInfo();
       } else {
         if (authModel.message.isNotEmpty) {
-          _view!.onLoginError(authModel.message);
+          _view!.onLoginError('Please check your Internet and try again !');
         } else {
           _view!.onLoginError('${authModel.errorCode}: ${authModel.status}');
         }
       }
-    // ignore: invalid_return_type_for_catch_error
-    }).catchError((onError) => _view!.onLoginError(onError.toString()));
+    }).catchError((onError) {
+      if (onError is http.ClientException || onError is SocketException) {
+        _view!.onLoginError('Please check your Internet and try again !');
+      } else {
+        _view!.onLoginError("An error occur.Please try again !");
+      }
+    });
   }
 
   Future<void> _saveAccessToken(String token) async {
@@ -62,7 +70,6 @@ class LoginPresenter {
             "Login error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError(
-      // ignore: invalid_return_type_for_catch_error
       (onError) => _view!.onLoginError(onError.toString()),
     );
   }

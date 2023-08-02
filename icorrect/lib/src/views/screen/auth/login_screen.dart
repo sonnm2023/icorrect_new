@@ -11,6 +11,7 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
@@ -44,10 +45,6 @@ class _LoginScreenState extends State<LoginScreen>
     _loading = CircleLoading();
     _loginPresenter = LoginPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    //TODO: For test
-    emailController.text = "luan@testing.com";
-    passwordController.text = "123456";
 
     _autoLogin();
   }
@@ -112,7 +109,9 @@ class _LoginScreenState extends State<LoginScreen>
                           _buildSignInButton(),
                           _buildSignUpButton(),
                           _buildForgotPasswordButton(),
-                          Expanded(child: Container(),),
+                          Expanded(
+                            child: Container(),
+                          ),
                           const ContactInfoWidget(),
                         ],
                       ),
@@ -141,6 +140,7 @@ class _LoginScreenState extends State<LoginScreen>
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
       onPressed: () {
+        FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
           _authProvider.updateProcessingStatus();
@@ -164,13 +164,9 @@ class _LoginScreenState extends State<LoginScreen>
       child: DefaultTextButton(
         onPressed: () {
           if (_authProvider.isProcessing == false) {
-            //TODO
             if (kDebugMode) {
               print("DEBUG: Goto Sign up screen");
             }
-
-            //TODO
-            // Navigator.of(context).pushNamedAndRemoveUntil(signupRoute, (route) => false);
           }
         },
         child: const DefaultText(
@@ -190,7 +186,6 @@ class _LoginScreenState extends State<LoginScreen>
       child: DefaultTextButton(
         onPressed: () {
           if (_authProvider.isProcessing == false) {
-            //TODO
             if (kDebugMode) {
               print("DEBUG: Goto Forgot password screen");
             }
@@ -226,10 +221,10 @@ class _LoginScreenState extends State<LoginScreen>
   void onLoginError(String message) {
     _authProvider.updateProcessingStatus();
 
-    //Show error message
-    showToastMsg(
-      msg: message,
-      toastState: ToastStatesType.error,
-    );
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return MessageDialog.alertDialog(context, message);
+        });
   }
 }

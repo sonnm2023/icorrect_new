@@ -15,6 +15,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<String> login(String email, String password) async {
     String url = '$apiDomain$loginEP';
+    print("step 1");
 
     return AppRepository.init()
         .sendRequest(
@@ -27,6 +28,9 @@ class AuthRepositoryImpl implements AuthRepository {
         .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;
+        })
+        .catchError((onError) {
+          print("error: ${onError.toString()}");
         });
   }
 

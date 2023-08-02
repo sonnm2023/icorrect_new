@@ -5,6 +5,7 @@ import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/special_homeworks_presenter.dart';
@@ -18,7 +19,7 @@ import '../../other_views/dialog/circle_loading.dart';
 
 class HighLightTab extends StatefulWidget {
   MyTestProvider provider;
-  HomeWorkModel homeWorkModel;
+  ActivitiesModel homeWorkModel;
   HighLightTab(
       {super.key, required this.provider, required this.homeWorkModel});
 
@@ -48,7 +49,7 @@ class _HighLightTabState extends State<HighLightTab>
     }
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString(),
-        activityId: widget.homeWorkModel.id.toString(),
+        activityId: widget.homeWorkModel.activityId.toString(),
         status: Status.allHomework.get,
         example: Status.highLight.get);
   }

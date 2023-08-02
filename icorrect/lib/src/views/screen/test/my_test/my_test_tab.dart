@@ -12,6 +12,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
@@ -32,7 +33,7 @@ import '../../other_views/dialog/alert_dialog.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
 class MyTestTab extends StatefulWidget {
-  final HomeWorkModel homeWorkModel;
+  final ActivitiesModel homeWorkModel;
   final MyTestProvider provider;
   const MyTestTab(
       {super.key, required this.homeWorkModel, required this.provider});
@@ -58,7 +59,7 @@ class _MyTestTabState extends State<MyTestTab>
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
-    _presenter!.getMyTest(widget.homeWorkModel.testId);
+    _presenter!.getMyTest(widget.homeWorkModel.activityAnswer.testId.toString());
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
@@ -84,7 +85,7 @@ class _MyTestTabState extends State<MyTestTab>
       } else {
         return Column(
           children: [
-            Expanded(flex: 5, child: VideoMyTest()),
+           // Expanded(flex: 5, child: VideoMyTest()),
             Expanded(
                 flex: 9,
                 child: ListView.builder(
@@ -95,7 +96,7 @@ class _MyTestTabState extends State<MyTestTab>
                     })),
             Stack(
               children: [
-                (widget.homeWorkModel.aiOrder != 0)
+                (widget.homeWorkModel.activityAnswer.aiOrder != 0)
                     ? Expanded(child: LayoutBuilder(builder: (_, constraint) {
                         return InkWell(
                           onTap: () {
@@ -174,10 +175,10 @@ class _MyTestTabState extends State<MyTestTab>
 
   void _onClickUpdateReanswer(List<QuestionTopicModel> requestions) {
     _loading!.show(context);
-    HomeWorkModel homework = widget.homeWorkModel;
+    ActivitiesModel homework = widget.homeWorkModel;
     _presenter!.updateMyAnswer(
-        testId: homework.testId,
-        activityId: homework.id.toString(),
+        testId: homework.activityAnswer.testId.toString(),
+        activityId: homework.activityId.toString(),
         reQuestions: requestions);
   }
 
@@ -211,7 +212,7 @@ class _MyTestTabState extends State<MyTestTab>
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
         builder: (_) {
           return FutureBuilder(
-              future: AiResponseEP(widget.homeWorkModel.aiOrder.toString()),
+              future: AiResponseEP(widget.homeWorkModel.activityAnswer.aiOrder.toString()),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return Stack(

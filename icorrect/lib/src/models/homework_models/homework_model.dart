@@ -216,7 +216,7 @@ class HomeWorkModel {
   set bank(int bank) => _bank = bank;
   String get bankName => _bankName ?? "";
   set bankName(String bankName) => _bankName = bankName;
-  int get bankType => _bankType ?? 0;
+  int get bankType => _bankType ?? 0;  
   set bankType(int bankType) => _bankType = bankType;
   String get bankDistributeCode => _bankDistributeCode ?? "";
   set bankDistributeCode(String bankDistributeCode) =>

@@ -325,7 +325,7 @@ class MyTestPresenter {
       for (int i = 0; i < q.answers.length; i++) {
         endFormat = '$format[$i]';
         File audioFile = File(await FileStorageHelper.getFilePath(
-            q.answers.elementAt(i).url.toString(), MediaType.audio, null)); //TODO
+            q.answers.elementAt(i).url.toString(), MediaType.audio, null));
 
         if (await audioFile.exists()) {
           request.files.add(

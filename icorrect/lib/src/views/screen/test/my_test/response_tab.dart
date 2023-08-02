@@ -6,6 +6,7 @@ import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
 import 'package:icorrect/src/presenters/response_presenter.dart';
@@ -19,7 +20,7 @@ import 'package:provider/provider.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
 class ResponseTab extends StatefulWidget {
-  HomeWorkModel homeWorkModel;
+  ActivitiesModel homeWorkModel;
   MyTestProvider provider;
   ResponseTab({super.key, required this.homeWorkModel, required this.provider});
 
@@ -42,8 +43,9 @@ class _ResponseTabState extends State<ResponseTab>
     }
     _loading = CircleLoading();
     _loading?.show(context);
-    if (widget.homeWorkModel.orderId.isNotEmpty) {
-      _presenter!.getResponse(widget.homeWorkModel.orderId);
+    if (widget.homeWorkModel.activityAnswer.orderId.toString().isNotEmpty) {
+      _presenter!
+          .getResponse(widget.homeWorkModel.activityAnswer.orderId.toString());
     }
   }
 
@@ -60,7 +62,7 @@ class _ResponseTabState extends State<ResponseTab>
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
             _loading?.show(context);
-            _presenter!.getResponse(widget.homeWorkModel.orderId.toString());
+            _presenter!.getResponse(widget.homeWorkModel.activityAnswer.orderId.toString());
           });
         },
         child: _buildResponseTab());

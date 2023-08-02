@@ -71,6 +71,12 @@ class ActivityAnswer {
   String get aiResponseLink => _aiResponseLink ?? "";
   set aiResponseLink(String aiResponseLink) => _aiResponseLink = aiResponseLink;
 
+   bool hasTeacherResponse() {
+    print('_orderId: ${_orderId.toString()}');
+    return _orderId != 0 && _orderId.toString().isNotEmpty;
+  }
+
+
   ActivityAnswer.fromJson(Map<String, dynamic> json) {
     _activityId = json['activity_id'];
     _testId = json['test_id'];

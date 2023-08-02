@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
@@ -21,7 +22,7 @@ class MyTestScreen extends StatefulWidget {
       required this.homeWorkModel,
       required this.isFromSimulatorTest});
 
-  final HomeWorkModel homeWorkModel;
+  final ActivitiesModel homeWorkModel;
   final bool isFromSimulatorTest;
 
   @override
@@ -58,7 +59,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         return false;
       },
       child: DefaultTabController(
-        length: widget.homeWorkModel.hasTeacherResponse() ? 4 : 3,
+        length: widget.homeWorkModel.activityAnswer.hasTeacherResponse() ? 4 : 3,
         child: Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
@@ -114,7 +115,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   }
 
   List<Widget> _tabsLabel() {
-    return widget.homeWorkModel.hasTeacherResponse()
+    return widget.homeWorkModel.activityAnswer.hasTeacherResponse()
         ? const [
             Tab(
               child: Text('MY TEST',
@@ -150,8 +151,8 @@ class _MyTestScreenState extends State<MyTestScreen> {
   }
 
   _tabBarView() {
-    print('has response: ${widget.homeWorkModel.hasTeacherResponse()}');
-    return widget.homeWorkModel.hasTeacherResponse()
+    print('has response: ${widget.homeWorkModel.activityAnswer.hasTeacherResponse()}');
+    return widget.homeWorkModel.activityAnswer.hasTeacherResponse()
         ? [
             MyTestTab(
                 homeWorkModel: widget.homeWorkModel, provider: _provider!),
@@ -190,7 +191,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
     for (var q in questions) {
       String fileName = q.answers.last.url.toString();
-      FileStorageHelper.deleteFile(fileName, MediaType.audio, null); //TODO
+      FileStorageHelper.deleteFile(fileName, MediaType.audio, null);
     }
   }
 }

@@ -37,9 +37,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   Permission? _storagePermission;
   PermissionStatus _storagePermissionStatus = PermissionStatus.denied;
 
-  HomeWorkModel? _selectedHomeWorkModel;
+  ActivitiesModel? _selectedHomeWorkModel;
 
-  void clickOnHomeWorkItem(HomeWorkModel homeWorkModel) async {
+  void clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
     _selectedHomeWorkModel = homeWorkModel;
 
     if (_storagePermission == null) {
@@ -222,8 +222,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 groupComparator: (value1, value2) => value2.compareTo(value1),
                 order: GroupedListOrder.ASC,
                 groupSeparatorBuilder: (String classId) {
-                  String className = Utils.getClassNameWithId(classId, homeworkProvider.listClassForFilter);
-                  
+                  String className = Utils.getClassNameWithId(
+                      classId, homeworkProvider.listClassForFilter);
+
                   return Padding(
                     padding: const EdgeInsets.only(
                       left: 10,
@@ -301,8 +302,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() {
-    if (_selectedHomeWorkModel!.completeStatus == Status.outOfDate.get ||
-        _selectedHomeWorkModel!.completeStatus == Status.notComplete.get) {
+    if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
+        _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
       Navigator.push(
         context,
         MaterialPageRoute(

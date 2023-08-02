@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,7 @@ import '../../other_views/dialog/circle_loading.dart';
 
 class OtherTab extends StatefulWidget {
   MyTestProvider provider;
-  HomeWorkModel homeWorkModel;
+  ActivitiesModel homeWorkModel;
   OtherTab({super.key, required this.provider, required this.homeWorkModel});
 
   @override
@@ -44,7 +45,7 @@ class _OtherTabState extends State<OtherTab>
         await Utils.getCurrentUser() ?? UserDataModel();
     _presenter!.getSpecialHomeWorks(
         email: userDataModel.userInfoModel.email.toString(),
-        activityId: widget.homeWorkModel.id.toString(),
+        activityId: widget.homeWorkModel.activityId.toString(),
         status: Status.allHomework.get,
         example: Status.others.get);
   }

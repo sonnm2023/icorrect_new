@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 
-ActivitiesModel activitiesModelFromJson(String str) => ActivitiesModel.fromJson(json.decode(str));
-String activitiesModelToJson(ActivitiesModel data) => json.encode(data.toJson());
+ActivitiesModel activitiesModelFromJson(String str) =>
+    ActivitiesModel.fromJson(json.decode(str));
+String activitiesModelToJson(ActivitiesModel data) =>
+    json.encode(data.toJson());
 
 class ActivitiesModel {
   int? _classId;
@@ -57,6 +59,16 @@ class ActivitiesModel {
   ActivityAnswer get activityAnswer => _activityAnswer ?? ActivityAnswer();
   set activityAnswer(ActivityAnswer activityAnswer) =>
       _activityAnswer = activityAnswer;
+
+  bool canReanswer() {
+    if (_activityAnswer != null &&
+            (_activityAnswer!.aiOrder != 0 || _activityAnswer!.orderId != 0) ||
+        _activityType != 'homework') {
+      return false;
+    }
+
+    return true;
+  }
 
   ActivitiesModel.fromJson(Map<String, dynamic> json) {
     _classId = json['class_id'];
