@@ -188,16 +188,24 @@ class MyTestPresenter {
               );
             } else {
               _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              //Download again
+              downloadFiles(testDetail, filesTopic);
               break loop;
             }
           } on TimeoutException {
             _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+            //Download again
+            downloadFiles(testDetail, filesTopic);
             break loop;
           } on SocketException {
             _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+            //Download again
+            downloadFiles(testDetail, filesTopic);
             break loop;
           } on http.ClientException {
             _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+            //Download again
+            downloadFiles(testDetail, filesTopic);
             break loop;
           }
         } else {
