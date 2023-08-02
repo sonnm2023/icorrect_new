@@ -7,6 +7,7 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test_new/simulator_test_screen.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:icorrect/src/views/widget/homework_widget.dart';
@@ -299,34 +300,34 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
   void _gotoHomeworkDetail() {
     //TODO: For test
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SimulatorTestScreen(
-          homeWorkModel: _selectedHomeWorkModel!,
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => SimulatorTestScreen(
+    //       homeWorkModel: _selectedHomeWorkModel!,
+    //     ),
+    //   ),
+    // );
+    if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
+        _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SimulatorTestScreen(
+            homeWorkModel: _selectedHomeWorkModel!,
+          ),
         ),
-      ),
-    );
-    // if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
-    //     _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (_) => SimulatorTestScreen(
-    //         homeWorkModel: _selectedHomeWorkModel!,
-    //       ),
-    //     ),
-    //   );
-    // } else {
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(
-    //       builder: (context) => MyTestScreen(
-    //         homeWorkModel: _selectedHomeWorkModel!,
-    //         isFromSimulatorTest: false,
-    //       ),
-    //     ),
-    //   );
-    // }
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MyTestScreen(
+            homeWorkModel: _selectedHomeWorkModel!,
+            isFromSimulatorTest: false,
+          ),
+        ),
+      );
+    }
   }
 
   @override
