@@ -1262,7 +1262,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const CustomAlertDialog(title: "Notify", description: "An error occur, please try again later!");
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur, please try again later!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }
@@ -1286,16 +1297,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return ConfirmDialogWidget(
+          return CustomAlertDialog(
             title: "Notify",
-            message: "Do you want to save this test?",
-            cancelButtonTitle: "Don't Save",
+            description: "Do you want to save this test?",
             okButtonTitle: "Save",
-            cancelButtonTapped: () {
-              if (kDebugMode) print("_cancelButtonTapped");
-            },
+            cancelButtonTitle: "Don't Save",
+            borderRadius: 8,
+            hasCloseButton: true,
             okButtonTapped: () {
               _startSubmitTest();
+            },
+            cancelButtonTapped: () {
+              Navigator.of(context).pop();
             },
           );
         },
