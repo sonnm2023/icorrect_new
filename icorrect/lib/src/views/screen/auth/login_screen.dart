@@ -7,7 +7,6 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';

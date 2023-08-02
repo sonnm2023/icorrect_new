@@ -932,11 +932,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateReviewingStatus(ReviewingStatus.none);
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
 
-    //Save answer list into prepare_simulator_test_provider
     List<String> temp = _prepareAnswerListForDelete();
     _simulatorTestProvider!.setAnswerList(temp);
-    List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
-    _simulatorTestProvider!.setQuestionList(questions);
 
     //Auto submit test for activity type = test
     if (_simulatorTestProvider!.activityType == "test") {
@@ -948,7 +945,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest() {
-    // _simulatorTestProvider!.setIsSubmitting(true);
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
