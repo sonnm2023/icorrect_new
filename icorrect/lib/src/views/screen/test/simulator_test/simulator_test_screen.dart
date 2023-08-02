@@ -18,12 +18,12 @@ import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
-import 'package:icorrect/src/views/screen/test/simulator_test_new/test_room_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
