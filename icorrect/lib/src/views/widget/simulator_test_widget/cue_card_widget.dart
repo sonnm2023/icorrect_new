@@ -17,7 +17,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
 
     return Consumer<SimulatorTestProvider>(
       builder: (context, simulatorTestProvider, child) {
-        if (simulatorTestProvider.isVisibleCueCard && simulatorTestProvider.currentQuestion.cueCard.isNotEmpty) {
+        if (simulatorTestProvider.visibleCueCard && simulatorTestProvider.currentQuestion.cueCard.isNotEmpty) {
           return Container(
             width: w,
             height: h,

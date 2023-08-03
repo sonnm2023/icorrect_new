@@ -233,7 +233,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         print("DEBUG: SimulatorTest --- build -- buildBody");
       }
 
-      if (provider.isDownloadingVideoFiles) {
+      if (provider.isDownloadProgressing) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -341,19 +341,38 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _getTestDetail() {
+    _simulatorTestProvider!.setGettingTestDetailStatus(true);
     _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
-    //Hide StartNow button
     _simulatorTestProvider!.setStartNowStatus(false);
+    _simulatorTestProvider!.setGettingTestDetailStatus(false);
 
     //Hide Loading view
-    _simulatorTestProvider!.setDownloadingVideoFilesStatus(false);
+    _simulatorTestProvider!.setDownloadProgressingStatus(false);
 
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
+  }
 
-    _simulatorTestProvider!.setGettingTestDetailStatus(false);
+  void _showCheckNetworkDialog() async {
+    await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CustomAlertDialog(
+        title: "Notify",
+        description: "An error occur. Please check your connection!",
+        okButtonTitle: "OK",
+        cancelButtonTitle: null,
+        borderRadius: 8,
+        hasCloseButton: false,
+        okButtonTapped: () {
+          Navigator.of(context).pop();
+        },
+        cancelButtonTapped: null,
+      );
+    },
+    );
   }
 
   @override
@@ -402,7 +421,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
     _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
-    _simulatorTestProvider!.setDownloadingVideoFilesStatus(true);
+    _simulatorTestProvider!.setDownloadProgressingStatus(true);
     _simulatorTestProvider!.setTotal(total);
   }
 
@@ -477,41 +496,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onReDownload() {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
-    _simulatorTestProvider!.setDownloadingVideoFilesStatus(false);
+    _simulatorTestProvider!.setDownloadProgressingStatus(false);
     _simulatorTestProvider!.setGettingTestDetailStatus(false);
-  }
-
-  void showCheckNetworkDialog() async {
-    await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return CustomAlertDialog(
-        title: "Notify",
-        description: "An error occur. Please check your connection!",
-        okButtonTitle: "OK",
-        cancelButtonTitle: null,
-        borderRadius: 8,
-        hasCloseButton: false,
-        okButtonTapped: () {
-          Navigator.of(context).pop();
-        },
-        cancelButtonTapped: null,
-      );
-    },
-    );
   }
 
   void updateStatusForReDownload() {
     _simulatorTestProvider!.setNeedDownloadAgain(false);
     _simulatorTestProvider!.setStartNowStatus(false);
-    _simulatorTestProvider!.setDownloadingVideoFilesStatus(true);
+    _simulatorTestProvider!.setDownloadProgressingStatus(true);
   }
 
   @override
   void onTryAgainToDownload() {
     //Check internet connection status
     if (isOffline) {
-      showCheckNetworkDialog();
+      _showCheckNetworkDialog();
     } else {
       if (null != _simulatorTestPresenter!.testDetail && null != _simulatorTestPresenter!.filesTopic) {
         updateStatusForReDownload();

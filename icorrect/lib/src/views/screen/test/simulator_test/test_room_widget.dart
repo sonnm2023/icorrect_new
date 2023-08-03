@@ -840,7 +840,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           case HandleWhenFinish.questionVideoType:
             {
               if (_currentQuestion!.cueCard.isNotEmpty &&
-                  (false == _simulatorTestProvider!.isVisibleCueCard)) {
+                  (false == _simulatorTestProvider!.visibleCueCard)) {
                 //Has Cue Card case
                 _simulatorTestProvider!.setVisibleRecord(false);
                 _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
@@ -859,7 +859,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               } else {
                 //Normal case
                 if (false == _simulatorTestProvider!.visibleRecord &&
-                    false == _simulatorTestProvider!.isVisibleCueCard) {
+                    false == _simulatorTestProvider!.visibleCueCard) {
                   _startRecordAnswer(fileName: fileName, isPart2: false);
                 }
               }
@@ -1117,7 +1117,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Stop record
     _setVisibleRecord(false, null, null);
 
-    if (_simulatorTestProvider!.isVisibleCueCard) {
+    if (_simulatorTestProvider!.visibleCueCard) {
       //Has cue card case
       if (isPart2) {
         _simulatorTestProvider!.setVisibleCueCard(false);

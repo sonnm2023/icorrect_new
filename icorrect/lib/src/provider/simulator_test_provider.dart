@@ -23,7 +23,7 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isGettingTestDetail = true;
+  bool _isGettingTestDetail = false;
   bool get isGettingTestDetail => _isGettingTestDetail;
   void setGettingTestDetailStatus(bool isProcessing) {
     _isGettingTestDetail = isProcessing;
@@ -33,10 +33,10 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isDownloadingVideoFiles = false;
-  bool get isDownloadingVideoFiles => _isDownloadingVideoFiles;
-  void setDownloadingVideoFilesStatus(bool isDownloading) {
-    _isDownloadingVideoFiles = isDownloading;
+  bool _isDownloadProgressing = false;
+  bool get isDownloadProgressing => _isDownloadProgressing;
+  void setDownloadProgressingStatus(bool isDownloading) {
+    _isDownloadProgressing = isDownloading;
 
     if (!isDisposed) {
       notifyListeners();
@@ -175,20 +175,20 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isVisibleCueCard = false;
-  bool get isVisibleCueCard => _isVisibleCueCard;
+  bool _visibleCueCard = false;
+  bool get visibleCueCard => _visibleCueCard;
   void setVisibleCueCard(bool visible) {
-    _isVisibleCueCard = visible;
+    _visibleCueCard = visible;
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
-  bool _isRepeatVisible = true;
-  bool get isRepeatVisible => _isRepeatVisible;
-  void setRepeatVisible(bool visible) {
-    _isRepeatVisible = visible;
+  bool _visibleRepeat = true;
+  bool get visibleRepeat => _visibleRepeat;
+  void setVisibleRepeat(bool visible) {
+    _visibleRepeat = visible;
     if (!isDisposed) {
       notifyListeners();
     }
@@ -258,17 +258,6 @@ class SimulatorTestProvider with ChangeNotifier {
   void clearQuestionList() {
     _questionList.clear();
   }
-
-  //TODO
-  // Timer? _countDownTimer;
-  // Timer? get countDownTimer => _countDownTimer;
-  // void setCountDownTimer(Timer? timer) {
-  //   _countDownTimer = timer;
-  //
-  //   if (!isDisposed) {
-  //     notifyListeners();
-  //   }
-  // }
 
   VideoPlayerController? _videoPlayerController;
   VideoPlayerController? get videoPlayController => _videoPlayerController;
@@ -447,8 +436,8 @@ class SimulatorTestProvider with ChangeNotifier {
     _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;
-    _isGettingTestDetail = true;
-    _isDownloadingVideoFiles = false;
+    _isGettingTestDetail = false;
+    _isDownloadProgressing = false;
     _startNowAvailable = false;
     _total = 0;
     _downloadingIndex = 1;
@@ -459,11 +448,10 @@ class SimulatorTestProvider with ChangeNotifier {
     _visibleRecord = false;
     _indexOfHeaderPart2 = 0;
     _indexOfHeaderPart3 = 0;
-    _isVisibleCueCard = false;
-    _isRepeatVisible = true;
+    _visibleCueCard = false;
+    _visibleRepeat = true;
     _isVisibleSave = false;
     _countRepeat = 0;
-    // _countDownTimer = null; //TODO
     _videoPlayerController = null;
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
