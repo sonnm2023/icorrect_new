@@ -296,7 +296,7 @@ class MyTestPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries([MapEntry('is_update', '0')]);
+    formData.addEntries(const [MapEntry('is_update', '1')]);
     // formData.addEntries([MapEntry('activity_id', activityId)]);
 
     if (Platform.isAndroid) {
