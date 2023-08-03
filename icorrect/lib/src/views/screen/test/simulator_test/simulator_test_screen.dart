@@ -80,6 +80,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void dispose() {
     connection!.cancel();
+    _simulatorTestPresenter!.closeClientRequest();
     _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
     _simulatorTestProvider!.resetAll();
     super.dispose();
@@ -340,8 +341,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  void _getTestDetail() {
-    _simulatorTestProvider!.setGettingTestDetailStatus(true);
+  void _getTestDetail() async {
+    await _simulatorTestPresenter!.initializeData();
     _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.activityId.toString());
   }
 

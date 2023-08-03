@@ -23,7 +23,7 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isGettingTestDetail = false;
+  bool _isGettingTestDetail = true;
   bool get isGettingTestDetail => _isGettingTestDetail;
   void setGettingTestDetailStatus(bool isProcessing) {
     _isGettingTestDetail = isProcessing;
@@ -436,7 +436,7 @@ class SimulatorTestProvider with ChangeNotifier {
     _activityType = '';
     _dialogShowing = false;
     _permissionDeniedTime = 0;
-    _isGettingTestDetail = false;
+    _isGettingTestDetail = true;
     _isDownloadProgressing = false;
     _startNowAvailable = false;
     _total = 0;

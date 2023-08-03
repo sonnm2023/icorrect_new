@@ -7,7 +7,6 @@ import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
-import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
@@ -45,6 +44,23 @@ class SimulatorTestPresenter {
   int get autoRequestDownloadTimes => _autoRequestDownloadTimes;
   void increaseAutoRequestDownloadTimes() {
     _autoRequestDownloadTimes += 1;
+  }
+
+  http.Client? client;
+  final Map<String, String> headers = {
+    'Accept': 'application/json',
+  };
+
+  Future<void> initializeData() async {
+    client ??= http.Client();
+    resetAutoRequestDownloadTimes();
+  }
+
+  void closeClientRequest() {
+    if (null != client) {
+      client!.close();
+      client = null;
+    }
   }
 
   void resetAutoRequestDownloadTimes() {
@@ -149,13 +165,6 @@ class SimulatorTestPresenter {
     return filesTopic;
   }
 
-  Future<http.Response> _sendRequest(String name) async {
-    String url = downloadFileEP(name);
-    return await AppRepository.init()
-        .sendRequest(RequestMethod.get, url, false)
-        .timeout(const Duration(seconds: 10));
-  }
-
   double _getPercent(int downloaded, int total) {
     return (downloaded / total);
   }
@@ -193,61 +202,73 @@ class SimulatorTestPresenter {
 
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
-    loop:
-    for (int index = 0; index < filesTopic.length; index++) {
-      FileTopicModel temp = filesTopic[index];
-      String fileTopic = temp.url;
-      String fileNameForDownload = Utils.reConvertFileName(fileTopic);
+    if (null != client) {
+      loop:
+      for (int index = 0; index < filesTopic.length; index++) {
+        FileTopicModel temp = filesTopic[index];
+        String fileTopic = temp.url;
+        String fileNameForDownload = Utils.reConvertFileName(fileTopic);
 
-      if (filesTopic.isNotEmpty) {
-        String fileType = Utils.fileType(fileTopic);
-        bool isExist = await FileStorageHelper.checkExistFile(fileTopic, MediaType.video, null);
-        if (fileType.isNotEmpty &&
-            !isExist) {
-          try {
-            if (kDebugMode) {
-              print("DEBUG: Downloading file at index = $index");
-            }
+        if (filesTopic.isNotEmpty) {
+          String fileType = Utils.fileType(fileTopic);
+          bool isExist = await FileStorageHelper.checkExistFile(fileTopic, MediaType.video, null);
+          if (fileType.isNotEmpty &&
+              !isExist) {
+            try {
+              if (kDebugMode) {
+                print("DEBUG: Downloading file at index = $index");
+              }
 
-            http.Response response = await _sendRequest(fileNameForDownload);
+              // http.Response response = await _sendRequest(fileNameForDownload);
+              String url = downloadFileEP(fileNameForDownload);
 
-            if (response.statusCode == 200) {
-              //Save file using file_storage
-              String contentString = await Utils.convertVideoToBase64(response);
-              await FileStorageHelper.writeVideo(
-                  contentString, fileTopic, MediaType.video);
-              double percent = _getPercent(index + 1, filesTopic.length);
-              _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
-            } else {
+              client!.head(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
+              // use client.get as you would http.get
+              http.Response response = await client!.get(
+                Uri.parse(url),
+              );
+
+              if (response.statusCode == 200) {
+                //Save file using file_storage
+                String contentString = await Utils.convertVideoToBase64(response);
+                await FileStorageHelper.writeVideo(
+                    contentString, fileTopic, MediaType.video);
+                double percent = _getPercent(index + 1, filesTopic.length);
+                _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
+              } else {
+                _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+                reDownloadAutomatic(testDetail, filesTopic);
+                break loop;
+              }
+            } on TimeoutException {
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              reDownloadAutomatic(testDetail, filesTopic);
+              break loop;
+            } on SocketException {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               //Download again
-              downloadFiles(testDetail, filesTopic);
+              reDownloadAutomatic(testDetail, filesTopic);
+              break loop;
+            } on http.ClientException {
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              //Download again
+              reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             }
-          } on TimeoutException {
-            _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
-            reDownload(testDetail, filesTopic);
-            break loop;
-          } on SocketException {
-            _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
-            //Download again
-            reDownload(testDetail, filesTopic);
-            break loop;
-          } on http.ClientException {
-            _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
-            //Download again
-            reDownload(testDetail, filesTopic);
-            break loop;
+          } else {
+            double percent = _getPercent(index + 1, filesTopic.length);
+            _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
           }
-        } else {
-          double percent = _getPercent(index + 1, filesTopic.length);
-          _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
         }
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: client is closed!");
       }
     }
   }
 
-  void reDownload(TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+  void reDownloadAutomatic(TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {
@@ -256,6 +277,8 @@ class SimulatorTestPresenter {
       downloadFiles(testDetail, filesTopic);
       increaseAutoRequestDownloadTimes();
     } else {
+      //Close old download request
+      closeClientRequest();
       _view!.onReDownload();
     }
   }
