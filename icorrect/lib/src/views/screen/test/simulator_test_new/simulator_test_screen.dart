@@ -50,17 +50,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void initState() {
-    connection = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    connection = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
       // whenevery connection status is changed.
-      if(result == ConnectivityResult.none) {
+      if (result == ConnectivityResult.none) {
         isOffline = true;
-      } else if(result == ConnectivityResult.mobile) {
+      } else if (result == ConnectivityResult.mobile) {
         isOffline = false;
-      } else if(result == ConnectivityResult.wifi) {
+      } else if (result == ConnectivityResult.wifi) {
         isOffline = false;
-      } else if(result == ConnectivityResult.ethernet) {
+      } else if (result == ConnectivityResult.ethernet) {
         isOffline = false;
-      } else if(result == ConnectivityResult.bluetooth) {
+      } else if (result == ConnectivityResult.bluetooth) {
         isOffline = false;
       }
 
@@ -215,7 +217,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     for (String answer in answers) {
       FileStorageHelper.deleteFile(answer, MediaType.audio,
-          _simulatorTestProvider!.currentTestDetail.testId.toString())
+              _simulatorTestProvider!.currentTestDetail.testId.toString())
           .then((value) {
         if (false == value) {
           showToastMsg(
@@ -278,7 +280,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildDownloadAgain() {
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
       if (provider.needDownloadAgain) {
-        return DownloadAgainWidget(simulatorTestPresenter: _simulatorTestPresenter!);
+        return DownloadAgainWidget(
+            simulatorTestPresenter: _simulatorTestPresenter!);
       } else {
         return const SizedBox();
       }
@@ -341,7 +344,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _getTestDetail() {
-    _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.activityId.toString());
+    _simulatorTestPresenter!
+        .getTestDetail(widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -441,9 +445,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MyTestScreen(
-          homeWorkModel: widget.homeWorkModel,
-          isFromSimulatorTest: true,
-        ),
+            homeWorkModel: widget.homeWorkModel, isFromSimulatorTest: true),
       ),
     );
   }
@@ -483,21 +485,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void showCheckNetworkDialog() async {
     await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return CustomAlertDialog(
-        title: "Notify",
-        description: "An error occur. Please check your connection!",
-        okButtonTitle: "OK",
-        cancelButtonTitle: null,
-        borderRadius: 8,
-        hasCloseButton: false,
-        okButtonTapped: () {
-          Navigator.of(context).pop();
-        },
-        cancelButtonTapped: null,
-      );
-    },
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur. Please check your connection!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
     );
   }
 
@@ -513,7 +515,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (isOffline) {
       showCheckNetworkDialog();
     } else {
-      if (null != _simulatorTestPresenter!.testDetail && null != _simulatorTestPresenter!.filesTopic) {
+      if (null != _simulatorTestPresenter!.testDetail &&
+          null != _simulatorTestPresenter!.filesTopic) {
         updateStatusForReDownload();
         _simulatorTestPresenter!.reDownloadFiles();
       }
