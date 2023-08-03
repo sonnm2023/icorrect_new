@@ -38,6 +38,10 @@ String submitHomeWorkEP() {
   return '${icorrectDomain}api/v1/ielts-test/syllabus/submit';
 }
 
+String submitHomeWorkV2EP(){
+  return '${icorrectDomain}api/v1/ielts-test/submit-v2';
+}
+
 String getTestDetailWithIdEP(String testId) =>
     '${toolDomain}api/get-test-with-id/$testId';
 

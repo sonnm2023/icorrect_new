@@ -43,7 +43,6 @@ class _MyTestScreenState extends State<MyTestScreen> {
   void initState() {
     super.initState();
     _provider = Provider.of<MyTestProvider>(context, listen: false);
-    print('activity Id:${widget.homeWorkModel.activityId.toString()}');
     Future.delayed(Duration.zero, () {
       _provider!.clearData();
     });
@@ -51,60 +50,60 @@ class _MyTestScreenState extends State<MyTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, false);
-return Future.value(false);
-      },
-      child: DefaultTabController(
-        length: widget.homeWorkModel.activityAnswer.hasTeacherResponse() ? 4 : 3,
-        child: Scaffold(
-          key: scaffoldKey,
-          appBar: AppBar(
-            elevation: 0.0,
-            iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
-            centerTitle: true,
-            leading: Consumer<MyTestProvider>(
-                builder: (context, myTestprovider, child) {
-              return BackButton(
-                onPressed: () {
-                  if (myTestprovider.reAnswerOfQuestions.isNotEmpty) {
-                    _showDialogConfirmToOutScreen(provider: myTestprovider);
-                  } else {
-                    if (widget.isFromSimulatorTest) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (_) => const HomeWorkScreen(),
-                        ),
-                        (route) => false,
-                      );
+    return DefaultTabController(
+      length: widget.homeWorkModel.activityAnswer.hasTeacherResponse() ? 4 : 3,
+      child: WillPopScope(
+          onWillPop: () async {
+            Navigator.of(context).pop();
+            return false;
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            appBar: AppBar(
+              elevation: 0.0,
+              iconTheme:
+                  const IconThemeData(color: AppColor.defaultPurpleColor),
+              centerTitle: true,
+              leading: Consumer<MyTestProvider>(
+                  builder: (context, myTestprovider, child) {
+                return BackButton(
+                  onPressed: () {
+                    if (myTestprovider.reAnswerOfQuestions.isNotEmpty) {
+                      _showDialogConfirmToOutScreen(provider: myTestprovider);
                     } else {
-                      Navigator.pop(context);
+                      if (widget.isFromSimulatorTest) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => const HomeWorkScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                        Navigator.pop(context);
+                      }
                     }
-                  }
-                },
-              );
-            }),
-            title: const Text(
-              "ICORRECT",
-              style: TextStyle(color: AppColor.defaultPurpleColor),
+                  },
+                );
+              }),
+              title: const Text(
+                "ICORRECT",
+                style: TextStyle(color: AppColor.defaultPurpleColor),
+              ),
+              bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(50),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                color: AppColor.defaultPurpleColor))),
+                    child: _tabBar,
+                  )),
+              backgroundColor: AppColor.defaultWhiteColor,
             ),
-            bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(50),
-                child: Container(
-                  decoration: const BoxDecoration(
-                      border: Border(
-                          bottom:
-                              BorderSide(color: AppColor.defaultPurpleColor))),
-                  child: _tabBar,
-                )),
-            backgroundColor: AppColor.defaultWhiteColor,
-          ),
-          body: TabBarView(
-            children: _tabBarView(),
-          ),
-        ),
-      ),
+            body: TabBarView(
+              children: _tabBarView(),
+            ),
+          )),
     );
   }
 
@@ -184,7 +183,7 @@ return Future.value(false);
 
   Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
     for (var q in questions) {
-      if(q.answers.isNotEmpty){
+      if (q.answers.isNotEmpty) {
         String fileName = q.answers.last.url.toString();
         FileStorageHelper.deleteFile(fileName, MediaType.audio, null);
       }
