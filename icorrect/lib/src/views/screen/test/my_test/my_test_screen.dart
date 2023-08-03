@@ -57,7 +57,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
 return Future.value(false);
       },
       child: DefaultTabController(
-        length: widget.homeWorkModel.activityAnswer.hasTeacherResponse() ? 4 : 3,
+        length: widget.homeWorkModel.activityAnswer!.hasTeacherResponse() ? 4 : 3,
         child: Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
@@ -109,7 +109,7 @@ return Future.value(false);
   }
 
   List<Widget> _tabsLabel() {
-    return widget.homeWorkModel.activityAnswer.hasTeacherResponse()
+    return widget.homeWorkModel.activityAnswer!.hasTeacherResponse()
         ? const [
             Tab(
               child: Text('MY TEST',
@@ -145,8 +145,8 @@ return Future.value(false);
   }
 
   _tabBarView() {
-    print('test id: ${widget.homeWorkModel.activityAnswer.testId.toString()}');
-    return widget.homeWorkModel.activityAnswer.hasTeacherResponse()
+    print('test id: ${widget.homeWorkModel.activityAnswer!.testId.toString()}');
+    return widget.homeWorkModel.activityAnswer!.hasTeacherResponse()
         ? [
             MyTestTab(
                 homeWorkModel: widget.homeWorkModel, provider: _provider!),

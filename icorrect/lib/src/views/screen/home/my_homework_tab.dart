@@ -308,8 +308,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     //     ),
     //   ),
     // );
-    if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
-        _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
+
+    Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(_selectedHomeWorkModel!);
+
+    if (statusMap['title'] == 'Out of date' || statusMap['title'] == 'Not Completed') {
+    // if (_selectedHomeWorkModel!.activityStatus == Status.outOfDate.get ||
+    //     _selectedHomeWorkModel!.activityStatus == Status.notComplete.get) {
       Navigator.push(
         context,
         MaterialPageRoute(

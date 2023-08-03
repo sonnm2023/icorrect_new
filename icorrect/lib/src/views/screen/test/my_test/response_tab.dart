@@ -43,9 +43,9 @@ class _ResponseTabState extends State<ResponseTab>
     }
     _loading = CircleLoading();
     _loading?.show(context);
-    if (widget.homeWorkModel.activityAnswer.orderId.toString().isNotEmpty) {
+    if (widget.homeWorkModel.activityAnswer!.orderId.toString().isNotEmpty) {
       _presenter!
-          .getResponse(widget.homeWorkModel.activityAnswer.orderId.toString());
+          .getResponse(widget.homeWorkModel.activityAnswer!.orderId.toString());
     }
   }
 
@@ -62,7 +62,7 @@ class _ResponseTabState extends State<ResponseTab>
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
             _loading?.show(context);
-            _presenter!.getResponse(widget.homeWorkModel.activityAnswer.orderId.toString());
+            _presenter!.getResponse(widget.homeWorkModel.activityAnswer!.orderId.toString());
           });
         },
         child: _buildResponseTab());

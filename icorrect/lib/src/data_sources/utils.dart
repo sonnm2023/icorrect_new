@@ -144,42 +144,65 @@ class Utils {
     }
   }
 
+  static DateTime convertStringToDateTime(String str) {
+    DateTime tempDate = DateTime.parse(str);
+    return tempDate;
+  }
+
   static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel) {
-    switch (homeWorkModel.activityStatus) {
-      case 1:
-        return {
-          'title': 'Submitted',
-          'color': const Color.fromARGB(255, 45, 117, 243)
-        };
-      case 2:
+    if (null == homeWorkModel.activityAnswer) {
+      return {
+        'title': 'Not Completed',
+        'color': const Color.fromARGB(255, 237, 179, 3)
+      };
+    } else {
+      if (homeWorkModel.activityEndTime.isNotEmpty) {
+        DateTime endTime = DateTime.parse(homeWorkModel.activityEndTime);
+        DateTime createTime =
+        DateTime.parse(homeWorkModel.activityAnswer!.createdAt);
+        if (endTime.compareTo(createTime) < 0) {
+          return {
+            'title': 'Out of date',
+            'color': Colors.red,
+          };
+        }
+      }
+
+      if (homeWorkModel.activityAnswer!.aiOrder != 0 || homeWorkModel.activityAnswer!.orderId != 0) {
         return {
           'title': 'Corrected',
           'color': const Color.fromARGB(255, 12, 201, 110)
         };
-      case 0:
-        return {
-          'title': 'Not Completed',
-          'color': const Color.fromARGB(255, 237, 179, 3)
-        };
-      case -1:
-        return {
-          'title': 'Late',
-          'color': Colors.orange,
-        };
-      case -2:
-        return {
-          'title': 'Out of date',
-          'color': Colors.red,
-        };
-      default:
-        return {};
+      } else {
+        if (homeWorkModel.activityAnswer!.late == 0) {
+          return {
+            'title': 'Submitted',
+            'color': const Color.fromARGB(255, 45, 117, 243)
+          };
+        }
+
+        if (homeWorkModel.activityAnswer!.late == 1) {
+          return {
+            'title': 'Late',
+            'color': Colors.orange,
+          };
+        }
+      }
+
+      return {}; //Error
     }
   }
 
   static String haveAiResponse(ActivitiesModel homeWorkModel) {
-    return homeWorkModel.activityAnswer.aiResponseLink.isNotEmpty
-        ? '& AI Scored'
-        : '';
+    if (null != homeWorkModel.activityAnswer) {
+      if (homeWorkModel.activityAnswer!.aiResponseLink.isNotEmpty) {
+        return "& AI Scored";
+      } else {
+        return '';
+      }
+    } else {
+      return '';
+    }
   }
 
   static int getFilterStatus(String status) {

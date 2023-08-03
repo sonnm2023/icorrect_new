@@ -62,8 +62,8 @@ class ActivitiesModel {
   String get activityTestOption => _activityTestOption ?? "";
   set activityTestOption(String activityTestOption) =>
       _activityTestOption = activityTestOption;
-  ActivityAnswer get activityAnswer => _activityAnswer ?? ActivityAnswer();
-  set activityAnswer(ActivityAnswer activityAnswer) =>
+  ActivityAnswer? get activityAnswer => _activityAnswer;
+  set activityAnswer(ActivityAnswer? activityAnswer) =>
       _activityAnswer = activityAnswer;
 
   bool canReanswer() {

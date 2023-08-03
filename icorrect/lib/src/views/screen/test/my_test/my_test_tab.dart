@@ -60,7 +60,7 @@ class _MyTestTabState extends State<MyTestTab>
     _player = AudioPlayer();
     _loading!.show(context);
     _presenter!
-        .getMyTest(widget.homeWorkModel.activityAnswer.testId.toString());
+        .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
@@ -97,7 +97,7 @@ class _MyTestTabState extends State<MyTestTab>
                     })),
             Stack(
               children: [
-                (widget.homeWorkModel.activityAnswer.aiOrder != 0)
+                (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
                     ? Expanded(child: LayoutBuilder(builder: (_, constraint) {
                         return InkWell(
                           onTap: () {
@@ -178,7 +178,7 @@ class _MyTestTabState extends State<MyTestTab>
     _loading!.show(context);
     ActivitiesModel homework = widget.homeWorkModel;
     _presenter!.updateMyAnswer(
-        testId: homework.activityAnswer.testId.toString(),
+        testId: homework.activityAnswer!.testId.toString(),
         activityId: homework.activityId.toString(),
         reQuestions: requestions);
   }
@@ -213,8 +213,8 @@ class _MyTestTabState extends State<MyTestTab>
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
         builder: (_) {
           return FutureBuilder(
-              future: AiResponseEP(
-                  widget.homeWorkModel.activityAnswer.aiOrder.toString()),
+              future: aiResponseEP(
+                  widget.homeWorkModel.activityAnswer!.aiOrder.toString()),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return Stack(
