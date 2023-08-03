@@ -297,7 +297,7 @@ class MyTestPresenter {
 
     formData.addEntries([MapEntry('test_id', testId)]);
     formData.addEntries(const [MapEntry('is_update', '1')]);
-    // formData.addEntries([MapEntry('activity_id', activityId)]);
+    formData.addEntries([MapEntry('activity_id', activityId)]);
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry('os', "android")]);

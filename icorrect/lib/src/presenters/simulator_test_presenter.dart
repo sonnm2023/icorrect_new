@@ -349,6 +349,7 @@ class SimulatorTestPresenter {
 
     formData.addEntries([MapEntry('test_id', testId)]);
     formData.addEntries([MapEntry('activity_id', activityId)]);
+    formData.addEntries([const MapEntry('is_update', '0')]);
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry('os', "android")]);
