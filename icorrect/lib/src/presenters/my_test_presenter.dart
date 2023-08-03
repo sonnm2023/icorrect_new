@@ -262,10 +262,10 @@ class MyTestPresenter {
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
+        print("error form: ${json.toString()}");
         if (json['error_code'] == 200 && json['status'] == 'success') {
           _view!.updateAnswersSuccess('Save your answers successfully!');
         } else {
-          print("error form: ${json.toString()}");
           _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
         }
       }).catchError((onError) {
@@ -285,7 +285,7 @@ class MyTestPresenter {
       {required String testId,
       required String activityId,
       required List<QuestionTopicModel> questions}) async {
-    String url = submitHomeWorkEP();
+    String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -296,7 +296,8 @@ class MyTestPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries([MapEntry('activity_id', activityId)]);
+    formData.addEntries([MapEntry('is_update', '0')]);
+    // formData.addEntries([MapEntry('activity_id', activityId)]);
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry('os', "android")]);

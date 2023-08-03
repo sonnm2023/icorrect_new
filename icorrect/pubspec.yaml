@@ -49,7 +49,7 @@ dependencies:
   device_info_plus: ^9.0.2
   package_info_plus: ^4.0.2
   grouped_list: ^5.1.2
-  audioplayers: ^4.0.1
+  audioplayers: ^5.0.0
   permission_handler: ^10.2.0
   record: ^4.4.4
   path_provider: ^2.0.14
