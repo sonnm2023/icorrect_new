@@ -337,7 +337,7 @@ class SimulatorTestPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
   }) async {
-    String url = submitHomeWorkEP();
+    String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
