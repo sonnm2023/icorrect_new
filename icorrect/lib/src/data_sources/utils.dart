@@ -151,6 +151,10 @@ class Utils {
 
   static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel) {
     if (null == homeWorkModel.activityAnswer) {
+      //TODO: Check time end so voi time hien tai
+      //Can server tra ve time hien tai - de thong nhat, do phai check timezone
+      //End time > time hien tai ==> out of date
+      //End time < time hien tai ==> Not Complete
       return {
         'title': 'Not Completed',
         'color': const Color.fromARGB(255, 237, 179, 3)
