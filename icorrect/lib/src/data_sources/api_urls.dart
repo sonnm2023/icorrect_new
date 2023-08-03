@@ -23,7 +23,7 @@ String fileEP(String name) => '${icorrectDomain}file?filename=$name';
 String responseEP(String orderId) =>
     '${toolDomain}api/response?order_id=$orderId';
 
-Future<String> AiResponseEP(String orderId) async =>
+Future<String> aiResponseEP(String orderId) async =>
     '${icorrectDomain}ai-response/index.html?order_id=$orderId&token=${await Utils.getAccessToken()}';
 
 String specialHomeWorksEP(
@@ -36,6 +36,10 @@ String myTestDetailEP(String testId) =>
 
 String submitHomeWorkEP() {
   return '${icorrectDomain}api/v1/ielts-test/syllabus/submit';
+}
+
+String submitHomeWorkV2EP(){
+  return '${icorrectDomain}api/v1/ielts-test/submit-v2';
 }
 
 String getTestDetailWithIdEP(String testId) =>

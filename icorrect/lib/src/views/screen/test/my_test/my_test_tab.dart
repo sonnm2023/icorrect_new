@@ -122,9 +122,14 @@ class _MyTestTabState extends State<MyTestTab>
                     : Container(),
                 Expanded(
                     child: Stack(children: [
-                  TestRecordWidget(finishAnswer: (currentQuestion) {
-                    _onFinishReanswer(currentQuestion);
-                  }),
+                  TestRecordWidget(
+                    finishAnswer: (currentQuestion) {
+                      _onFinishReanswer(currentQuestion);
+                    },
+                    cancelAnswer: () {
+                      _onCancelReanswer();
+                    },
+                  ),
                   (provider.reAnswerOfQuestions.isNotEmpty &&
                           !provider.visibleRecord)
                       ? LayoutBuilder(builder: (_, constraint) {
@@ -189,6 +194,10 @@ class _MyTestTabState extends State<MyTestTab>
         .indexWhere((q) => q.id == question.id);
     widget.provider.myAnswerOfQuestions[index] = question;
     widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
+    _onCancelReanswer();
+  }
+
+  void _onCancelReanswer() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
     widget.provider.countDownTimer!.cancel();
@@ -218,19 +227,25 @@ class _MyTestTabState extends State<MyTestTab>
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return Stack(
-                    alignment: Alignment.topCenter,
+                    alignment: Alignment.topRight,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: AppColor.defaultGrayColor,
-                          size: 35,
+                      Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: AIResponse(url: snapshot.data.toString()),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(10),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.black,
+                            size: 25,
+                          ),
                         ),
                       ),
-                      AIResponse(url: snapshot.data.toString())
                     ],
                   );
                 }
@@ -360,9 +375,11 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
-    widget.provider.setCurrentQuestion(question);
-    widget.provider.setVisibleRecord(true);
-    _recordReanswer(provider.visibleRecord, question);
+    if (!provider.visibleRecord) {
+      widget.provider.setCurrentQuestion(question);
+      widget.provider.setVisibleRecord(true);
+      _recordReanswer(provider.visibleRecord, question);
+    }
   }
 
   _showTips(QuestionTopicModel questionTopicModel) {

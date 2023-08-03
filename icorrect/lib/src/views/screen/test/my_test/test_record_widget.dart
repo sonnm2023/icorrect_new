@@ -7,9 +7,11 @@ import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:provider/provider.dart';
 
 class TestRecordWidget extends StatelessWidget {
-  const TestRecordWidget({super.key, required this.finishAnswer});
+  const TestRecordWidget(
+      {super.key, required this.finishAnswer, required this.cancelAnswer});
 
   final Function(QuestionTopicModel questionTopicModel) finishAnswer;
+  final Function() cancelAnswer;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +53,15 @@ class TestRecordWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Center(
-                    child: _buildFinishButton(currentQuestion),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildFinishButton(currentQuestion),
+                        _buildCancelButton()
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -79,6 +88,31 @@ class TestRecordWidget extends StatelessWidget {
         alignment: Alignment.center,
         child: const Text(
           'Finish',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCancelButton() {
+    return InkWell(
+      onTap: () {
+        cancelAnswer();
+      },
+      child: Container(
+        width: 100,
+        height: 44,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(22),
+          color: AppColor.defaultLightGrayColor,
+        ),
+        alignment: Alignment.center,
+        child: const Text(
+          'Cancel',
           style: TextStyle(
             color: Colors.white,
             fontSize: 15,
