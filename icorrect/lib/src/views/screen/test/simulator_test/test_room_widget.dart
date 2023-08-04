@@ -64,7 +64,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   final List<dynamic> _reviewingList = [];
   List<dynamic> _reviewingQuestionList = [];
 
-
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
