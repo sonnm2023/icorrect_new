@@ -75,7 +75,7 @@ class _OtherTabState extends State<OtherTab>
               return InkWell(
                 onTap: () {
                   StudentResultModel resultModel =
-                      provider.highLightHomeworks.elementAt(index);
+                      provider.otherLightHomeWorks.elementAt(index);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
