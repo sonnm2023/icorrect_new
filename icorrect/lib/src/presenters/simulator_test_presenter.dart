@@ -287,6 +287,18 @@ class SimulatorTestPresenter {
     _view!.onGotoMyTestScreen();
   }
 
+  void reDownloadFiles() {
+    downloadFiles(testDetail!, filesTopic!);
+  }
+
+  void tryAgainToDownload() async {
+    if (kDebugMode) {
+      print("DEBUG: tryAgainToDownload");
+    }
+
+    _view!.onTryAgainToDownload();
+  }
+
   Future<void> submitTest({
     required String testId,
     required String activityId,
@@ -302,6 +314,10 @@ class SimulatorTestPresenter {
 
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
+        if (kDebugMode) {
+          print("DEBUG: submit response: $value");
+        }
+
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         if (json['error_code'] == 200) {
           _view!.onSubmitTestSuccess('Save your answers successfully!');
@@ -320,16 +336,17 @@ class SimulatorTestPresenter {
     }
   }
 
-  void reDownloadFiles() {
-    downloadFiles(testDetail!, filesTopic!);
-  }
+  List<MapEntry<String, String>> _generateFormat(
+      QuestionTopicModel q, String suffix) {
+    List<MapEntry<String, String>> result = [];
 
-  void tryAgainToDownload() async {
-    if (kDebugMode) {
-      print("DEBUG: tryAgainToDownload");
+    if (q.answers.isEmpty) return [];
+
+    for (int i = 0; i < q.answers.length; i++) {
+      result.add(MapEntry("$suffix[$i]", q.answers[i].url));
     }
 
-    _view!.onTryAgainToDownload();
+    return result;
   }
 
   Future<http.MultipartRequest> _formDataRequest({
@@ -396,14 +413,12 @@ class SimulatorTestPresenter {
       for (int i = 0; i < q.answers.length; i++) {
         File audioFile = File(
           await FileStorageHelper.getFilePath(
-              q.answers.elementAt(i).url.toString(),
-              MediaType.audio,
-              testId),
+              q.answers.elementAt(i).url.toString(), MediaType.audio, testId),
         );
 
         if (await audioFile.exists()) {
           request.files
-              .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
+              .add(await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
     }
@@ -411,19 +426,6 @@ class SimulatorTestPresenter {
     request.fields.addAll(formData);
 
     return request;
-  }
-  
-  List<MapEntry<String, String>> _generateFormat(
-      QuestionTopicModel q, String suffix) {
-    List<MapEntry<String, String>> result = [];
-
-    if (q.answers.isEmpty) return [];
-
-    for (int i = 0; i < q.answers.length; i++) {
-      result.add(MapEntry("$suffix[$i]", q.answers[i].url));
-    }
-
-    return result;
   }
 
 }

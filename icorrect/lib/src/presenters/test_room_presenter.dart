@@ -181,6 +181,10 @@ class TestRoomPresenter {
 
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
+        if (kDebugMode) {
+          print("DEBUG: submit response: $value");
+        }
+
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         if (json['error_code'] == 200) {
           _view!.onSubmitTestSuccess('Save your answers successfully!');
@@ -281,7 +285,7 @@ class TestRoomPresenter {
 
         if (await audioFile.exists()) {
           request.files
-              .add(await http.MultipartFile.fromPath(prefix, audioFile.path));
+              .add(await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
     }
