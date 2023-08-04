@@ -45,6 +45,10 @@ String submitHomeWorkV2EP(){
 String getTestDetailWithIdEP(String testId) =>
     '${toolDomain}api/get-test-with-id/$testId';
 
+String getActivitiesList(Map<String, String> queryParameters){
+  return '${apiDomain}api/v1/syllabus/activities-of-class/index?${Uri(queryParameters: queryParameters).query}';
+}
+
 class RequestMethod {
   static const post = 'POST';
   static const get = 'GET';
