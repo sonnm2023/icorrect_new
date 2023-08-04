@@ -160,19 +160,8 @@ class Utils {
         'color': const Color.fromARGB(255, 237, 179, 3)
       };
     } else {
-      if (homeWorkModel.activityEndTime.isNotEmpty) {
-        DateTime endTime = DateTime.parse(homeWorkModel.activityEndTime);
-        DateTime createTime =
-        DateTime.parse(homeWorkModel.activityAnswer!.createdAt);
-        if (endTime.compareTo(createTime) < 0) {
-          return {
-            'title': 'Out of date',
-            'color': Colors.red,
-          };
-        }
-      }
-
-      if (homeWorkModel.activityAnswer!.aiOrder != 0 || homeWorkModel.activityAnswer!.orderId != 0) {
+      if (homeWorkModel.activityAnswer!.aiOrder != 0 ||
+          homeWorkModel.activityAnswer!.orderId != 0) {
         return {
           'title': 'Corrected',
           'color': const Color.fromARGB(255, 12, 201, 110)
@@ -190,6 +179,18 @@ class Utils {
             'title': 'Late',
             'color': Colors.orange,
           };
+        }
+
+        if (homeWorkModel.activityEndTime.isNotEmpty) {
+          DateTime endTime = DateTime.parse(homeWorkModel.activityEndTime);
+          DateTime createTime =
+              DateTime.parse(homeWorkModel.activityAnswer!.createdAt);
+          if (endTime.compareTo(createTime) < 0) {
+            return {
+              'title': 'Out of date',
+              'color': Colors.red,
+            };
+          }
         }
       }
 

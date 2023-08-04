@@ -179,6 +179,11 @@ class TestRoomPresenter {
       questions: questions,
     );
 
+    if (kDebugMode) {
+      print("DEBUG: testId = $testId");
+      print("DEBUG: activityId = $activityId");
+    }
+
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
         if (kDebugMode) {

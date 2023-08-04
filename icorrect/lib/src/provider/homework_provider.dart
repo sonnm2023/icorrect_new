@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
@@ -272,8 +273,13 @@ class HomeWorkProvider with ChangeNotifier {
       List<ActivitiesModel> temp1 = listHomeWorks.where((e1) => listSelectedClassFilter.map((e2) => e2.id)
           .contains(e1.classId)).toList();
 
-      List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
-          .contains(e1.activityStatus)).toList(); //completeStatus //TODO
+      // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
+      //     .contains(e1.activityStatus)).toList();
+      List<ActivitiesModel> temp2 = temp1.where((e1) {
+        Map<String, dynamic> activityStatusMap = Utils.getHomeWorkStatus(e1);
+        return listSelectedStatusFilter.map((e2) => e2.name)
+            .contains(activityStatusMap['title']);
+      }).toList();
       setListFilteredHomeWorks(temp2);
     }
 
