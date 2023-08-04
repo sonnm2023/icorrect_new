@@ -90,6 +90,63 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _onAppActive();
+
+        break;
+      case AppLifecycleState.paused:
+        print('App paused');
+        break;
+      case AppLifecycleState.inactive:
+        _onAppInBackground();
+        break;
+      case AppLifecycleState.detached:
+        print('App detached');
+        break;
+    }
+  }
+
+  Future _onAppInBackground() async {
+    VideoPlayerController videoController =
+        _simulatorTestProvider!.videoPlayController!;
+    if (videoController.value.isPlaying) {
+      videoController.pause();
+      _simulatorTestProvider!.setPlayController(videoController);
+    }
+
+    if (_simulatorTestProvider!.visibleRecord) {
+      _recordController!.stop();
+      _audioPlayerController!.stop();
+    }
+  }
+
+  Future _onAppActive() async {
+    VideoPlayerController videoController =
+        _simulatorTestProvider!.videoPlayController!;
+
+    if (_simulatorTestProvider!.visibleRecord ||
+        _simulatorTestProvider!.visibleCueCard) {
+      QuestionTopicModel currentQuestion =
+          _simulatorTestProvider!.currentQuestion;
+      _initVideoController(
+          fileName: currentQuestion.files.first.url,
+          handleWhenFinishType: HandleWhenFinish.questionVideoType);
+
+      _simulatorTestProvider!.setVisibleCueCard(false);
+      _simulatorTestProvider!.setVisibleRecord(false);
+      _recordController!.stop();
+      _audioPlayerController!.stop();
+    } else {
+      videoController.play();
+    }
+    _simulatorTestProvider!.setPlayController(videoController);
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
       print("DEBUG: TestRoomWidget --- build");
@@ -369,8 +426,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
-    bool isPart2 =
-        _simulatorTestProvider!.topicsQueue.first.numPart == PartOfTest.part2.get;
+    bool isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
+        PartOfTest.part2.get;
     onFinishAnswer(isPart2);
   }
 

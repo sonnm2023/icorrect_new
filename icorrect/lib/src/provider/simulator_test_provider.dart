@@ -192,7 +192,7 @@ class SimulatorTestProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
-  }
+  } 
 
   int _countRepeat = 0;
   int get countRepeat => _countRepeat;
