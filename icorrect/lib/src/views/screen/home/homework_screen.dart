@@ -11,6 +11,7 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
@@ -38,6 +39,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
+  AuthProvider? _authProvider;
   CircleLoading? _loading;
 
   @override
@@ -45,6 +47,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     super.initState();
     _loading = CircleLoading();
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _homeWorkPresenter = HomeWorkPresenter(this);
     _getListHomeWork();
   }
@@ -60,6 +63,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void dispose() {
     _homeWorkProvider.dispose();
+    _authProvider!.dispose();
     super.dispose();
   }
 
@@ -107,74 +111,85 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       ],
     );
 
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: MaterialApp(
-        theme: ThemeData(
-          brightness: Brightness.light,
-          // add tabBarTheme
-          tabBarTheme: const TabBarTheme(
-            labelColor: AppColor.defaultPurpleColor,
-            labelStyle: TextStyle(
-                color: AppColor.defaultPurpleColor,
-                fontWeight: FontWeight.w800),
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: AppColor.defaultPurpleColor),
-            ),
-          ),
-          primaryColor: AppColor.defaultPurpleColor,
-          unselectedWidgetColor:
-              AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: DefaultTabController(
-          length: 1,
-          child: Scaffold(
-            key: scaffoldKey,
-            appBar: AppBar(
-              title: const Text(
-                "MY HOMEWORK",
-                style: TextStyle(color: AppColor.defaultPurpleColor),
+    return Consumer<AuthProvider>(builder: (context, authProvider, child) {
+      return WillPopScope(
+        onWillPop: () async {
+          if (authProvider.isDialogShowing) {
+            Navigator.pop(context);
+            authProvider.setDialogShowing(false);
+            return false;
+          }
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const HomeWorkScreen()));
+          return true;
+        },
+        child: MaterialApp(
+          theme: ThemeData(
+            brightness: Brightness.light,
+            // add tabBarTheme
+            tabBarTheme: const TabBarTheme(
+              labelColor: AppColor.defaultPurpleColor,
+              labelStyle: TextStyle(
+                  color: AppColor.defaultPurpleColor,
+                  fontWeight: FontWeight.w800),
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(color: AppColor.defaultPurpleColor),
               ),
-              centerTitle: true,
-              elevation: 0.0,
-              iconTheme:
-                  const IconThemeData(color: AppColor.defaultPurpleColor),
-              // bottom: PreferredSize(
-              //   preferredSize: _tabBar.preferredSize,
-              //   child: Material(
-              //     color: defaultWhiteColor,
-              //     child: _tabBar,
-              //   ),
-              // ),
-              backgroundColor: AppColor.defaultWhiteColor,
             ),
-            body: Stack(
-              children: [
-                MyHomeWorkTab(
-                  homeWorkProvider: _homeWorkProvider,
-                  homeWorkPresenter: _homeWorkPresenter!,
+            primaryColor: AppColor.defaultPurpleColor,
+            unselectedWidgetColor:
+                AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: DefaultTabController(
+            length: 1,
+            child: Scaffold(
+              key: scaffoldKey,
+              appBar: AppBar(
+                title: const Text(
+                  "MY HOMEWORK",
+                  style: TextStyle(color: AppColor.defaultPurpleColor),
                 ),
-                Consumer<HomeWorkProvider>(
-                  builder: (context, homeWorkProvider, child) {
-                    if (homeWorkProvider.isProcessing) {
-                      _loading!.show(context);
-                    } else {
-                      _loading!.hide();
-                    }
-                    return Container();
-                  },
-                ),
-              ],
-            ),
-            drawer: Drawer(
-              backgroundColor: AppColor.defaultWhiteColor,
-              child: drawerItems,
+                centerTitle: true,
+                elevation: 0.0,
+                iconTheme:
+                    const IconThemeData(color: AppColor.defaultPurpleColor),
+                // bottom: PreferredSize(
+                //   preferredSize: _tabBar.preferredSize,
+                //   child: Material(
+                //     color: defaultWhiteColor,
+                //     child: _tabBar,
+                //   ),
+                // ),
+                backgroundColor: AppColor.defaultWhiteColor,
+              ),
+              body: Stack(
+                children: [
+                  MyHomeWorkTab(
+                    homeWorkProvider: _homeWorkProvider,
+                    homeWorkPresenter: _homeWorkPresenter!,
+                  ),
+                  Consumer<HomeWorkProvider>(
+                    builder: (context, homeWorkProvider, child) {
+                      if (homeWorkProvider.isProcessing) {
+                        _loading!.show(context);
+                      } else {
+                        _loading!.hide();
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
+              ),
+              drawer: Drawer(
+                backgroundColor: AppColor.defaultWhiteColor,
+                child: drawerItems,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   static Widget _drawHeader(UserDataModel user) {
@@ -380,7 +395,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onNewGetListHomeworkComplete( List<ActivitiesModel> activities, List<NewClassModel> classes) async {
+  void onNewGetListHomeworkComplete(
+      List<ActivitiesModel> activities, List<NewClassModel> classes) async {
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
     await _homeWorkProvider.initializeListFilter();

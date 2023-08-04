@@ -69,6 +69,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         ),
         centerTitle: true,
         leading: const BackButton(color: AppColor.defaultPurpleColor),
+        bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(4.0),
+            child: Divider(
+              color: AppColor.defaultPurpleColor,
+              thickness: 1,
+            )),
       ),
       body: SafeArea(
         child: CustomScrollView(
@@ -91,8 +97,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                       PasswordInputWidget(
                           passwordController: confirmNewPasswordController,
                           type: PasswordType.confirmNewPassword),
+                      const SizedBox(height: 20),
                       _buildSaveButton(),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       _buildCancelButton(),
                     ],
                   ),
@@ -130,8 +137,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       },
       background: AppColor.defaultPurpleColor,
       text: 'Save change',
-      fontSize: 15,
-      height: 60,
+      fontSize: 17,
+      height: 50,
+      radius: 20,
     );
   }
 
@@ -144,9 +152,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       background: AppColor.defaultWhiteColor,
       textColor: AppColor.defaultPurpleColor,
       text: 'Cancel',
-      fontSize: 15,
-      height: 60,
-      radius: 13,
+      fontSize: 17,
+      height: 50,
+      radius: 20,
       hasBorder: true,
     );
   }

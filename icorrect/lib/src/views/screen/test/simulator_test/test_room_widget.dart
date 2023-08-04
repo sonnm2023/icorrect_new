@@ -93,20 +93,21 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    switch (state) {
-      case AppLifecycleState.resumed:
-        _onAppActive();
-
-        break;
-      case AppLifecycleState.paused:
-        print('App paused');
-        break;
-      case AppLifecycleState.inactive:
-        _onAppInBackground();
-        break;
-      case AppLifecycleState.detached:
-        print('App detached');
-        break;
+    if (!_simulatorTestProvider!.isVisibleSaveTheTest) {
+      switch (state) {
+        case AppLifecycleState.resumed:
+          _onAppActive();
+          break;
+        case AppLifecycleState.paused:
+          print('App paused');
+          break;
+        case AppLifecycleState.inactive:
+          _onAppInBackground();
+          break;
+        case AppLifecycleState.detached:
+          print('App detached');
+          break;
+      }
     }
   }
 
