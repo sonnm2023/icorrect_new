@@ -845,7 +845,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 _simulatorTestProvider!.setVisibleRecord(false);
                 _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 3; //3 for test, 60 for product
+                int time = 60; //3 for test, 60 for product
                 String timeString = Utils.getTimeRecordString(time);
                 _simulatorTestProvider!.setCountDownCueCard(timeString);
 
