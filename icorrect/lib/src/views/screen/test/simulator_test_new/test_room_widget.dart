@@ -64,7 +64,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   final List<dynamic> _reviewingList = [];
   List<dynamic> _reviewingQuestionList = [];
 
-
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -841,7 +840,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           case HandleWhenFinish.questionVideoType:
             {
               if (_currentQuestion!.cueCard.isNotEmpty &&
-                  (false == _simulatorTestProvider!.visibleCueCard)) {
+                  (false == _simulatorTestProvider!.isVisibleCueCard)) {
                 //Has Cue Card case
                 _simulatorTestProvider!.setVisibleRecord(false);
                 _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
@@ -860,7 +859,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               } else {
                 //Normal case
                 if (false == _simulatorTestProvider!.visibleRecord &&
-                    false == _simulatorTestProvider!.visibleCueCard) {
+                    false == _simulatorTestProvider!.isVisibleCueCard) {
                   _startRecordAnswer(fileName: fileName, isPart2: false);
                 }
               }
@@ -928,10 +927,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _prepareToEndTheTest() async {
-    //Stop old record
-    await _stopRecord();
-
+  void _prepareToEndTheTest() {
     //Finish doing test
     _simulatorTestProvider!.updateReviewingStatus(ReviewingStatus.none);
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.finish);
@@ -1121,7 +1117,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Stop record
     _setVisibleRecord(false, null, null);
 
-    if (_simulatorTestProvider!.visibleCueCard) {
+    if (_simulatorTestProvider!.isVisibleCueCard) {
       //Has cue card case
       if (isPart2) {
         _simulatorTestProvider!.setVisibleCueCard(false);

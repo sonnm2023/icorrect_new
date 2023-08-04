@@ -47,11 +47,14 @@ class _MyTestScreenState extends State<MyTestScreen> {
       _provider!.clearData();
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {
+    bool hasTeacherResponse = (widget.homeWorkModel.activityAnswer != null &&
+        widget.homeWorkModel.activityAnswer!.hasTeacherResponse());
     return DefaultTabController(
-      length: widget.homeWorkModel.activityAnswer!.hasTeacherResponse() ? 4 : 3,
+      length: hasTeacherResponse ? 4 : 3,
       child: WillPopScope(
           onWillPop: () async {
             Navigator.of(context).pop();
