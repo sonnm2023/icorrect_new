@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -1132,8 +1133,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setVisibleSaveTheTest(isVisible);
   }
 
-  void _gotoMyTestScreen() {
-    widget.simulatorTestPresenter.gotoMyTestScreen();
+  void _gotoMyTestScreen(ActivityAnswer activityAnswer) {
+    widget.simulatorTestPresenter.gotoMyTestScreen(activityAnswer);
   }
 
   //For test: Delete All Answer file
@@ -1282,7 +1283,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onSubmitTestSuccess(String msg) {
+  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
 
     showToastMsg(
@@ -1290,7 +1291,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       toastState: ToastStatesType.success,
     );
 
-    _gotoMyTestScreen();
+    _gotoMyTestScreen(activityAnswer);
   }
 
   @override
