@@ -53,60 +53,53 @@ class _MyTestScreenState extends State<MyTestScreen> {
     bool hasTeacherResponse = widget.homeWorkModel.activityAnswer != null &&
         widget.homeWorkModel.activityAnswer!.hasTeacherResponse();
     return DefaultTabController(
-      length: hasTeacherResponse ? 4 : 3,
-      child: WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            return false;
-          },
-          child: Scaffold(
-            key: scaffoldKey,
-            appBar: AppBar(
-              elevation: 0.0,
-              iconTheme:
-                  const IconThemeData(color: AppColor.defaultPurpleColor),
-              centerTitle: true,
-              leading: Consumer<MyTestProvider>(
-                  builder: (context, myTestprovider, child) {
-                return BackButton(
-                  onPressed: () {
-                    if (myTestprovider.reAnswerOfQuestions.isNotEmpty) {
-                      _showDialogConfirmToOutScreen(provider: myTestprovider);
+        length: hasTeacherResponse ? 4 : 3,
+        child: Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            elevation: 0.0,
+            iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
+            centerTitle: true,
+            leading: Consumer<MyTestProvider>(
+                builder: (context, myTestprovider, child) {
+              return BackButton(
+                onPressed: () {
+                  if (myTestprovider.reAnswerOfQuestions.isNotEmpty) {
+                    _showDialogConfirmToOutScreen(provider: myTestprovider);
+                  } else {
+                    if (widget.isFromSimulatorTest) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => const HomeWorkScreen(),
+                        ),
+                        (route) => false,
+                      );
                     } else {
-                      if (widget.isFromSimulatorTest) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (_) => const HomeWorkScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      } else {
-                        Navigator.pop(context);
-                      }
+                      Navigator.pop(context);
                     }
-                  },
-                );
-              }),
-              title: const Text(
-                "ICORRECT",
-                style: TextStyle(color: AppColor.defaultPurpleColor),
-              ),
-              bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(50),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: AppColor.defaultPurpleColor))),
-                    child: _tabBar,
-                  )),
-              backgroundColor: AppColor.defaultWhiteColor,
+                  }
+                },
+              );
+            }),
+            title: const Text(
+              "ICORRECT",
+              style: TextStyle(color: AppColor.defaultPurpleColor),
             ),
-            body: TabBarView(
-              children: _tabBarView(),
-            ),
-          )),
-    );
+            bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(50),
+                child: Container(
+                  decoration: const BoxDecoration(
+                      border: Border(
+                          bottom:
+                              BorderSide(color: AppColor.defaultPurpleColor))),
+                  child: _tabBar,
+                )),
+            backgroundColor: AppColor.defaultWhiteColor,
+          ),
+          body: TabBarView(
+            children: _tabBarView(),
+          ),
+        ));
   }
 
   List<Widget> _tabsLabel() {

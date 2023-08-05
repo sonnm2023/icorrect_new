@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 class AuthProvider with ChangeNotifier {
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
+
+  bool _isDialogShowing = false;
+  bool get isDialogShowing => _isDialogShowing;
+
   bool isDisposed = false;
 
   @override
@@ -18,9 +22,13 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-
   void updateProcessingStatus() {
     _isProcessing = !_isProcessing;
+    notifyListeners();
+  }
+
+  void setDialogShowing(bool isShowing) {
+    _isDialogShowing = isShowing;
     notifyListeners();
   }
 }
