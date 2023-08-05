@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -16,7 +17,9 @@ import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
+import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeWorkScreen extends StatefulWidget {
@@ -108,7 +111,23 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
 
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async {
+        //TODO: Show confirm dialog to quit the application here
+        if (kDebugMode) {
+          print("DEBUG: TODO: Show confirm dialog to quit the application here");
+        }
+
+        //Filter bottom sheet
+        if (_homeWorkProvider.isShowFilter) {
+          _homeWorkProvider.setShowFilter(false);
+          Navigator.of(filterScaffoldKey.currentState!.context).pop();
+        }
+
+        //AI
+        Navigator.of(aiScaffoldKey.currentState!.context).pop();
+
+        return false;
+      },
       child: MaterialApp(
         theme: ThemeData(
           brightness: Brightness.light,

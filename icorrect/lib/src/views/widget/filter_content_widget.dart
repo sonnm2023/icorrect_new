@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+
+final filterScaffoldKey = GlobalKey<ScaffoldState>();
 
 class FilterContentWidget extends StatefulWidget {
   const FilterContentWidget({super.key, required this.homeWorkProvider});
@@ -22,10 +25,11 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
           Tab(text: 'CHOOSE STATUS'),
         ],
       );
-  final scaffoldKey = GlobalKey<ScaffoldState>();
   // late List<ClassModel> _listSelectedClass = [];
   late List<NewClassModel> _listSelectedClass = [];
   late List<HomeWorkStatusModel> _listSelectedStatus = [];
+  late List<NewClassModel> _listSelectedClassTemp = [];
+  late List<HomeWorkStatusModel> _listSelectedStatusTemp = [];
 
   @override
   void initState() {
@@ -33,21 +37,32 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
     _listSelectedClass = widget.homeWorkProvider.listSelectedClassFilter;
     _listSelectedStatus = widget.homeWorkProvider.listSelectedStatusFilter;
+
+    _listSelectedClassTemp = widget.homeWorkProvider.listSelectedClassFilter;
+    _listSelectedStatusTemp = widget.homeWorkProvider.listSelectedStatusFilter;
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        key: scaffoldKey,
-        resizeToAvoidBottomInset: true,
-        appBar: _tabBar,
-        body: TabBarView(
-          children: [
-            _buildListClass(),
-            _buildListStatus(),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        if (kDebugMode) {
+          print("DEBUG: FilterContentWidget - WillPopScope");
+        }
+        return false;
+      },
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          key: filterScaffoldKey,
+          resizeToAvoidBottomInset: true,
+          appBar: _tabBar,
+          body: TabBarView(
+            children: [
+              _buildListClass(),
+              _buildListStatus(),
+            ],
+          ),
         ),
       ),
     );

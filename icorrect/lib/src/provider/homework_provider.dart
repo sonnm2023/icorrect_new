@@ -100,6 +100,18 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
+  //List selected class
+  final List<HomeWorkStatusModel> _listSelectedStatusFilter = [];
+  List<HomeWorkStatusModel> get listSelectedStatusFilter => _listSelectedStatusFilter;
+  void setListSelectedStatusFilter(List<HomeWorkStatusModel> list) {
+    _listSelectedStatusFilter.clear();
+    _listSelectedStatusFilter.addAll(list);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   //Current user information
   UserDataModel _currentUser = UserDataModel();
   UserDataModel get currentUser => _currentUser;
@@ -138,18 +150,6 @@ class HomeWorkProvider with ChangeNotifier {
       return true;
     } else {
       return false;
-    }
-  }
-
-  //List selected class
-  final List<HomeWorkStatusModel> _listSelectedStatusFilter = [];
-  List<HomeWorkStatusModel> get listSelectedStatusFilter => _listSelectedStatusFilter;
-  void setListSelectedStatusFilter(List<HomeWorkStatusModel> list) {
-    _listSelectedStatusFilter.clear();
-    _listSelectedStatusFilter.addAll(list);
-
-    if (!isDisposed) {
-      notifyListeners();
     }
   }
 
@@ -316,5 +316,11 @@ class HomeWorkProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
+  }
+
+  bool _isShowFilter = false;
+  bool get isShowFilter => _isShowFilter;
+  void setShowFilter(bool isShowing) {
+    _isShowFilter = isShowing;
   }
 }

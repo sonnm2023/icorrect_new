@@ -103,9 +103,10 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               width: 25,
             ),
             onPressed: () {
+              widget.homeWorkProvider.setShowFilter(true);
               showModalBottomSheet<void>(
                 context: context,
-                isDismissible: false,
+                isDismissible: true,
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: 400,

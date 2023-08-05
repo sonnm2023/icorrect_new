@@ -32,6 +32,8 @@ import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/alert_dialog.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
+final aiScaffoldKey = GlobalKey<ScaffoldState>();
+
 class MyTestTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
   final MyTestProvider provider;
@@ -226,27 +228,30 @@ class _MyTestTabState extends State<MyTestTab>
                   widget.homeWorkModel.activityAnswer!.aiOrder.toString()),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
-                  return Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        child: AIResponse(url: snapshot.data.toString()),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(
-                            Icons.cancel_outlined,
-                            color: Colors.black,
-                            size: 25,
+                  return Scaffold(
+                    key: aiScaffoldKey,
+                    body: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          child: AIResponse(url: snapshot.data.toString()),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.black,
+                              size: 25,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 }
                 return Container(
