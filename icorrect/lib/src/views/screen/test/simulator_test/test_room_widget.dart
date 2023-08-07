@@ -97,16 +97,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     switch (state) {
       case AppLifecycleState.resumed:
         _onAppActive();
-
         break;
       case AppLifecycleState.paused:
-        print('App paused');
+        if (kDebugMode) {
+          print('DEBUG: App paused');
+        }
         break;
       case AppLifecycleState.inactive:
         _onAppInBackground();
         break;
       case AppLifecycleState.detached:
-        print('App detached');
+        if (kDebugMode) {
+          print('DEBUG: App detached');
+        }
         break;
     }
   }

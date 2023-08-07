@@ -16,7 +16,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<String> login(String email, String password) async {
     String url = '$apiDomain$loginEP';
-    print("step 1");
+    if (kDebugMode) {
+      print("DEBUG: step 1");
+    }
 
     return AppRepository.init()
         .sendRequest(

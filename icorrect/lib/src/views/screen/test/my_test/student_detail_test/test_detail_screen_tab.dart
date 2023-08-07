@@ -191,7 +191,9 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       {required String fileName, required String questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
       //TODO
-      print('_playAudio:${value.path.toString()}');
+      if (kDebugMode) {
+        print('DEBUG: _playAudio:${value.path.toString()}');
+      }
       _playAudio(value.path.toString(), questionId);
     });
   }

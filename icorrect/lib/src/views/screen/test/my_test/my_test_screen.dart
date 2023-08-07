@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -146,7 +147,9 @@ class _MyTestScreenState extends State<MyTestScreen> {
   }
 
   _tabBarView() {
-    print('test id: ${widget.homeWorkModel.activityAnswer!.testId.toString()}');
+    if (kDebugMode) {
+      print('DEBUG: test id: ${widget.homeWorkModel.activityAnswer!.testId.toString()}');
+    }
     return widget.homeWorkModel.activityAnswer!.hasTeacherResponse()
         ? [
             MyTestTab(

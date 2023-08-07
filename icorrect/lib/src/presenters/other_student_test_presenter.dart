@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 
@@ -167,7 +168,9 @@ class OtherStudentTestPresenter {
 
   void downloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total) {
-    print("success : ${nameFile}");
+    if (kDebugMode) {
+      print("DEBUG: success : $nameFile");
+    }
     _view!.downloadFilesSuccess(testDetail, nameFile, percent, index, total);
   }
 
@@ -198,8 +201,10 @@ class OtherStudentTestPresenter {
 
             if (response.statusCode == 200) {
               String contentString = await Utils.convertVideoToBase64(response);
-              print('content String:${contentString}');
-              print('file topic :${fileTopic}');
+              if (kDebugMode) {
+                print('DEBUG: content String:$contentString');
+                print('DEBUG: file topic :$fileTopic');
+              }
 
               await FileStorageHelper.writeVideo(
                   contentString, fileTopic, _mediaType(fileType));

@@ -312,7 +312,9 @@ class MyTestPresenter {
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        print("error form: ${json.toString()}");
+        if (kDebugMode) {
+          print("DEBUG: error form: ${json.toString()}");
+        }
         if (json['error_code'] == 200 && json['status'] == 'success') {
           _view!.updateAnswersSuccess('Save your answers successfully!');
         } else {
@@ -360,7 +362,9 @@ class MyTestPresenter {
     String endFormat = '';
     for (QuestionTopicModel q in questions) {
       String questionId = q.id.toString();
-      print("num part : ${q.numPart.toString()}");
+      if (kDebugMode) {
+        print("DEBUG: num part : ${q.numPart.toString()}");
+      }
       if (q.numPart == PartOfTest.introduce.get) {
         format = 'introduce[$questionId]';
         reanswerFormat = 'reanswer_introduce[$questionId]';
