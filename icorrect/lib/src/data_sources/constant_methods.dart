@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:ui' as ui;
-import 'constant_strings.dart';
+import 'constants.dart';
 
 void printResponse(String text) {
   if (kDebugMode) {

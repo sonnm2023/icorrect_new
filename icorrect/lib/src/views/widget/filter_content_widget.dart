@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-
-final filterScaffoldKey = GlobalKey<ScaffoldState>();
 
 class FilterContentWidget extends StatefulWidget {
   const FilterContentWidget({super.key, required this.homeWorkProvider});
@@ -54,7 +52,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
-          key: filterScaffoldKey,
+          key: GlobalScaffoldKey.filterScaffoldKey,
           resizeToAvoidBottomInset: true,
           appBar: _tabBar,
           body: TabBarView(

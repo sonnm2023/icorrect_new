@@ -10,7 +10,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 
 import '../data_sources/api_urls.dart';
-import '../data_sources/constant_strings.dart';
+import '../data_sources/constants.dart';
 import '../data_sources/local/file_storage_helper.dart';
 import '../data_sources/repositories/app_repository.dart';
 import '../data_sources/utils.dart';

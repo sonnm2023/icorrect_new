@@ -265,4 +265,10 @@ class MyTestProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool _isShowAIResponse = false;
+  bool get isShowAIResponse => _isShowAIResponse;
+  void setShowAIResponse(bool isShow) {
+    _isShowAIResponse = isShow;
+  }
 }

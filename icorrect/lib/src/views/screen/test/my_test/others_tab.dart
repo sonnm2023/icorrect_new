@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/app_asset.dart';
 import '../../../../../core/app_color.dart';
-import '../../../../data_sources/constant_strings.dart';
+import '../../../../data_sources/constants.dart';
 import '../../../../data_sources/utils.dart';
 import '../../../../models/user_data_models/user_data_model.dart';
 import '../../../../presenters/special_homeworks_presenter.dart';

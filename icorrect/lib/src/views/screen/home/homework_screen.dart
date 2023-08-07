@@ -7,16 +7,18 @@ import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
@@ -41,6 +43,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
+  late MyTestProvider _myTestProvider;
   CircleLoading? _loading;
 
   @override
@@ -49,6 +52,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _loading = CircleLoading();
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
     _homeWorkPresenter = HomeWorkPresenter(this);
+
+    _myTestProvider = Provider.of<MyTestProvider>(context, listen: false);
+
     _getListHomeWork();
   }
 
@@ -112,19 +118,26 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     return WillPopScope(
       onWillPop: () async {
-        //TODO: Show confirm dialog to quit the application here
-        if (kDebugMode) {
-          print("DEBUG: TODO: Show confirm dialog to quit the application here");
-        }
-
-        //Filter bottom sheet
         if (_homeWorkProvider.isShowFilter) {
+          //Filter bottom sheet
           _homeWorkProvider.setShowFilter(false);
-          Navigator.of(filterScaffoldKey.currentState!.context).pop();
+          Navigator.of(
+                  GlobalScaffoldKey.filterScaffoldKey.currentState!.context)
+              .pop();
+        } else if (_myTestProvider.isShowAIResponse) {
+          //AI Response
+          _myTestProvider.setShowAIResponse(false);
+          Navigator.of(
+                  GlobalScaffoldKey.aiResponseScaffoldKey.currentState!.context)
+              .pop();
+        } else {
+          //TODO: Show confirm dialog to quit the application here
+          if (kDebugMode) {
+            print(
+                "DEBUG: TODO: Show confirm dialog to quit the application here");
+          }
+          _showQuitAppConfirmDialog();
         }
-
-        //AI
-        Navigator.of(aiScaffoldKey.currentState!.context).pop();
 
         return false;
       },
@@ -190,9 +203,28 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               backgroundColor: AppColor.defaultWhiteColor,
               child: drawerItems,
             ),
+            drawerEnableOpenDragGesture: false,
           ),
         ),
       ),
+    );
+  }
+
+  _showQuitAppConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (builder) {
+        return ConfirmDialogWidget(
+          title: "Confirm",
+          message: "Are you sure to quit this application?",
+          cancelButtonTitle: "Cancel",
+          okButtonTitle: "Ok",
+          cancelButtonTapped: () {},
+          okButtonTapped: () {
+            Navigator.of(context).pop(true);
+          },
+        );
+      },
     );
   }
 
@@ -399,7 +431,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onNewGetListHomeworkComplete( List<ActivitiesModel> activities, List<NewClassModel> classes) async {
+  void onNewGetListHomeworkComplete(
+      List<ActivitiesModel> activities, List<NewClassModel> classes) async {
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
     await _homeWorkProvider.initializeListFilter();

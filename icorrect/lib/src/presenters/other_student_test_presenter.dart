@@ -6,7 +6,7 @@ import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 
 import '../data_sources/api_urls.dart';
-import '../data_sources/constant_strings.dart';
+import '../data_sources/constants.dart';
 import '../data_sources/local/file_storage_helper.dart';
 import '../data_sources/repositories/app_repository.dart';
 import '../data_sources/utils.dart';

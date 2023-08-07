@@ -8,7 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -31,8 +31,6 @@ import 'package:video_player/video_player.dart';
 import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/alert_dialog.dart';
 import '../../other_views/dialog/circle_loading.dart';
-
-final aiScaffoldKey = GlobalKey<ScaffoldState>();
 
 class MyTestTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
@@ -229,7 +227,7 @@ class _MyTestTabState extends State<MyTestTab>
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return Scaffold(
-                    key: aiScaffoldKey,
+                    key: GlobalScaffoldKey.aiResponseScaffoldKey,
                     body: Stack(
                       alignment: Alignment.topRight,
                       children: [
