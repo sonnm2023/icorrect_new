@@ -47,7 +47,7 @@ class MyTestTab extends StatefulWidget {
 
 class _MyTestTabState extends State<MyTestTab>
     with AutomaticKeepAliveClientMixin<MyTestTab>
-    implements MyTestConstract, ActionAlertListener {
+    implements MyTestContract, ActionAlertListener {
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
 

@@ -19,7 +19,7 @@ import '../models/simulator_test_models/topic_model.dart';
 import '../models/ui_models/alert_info.dart';
 import 'package:http/http.dart' as http;
 
-abstract class MyTestConstract {
+abstract class MyTestContract {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
@@ -34,7 +34,7 @@ abstract class MyTestConstract {
 }
 
 class MyTestPresenter {
-  final MyTestConstract? _view;
+  final MyTestContract? _view;
   MyTestRepository? _repository;
 
   MyTestPresenter(this._view) {
