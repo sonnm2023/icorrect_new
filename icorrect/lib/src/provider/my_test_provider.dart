@@ -271,4 +271,14 @@ class MyTestProvider extends ChangeNotifier {
   void setShowAIResponse(bool isShow) {
     _isShowAIResponse = isShow;
   }
+
+  bool _needDownloadAgain = false;
+  bool get needDownloadAgain => _needDownloadAgain;
+  void setNeedDownloadAgain(bool need) {
+    _needDownloadAgain = need;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 }

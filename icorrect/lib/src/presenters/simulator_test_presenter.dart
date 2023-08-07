@@ -294,7 +294,7 @@ class SimulatorTestPresenter {
 
   void tryAgainToDownload() async {
     if (kDebugMode) {
-      print("DEBUG: tryAgainToDownload");
+      print("DEBUG: SimulatorTestPresenter tryAgainToDownload");
     }
 
     _view!.onTryAgainToDownload();
