@@ -415,6 +415,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
+    _simulatorTestProvider!.setShowViewTips(true);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

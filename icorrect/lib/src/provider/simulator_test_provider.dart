@@ -426,7 +426,14 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _isShowViewTips = false;
+  bool get isShowViewTips => _isShowViewTips;
+  void setShowViewTips(bool isShowing) {
+    _isShowViewTips = isShowing;
+  }
+
   void resetAll() {
+    _isShowViewTips = false;
     _needDownloadAgain = false;
     _isLoadingVideo = false;
     _answerList.clear();

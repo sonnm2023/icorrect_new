@@ -14,6 +14,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
@@ -44,16 +45,20 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late MyTestProvider _myTestProvider;
+  late SimulatorTestProvider _simulatorTestProvider;
+
   CircleLoading? _loading;
 
   @override
   void initState() {
     super.initState();
     _loading = CircleLoading();
-    _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
     _homeWorkPresenter = HomeWorkPresenter(this);
 
+    _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
     _myTestProvider = Provider.of<MyTestProvider>(context, listen: false);
+    _simulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
 
     _getListHomeWork();
   }
@@ -129,6 +134,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           _myTestProvider.setShowAIResponse(false);
           Navigator.of(
                   GlobalScaffoldKey.aiResponseScaffoldKey.currentState!.context)
+              .pop();
+        } else if (_simulatorTestProvider.isShowViewTips) {
+          _simulatorTestProvider.setShowViewTips(false);
+          Navigator.of(
+                  GlobalScaffoldKey.viewTipScaffoldKey.currentState!.context)
               .pop();
         } else {
           //TODO: Show confirm dialog to quit the application here
