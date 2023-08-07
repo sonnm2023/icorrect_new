@@ -124,7 +124,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (_simulatorTestProvider!.visibleRecord) {
       _recordController!.stop();
+    }
+    
+    if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
+      _playAnswerProvider!.resetSelectedQuestionIndex();
     }
   }
 
@@ -145,7 +149,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _recordController!.stop();
       _audioPlayerController!.stop();
     } else {
-      videoController.play();
+      if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+        videoController.play();
+      }
     }
     _simulatorTestProvider!.setPlayController(videoController);
   }

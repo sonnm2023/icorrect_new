@@ -46,7 +46,7 @@ class MyTestTab extends StatefulWidget {
 }
 
 class _MyTestTabState extends State<MyTestTab>
-    with AutomaticKeepAliveClientMixin<MyTestTab>
+    with AutomaticKeepAliveClientMixin<MyTestTab>, WidgetsBindingObserver
     implements MyTestContract, ActionAlertListener {
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
@@ -59,6 +59,7 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     connection = Connectivity()
         .onConnectivityChanged
@@ -100,8 +101,9 @@ class _MyTestTabState extends State<MyTestTab>
 
   @override
   void dispose() {
-    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
+    super.dispose();
   }
 
   @override
@@ -223,6 +225,76 @@ class _MyTestTabState extends State<MyTestTab>
                 _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
               });
         });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _onAppActive();
+        break;
+      case AppLifecycleState.paused:
+        if (kDebugMode) {
+          print('DEBUG: App paused');
+        }
+        break;
+      case AppLifecycleState.inactive:
+        _onAppInBackground();
+        break;
+      case AppLifecycleState.detached:
+        if (kDebugMode) {
+          print('DEBUG:App detached');
+        }
+        break;
+    }
+  }
+
+  Future _onAppInBackground() async {
+    //TODO
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // if (videoController.value.isPlaying) {
+    //   videoController.pause();
+    //   _simulatorTestProvider!.setPlayController(videoController);
+    // }
+
+    if (widget.provider.visibleRecord) {
+      _record.stop();
+    }
+    
+    if (_player!.state == PlayerState.playing) {
+      QuestionTopicModel q = widget.provider.currentQuestion;
+      widget.provider.setPlayAnswer(false, q.id.toString());
+      _stopAudio();
+    }
+  }
+
+  Future _onAppActive() async {
+    //TODO
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // _simulatorTestProvider!.setPlayController(videoController);
+
+    if (widget.provider.visibleRecord) {
+      QuestionTopicModel currentQuestion =
+          widget.provider.currentQuestion;
+      
+      //TODO
+      // _initVideoController(
+      //     fileName: currentQuestion.files.first.url,
+      //     handleWhenFinishType: HandleWhenFinish.questionVideoType);
+
+      widget.provider.setVisibleRecord(false);
+      _record.stop();
+      _player!.stop();
+    } else {
+      //TODO
+      // if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+      //   videoController.play();
+      // }
+    }
   }
 
   void _onClickUpdateReAnswer(List<QuestionTopicModel> requestions) {
