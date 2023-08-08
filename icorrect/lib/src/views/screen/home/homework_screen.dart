@@ -111,7 +111,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           leading: const Icon(Icons.logout_outlined),
           onTap: () {
             toggleDrawer();
-            showAlertDialog(context);
+            _showLogoutConfirmDialog();
           },
         ),
       ],
@@ -123,9 +123,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
 
           //Reset global key
-          _authProvider.setShowDialogWithGlobalScaffoldKey(false, GlobalKey<ScaffoldState>());
+          _authProvider.setShowDialogWithGlobalScaffoldKey(
+              false, GlobalKey<ScaffoldState>());
 
-          Navigator.of( key.currentState!.context).pop();
+          Navigator.of(key.currentState!.context).pop();
         } else {
           _showQuitAppConfirmDialog();
         }
@@ -334,56 +335,24 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     }
   }
 
-  void showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton(
-      child: const Text(
-        "Cancel",
-        style: TextStyle(
-            color: AppColor.defaultGrayColor, fontWeight: FontWeight.w800),
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-      },
-    );
-    Widget continueButton = TextButton(
-      child: const Text(
-        "OK",
-        style: TextStyle(
-            color: AppColor.defaultPurpleColor, fontWeight: FontWeight.w800),
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-        _homeWorkProvider.updateProcessingStatus();
-        _homeWorkPresenter!.logout();
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      title: const Text(
-        "Notification",
-        style: TextStyle(
-          color: AppColor.defaultBlackColor,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-      content: const Text(
-        "Do you want to logout?",
-        style: TextStyle(fontSize: 17),
-      ),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
+  void _showLogoutConfirmDialog() async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "Do you want to logout?",
+          okButtonTitle: "OK",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
       },
     );
   }
