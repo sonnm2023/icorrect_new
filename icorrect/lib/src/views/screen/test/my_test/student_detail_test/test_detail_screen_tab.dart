@@ -3,11 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/other_student_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -217,6 +219,8 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   _showTips(QuestionTopicModel questionTopicModel) {
+    Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(true, GlobalScaffoldKey.showTipScaffoldKey);
+    
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,

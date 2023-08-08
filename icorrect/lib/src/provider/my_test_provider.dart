@@ -266,12 +266,6 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
-  bool _isShowAIResponse = false;
-  bool get isShowAIResponse => _isShowAIResponse;
-  void setShowAIResponse(bool isShow) {
-    _isShowAIResponse = isShow;
-  }
-
   bool _needDownloadAgain = false;
   bool get needDownloadAgain => _needDownloadAgain;
   void setNeedDownloadAgain(bool need) {

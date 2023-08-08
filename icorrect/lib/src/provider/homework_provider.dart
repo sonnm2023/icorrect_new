@@ -15,8 +15,8 @@ class HomeWorkProvider with ChangeNotifier {
 
   @override
   void dispose() {
-    isDisposed = true;
     super.dispose();
+    isDisposed = true;
   }
 
   @override
@@ -316,11 +316,5 @@ class HomeWorkProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
-  }
-
-  bool _isShowFilter = false;
-  bool get isShowFilter => _isShowFilter;
-  void setShowFilter(bool isShowing) {
-    _isShowFilter = isShowing;
   }
 }

@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
@@ -415,7 +416,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
-    _simulatorTestProvider!.setShowViewTips(true);
+    Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(true, GlobalScaffoldKey.showTipScaffoldKey);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
