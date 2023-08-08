@@ -145,17 +145,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return ConfirmDialogWidget(
+              return CustomAlertDialog(
                 title: "Notification",
-                message: "The test is not completed! Are you sure to quit?",
-                cancelButtonTitle: "Cancel",
+                description: "The test is not completed! Are you sure to quit?",
                 okButtonTitle: "OK",
-                cancelButtonTapped: () {
-                  if (kDebugMode) print("_cancelButtonTapped");
-                },
+                cancelButtonTitle: "Cancel",
+                borderRadius: 8,
+                hasCloseButton: false,
                 okButtonTapped: () {
                   okButtonTapped = true;
                   _deleteAllAnswer();
+                },
+                cancelButtonTapped: () {
+                  Navigator.of(context).pop();
                 },
               );
             },
@@ -179,15 +181,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return ConfirmDialogWidget(
+              return CustomAlertDialog(
                 title: "Notify",
-                message: "Do you want to save this test before quit?",
-                cancelButtonTitle: "Don't Save",
+                description: "Do you want to save this test before quit?",
                 okButtonTitle: "Save",
-                cancelButtonTapped: () {
-                  cancelButtonTapped = true;
-                  _deleteAllAnswer();
-                },
+                cancelButtonTitle: "Don't Save",
+                borderRadius: 8,
+                hasCloseButton: false,
                 okButtonTapped: () {
                   //Submit
                   _simulatorTestProvider!
@@ -198,6 +198,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     activityId: widget.homeWorkModel.activityId.toString(),
                     questions: _simulatorTestProvider!.questionList,
                   );
+                },
+                cancelButtonTapped: () {
+                  cancelButtonTapped = true;
+                  _deleteAllAnswer();
+                  Navigator.of(context).pop();
                 },
               );
             },

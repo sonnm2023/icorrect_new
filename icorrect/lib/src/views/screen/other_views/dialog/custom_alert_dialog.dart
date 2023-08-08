@@ -43,6 +43,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 15),
               Text(
@@ -54,7 +55,10 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(widget.description, style: const TextStyle(fontSize: fontSize_15),),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Text(widget.description, textAlign: TextAlign.center, style: const TextStyle(fontSize: fontSize_15),),
+              ),
               const SizedBox(height: 5),
               const Divider(
                 thickness: 0.5,
