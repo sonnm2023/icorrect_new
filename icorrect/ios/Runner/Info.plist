@@ -28,6 +28,10 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app require permission to access gallery</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>
@@ -39,13 +43,9 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <!-- Permission options for the `microphone` group -->
-    <key>NSMicrophoneUsageDescription</key>
-    <string>microphone</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app require permission to access gallery</string>
 </dict>
 </plist>
