@@ -20,6 +20,7 @@ import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
@@ -141,11 +142,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                   GlobalScaffoldKey.viewTipScaffoldKey.currentState!.context)
               .pop();
         } else {
-          //TODO: Show confirm dialog to quit the application here
-          if (kDebugMode) {
-            print(
-                "DEBUG: TODO: Show confirm dialog to quit the application here");
-          }
           _showQuitAppConfirmDialog();
         }
 
@@ -220,18 +216,22 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  _showQuitAppConfirmDialog() {
-    showDialog(
+  _showQuitAppConfirmDialog() async {
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return ConfirmDialogWidget(
-          title: "Confirm",
-          message: "Are you sure to quit this application?",
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "Do you want to exit app?",
+          okButtonTitle: "OK",
           cancelButtonTitle: "Cancel",
-          okButtonTitle: "Ok",
-          cancelButtonTapped: () {},
+          borderRadius: 8,
+          hasCloseButton: false,
           okButtonTapped: () {
-            Navigator.of(context).pop(true);
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
           },
         );
       },
