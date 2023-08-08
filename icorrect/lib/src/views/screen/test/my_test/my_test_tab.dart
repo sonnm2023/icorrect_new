@@ -326,7 +326,7 @@ class _MyTestTabState extends State<MyTestTab>
 
   _showAiResponse() {
     Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(true, GlobalScaffoldKey.aiResponseScaffoldKey);
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -354,7 +354,7 @@ class _MyTestTabState extends State<MyTestTab>
                   children: [
                     Container(
                       margin: const EdgeInsets.only(top: 10),
-                      child: AIResponse(url: snapshot.data.toString()),
+                      child: AiResponse(url: snapshot.data.toString()),
                     ),
                     Container(
                       margin: const EdgeInsets.all(10),

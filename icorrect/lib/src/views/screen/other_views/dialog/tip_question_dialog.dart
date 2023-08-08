@@ -3,7 +3,6 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +11,7 @@ class TipQuestionDialog {
       BuildContext context, QuestionTopicModel question) {
     return LayoutBuilder(builder: (_, constraint) {
       return Scaffold(
-        key: GlobalScaffoldKey.viewTipScaffoldKey,
+        key: GlobalScaffoldKey.showTipScaffoldKey,
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
@@ -38,7 +37,7 @@ class TipQuestionDialog {
                     alignment: Alignment.topRight,
                     child: InkWell(
                       onTap: () {
-                        Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(false, GlobalScaffoldKey.viewTipScaffoldKey);
+                        Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(false, GlobalScaffoldKey.showTipScaffoldKey);
                         Navigator.pop(context);
                       },
                       child: const Icon(
