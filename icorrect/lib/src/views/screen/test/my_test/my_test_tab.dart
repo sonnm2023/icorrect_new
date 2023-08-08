@@ -44,38 +44,67 @@ class MyTestTab extends StatefulWidget {
 }
 
 class _MyTestTabState extends State<MyTestTab>
-    with AutomaticKeepAliveClientMixin<MyTestTab>
+    with AutomaticKeepAliveClientMixin<MyTestTab>, WidgetsBindingObserver
     implements MyTestConstract, ActionAlertListener {
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
-  AuthProvider? _authProvider;
 
   AudioPlayer? _player;
   final Record _record = Record();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     _loading = CircleLoading();
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
-    _presenter!
-        .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
+
+    startLoadMyTest();
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
   }
 
+  Future startLoadMyTest() async {
+    await _presenter!.initializeData();
+    _presenter!
+        .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
+  }
+
   @override
   void dispose() {
-    dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _presenter!.closeClientRequest();
     super.dispose();
     _player!.dispose();
-    _authProvider!.dispose();
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  Future onAppActive() async {
+    _player!.pause();
+    
+  }
+
+  Future onAppInActive() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +271,6 @@ class _MyTestTabState extends State<MyTestTab>
                         child: InkWell(
                           onTap: () {
                             Navigator.pop(context);
-                            _authProvider!.setDialogShowing(false);
                           },
                           child: const Icon(
                             Icons.cancel_outlined,
@@ -267,7 +295,6 @@ class _MyTestTabState extends State<MyTestTab>
                 );
               });
         });
-    _authProvider!.setDialogShowing(true);
   }
 
   Widget _questionItem(QuestionTopicModel question) {
@@ -508,6 +535,11 @@ class _MyTestTabState extends State<MyTestTab>
     if (kDebugMode) {
       print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
     }
+  }
+
+  @override
+  void onReDownload() {
+    _loading!.hide();
   }
 
   @override

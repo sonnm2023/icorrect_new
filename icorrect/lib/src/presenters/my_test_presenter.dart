@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
@@ -23,6 +24,7 @@ abstract class MyTestConstract {
   void downloadFilesSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
   void downloadFilesFail(AlertInfo alertInfo);
+  void onReDownload();
   void getMyTestFail(AlertInfo alertInfo);
   void onCountDown(String time);
   void finishCountDown();
@@ -36,6 +38,32 @@ class MyTestPresenter {
 
   MyTestPresenter(this._view) {
     _repository = Injector().getMyTestRepository();
+  }
+  int _autoRequestDownloadTimes = 0;
+  int get autoRequestDownloadTimes => _autoRequestDownloadTimes;
+  void increaseAutoRequestDownloadTimes() {
+    _autoRequestDownloadTimes += 1;
+  }
+
+  http.Client? client;
+  final Map<String, String> headers = {
+    'Accept': 'application/json',
+  };
+
+  Future<void> initializeData() async {
+    client ??= http.Client();
+    resetAutoRequestDownloadTimes();
+  }
+
+  void closeClientRequest() {
+    if (null != client) {
+      client!.close();
+      client = null;
+    }
+  }
+
+  void resetAutoRequestDownloadTimes() {
+    _autoRequestDownloadTimes = 0;
   }
 
   void getMyTest(String testId) {
@@ -157,72 +185,88 @@ class MyTestPresenter {
 
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
-    loop:
-    for (int index = 0; index < filesTopic.length; index++) {
-      FileTopicModel temp = filesTopic[index];
-      String fileTopic = temp.url;
-      String fileNameForDownload = Utils.reConvertFileName(fileTopic);
+    if (client != null) {
+      loop:
+      for (int index = 0; index < filesTopic.length; index++) {
+        FileTopicModel temp = filesTopic[index];
+        String fileTopic = temp.url;
+        String fileNameForDownload = Utils.convertFileName(fileTopic);
 
-      if (filesTopic.isNotEmpty) {
-        String fileType = Utils.fileType(fileTopic);
-
-        if (_mediaType(fileType) == MediaType.audio) {
-          fileNameForDownload = fileTopic;
-          fileTopic = Utils.convertFileName(fileTopic);
-        }
-
-        if (fileType.isNotEmpty &&
-            !await _isExist(fileTopic, _mediaType(fileType))) {
-          try {
-            http.Response response = await _sendRequest(fileNameForDownload);
-
-            if (response.statusCode == 200) {
-              String contentString = await Utils.convertVideoToBase64(response);
-              print('content String:${contentString}');
-              print('file topic :${fileTopic}');
-
-              await FileStorageHelper.writeVideo(
-                  contentString, fileTopic, _mediaType(fileType));
-
-              downloadSuccess(
-                testDetail,
-                fileTopic,
-                _getPercent(index + 1, filesTopic.length),
-                index + 1,
-                filesTopic.length,
+        if (filesTopic.isNotEmpty) {
+          String fileType = Utils.fileType(fileTopic);
+          bool isExist = await FileStorageHelper.checkExistFile(
+              fileTopic, MediaType.video, null);
+          if (fileType.isNotEmpty && !isExist) {
+            try {
+              if (kDebugMode) {
+                print("DEBUG: Downloading file at index = $index");
+              }
+              // http.Response response = await _sendRequest(fileNameForDownload);
+              String url = downloadFileEP(fileTopic);
+              client!
+                  .head(Uri.parse(url), headers: headers)
+                  .timeout(const Duration(seconds: 10));
+              http.Response response = await client!.get(
+                Uri.parse(url),
               );
-            } else {
+
+              if (response.statusCode == 200) {
+              
+                //Save file using file_storage
+                String contentString =
+                    await Utils.convertVideoToBase64(response);
+                await FileStorageHelper.writeVideo(
+                    contentString, fileNameForDownload, MediaType.audio);
+                double percent = _getPercent(index + 1, filesTopic.length);
+                _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
+                    index + 1, filesTopic.length);
+              } else {
+                _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+                reDownloadAutomatic(testDetail, filesTopic);
+                break loop;
+              }
+            } on TimeoutException {
+              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              reDownloadAutomatic(testDetail, filesTopic);
+              break loop;
+            } on SocketException {
               _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
               //Download again
-              downloadFiles(testDetail, filesTopic);
+              reDownloadAutomatic(testDetail, filesTopic);
+              break loop;
+            } on http.ClientException {
+              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              //Download again
+              reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             }
-          } on TimeoutException {
-            _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-            //Download again
-            downloadFiles(testDetail, filesTopic);
-            break loop;
-          } on SocketException {
-            _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-            //Download again
-            downloadFiles(testDetail, filesTopic);
-            break loop;
-          } on http.ClientException {
-            _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-            //Download again
-            downloadFiles(testDetail, filesTopic);
-            break loop;
+          } else {
+            double percent = _getPercent(index + 1, filesTopic.length);
+            _view!.downloadFilesSuccess(
+                testDetail, fileTopic, percent, index + 1, filesTopic.length);
           }
-        } else {
-          downloadSuccess(
-            testDetail,
-            fileTopic,
-            _getPercent(index + 1, filesTopic.length),
-            index + 1,
-            filesTopic.length,
-          );
         }
       }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: client is closed!");
+      }
+    }
+  }
+
+  void reDownloadAutomatic(
+      TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+    //Download again
+    if (autoRequestDownloadTimes <= 3) {
+      if (kDebugMode) {
+        print("DEBUG: request to download in times: $autoRequestDownloadTimes");
+      }
+      downloadFiles(testDetail, filesTopic);
+      increaseAutoRequestDownloadTimes();
+    } else {
+      //Close old download request
+      closeClientRequest();
+      _view!.onReDownload();
     }
   }
 

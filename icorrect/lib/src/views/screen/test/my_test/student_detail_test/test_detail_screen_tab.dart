@@ -48,15 +48,21 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     _loading!.show(context);
 
     print("tetst: ${widget.studentResultModel.testId.toString()}");
-    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+    startLoadTestDetail();
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
   }
 
+  Future startLoadTestDetail() async {
+    _presenter!.initializeData();
+    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+  }
+
   @override
   void dispose() {
+    _presenter!.closeClientRequest();
     super.dispose();
     _player!.dispose();
   }
@@ -198,7 +204,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
-       await _player!.play(DeviceFileSource(audioPath));
+      await _player!.play(DeviceFileSource(audioPath));
       await _player!.setVolume(2.5);
       _player!.onPlayerComplete.listen((event) {
         widget.provider.setPlayAnswer(false, questionId);
@@ -233,6 +239,11 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           return TipQuestionDialog.tipQuestionDialog(
               context, questionTopicModel);
         });
+  }
+
+  @override
+  void onReDownload() {
+    _loading!.hide();
   }
 
   @override

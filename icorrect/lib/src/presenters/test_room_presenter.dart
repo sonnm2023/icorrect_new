@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -24,7 +25,7 @@ abstract class TestRoomViewContract {
   void onCountDown(String countDownString);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
-  void onSubmitTestSuccess(String msg);
+  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
   void onSubmitTestFail(String msg);
   void onClickSaveTheTest();
   void onFinishTheTest();
@@ -192,7 +193,8 @@ class TestRoomPresenter {
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         if (json['error_code'] == 200) {
-          _view!.onSubmitTestSuccess('Save your answers successfully!');
+          ActivityAnswer activityAnswer = ActivityAnswer.fromJson(json['data']['activities_answer']);
+          _view!.onSubmitTestSuccess('Save your answers successfully!', activityAnswer);
         } else {
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }

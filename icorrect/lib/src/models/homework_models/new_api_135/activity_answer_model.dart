@@ -78,16 +78,38 @@ class ActivityAnswer {
 
 
   ActivityAnswer.fromJson(Map<String, dynamic> json) {
-    _activityId = json['activity_id'];
-    _testId = json['test_id'];
+     if (json['activity_id'] is String) {
+       _activityId = int.parse(json['activity_id']);
+     } else {
+       _activityId = json['activity_id'];
+     }
+
+     if (json['test_id'] is String) {
+       _testId = int.parse(json['test_id']);
+     } else {
+       _testId = json['test_id'];
+     }
+
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
-    _orderId = json['order_id'];
+
+     if (json['order_id'] is String) {
+       _orderId = int.parse(json['order_id']);
+     } else {
+       _orderId = json['order_id'];
+     }
+
     _publis = json['publis'];
     _realActivityId = json['real_activity_id'];
     _aiOrder = json['ai_order'];
     _email = json['email'];
-    _id = json['id'];
+
+     if (json['id'] is String) {
+       _id = int.parse(json['id']);
+     } else {
+       _id = json['id'];
+     }
+
     _late = json['late'];
     _aiResponseLink = json['ai_response_link'];
   }

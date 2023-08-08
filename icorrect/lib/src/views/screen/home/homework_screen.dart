@@ -112,86 +112,83 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
 
     return Consumer<AuthProvider>(builder: (context, authProvider, child) {
-      return
-
-          // WillPopScope(
-          //   onWillPop: () async {
-          //     if (authProvider.isDialogShowing) {
-          //       Navigator.pop(context);
-          //       authProvider.setDialogShowing(false);
-          //       return false;
-          //     }
-          //     Navigator.push(context,
-          //         MaterialPageRoute(builder: (context) => const HomeWorkScreen()));
-          //     return true;
-          //   },
-          //   child:
-          MaterialApp(
-        theme: ThemeData(
-          brightness: Brightness.light,
-          // add tabBarTheme
-          tabBarTheme: const TabBarTheme(
-            labelColor: AppColor.defaultPurpleColor,
-            labelStyle: TextStyle(
-                color: AppColor.defaultPurpleColor,
-                fontWeight: FontWeight.w800),
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: AppColor.defaultPurpleColor),
-            ),
-          ),
-          primaryColor: AppColor.defaultPurpleColor,
-          unselectedWidgetColor:
-              AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: DefaultTabController(
-          length: 1,
-          child: Scaffold(
-            key: scaffoldKey,
-            appBar: AppBar(
-              title: const Text(
-                "MY HOMEWORK",
-                style: TextStyle(color: AppColor.defaultPurpleColor),
+      return WillPopScope(
+        onWillPop: () async {
+          // if (authProvider.isDialogShowing) {
+          //   Navigator.pop(context);
+          //   authProvider.setDialogShowing(false);
+          //   return false;
+          // }
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => const HomeWorkScreen()));
+          return false;
+        },
+        child: MaterialApp(
+          theme: ThemeData(
+            brightness: Brightness.light,
+            // add tabBarTheme
+            tabBarTheme: const TabBarTheme(
+              labelColor: AppColor.defaultPurpleColor,
+              labelStyle: TextStyle(
+                  color: AppColor.defaultPurpleColor,
+                  fontWeight: FontWeight.w800),
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(color: AppColor.defaultPurpleColor),
               ),
-              centerTitle: true,
-              elevation: 0.0,
-              iconTheme:
-                  const IconThemeData(color: AppColor.defaultPurpleColor),
-              // bottom: PreferredSize(
-              //   preferredSize: _tabBar.preferredSize,
-              //   child: Material(
-              //     color: defaultWhiteColor,
-              //     child: _tabBar,
-              //   ),
-              // ),
-              backgroundColor: AppColor.defaultWhiteColor,
             ),
-            body: Stack(
-              children: [
-                MyHomeWorkTab(
-                  homeWorkProvider: _homeWorkProvider,
-                  homeWorkPresenter: _homeWorkPresenter!,
+            primaryColor: AppColor.defaultPurpleColor,
+            unselectedWidgetColor:
+                AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: DefaultTabController(
+            length: 1,
+            child: Scaffold(
+              key: scaffoldKey,
+              appBar: AppBar(
+                title: const Text(
+                  "MY HOMEWORK",
+                  style: TextStyle(color: AppColor.defaultPurpleColor),
                 ),
-                Consumer<HomeWorkProvider>(
-                  builder: (context, homeWorkProvider, child) {
-                    if (homeWorkProvider.isProcessing) {
-                      _loading!.show(context);
-                    } else {
-                      _loading!.hide();
-                    }
-                    return Container();
-                  },
-                ),
-              ],
-            ),
-            drawer: Drawer(
-              backgroundColor: AppColor.defaultWhiteColor,
-              child: drawerItems,
+                centerTitle: true,
+                elevation: 0.0,
+                iconTheme:
+                    const IconThemeData(color: AppColor.defaultPurpleColor),
+                // bottom: PreferredSize(
+                //   preferredSize: _tabBar.preferredSize,
+                //   child: Material(
+                //     color: defaultWhiteColor,
+                //     child: _tabBar,
+                //   ),
+                // ),
+                backgroundColor: AppColor.defaultWhiteColor,
+              ),
+              body: Stack(
+                children: [
+                  MyHomeWorkTab(
+                    homeWorkProvider: _homeWorkProvider,
+                    homeWorkPresenter: _homeWorkPresenter!,
+                  ),
+                  Consumer<HomeWorkProvider>(
+                    builder: (context, homeWorkProvider, child) {
+                      if (homeWorkProvider.isProcessing) {
+                        _loading!.show(context);
+                      } else {
+                        _loading!.hide();
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
+              ),
+              drawer: Drawer(
+                backgroundColor: AppColor.defaultWhiteColor,
+                child: drawerItems,
+              ),
             ),
           ),
         ),
       );
-      //  );
     });
   }
 

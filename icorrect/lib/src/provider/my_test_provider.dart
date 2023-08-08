@@ -29,6 +29,10 @@ class MyTestProvider extends ChangeNotifier {
     setCountDownTimer(null);
     setCurrentQuestion(QuestionTopicModel());
     setVisibleRecord(false);
+
+    setTotal(0);
+    updateDownloadingPercent(0.0);
+    updateDownloadingIndex(0);
     if (!isDisposed) {
       notifyListeners();
     }

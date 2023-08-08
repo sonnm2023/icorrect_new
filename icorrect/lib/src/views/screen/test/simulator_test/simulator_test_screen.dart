@@ -9,6 +9,7 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constant_strings.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
@@ -457,10 +458,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onGotoMyTestScreen() {
+  void onGotoMyTestScreen(ActivityAnswer activityAnswer) {
     if (kDebugMode) {
       print("DEBUG: onGotoMyTestScreen");
     }
+
+    //Update activityAnswer into current homeWorkModel
+    widget.homeWorkModel.activityAnswer = activityAnswer;
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MyTestScreen(
@@ -483,7 +488,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onSubmitTestSuccess(String msg) {
+  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
 
     showToastMsg(
@@ -492,7 +497,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
 
     //Go to MyTest Screen
-    _simulatorTestPresenter!.gotoMyTestScreen();
+    _simulatorTestPresenter!.gotoMyTestScreen(activityAnswer);
   }
 
   @override
