@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class AIResponse extends StatefulWidget {
+// ignore: must_be_immutable
+class AiResponse extends StatefulWidget {
   String url;
-  AIResponse({super.key, required this.url});
+  AiResponse({super.key, required this.url});
 
   @override
-  State<AIResponse> createState() => _AIResponseState();
+  State<AiResponse> createState() => _AIResponseState();
 }
 
-class _AIResponseState extends State<AIResponse> {
+class _AIResponseState extends State<AiResponse> {
   WebViewController? _webViewController;
   CircleLoading? _loading;
 

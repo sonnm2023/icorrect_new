@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/data_sources/constants.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isProcessing = false;
