@@ -14,6 +14,7 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
@@ -76,6 +77,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _simulatorTestPresenter = SimulatorTestPresenter(this);
+
+    Provider.of<HomeWorkProvider>(context, listen: false).setSimulatorTestPresenter(_simulatorTestPresenter);
 
     _getTestDetail();
   }
@@ -536,5 +539,29 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _simulatorTestPresenter!.reDownloadFiles();
       }
     }
+  }
+  
+  @override
+  void onHandleEventBackButtonSystem({required bool isQuitTheTest}) {
+    if (kDebugMode) {
+      print(
+          "DEBUG: _handleEventBackButtonSystem - quit this test = $isQuitTheTest");
+    }
+
+    if (isQuitTheTest) {
+      _deleteAllAnswer();
+      Navigator.of(context).pop();
+    } else {
+      //Continue play video
+    }
+  }
+  
+  @override
+  void onHandleBackButtonSystemTapped() {
+    if (kDebugMode) {
+      print(
+          "DEBUG: onHandleBackButtonSystemTapped");
+    }
+    //Pause video player
   }
 }

@@ -206,6 +206,7 @@ class GlobalScaffoldKey {
   static final filterScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'FilterScaffoldKeys');
   static final aiResponseScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'AIResponseScaffoldKeys');
   static final showTipScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'ShowTipScaffoldKey');
+  static final showQuitTheTestScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'ShowQuitTheTestScaffoldKey');
 }
 
 class FontsSize {

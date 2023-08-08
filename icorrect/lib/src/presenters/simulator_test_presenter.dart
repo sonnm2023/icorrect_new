@@ -31,6 +31,8 @@ abstract class SimulatorTestViewContract {
   void onSubmitTestFail(String msg);
   void onReDownload();
   void onTryAgainToDownload();
+  void onHandleBackButtonSystemTapped();
+  void onHandleEventBackButtonSystem({required bool isQuitTheTest});
 }
 
 class SimulatorTestPresenter {
@@ -95,12 +97,12 @@ class SimulatorTestPresenter {
         List<FileTopicModel> tempFilesTopic =
             _prepareFileTopicListForDownload(tempTestDetailModel);
 
-        filesTopic =
-            _prepareFileTopicListForDownload(tempTestDetailModel);
+        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
 
         downloadFiles(tempTestDetailModel, tempFilesTopic);
 
-        _view!.onGetTestDetailComplete(tempTestDetailModel, tempFilesTopic.length);
+        _view!.onGetTestDetailComplete(
+            tempTestDetailModel, tempFilesTopic.length);
       } else {
         _view!.onGetTestDetailError(
             "Loading homework detail error: ${map['error_code']}${map['status']}");
@@ -212,9 +214,9 @@ class SimulatorTestPresenter {
 
         if (filesTopic.isNotEmpty) {
           String fileType = Utils.fileType(fileTopic);
-          bool isExist = await FileStorageHelper.checkExistFile(fileTopic, MediaType.video, null);
-          if (fileType.isNotEmpty &&
-              !isExist) {
+          bool isExist = await FileStorageHelper.checkExistFile(
+              fileTopic, MediaType.video, null);
+          if (fileType.isNotEmpty && !isExist) {
             try {
               if (kDebugMode) {
                 print("DEBUG: Downloading file at index = $index");
@@ -223,7 +225,9 @@ class SimulatorTestPresenter {
               // http.Response response = await _sendRequest(fileNameForDownload);
               String url = downloadFileEP(fileNameForDownload);
 
-              client!.head(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
+              client!
+                  .head(Uri.parse(url), headers: headers)
+                  .timeout(const Duration(seconds: 10));
               // use client.get as you would http.get
               http.Response response = await client!.get(
                 Uri.parse(url),
@@ -231,11 +235,13 @@ class SimulatorTestPresenter {
 
               if (response.statusCode == 200) {
                 //Save file using file_storage
-                String contentString = await Utils.convertVideoToBase64(response);
+                String contentString =
+                    await Utils.convertVideoToBase64(response);
                 await FileStorageHelper.writeVideo(
                     contentString, fileTopic, MediaType.video);
                 double percent = _getPercent(index + 1, filesTopic.length);
-                _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
+                _view!.onDownloadSuccess(testDetail, fileTopic, percent,
+                    index + 1, filesTopic.length);
               } else {
                 _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(testDetail, filesTopic);
@@ -258,7 +264,8 @@ class SimulatorTestPresenter {
             }
           } else {
             double percent = _getPercent(index + 1, filesTopic.length);
-            _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
+            _view!.onDownloadSuccess(
+                testDetail, fileTopic, percent, index + 1, filesTopic.length);
           }
         }
       }
@@ -269,7 +276,8 @@ class SimulatorTestPresenter {
     }
   }
 
-  void reDownloadAutomatic(TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+  void reDownloadAutomatic(
+      TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {
@@ -322,7 +330,8 @@ class SimulatorTestPresenter {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         if (json['error_code'] == 200) {
           ActivityAnswer activityAnswer = json[''];
-          _view!.onSubmitTestSuccess('Save your answers successfully!', activityAnswer);
+          _view!.onSubmitTestSuccess(
+              'Save your answers successfully!', activityAnswer);
         } else {
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
@@ -419,8 +428,8 @@ class SimulatorTestPresenter {
         );
 
         if (await audioFile.exists()) {
-          request.files
-              .add(await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          request.files.add(
+              await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
     }
@@ -430,4 +439,11 @@ class SimulatorTestPresenter {
     return request;
   }
 
+  void handleEventBackButtonSystem({required bool isQuitTheTest}) {
+    _view!.onHandleEventBackButtonSystem(isQuitTheTest: isQuitTheTest);
+  }
+
+  void handleBackButtonSystemTapped() {
+    _view!.onHandleBackButtonSystemTapped();
+  }
 }

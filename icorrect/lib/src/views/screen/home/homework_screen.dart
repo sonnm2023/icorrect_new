@@ -12,9 +12,9 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
@@ -127,6 +127,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               false, GlobalKey<ScaffoldState>());
 
           Navigator.of(key.currentState!.context).pop();
+        } else if (Provider.of<SimulatorTestProvider>(context, listen: false)
+                .doingStatus ==
+            DoingStatus.doing) {
+          _showQuitTheTestConfirmDialog();
         } else {
           _showQuitAppConfirmDialog();
         }
@@ -202,7 +206,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  _showQuitAppConfirmDialog() async {
+  void _showQuitAppConfirmDialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -218,6 +222,46 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           },
           cancelButtonTapped: () {
             Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  void _handleEventBackButtonSystem({required bool isQuitTheTest}) {
+    SimulatorTestPresenter? presenter =
+        Provider.of<HomeWorkProvider>(context, listen: false)
+            .simulatorTestPresenter;
+    if (null == presenter) return;
+
+    presenter.handleEventBackButtonSystem(isQuitTheTest: isQuitTheTest);
+  }
+
+  void _showQuitTheTestConfirmDialog() async {
+    SimulatorTestPresenter? presenter =
+        Provider.of<HomeWorkProvider>(context, listen: false)
+            .simulatorTestPresenter;
+
+    if (null == presenter) return;
+
+    presenter.handleBackButtonSystemTapped();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "The test is not completed! Are you sure to quit?",
+          okButtonTitle: "OK",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            _handleEventBackButtonSystem(isQuitTheTest: true);
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+            _handleEventBackButtonSystem(isQuitTheTest: false);
           },
         );
       },

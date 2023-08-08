@@ -9,6 +9,7 @@ import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
 class HomeWorkProvider with ChangeNotifier {
   bool isDisposed = false;
@@ -316,5 +317,11 @@ class HomeWorkProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
+  }
+
+  SimulatorTestPresenter? _simulatorTestPresenter;
+  SimulatorTestPresenter? get simulatorTestPresenter => _simulatorTestPresenter;
+  void setSimulatorTestPresenter(SimulatorTestPresenter? presenter) {
+    _simulatorTestPresenter = presenter;
   }
 }
