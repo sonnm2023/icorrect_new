@@ -1,31 +1,22 @@
+import 'package:icorrect/src/models/log_models/common_info_model.dart';
+
 class LogModel {
   String? _action;
-  String? _os;
   String? _status;
   String? _createdTime;
   String? _message;
   List<String>? _data = [];
-  String? _userId;
-  String? _deviceId;
-  String? _deviceName;
-  String? _osVersion;
-  String? _versionApp;
+  CommonInfoModel? _commonInfoModel;
 
   LogModel({
     String? action,
-    String? os,
     String? status,
     String? createdTime,
     String? message,
     List<String>? data,
-    String? userId,
-    String? deviceId,
-    String? deviceName,
-    String? osVersion,
-    String? versionApp,
+    CommonInfoModel? commonInfoModel,
   }) {
     _action = action;
-    _os = os;
     _status = status;
     _createdTime = createdTime;
     _message = message;
@@ -36,17 +27,11 @@ class LogModel {
       _data = [];
     }
 
-    _userId = userId;
-    _deviceId = deviceId;
-    _deviceName = deviceName;
-    _osVersion = osVersion;
-    _versionApp = versionApp;
+    _commonInfoModel = commonInfoModel;
   }
 
   String get action => _action ?? '';
   set action(String action) => _action = action;
-  String get os => _os ?? '';
-  set os(String action) => _os = os;
   String get status => _status ?? '';
   set status(String status) => _status = status;
   String get createdTime => _createdTime ?? '';
@@ -55,34 +40,24 @@ class LogModel {
   set message(String message) => _message = message;
   List<String>? get data => _data ?? [];
   set data(List<String>? data) => _data = data;
-  String get userId => _userId ?? '';
-  set userId(String userId) => _userId = userId;
-  String get deviceId => _deviceId ?? '';
-  set deviceId(String deviceId) => _deviceId = deviceId;
-  String get deviceName => _deviceName ?? '';
-  set deviceName(String deviceName) => _deviceName = deviceName;
-  String get osVersion => _osVersion ?? '';
-  set osVersion(String osVersion) => _osVersion = osVersion;
-  String get versionApp => _versionApp ?? '';
-  set versionApp(String versionApp) => _versionApp = versionApp;
+  CommonInfoModel? get commonInfoModel => _commonInfoModel;
+  set commonInfoModel(CommonInfoModel? commonInfoModel) => _commonInfoModel = commonInfoModel;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> dataMap = <String, dynamic>{};
     dataMap['action'] = _action;
-    dataMap['os'] = _os;
     dataMap['status'] = _status;
     dataMap['created_time'] = _createdTime;
     dataMap['message'] = _message;
-    dataMap['user_id'] = _userId;
-    dataMap['device_id'] = _deviceId;
-    dataMap['device_name'] = _deviceName;
-    dataMap['os_version'] = _osVersion;
-    dataMap['version_app'] = _versionApp;
 
     if (_data != null) {
       dataMap['data'] = _data;
     } else {
       dataMap['data'] = <String>[];
+    }
+
+    if (_commonInfoModel != null) {
+      dataMap['common_info'] = _commonInfoModel!.toJson();
     }
     return dataMap;
   }
