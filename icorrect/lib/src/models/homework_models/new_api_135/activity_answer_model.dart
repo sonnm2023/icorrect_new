@@ -1,6 +1,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 ActivityAnswer activityAnswerFromJson(String str) => ActivityAnswer.fromJson(json.decode(str));
 String activityAnswerToJson(ActivityAnswer data) => json.encode(data.toJson());
 
@@ -72,7 +74,9 @@ class ActivityAnswer {
   set aiResponseLink(String aiResponseLink) => _aiResponseLink = aiResponseLink;
 
    bool hasTeacherResponse() {
-    print('_orderId: ${_orderId.toString()}');
+    if (kDebugMode) {
+      print('DEBUG: _orderId: ${_orderId.toString()}');
+    }
     return _orderId != 0 && _orderId.toString().isNotEmpty;
   }
 

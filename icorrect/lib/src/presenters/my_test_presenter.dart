@@ -11,7 +11,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 
 import '../data_sources/api_urls.dart';
-import '../data_sources/constant_strings.dart';
+import '../data_sources/constants.dart';
 import '../data_sources/local/file_storage_helper.dart';
 import '../data_sources/repositories/app_repository.dart';
 import '../data_sources/utils.dart';
@@ -19,30 +19,26 @@ import '../models/simulator_test_models/topic_model.dart';
 import '../models/ui_models/alert_info.dart';
 import 'package:http/http.dart' as http;
 
-abstract class MyTestConstract {
+abstract class MyTestContract {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
-  void downloadFilesSuccess(TestDetailModel testDetail, String nameFile,
+  void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
   void downloadFilesFail(AlertInfo alertInfo);
-  void onReDownload();
   void getMyTestFail(AlertInfo alertInfo);
   void onCountDown(String time);
   void finishCountDown();
   void updateAnswersSuccess(String message);
   void updateAnswerFail(AlertInfo info);
+  void onReDownload();
+  void onTryAgainToDownload();
 }
 
 class MyTestPresenter {
-  final MyTestConstract? _view;
+  final MyTestContract? _view;
   MyTestRepository? _repository;
 
   MyTestPresenter(this._view) {
     _repository = Injector().getMyTestRepository();
-  }
-  int _autoRequestDownloadTimes = 0;
-  int get autoRequestDownloadTimes => _autoRequestDownloadTimes;
-  void increaseAutoRequestDownloadTimes() {
-    _autoRequestDownloadTimes += 1;
   }
 
   http.Client? client;
@@ -50,10 +46,24 @@ class MyTestPresenter {
     'Accept': 'application/json',
   };
 
+  int _autoRequestDownloadTimes = 0;
+  int get autoRequestDownloadTimes => _autoRequestDownloadTimes;
+  void increaseAutoRequestDownloadTimes() {
+    _autoRequestDownloadTimes += 1;
+  }
+
+  TestDetailModel? testDetail;
+  List<FileTopicModel>? filesTopic;
+
   Future<void> initializeData() async {
     client ??= http.Client();
     resetAutoRequestDownloadTimes();
   }
+
+  void resetAutoRequestDownloadTimes() {
+    _autoRequestDownloadTimes = 0;
+  }
+
 
   void closeClientRequest() {
     if (null != client) {
@@ -62,24 +72,29 @@ class MyTestPresenter {
     }
   }
 
-  void resetAutoRequestDownloadTimes() {
-    _autoRequestDownloadTimes = 0;
-  }
-
   void getMyTest(String testId) {
     assert(_view != null && _repository != null);
 
-    print('testId: ${testId.toString()}');
+    if (kDebugMode) {
+      print('DEBUG: testId: ${testId.toString()}');
+    }
+
     _repository!.getMyTestDetail(testId).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
       if (json.isNotEmpty) {
         if (json['error_code'] == 200) {
+          Map<String, dynamic> dataMap = json['data'];
           TestDetailModel testDetailModel =
-              TestDetailModel.fromMyTestJson(json['data']);
-          List<FileTopicModel> filesTopic =
+              TestDetailModel.fromMyTestJson(dataMap);
+          testDetail = TestDetailModel.fromMyTestJson(dataMap);
+
+          List<FileTopicModel> tempFilesTopic =
+          _prepareFileTopicListForDownload(testDetailModel);
+
+          filesTopic =
               _prepareFileTopicListForDownload(testDetailModel);
 
-          downloadFiles(testDetailModel, filesTopic);
+          downloadFiles(testDetailModel, tempFilesTopic);
 
           _view!.getMyTestSuccess(_getQuestionsAnswer(testDetailModel));
         } else {
@@ -92,7 +107,10 @@ class MyTestPresenter {
         // ignore: invalid_return_type_for_catch_error
 
         (onError) {
-      print("fail meomoe");
+      if (kDebugMode) {
+        print("DEBUG: fail meomoe");
+      }
+
       _view!.getMyTestFail(AlertClass.getTestDetailAlert);
     });
   }
@@ -174,52 +192,44 @@ class MyTestPresenter {
     return allFiles;
   }
 
-  void downloadSuccess(TestDetailModel testDetail, String nameFile,
-      double percent, int index, int total) {
-    _view!.downloadFilesSuccess(testDetail, nameFile, percent, index, total);
-  }
-
   void downloadFailure(AlertInfo alertInfo) {
     _view!.downloadFilesFail(alertInfo);
   }
 
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
-    if (client != null) {
+    if (null != client) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
         String fileTopic = temp.url;
-        String fileNameForDownload = Utils.convertFileName(fileTopic);
+        String fileNameForDownload = Utils.reConvertFileName(fileTopic);
 
         if (filesTopic.isNotEmpty) {
           String fileType = Utils.fileType(fileTopic);
-          bool isExist = await FileStorageHelper.checkExistFile(
-              fileTopic, MediaType.video, null);
-          if (fileType.isNotEmpty && !isExist) {
+
+          if (_mediaType(fileType) == MediaType.audio) {
+            fileNameForDownload = fileTopic;
+            fileTopic = Utils.convertFileName(fileTopic);
+          }
+
+          if (fileType.isNotEmpty &&
+              !await _isExist(fileTopic, _mediaType(fileType))) {
             try {
-              if (kDebugMode) {
-                print("DEBUG: Downloading file at index = $index");
-              }
-              // http.Response response = await _sendRequest(fileNameForDownload);
-              String url = downloadFileEP(fileTopic);
-              client!
-                  .head(Uri.parse(url), headers: headers)
-                  .timeout(const Duration(seconds: 10));
-              http.Response response = await client!.get(
-                Uri.parse(url),
-              );
+              http.Response response = await _sendRequest(fileNameForDownload);
 
               if (response.statusCode == 200) {
-              
-                //Save file using file_storage
-                String contentString =
-                    await Utils.convertVideoToBase64(response);
+                String contentString = await Utils.convertVideoToBase64(response);
+                if (kDebugMode) {
+                  print('DEBUG: content String:$contentString');
+                  print('DEBUG: file topic :$fileTopic');
+                }
+
                 await FileStorageHelper.writeVideo(
-                    contentString, fileNameForDownload, MediaType.audio);
+                    contentString, fileTopic, _mediaType(fileType));
+
                 double percent = _getPercent(index + 1, filesTopic.length);
-                _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
-                    index + 1, filesTopic.length);
+                _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
               } else {
                 _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(testDetail, filesTopic);
@@ -231,19 +241,16 @@ class MyTestPresenter {
               break loop;
             } on SocketException {
               _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-              //Download again
               reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             } on http.ClientException {
               _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-              //Download again
               reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             }
           } else {
             double percent = _getPercent(index + 1, filesTopic.length);
-            _view!.downloadFilesSuccess(
-                testDetail, fileTopic, percent, index + 1, filesTopic.length);
+            _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
           }
         }
       }
@@ -254,8 +261,7 @@ class MyTestPresenter {
     }
   }
 
-  void reDownloadAutomatic(
-      TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+  void reDownloadAutomatic(TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {
@@ -306,7 +312,9 @@ class MyTestPresenter {
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        print("error form: ${json.toString()}");
+        if (kDebugMode) {
+          print("DEBUG: error form: ${json.toString()}");
+        }
         if (json['error_code'] == 200 && json['status'] == 'success') {
           _view!.updateAnswersSuccess('Save your answers successfully!');
         } else {
@@ -354,7 +362,9 @@ class MyTestPresenter {
     String endFormat = '';
     for (QuestionTopicModel q in questions) {
       String questionId = q.id.toString();
-      print("num part : ${q.numPart.toString()}");
+      if (kDebugMode) {
+        print("DEBUG: num part : ${q.numPart.toString()}");
+      }
       if (q.numPart == PartOfTest.introduce.get) {
         format = 'introduce[$questionId]';
         reanswerFormat = 'reanswer_introduce[$questionId]';
@@ -397,5 +407,17 @@ class MyTestPresenter {
     request.fields.addAll(formData);
 
     return request;
+  }
+
+  void tryAgainToDownload() async {
+    if (kDebugMode) {
+      print("DEBUG: MyTestPresenter tryAgainToDownload");
+    }
+
+    _view!.onTryAgainToDownload();
+  }
+
+  void reDownloadFiles() {
+    downloadFiles(testDetail!, filesTopic!);
   }
 }

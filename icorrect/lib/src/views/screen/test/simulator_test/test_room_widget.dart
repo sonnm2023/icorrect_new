@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -94,21 +94,23 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (!_simulatorTestProvider!.isVisibleSaveTheTest) {
-      switch (state) {
-        case AppLifecycleState.resumed:
-          _onAppActive();
-          break;
-        case AppLifecycleState.paused:
-          print('App paused');
-          break;
-        case AppLifecycleState.inactive:
-          _onAppInBackground();
-          break;
-        case AppLifecycleState.detached:
-          print('App detached');
-          break;
-      }
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _onAppActive();
+        break;
+      case AppLifecycleState.paused:
+        if (kDebugMode) {
+          print('DEBUG: App paused');
+        }
+        break;
+      case AppLifecycleState.inactive:
+        _onAppInBackground();
+        break;
+      case AppLifecycleState.detached:
+        if (kDebugMode) {
+          print('DEBUG: App detached');
+        }
+        break;
     }
   }
 
@@ -122,7 +124,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (_simulatorTestProvider!.visibleRecord) {
       _recordController!.stop();
+    }
+    
+    if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
+      _playAnswerProvider!.resetSelectedQuestionIndex();
     }
   }
 
@@ -143,7 +149,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _recordController!.stop();
       _audioPlayerController!.stop();
     } else {
-      videoController.play();
+      if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+        videoController.play();
+      }
     }
     _simulatorTestProvider!.setPlayController(videoController);
   }
@@ -407,6 +415,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
+    _simulatorTestProvider!.setShowViewTips(true);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

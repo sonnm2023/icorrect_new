@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -6,7 +7,7 @@ import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/screen/test/my_test/response_tab.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data_sources/constant_strings.dart';
+import '../../../../data_sources/constants.dart';
 import '../../../../data_sources/local/file_storage_helper.dart';
 import '../../../../models/simulator_test_models/question_topic_model.dart';
 import '../../../../provider/my_test_provider.dart';
@@ -139,7 +140,9 @@ class _MyTestScreenState extends State<MyTestScreen> {
   }
 
   _tabBarView() {
-    print('test id: ${widget.homeWorkModel.activityAnswer!.testId.toString()}');
+    if (kDebugMode) {
+      print('DEBUG: test id: ${widget.homeWorkModel.activityAnswer!.testId.toString()}');
+    }
     return widget.homeWorkModel.activityAnswer!.hasTeacherResponse()
         ? [
             MyTestTab(

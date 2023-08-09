@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 enum ToastStatesType {
@@ -199,4 +200,14 @@ class AlertClass {
 
   static AlertInfo errorWhenUpdateAnswer = AlertInfo(
       'Warning', 'An error when update your answers. Please try again !');
+}
+
+class GlobalScaffoldKey {
+  static final filterScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'FilterScaffoldKeys');
+  static final aiResponseScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'AIResponseScaffoldKeys');
+  static final viewTipScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'ViewTipScaffoldKey');
+}
+
+class FontsSize {
+  static const double fontSize_13 = 13.0;
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/presenters/change_password_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';

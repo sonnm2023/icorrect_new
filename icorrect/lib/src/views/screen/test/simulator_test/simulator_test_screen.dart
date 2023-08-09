@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
@@ -54,7 +54,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     connection = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      // whenevery connection status is changed.
+      // when every connection status is changed.
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
@@ -283,7 +283,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
       if (provider.needDownloadAgain) {
         return DownloadAgainWidget(
-            simulatorTestPresenter: _simulatorTestPresenter!);
+          simulatorTestPresenter: _simulatorTestPresenter!,
+          myTestPresenter: null,
+        );
       } else {
         return const SizedBox();
       }
@@ -347,7 +349,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
-    _simulatorTestPresenter!.getTestDetail(widget.homeWorkModel.activityId.toString());
+    _simulatorTestPresenter!
+        .getTestDetail(widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -362,21 +365,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _showCheckNetworkDialog() async {
     await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return CustomAlertDialog(
-        title: "Notify",
-        description: "An error occur. Please check your connection!",
-        okButtonTitle: "OK",
-        cancelButtonTitle: null,
-        borderRadius: 8,
-        hasCloseButton: false,
-        okButtonTapped: () {
-          Navigator.of(context).pop();
-        },
-        cancelButtonTapped: null,
-      );
-    },
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur. Please check your connection!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
     );
   }
 
@@ -522,6 +525,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (null != _simulatorTestPresenter!.testDetail &&
           null != _simulatorTestPresenter!.filesTopic) {
         updateStatusForReDownload();
+        if (null == _simulatorTestPresenter!.client) {
+          _simulatorTestPresenter!.initializeData();
+        }
         _simulatorTestPresenter!.reDownloadFiles();
       }
     }

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';

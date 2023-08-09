@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:provider/provider.dart';

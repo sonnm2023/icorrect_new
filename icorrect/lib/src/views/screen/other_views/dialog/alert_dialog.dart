@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class ActionAlertListener {

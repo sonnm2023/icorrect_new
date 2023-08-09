@@ -48,21 +48,15 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     _loading!.show(context);
 
     print("tetst: ${widget.studentResultModel.testId.toString()}");
-    startLoadTestDetail();
+    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
   }
 
-  Future startLoadTestDetail() async {
-    _presenter!.initializeData();
-    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
-  }
-
   @override
   void dispose() {
-    _presenter!.closeClientRequest();
     super.dispose();
     _player!.dispose();
   }
@@ -197,14 +191,16 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       {required String fileName, required String questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
       //TODO
-      print('_playAudio:${value.path.toString()}');
+      if (kDebugMode) {
+        print('DEBUG: _playAudio:${value.path.toString()}');
+      }
       _playAudio(value.path.toString(), questionId);
     });
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
-      await _player!.play(DeviceFileSource(audioPath));
+       await _player!.play(DeviceFileSource(audioPath));
       await _player!.setVolume(2.5);
       _player!.onPlayerComplete.listen((event) {
         widget.provider.setPlayAnswer(false, questionId);
@@ -239,11 +235,6 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           return TipQuestionDialog.tipQuestionDialog(
               context, questionTopicModel);
         });
-  }
-
-  @override
-  void onReDownload() {
-    _loading!.hide();
   }
 
   @override

@@ -1,23 +1,28 @@
 import 'dart:core';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
+import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeWorkScreen extends StatefulWidget {
@@ -39,16 +44,22 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
-  AuthProvider? _authProvider;
+  late MyTestProvider _myTestProvider;
+  late SimulatorTestProvider _simulatorTestProvider;
+
   CircleLoading? _loading;
 
   @override
   void initState() {
     super.initState();
     _loading = CircleLoading();
-    _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _homeWorkPresenter = HomeWorkPresenter(this);
+
+    _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
+    _myTestProvider = Provider.of<MyTestProvider>(context, listen: false);
+    _simulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
+
     _getListHomeWork();
   }
 
@@ -63,7 +74,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void dispose() {
     _homeWorkProvider.dispose();
-    _authProvider!.dispose();
     super.dispose();
   }
 
@@ -111,85 +121,121 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       ],
     );
 
-    return Consumer<AuthProvider>(builder: (context, authProvider, child) {
-      return WillPopScope(
-        onWillPop: () async {
-          // if (authProvider.isDialogShowing) {
-          //   Navigator.pop(context);
-          //   authProvider.setDialogShowing(false);
-          //   return false;
-          // }
-          // Navigator.push(context,
-          //     MaterialPageRoute(builder: (context) => const HomeWorkScreen()));
-          return false;
-        },
-        child: MaterialApp(
-          theme: ThemeData(
-            brightness: Brightness.light,
-            // add tabBarTheme
-            tabBarTheme: const TabBarTheme(
-              labelColor: AppColor.defaultPurpleColor,
-              labelStyle: TextStyle(
-                  color: AppColor.defaultPurpleColor,
-                  fontWeight: FontWeight.w800),
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(color: AppColor.defaultPurpleColor),
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        if (_homeWorkProvider.isShowFilter) {
+          //Filter bottom sheet
+          _homeWorkProvider.setShowFilter(false);
+          Navigator.of(
+                  GlobalScaffoldKey.filterScaffoldKey.currentState!.context)
+              .pop();
+        } else if (_myTestProvider.isShowAIResponse) {
+          //AI Response
+          _myTestProvider.setShowAIResponse(false);
+          Navigator.of(
+                  GlobalScaffoldKey.aiResponseScaffoldKey.currentState!.context)
+              .pop();
+        } else if (_simulatorTestProvider.isShowViewTips) {
+          _simulatorTestProvider.setShowViewTips(false);
+          Navigator.of(
+                  GlobalScaffoldKey.viewTipScaffoldKey.currentState!.context)
+              .pop();
+        } else {
+          //TODO: Show confirm dialog to quit the application here
+          if (kDebugMode) {
+            print(
+                "DEBUG: TODO: Show confirm dialog to quit the application here");
+          }
+          _showQuitAppConfirmDialog();
+        }
+
+        return false;
+      },
+      child: MaterialApp(
+        theme: ThemeData(
+          brightness: Brightness.light,
+          // add tabBarTheme
+          tabBarTheme: const TabBarTheme(
+            labelColor: AppColor.defaultPurpleColor,
+            labelStyle: TextStyle(
+                color: AppColor.defaultPurpleColor,
+                fontWeight: FontWeight.w800),
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(color: AppColor.defaultPurpleColor),
             ),
-            primaryColor: AppColor.defaultPurpleColor,
-            unselectedWidgetColor:
-                AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
           ),
-          debugShowCheckedModeBanner: false,
-          home: DefaultTabController(
-            length: 1,
-            child: Scaffold(
-              key: scaffoldKey,
-              appBar: AppBar(
-                title: const Text(
-                  "MY HOMEWORK",
-                  style: TextStyle(color: AppColor.defaultPurpleColor),
-                ),
-                centerTitle: true,
-                elevation: 0.0,
-                iconTheme:
-                    const IconThemeData(color: AppColor.defaultPurpleColor),
-                // bottom: PreferredSize(
-                //   preferredSize: _tabBar.preferredSize,
-                //   child: Material(
-                //     color: defaultWhiteColor,
-                //     child: _tabBar,
-                //   ),
-                // ),
-                backgroundColor: AppColor.defaultWhiteColor,
+          primaryColor: AppColor.defaultPurpleColor,
+          unselectedWidgetColor:
+              AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: DefaultTabController(
+          length: 1,
+          child: Scaffold(
+            key: scaffoldKey,
+            appBar: AppBar(
+              title: const Text(
+                "MY HOMEWORK",
+                style: TextStyle(color: AppColor.defaultPurpleColor),
               ),
-              body: Stack(
-                children: [
-                  MyHomeWorkTab(
-                    homeWorkProvider: _homeWorkProvider,
-                    homeWorkPresenter: _homeWorkPresenter!,
-                  ),
-                  Consumer<HomeWorkProvider>(
-                    builder: (context, homeWorkProvider, child) {
-                      if (homeWorkProvider.isProcessing) {
-                        _loading!.show(context);
-                      } else {
-                        _loading!.hide();
-                      }
-                      return Container();
-                    },
-                  ),
-                ],
-              ),
-              drawer: Drawer(
-                backgroundColor: AppColor.defaultWhiteColor,
-                child: drawerItems,
-              ),
+              centerTitle: true,
+              elevation: 0.0,
+              iconTheme:
+                  const IconThemeData(color: AppColor.defaultPurpleColor),
+              // bottom: PreferredSize(
+              //   preferredSize: _tabBar.preferredSize,
+              //   child: Material(
+              //     color: defaultWhiteColor,
+              //     child: _tabBar,
+              //   ),
+              // ),
+              backgroundColor: AppColor.defaultWhiteColor,
             ),
+            body: Stack(
+              children: [
+                MyHomeWorkTab(
+                  homeWorkProvider: _homeWorkProvider,
+                  homeWorkPresenter: _homeWorkPresenter!,
+                ),
+                Consumer<HomeWorkProvider>(
+                  builder: (context, homeWorkProvider, child) {
+                    if (homeWorkProvider.isProcessing) {
+                      _loading!.show(context);
+                    } else {
+                      _loading!.hide();
+                    }
+                    return Container();
+                  },
+                ),
+              ],
+            ),
+            drawer: Drawer(
+              backgroundColor: AppColor.defaultWhiteColor,
+              child: drawerItems,
+            ),
+            drawerEnableOpenDragGesture: false,
           ),
         ),
-      );
-    });
+      ),
+    );
+  }
+
+  _showQuitAppConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (builder) {
+        return ConfirmDialogWidget(
+          title: "Confirm",
+          message: "Are you sure to quit this application?",
+          cancelButtonTitle: "Cancel",
+          okButtonTitle: "Ok",
+          cancelButtonTapped: () {},
+          okButtonTapped: () {
+            Navigator.of(context).pop(true);
+          },
+        );
+      },
+    );
   }
 
   static Widget _drawHeader(UserDataModel user) {

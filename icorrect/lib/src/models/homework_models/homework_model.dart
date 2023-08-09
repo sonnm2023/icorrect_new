@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/models/homework_models/submited_model.dart';
 
 HomeWorkModel homeworkModelFromJson(String str) =>
@@ -229,7 +230,9 @@ class HomeWorkModel {
   set questionIndex(int questionIndex) => _questionIndex = questionIndex;
 
   bool hasTeacherResponse() {
-    print('_orderId: ${_orderId.toString()}');
+    if (kDebugMode) {
+      print('DEBUG: _orderId: ${_orderId.toString()}');
+    }
     return _orderId != '0' && _orderId!.isNotEmpty;
   }
 

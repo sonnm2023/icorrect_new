@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';

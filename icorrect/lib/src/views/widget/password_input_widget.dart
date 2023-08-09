@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/views/widget/auth_form_field.dart';
 
 class PasswordInputWidget extends StatelessWidget {

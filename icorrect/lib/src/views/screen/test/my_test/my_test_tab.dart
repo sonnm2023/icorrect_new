@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
-import 'package:icorrect/src/data_sources/constant_strings.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -16,15 +17,16 @@ import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart'
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/video_my_test.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
+import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 import 'package:video_player/video_player.dart';
@@ -45,31 +47,53 @@ class MyTestTab extends StatefulWidget {
 
 class _MyTestTabState extends State<MyTestTab>
     with AutomaticKeepAliveClientMixin<MyTestTab>, WidgetsBindingObserver
-    implements MyTestConstract, ActionAlertListener {
+    implements MyTestContract, ActionAlertListener {
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
 
   AudioPlayer? _player;
   final Record _record = Record();
+  bool isOffline = false;
+  StreamSubscription? connection;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    connection = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      // when every connection status is changed.
+      if (result == ConnectivityResult.none) {
+        isOffline = true;
+      } else if (result == ConnectivityResult.mobile) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.wifi) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.ethernet) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.bluetooth) {
+        isOffline = false;
+      }
+
+      if (kDebugMode) {
+        print("DEBUG: NO INTERNET === $isOffline");
+      }
+    });
 
     _loading = CircleLoading();
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
-
-    startLoadMyTest();
+    _getMyTest();
 
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
   }
 
-  Future startLoadMyTest() async {
+  void _getMyTest() async {
     await _presenter!.initializeData();
     _presenter!
         .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
@@ -78,33 +102,9 @@ class _MyTestTabState extends State<MyTestTab>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _presenter!.closeClientRequest();
-    super.dispose();
     _player!.dispose();
+    super.dispose();
   }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    switch (state) {
-      case AppLifecycleState.resumed:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
-  }
-
-  Future onAppActive() async {
-    _player!.pause();
-    
-  }
-
-  Future onAppInActive() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -117,79 +117,94 @@ class _MyTestTabState extends State<MyTestTab>
       if (provider.isDownloading) {
         return const DownloadProgressingWidget();
       } else {
-        return Column(
+        return Stack(
           children: [
-            // Expanded(flex: 5, child: VideoMyTest()),
-            Expanded(
-                flex: 9,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: provider.myAnswerOfQuestions.length,
-                    itemBuilder: (context, index) {
-                      return _questionItem(provider.myAnswerOfQuestions[index]);
-                    })),
-            Stack(
+            Column(
               children: [
-                (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
-                    ? Expanded(child: LayoutBuilder(builder: (_, constraint) {
-                        return InkWell(
-                          onTap: () {
-                            _showAiResponse();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            color: Colors.green,
-                            width: constraint.maxWidth,
-                            child: const Center(
-                              child: Text(
-                                'View AI Response',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 19),
-                              ),
-                            ),
-                          ),
-                        );
-                      }))
-                    : Container(),
+                // Expanded(flex: 5, child: VideoMyTest()),
                 Expanded(
-                    child: Stack(children: [
-                  TestRecordWidget(
-                    finishAnswer: (currentQuestion) {
-                      _onFinishReanswer(currentQuestion);
-                    },
-                    cancelAnswer: () {
-                      _onCancelReanswer();
-                    },
-                  ),
-                  (provider.reAnswerOfQuestions.isNotEmpty &&
-                          !provider.visibleRecord)
-                      ? LayoutBuilder(builder: (_, constraint) {
-                          return InkWell(
-                            onTap: () {
-                              _showDialogConfirmSaveChange(provider: provider);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              color: AppColor.defaultPurpleColor,
-                              width: constraint.maxWidth,
-                              child: const Center(
-                                child: Text(
-                                  'Update Your Answer',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 19),
+                    flex: 9,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: provider.myAnswerOfQuestions.length,
+                        itemBuilder: (context, index) {
+                          return _questionItem(
+                              provider.myAnswerOfQuestions[index]);
+                        })),
+                Stack(
+                  children: [
+                    (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
+                        ? Expanded(
+                            child: LayoutBuilder(builder: (_, constraint) {
+                            return InkWell(
+                              onTap: () {
+                                _showAiResponse();
+                              },
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                color: Colors.green,
+                                width: constraint.maxWidth,
+                                child: const Center(
+                                  child: Text(
+                                    'View AI Response',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 19),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        })
-                      : Container()
-                ])),
+                            );
+                          }))
+                        : Container(),
+                    Expanded(
+                        child: Stack(children: [
+                      TestRecordWidget(
+                        finishAnswer: (currentQuestion) {
+                          _onFinishReanswer(currentQuestion);
+                        },
+                        cancelAnswer: () {
+                          _onCancelReAnswer();
+                        },
+                      ),
+                      (provider.reAnswerOfQuestions.isNotEmpty &&
+                              !provider.visibleRecord)
+                          ? LayoutBuilder(builder: (_, constraint) {
+                              return InkWell(
+                                onTap: () {
+                                  _showDialogConfirmSaveChange(
+                                      provider: provider);
+                                },
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  color: AppColor.defaultPurpleColor,
+                                  width: constraint.maxWidth,
+                                  child: const Center(
+                                    child: Text(
+                                      'Update Your Answer',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 19),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            })
+                          : Container()
+                    ])),
+                  ],
+                )
               ],
-            )
+            ),
+            provider.needDownloadAgain
+                ? DownloadAgainWidget(
+                    simulatorTestPresenter: null,
+                    myTestPresenter: _presenter!,
+                  )
+                : const SizedBox(),
           ],
         );
       }
@@ -207,12 +222,82 @@ class _MyTestTabState extends State<MyTestTab>
               okButtonTitle: "Save",
               cancelButtonTapped: () {},
               okButtonTapped: () {
-                _onClickUpdateReanswer(provider.reAnswerOfQuestions);
+                _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
               });
         });
   }
 
-  void _onClickUpdateReanswer(List<QuestionTopicModel> requestions) {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _onAppActive();
+        break;
+      case AppLifecycleState.paused:
+        if (kDebugMode) {
+          print('DEBUG: App paused');
+        }
+        break;
+      case AppLifecycleState.inactive:
+        _onAppInBackground();
+        break;
+      case AppLifecycleState.detached:
+        if (kDebugMode) {
+          print('DEBUG:App detached');
+        }
+        break;
+    }
+  }
+
+  Future _onAppInBackground() async {
+    //TODO
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // if (videoController.value.isPlaying) {
+    //   videoController.pause();
+    //   _simulatorTestProvider!.setPlayController(videoController);
+    // }
+
+    if (widget.provider.visibleRecord) {
+      _record.stop();
+    }
+    
+    if (_player!.state == PlayerState.playing) {
+      QuestionTopicModel q = widget.provider.currentQuestion;
+      widget.provider.setPlayAnswer(false, q.id.toString());
+      _stopAudio();
+    }
+  }
+
+  Future _onAppActive() async {
+    //TODO
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // _simulatorTestProvider!.setPlayController(videoController);
+
+    if (widget.provider.visibleRecord) {
+      QuestionTopicModel currentQuestion =
+          widget.provider.currentQuestion;
+      
+      //TODO
+      // _initVideoController(
+      //     fileName: currentQuestion.files.first.url,
+      //     handleWhenFinishType: HandleWhenFinish.questionVideoType);
+
+      widget.provider.setVisibleRecord(false);
+      _record.stop();
+      _player!.stop();
+    } else {
+      //TODO
+      // if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+      //   videoController.play();
+      // }
+    }
+  }
+
+  void _onClickUpdateReAnswer(List<QuestionTopicModel> requestions) {
     _loading!.show(context);
     ActivitiesModel homework = widget.homeWorkModel;
     _presenter!.updateMyAnswer(
@@ -227,10 +312,10 @@ class _MyTestTabState extends State<MyTestTab>
         .indexWhere((q) => q.id == question.id);
     widget.provider.myAnswerOfQuestions[index] = question;
     widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
-    _onCancelReanswer();
+    _onCancelReAnswer();
   }
 
-  void _onCancelReanswer() {
+  void _onCancelReAnswer() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
     widget.provider.countDownTimer!.cancel();
@@ -240,61 +325,66 @@ class _MyTestTabState extends State<MyTestTab>
 
   _showAiResponse() {
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        enableDrag: false,
-        barrierColor: AppColor.defaultGrayColor,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      enableDrag: false,
+      barrierColor: AppColor.defaultGrayColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
-        builder: (_) {
-          return FutureBuilder(
-              future: aiResponseEP(
-                  widget.homeWorkModel.activityAnswer!.aiOrder.toString()),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.hasData) {
-                  return Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        child: AIResponse(url: snapshot.data.toString()),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(
-                            Icons.cancel_outlined,
-                            color: Colors.black,
-                            size: 25,
-                          ),
+      ),
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+      builder: (_) {
+        return FutureBuilder(
+          future: aiResponseEP(
+              widget.homeWorkModel.activityAnswer!.aiOrder.toString()),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              return Scaffold(
+                key: GlobalScaffoldKey.aiResponseScaffoldKey,
+                body: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: AIResponse(url: snapshot.data.toString()),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(
+                          Icons.cancel_outlined,
+                          color: Colors.black,
+                          size: 25,
                         ),
                       ),
-                    ],
-                  );
-                }
-                return Container(
-                  height: 400,
-                  color: Colors.white,
-                  child: const Center(
-                    child: Text('Nothing in here',
-                        style: TextStyle(
-                            color: AppColor.defaultGrayColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400)),
-                  ),
-                );
-              });
-        });
+                    ),
+                  ],
+                ),
+              );
+            }
+            return Container(
+              height: 400,
+              color: Colors.white,
+              child: const Center(
+                child: Text('Nothing in here',
+                    style: TextStyle(
+                        color: AppColor.defaultGrayColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400)),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _questionItem(QuestionTopicModel question) {
@@ -411,7 +501,7 @@ class _MyTestTabState extends State<MyTestTab>
     if (!provider.visibleRecord) {
       widget.provider.setCurrentQuestion(question);
       widget.provider.setVisibleRecord(true);
-      _recordReanswer(provider.visibleRecord, question);
+      _recordReAnswer(provider.visibleRecord, question);
     }
   }
 
@@ -436,7 +526,7 @@ class _MyTestTabState extends State<MyTestTab>
         });
   }
 
-  Future _recordReanswer(
+  Future _recordReAnswer(
       bool visibleRecord, QuestionTopicModel question) async {
     if (visibleRecord) {
       String audioFile = '${await Utils.generateAudioFileName()}.wav';
@@ -470,7 +560,9 @@ class _MyTestTabState extends State<MyTestTab>
       {required String fileName, required String questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
       //TODO
-      print('_playAudio:${value.path.toString()}');
+      if (kDebugMode) {
+        print('DEBUG: _playAudio:${value.path.toString()}');
+      }
       _playAudio(value.path.toString(), questionId);
     });
   }
@@ -504,7 +596,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void downloadFilesSuccess(TestDetailModel testDetail, String nameFile,
+  void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total) {
     widget.provider.setTotal(total);
     widget.provider.updateDownloadingPercent(percent);
@@ -535,11 +627,6 @@ class _MyTestTabState extends State<MyTestTab>
     if (kDebugMode) {
       print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
     }
-  }
-
-  @override
-  void onReDownload() {
-    _loading!.hide();
   }
 
   @override
@@ -586,7 +673,9 @@ class _MyTestTabState extends State<MyTestTab>
 
   @override
   void updateAnswerFail(AlertInfo info) {
-    print(info.description.toString());
+    if (kDebugMode) {
+      print("DEBUG: updateAnswerFail ${info.description.toString()}");
+    }
     //AlertsDialog.init().showDialog(context, info, this);
     _loading!.hide();
     Fluttertoast.showToast(
@@ -599,4 +688,54 @@ class _MyTestTabState extends State<MyTestTab>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void onReDownload() {
+    if (kDebugMode) {
+      print("DEBUG: TODO: implement onReDownload");
+    }
+    widget.provider.setDownloadingFile(false);
+    widget.provider.setNeedDownloadAgain(true);
+  }
+
+  @override
+  void onTryAgainToDownload() {
+    //Check internet connection status
+    if (isOffline) {
+      _showCheckNetworkDialog();
+    } else {
+      if (null != _presenter!.testDetail && null != _presenter!.filesTopic) {
+        updateStatusForReDownload();
+        if (null == _presenter!.client) {
+          _presenter!.initializeData();
+        }
+        _presenter!.reDownloadFiles();
+      }
+    }
+  }
+
+  void _showCheckNetworkDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur. Please check your connection!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
+  }
+
+  void updateStatusForReDownload() {
+    widget.provider.setNeedDownloadAgain(false);
+    widget.provider.setDownloadingFile(true);
+  }
 }
