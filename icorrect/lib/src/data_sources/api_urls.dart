@@ -17,6 +17,7 @@ const String profileInfoEP = 'auth/profile-info';
 const String updateInfoEP = 'auth/update-info';
 const String changePasswordEP = 'auth/change-password';
 const String getTestInfoEP = 'api/v1/ielts-test/syllabus/create';
+const String appConfigEP = 'api/v1/ielts-test/app-config';
 String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 String fileEP(String name) => '${icorrectDomain}file?filename=$name';
 

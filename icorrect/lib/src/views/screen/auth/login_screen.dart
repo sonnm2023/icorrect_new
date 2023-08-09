@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -45,10 +48,19 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //TODO: For test
-    // emailController.text = "luan@testing.com";
-    // passwordController.text = "123456";
+    emailController.text = "luan@testing.com";
+    passwordController.text = "nvl12345";
 
-    _autoLogin();
+    _getAppConfigInfo();
+  }
+
+  void _getAppConfigInfo() async {
+    String appConfigInfo = await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
+    if (appConfigInfo.isEmpty) {
+      _loginPresenter!.getAppConfigInfo();
+    } else {
+      _autoLogin();
+    }
   }
 
   void _autoLogin() async {
@@ -219,5 +231,22 @@ class _LoginScreenState extends State<LoginScreen>
         builder: (builder) {
           return MessageDialog.alertDialog(context, message);
         });
+  }
+  
+  @override
+  void onGetAppConfigInfoFail(String message) {
+    if (kDebugMode) {
+      print("DEBUG: onGetAppConfigInfoFail $message");
+    }
+    //Show get app config info error
+    showToastMsg(msg: "Has an error when getting app config infomation!", toastState: ToastStatesType.error);
+  }
+  
+  @override
+  void onGetAppConfigInfoSuccess() {
+    if (kDebugMode) {
+      print("DEBUG: onGetAppConfigInfoSuccess");
+    }
+    _autoLogin();
   }
 }
