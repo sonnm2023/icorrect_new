@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,10 @@ Widget items(BuildContext context) {
           "Home",
           style: CustomTextStyle.textGrey_15,
         ),
-        leading: const Icon(Icons.home_outlined),
+        leading: const Icon(
+          Icons.home_outlined,
+          color: AppColor.defaultGrayColor,
+        ),
         onTap: () {
           Utils.toggleDrawer();
 
@@ -35,7 +39,10 @@ Widget items(BuildContext context) {
           "Practice",
           style: CustomTextStyle.textGrey_15,
         ),
-        leading: const Icon(Icons.menu_book_outlined),
+        leading: const Icon(
+          Icons.menu_book_outlined,
+          color: AppColor.defaultGrayColor,
+        ),
         onTap: () {
           Utils.toggleDrawer();
 
@@ -51,7 +58,10 @@ Widget items(BuildContext context) {
           "Change password",
           style: CustomTextStyle.textGrey_15,
         ),
-        leading: const Icon(Icons.password_outlined),
+        leading: const Icon(
+          Icons.password_outlined,
+          color: AppColor.defaultGrayColor,
+        ),
         onTap: () {
           Utils.toggleDrawer();
 
@@ -67,7 +77,10 @@ Widget items(BuildContext context) {
           "Logout",
           style: CustomTextStyle.textGrey_15,
         ),
-        leading: const Icon(Icons.logout_outlined),
+        leading: const Icon(
+          Icons.logout_outlined,
+          color: AppColor.defaultGrayColor,
+        ),
         onTap: () {
           Utils.toggleDrawer();
           Utils.showLogoutConfirmDialog(context);

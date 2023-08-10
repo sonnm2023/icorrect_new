@@ -470,6 +470,8 @@ class Utils {
                 Text(
                   user.profileModel.displayName.toString(),
                   style: CustomTextStyle.textWhiteBold_15,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: CustomSize.size_5),
                 Row(

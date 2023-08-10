@@ -274,19 +274,19 @@ class CustomTextStyle {
   );
 
   static const TextStyle textBoldGrey_16 = TextStyle(
-    color: Colors.grey,
+    color: AppColor.defaultGrayColor,
     fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_16,
   );
 
   static const TextStyle textBlack_16 = TextStyle(
-    color: Colors.black,
+    color: AppColor.defaultBlackColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_16,
   );
 
   static const TextStyle textBoldBlack_16 = TextStyle(
-    color: Colors.black,
+    color: AppColor.defaultBlackColor,
     fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_16,
   );
@@ -298,25 +298,25 @@ class CustomTextStyle {
   );
 
   static const TextStyle textGrey_15 = TextStyle(
-    color: Colors.grey,
+    color: AppColor.defaultGrayColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_15,
   );
 
   static const TextStyle textBoldGrey_15 = TextStyle(
-    color: Colors.grey,
+    color: AppColor.defaultGrayColor,
     fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_15,
   );
 
   static const TextStyle textBlack_15 = TextStyle(
-    color: Colors.black,
+    color: AppColor.defaultBlackColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_15,
   );
 
   static const TextStyle textBoldBlack_15 = TextStyle(
-    color: Colors.black,
+    color: AppColor.defaultBlackColor,
     fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_15,
   );
@@ -328,37 +328,37 @@ class CustomTextStyle {
   );
 
   static const TextStyle textWhite_15 = TextStyle(
-    color: Colors.white,
+    color: AppColor.defaultWhiteColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_15,
   );
 
   static const TextStyle textWhiteBold_15 = TextStyle(
-    color: Colors.white,
+    color: AppColor.defaultWhiteColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_15,
   );
 
   static const TextStyle textGrey_14 = TextStyle(
-    color: Colors.grey,
+    color: AppColor.defaultGrayColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_14,
   );
 
   static const TextStyle textBoldGrey_14 = TextStyle(
-    color: Colors.grey,
+    color: AppColor.defaultGrayColor,
     fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_14,
   );
 
   static const TextStyle textBlack_14 = TextStyle(
-    color: Colors.black,
+    color: AppColor.defaultBlackColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_14,
   );
 
   static const TextStyle textBoldBlack_14 = TextStyle(
-    color: Colors.black,
+    color: AppColor.defaultBlackColor,
     fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_14,
   );
@@ -370,13 +370,13 @@ class CustomTextStyle {
   );
 
   static const TextStyle textWhite_14 = TextStyle(
-    color: Colors.white,
+    color: AppColor.defaultWhiteColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_14,
   );
 
   static const TextStyle textWhiteBold_14 = TextStyle(
-    color: Colors.white,
+    color: AppColor.defaultWhiteColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_14,
   );
