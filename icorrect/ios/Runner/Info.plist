@@ -31,7 +31,7 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>microphone</string>
+	<string>We need to access to the microphone to record audio file</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app require permission to access gallery</string>
 	<key>UIFileSharingEnabled</key>
