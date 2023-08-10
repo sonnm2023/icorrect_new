@@ -410,7 +410,7 @@ class Utils {
     return "";
   }
 
-  //huy custom function
+  //huy copied functions
   static Widget drawHeader(UserDataModel user) {
     return Container(
       padding: const EdgeInsets.symmetric(
