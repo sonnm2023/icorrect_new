@@ -86,7 +86,7 @@ class AuthFormField extends StatelessWidget {
       this.errorMaxLines = 2,
       this.textDirection = TextDirection.ltr,
       this.textAlign = TextAlign.start,
-      this.textInputAction,
+      this.textInputAction = TextInputAction.next,
       this.autofocus = false})
       : super(key: key);
 
