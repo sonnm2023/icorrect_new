@@ -220,6 +220,7 @@ class SimulatorTestProvider with ChangeNotifier {
   void addCurrentQuestionIntoList({
     required QuestionTopicModel questionTopic,
     required int repeatIndex,
+    required bool isRepeat,
   }) {
     QuestionTopicModel temp = QuestionTopicModel().copyWith(
         id: questionTopic.id,
@@ -236,10 +237,10 @@ class SimulatorTestProvider with ChangeNotifier {
         repeatIndex: questionTopic.repeatIndex,
         files: questionTopic.files
     );
-    if (repeatIndex != 0) {
+    if (isRepeat) {
       temp.content = "Ask for repeating the question!";
-      temp.repeatIndex = repeatIndex;
     }
+    temp.repeatIndex = repeatIndex;
     _questionList.add(temp);
 
     if (!isDisposed) {
