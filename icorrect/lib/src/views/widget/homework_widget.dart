@@ -17,17 +17,17 @@ class HomeWorkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: CustomSize.size_20,
-        vertical: CustomSize.size_5,
+        horizontal: CustomSize.size_10,
+        // vertical: CustomSize.size_5,
       ),
       child: Card(
         elevation: 0,
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(CustomSize.size_20),
+              borderRadius: BorderRadius.circular(CustomSize.size_10),
               border: Border.all(
                 color: AppColor.defaultPurpleColor,
-                width: 1,
+                width: 0.5,
                 style: BorderStyle.solid,
               )),
           child: ListTile(
@@ -41,8 +41,10 @@ class HomeWorkWidget extends StatelessWidget {
               height: CustomSize.size_50,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                border:
-                    Border.all(width: 2, color: AppColor.defaultPurpleColor),
+                border: Border.all(
+                  width: 1.0,
+                  color: AppColor.defaultPurpleColor,
+                ),
                 borderRadius: BorderRadius.circular(CustomSize.size_100),
               ),
               child: Column(

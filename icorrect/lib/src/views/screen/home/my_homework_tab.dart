@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -239,7 +240,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
                   return Padding(
                     padding: const EdgeInsets.only(
-                      left: CustomSize.size_10,
+                      left: CustomSize.size_15,
                       top: CustomSize.size_5,
                       right: CustomSize.size_10,
                       bottom: CustomSize.size_5,
@@ -269,7 +270,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
-    _storagePermission = Permission.storage;
+    AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+    int sdk = android.version.sdkInt;
+
+    sdk >= 33
+        ? _storagePermission = Permission.manageExternalStorage
+        : _storagePermission = Permission.storage;
   }
 
   void _listenForPermissionStatus() async {

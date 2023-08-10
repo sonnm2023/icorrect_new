@@ -23,6 +23,9 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data_sources/utils.dart';
+import '../../widget/drawer_items.dart';
+
 class HomeWorkScreen extends StatefulWidget {
   const HomeWorkScreen({super.key});
 
@@ -74,50 +77,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
-    final drawerItems = ListView(
-      children: [
-        Consumer<HomeWorkProvider>(builder: (context, homeWorkProvider, child) {
-          return _drawHeader(homeWorkProvider.currentUser);
-        }),
-        ListTile(
-          title: const Text(
-            "Home",
-            style: CustomTextStyle.textGrey_15,
-          ),
-          leading: const Icon(Icons.home_outlined),
-          onTap: () {
-            toggleDrawer();
-          },
-        ),
-        ListTile(
-          title: const Text(
-            "Change password",
-            style: CustomTextStyle.textGrey_15,
-          ),
-          leading: const Icon(Icons.password_outlined),
-          onTap: () {
-            toggleDrawer();
-
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ChangePasswordScreen(),
-              ),
-            );
-          },
-        ),
-        ListTile(
-          title: const Text(
-            "Logout",
-            style: CustomTextStyle.textGrey_15,
-          ),
-          leading: const Icon(Icons.logout_outlined),
-          onTap: () {
-            toggleDrawer();
-            _showLogoutConfirmDialog();
-          },
-        ),
-      ],
-    );
+    final drawerItems = items(context);
 
     return WillPopScope(
       onWillPop: () async {
