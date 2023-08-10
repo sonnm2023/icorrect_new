@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
+import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../data_sources/constants.dart';
@@ -25,6 +26,22 @@ Widget items(BuildContext context) {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const HomeWorkScreen(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        title: const Text(
+          "Practice",
+          style: CustomTextStyle.textGrey_15,
+        ),
+        leading: const Icon(Icons.menu_book_outlined),
+        onTap: () {
+          Utils.toggleDrawer();
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const PracticeScreen(),
             ),
           );
         },
