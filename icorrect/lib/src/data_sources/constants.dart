@@ -251,6 +251,7 @@ class CustomSize {
   static const double size_90 = 90.0;
   static const double size_100 = 100.0;
   static const double size_200 = 200.0;
+  static const double size_400 = 400.0;
 }
 
 class CustomTextStyle {

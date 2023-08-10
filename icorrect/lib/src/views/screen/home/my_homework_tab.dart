@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -15,13 +16,12 @@ import 'package:icorrect/src/views/widget/homework_widget.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:grouped_list/sliver_grouped_list.dart';
 
 class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
       {Key? key,
-        required this.homeWorkProvider,
-        required this.homeWorkPresenter})
+      required this.homeWorkProvider,
+      required this.homeWorkPresenter})
       : super(key: key);
 
   final HomeWorkProvider homeWorkProvider;
@@ -73,23 +73,25 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       decoration: const BoxDecoration(
         color: AppColor.defaultGraySlightColor,
         border: Border(
-          top: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
-          bottom: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
+          top: BorderSide(
+            color: AppColor.defaultPurpleColor,
+            width: 1.5,
+          ),
+          bottom: BorderSide(
+            color: AppColor.defaultPurpleColor,
+            width: 1.5,
+          ),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: 80),
+          const SizedBox(width: CustomSize.size_80),
           Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
               return Text(
                 homeworkProvider.filterString,
-                style: const TextStyle(
-                  color: AppColor.defaultBlackColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.0,
-                ),
+                style: CustomTextStyle.textBoldBlack_14,
               );
             },
           ),
@@ -100,18 +102,22 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             ),
             child: Image.asset(
               'assets/images/ic_filter.png',
-              height: 25,
-              width: 25,
+              height: CustomSize.size_25,
+              width: CustomSize.size_25,
             ),
             onPressed: () {
-              Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(true, GlobalScaffoldKey.filterScaffoldKey);
-      
+              Provider.of<AuthProvider>(context, listen: false)
+                  .setShowDialogWithGlobalScaffoldKey(
+                true,
+                GlobalScaffoldKey.filterScaffoldKey,
+              );
+
               showModalBottomSheet<void>(
                 context: context,
                 isDismissible: true,
                 builder: (BuildContext context) {
                   return SizedBox(
-                    height: 400,
+                    height: CustomSize.size_400,
                     child: _buildFilterBottomSheet(),
                   );
                 },
@@ -143,13 +149,18 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     return Row(
       children: [
         Container(
-          height: 50,
+          height: CustomSize.size_50,
           width: w,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
-              right:
-              BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
+              top: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
+              right: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
             ),
           ),
           child: InkWell(
@@ -168,11 +179,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           ),
         ),
         Container(
-          height: 50,
+          height: CustomSize.size_50,
           width: w,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
+              top: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
             ),
           ),
           child: InkWell(
@@ -192,10 +206,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             child: const Center(
               child: Text(
                 "Done",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColor.defaultPurpleColor,
-                ),
+                style: CustomTextStyle.textBoldPurple_14,
               ),
             ),
           ),
@@ -207,51 +218,52 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   Widget _buildListHomeWork() {
     return Expanded(
       child: Container(
-        color: AppColor.defaultGraySlightColor,
+        color: AppColor.defaultWhiteColor,
         child: Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
-              if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
-                  !homeworkProvider.isProcessing) {
-                return const NoDataWidget(
-                    msg: 'No data, please choose other filter!');
-              }
-              return CustomScrollView(
-                slivers: [
-                  SliverGroupedListView<ActivitiesModel, String>(
-                    elements: homeworkProvider.listFilteredHomeWorks,
-                    groupBy: (element) => element.classId.toString(),
-                    groupComparator: (value1, value2) => value2.compareTo(value1),
-                    order: GroupedListOrder.ASC,
-                    groupSeparatorBuilder: (String classId) {
-                      String className = Utils.getClassNameWithId(classId, homeworkProvider.listClassForFilter);
+          if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
+              !homeworkProvider.isProcessing) {
+            return const NoDataWidget(
+                msg: 'No data, please choose other filter!');
+          }
+          return CustomScrollView(
+            slivers: [
+              SliverGroupedListView<ActivitiesModel, String>(
+                elements: homeworkProvider.listFilteredHomeWorks,
+                groupBy: (element) => element.classId.toString(),
+                groupComparator: (value1, value2) => value2.compareTo(value1),
+                order: GroupedListOrder.ASC,
+                groupSeparatorBuilder: (String classId) {
+                  String className = Utils.getClassNameWithId(
+                      classId, homeworkProvider.listClassForFilter);
 
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 10,
-                          top: 5,
-                          right: 10,
-                          bottom: 5,
-                        ),
-                        child: Text(
-                          className,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    },
-                    itemBuilder: (c, element) {
-                      return HomeWorkWidget(
-                        homeWorkModel: element,
-                        callBack: clickOnHomeWorkItem,
-                      );
-                    },
-                  ),
-                ],
-              );
-            }),
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: CustomSize.size_10,
+                      top: CustomSize.size_5,
+                      right: CustomSize.size_10,
+                      bottom: CustomSize.size_5,
+                    ),
+                    child: Text(
+                      className,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        fontSize: CustomSize.size_20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
+                itemBuilder: (c, element) {
+                  return HomeWorkWidget(
+                    homeWorkModel: element,
+                    callBack: clickOnHomeWorkItem,
+                  );
+                },
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -312,9 +324,11 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     //   ),
     // );
 
-    Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(_selectedHomeWorkModel!);
+    Map<String, dynamic> statusMap =
+        Utils.getHomeWorkStatus(_selectedHomeWorkModel!);
 
-    if (statusMap['title'] == 'Out of date' || statusMap['title'] == 'Not Completed') {
+    if (statusMap['title'] == 'Out of date' ||
+        statusMap['title'] == 'Not Completed') {
       Navigator.push(
         context,
         MaterialPageRoute(
