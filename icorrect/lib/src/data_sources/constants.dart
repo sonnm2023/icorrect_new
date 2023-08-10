@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
+import '../../core/app_color.dart';
+
 enum ToastStatesType {
   success,
   error,
@@ -209,6 +211,166 @@ class GlobalScaffoldKey {
   static final showQuitTheTestScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'ShowQuitTheTestScaffoldKey');
 }
 
+
+
 class FontsSize {
+  static const double fontSize_8 = 8.0;
   static const double fontSize_13 = 13.0;
+  static const double fontSize_14 = 14.0;
+  static const double fontSize_15 = 15.0;
+  static const double fontSize_16 = 16.0;
+  static const double fontSize_18 = 18.0;
+  static const double fontSize_20 = 20.0;
+}
+
+class CustomPadding {
+  static const double padding_1 = 1.0;
+  static const double padding_2 = 2.0;
+  static const double padding_5 = 5.0;
+  static const double padding_10 = 10.0;
+  static const double padding_15 = 15.0;
+  static const double padding_20 = 20.0;
+  static const double padding_30 = 30.0;
+  static const double padding_40 = 40.0;
+  static const double padding_50 = 50.0;
+  static const double padding_100 = 100.0;
+}
+
+class CustomSize {
+  static const double size_5 = 5.0;
+  static const double size_10 = 10.0;
+  static const double size_15 = 15.0;
+  static const double size_20 = 20.0;
+  static const double size_25 = 25.0;
+  static const double size_30 = 30.0;
+  static const double size_40 = 40.0;
+  static const double size_50 = 50.0;
+  static const double size_60 = 60.0;
+  static const double size_70 = 70.0;
+  static const double size_80 = 80.0;
+  static const double size_90 = 90.0;
+  static const double size_100 = 100.0;
+  static const double size_200 = 200.0;
+}
+
+class CustomTextStyle {
+  static const TextStyle appbarContent = TextStyle(
+    color: AppColor.defaultPurpleColor,
+    fontWeight: FontWeight.w800,
+    fontSize: FontsSize.fontSize_18,
+  );
+
+  static TextStyle textGrey_16 = TextStyle(
+    color: Colors.grey.withOpacity(0.6),
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_16,
+  );
+
+  static const TextStyle textBoldGrey_16 = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_16,
+  );
+
+  static const TextStyle textBlack_16 = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_16,
+  );
+
+  static const TextStyle textBoldBlack_16 = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_16,
+  );
+
+  static const TextStyle textBoldPurple_16 = TextStyle(
+    color: AppColor.defaultPurpleColor,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_16,
+  );
+
+  static const TextStyle textGrey_15 = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textBoldGrey_15 = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textBlack_15 = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textBoldBlack_15 = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textBoldPurple_15 = TextStyle(
+    color: AppColor.defaultPurpleColor,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textWhite_15 = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textWhiteBold_15 = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textGrey_14 = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textBoldGrey_14 = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textBlack_14 = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textBoldBlack_14 = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textBoldPurple_14 = TextStyle(
+    color: AppColor.defaultPurpleColor,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textWhite_14 = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textWhiteBold_14 = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_14,
+  );
 }

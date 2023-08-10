@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 
+import '../../data_sources/constants.dart';
+
 class AuthFormField extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
@@ -60,7 +62,7 @@ class AuthFormField extends StatelessWidget {
       this.hintText,
       this.upHintText,
       this.backgroundColor,
-      this.height,
+      this.height = CustomSize.size_70,
       this.radius = 30.0,
       this.maxLines,
       this.enabled = true,
@@ -94,6 +96,7 @@ class AuthFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
+          height: height,
           alignment: containerAlignment,
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: TextFormField(
@@ -116,9 +119,7 @@ class AuthFormField extends StatelessWidget {
             onChanged: onChanged,
             onTap: onTap,
             obscureText: obscureText,
-            style: const TextStyle(
-              color: Colors.grey,
-            ),
+            style: CustomTextStyle.textBlack_14,
             decoration: InputDecoration(
               counterText: '',
               suffixStyle: suffixTextStyle,
@@ -134,17 +135,21 @@ class AuthFormField extends StatelessWidget {
                   ),
               labelText: labelText,
               enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(width: 1.0, color: AppColor.defaultPurpleColor),
-                  borderRadius: BorderRadius.circular(13.0)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(width: 1.0, color: AppColor.defaultPurpleColor),
-                  borderRadius: BorderRadius.circular(13.0)),
-              hintText: hintText,
-              hintStyle: TextStyle(
-                color: Colors.grey.withOpacity(0.8),
+                borderSide: const BorderSide(
+                  width: 1.0,
+                  color: AppColor.defaultPurpleColor,
+                ),
+                borderRadius: BorderRadius.circular(13.0),
               ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  width: 1.0,
+                  color: AppColor.defaultPurpleColor,
+                ),
+                borderRadius: BorderRadius.circular(13.0),
+              ),
+              hintText: hintText,
+              hintStyle: CustomTextStyle.textGrey_14,
               hintTextDirection: TextDirection.ltr,
               prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,
