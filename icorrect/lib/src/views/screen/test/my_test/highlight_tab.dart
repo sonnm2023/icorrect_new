@@ -4,14 +4,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/special_homeworks_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/student_test_screen.dart';
-import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +19,7 @@ import '../../other_views/dialog/circle_loading.dart';
 class HighLightTab extends StatefulWidget {
   MyTestProvider provider;
   ActivitiesModel homeWorkModel;
+
   HighLightTab(
       {super.key, required this.provider, required this.homeWorkModel});
 
@@ -94,26 +93,31 @@ class _HighLightTabState extends State<HighLightTab>
       } else {
         return EmptyWidget.init().buildNothingWidget(
             'Nothing HighLight Homeworks in here',
-            widthSize: 100,
-            heightSize: 100);
+            widthSize: CustomSize.size_100,
+            heightSize: CustomSize.size_100);
       }
     });
   }
 
   Widget _highlightItem(StudentResultModel resultModel) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CustomSize.size_10,
+        vertical: CustomSize.size_5,
+      ),
+      margin: const EdgeInsets.only(
+        top: CustomSize.size_20,
+        left: CustomSize.size_10,
+        right: CustomSize.size_10,
+      ),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 0.3,
-              spreadRadius: 0.3,
-            )
-          ]),
+          color: AppColor.defaultWhiteColor,
+          borderRadius: BorderRadius.circular(CustomSize.size_10),
+          border: Border.all(
+            color: AppColor.defaultPurpleColor,
+            style: BorderStyle.solid,
+            width: 0.5,
+          )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -121,45 +125,41 @@ class _HighLightTabState extends State<HighLightTab>
             children: [
               const CircleAvatar(
                 foregroundImage: AssetImage(AppAsset.defaultAvt),
-                radius: 30,
+                radius: CustomSize.size_30,
               ),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: CustomSize.size_20,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DefaultText(
-                      text: resultModel.students!.name.toString(),
+                    Text(
+                      resultModel.students!.name.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      color: Colors.black,
+                      style: CustomTextStyle.textBoldBlack_15,
                     ),
-                    const SizedBox(height: 10),
-                    DefaultText(
-                      text: resultModel.createdAt.toString(),
+                    const SizedBox(height: CustomSize.size_10),
+                    Text(
+                      resultModel.createdAt.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
-                      color: AppColor.defaultGrayColor,
+                      style: CustomTextStyle.textGrey_14,
                     )
                   ],
                 ),
               )
             ],
           ),
-          DefaultText(
-            text: resultModel.aiScore.toString().isNotEmpty
+          Text(
+            resultModel.aiScore.toString().isNotEmpty
                 ? resultModel.aiScore.toString()
                 : resultModel.overallScore.toString(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            fontWeight: FontWeight.bold,
-            fontSize: 17,
-            color: Colors.green,
-          )
+            style: CustomTextStyle.textBoldGreen_16,
+          ),
         ],
       ),
     );
