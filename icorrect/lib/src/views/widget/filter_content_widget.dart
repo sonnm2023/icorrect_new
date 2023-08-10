@@ -42,25 +42,17 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (kDebugMode) {
-          print("DEBUG: FilterContentWidget - WillPopScope");
-        }
-        return false;
-      },
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          key: GlobalScaffoldKey.filterScaffoldKey,
-          resizeToAvoidBottomInset: true,
-          appBar: _tabBar,
-          body: TabBarView(
-            children: [
-              _buildListClass(),
-              _buildListStatus(),
-            ],
-          ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        key: GlobalScaffoldKey.filterScaffoldKey,
+        resizeToAvoidBottomInset: true,
+        appBar: _tabBar,
+        body: TabBarView(
+          children: [
+            _buildListClass(),
+            _buildListStatus(),
+          ],
         ),
       ),
     );
