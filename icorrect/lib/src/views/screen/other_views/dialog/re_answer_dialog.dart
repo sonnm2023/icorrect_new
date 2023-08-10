@@ -125,7 +125,7 @@ class ReAnswerDialog extends Dialog {
     if (await _record.hasPermission()) {
       await _record.start(
         path: path,
-        encoder: AudioEncoder.wav,
+        // encoder: AudioEncoder.wav,
         bitRate: 128000,
         samplingRate: 44100,
       );

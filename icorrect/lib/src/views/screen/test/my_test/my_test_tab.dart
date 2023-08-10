@@ -562,7 +562,7 @@ class _MyTestTabState extends State<MyTestTab>
           path:
               '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
               '\\$audioFile',
-          encoder: AudioEncoder.wav,
+          // encoder: AudioEncoder.wav,
           bitRate: 128000,
           samplingRate: 44100,
         );

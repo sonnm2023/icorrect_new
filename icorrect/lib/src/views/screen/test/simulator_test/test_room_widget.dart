@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_audio_recorder3/flutter_audio_recorder3.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
@@ -30,9 +31,9 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/video_player_widget.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
@@ -57,7 +58,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   PlayAnswerProvider? _playAnswerProvider;
   VideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
-  Record? _recordController;
+  FlutterAudioRecorder3? _recorder;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -71,7 +72,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _audioPlayerController = AudioPlayer();
-    _recordController = Record();
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -124,9 +124,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (_simulatorTestProvider!.visibleRecord) {
-      _recordController!.stop();
+      if (null != _recorder) {
+        _recorder!.stop();
+      }
     }
-    
+
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
       _playAnswerProvider!.resetSelectedQuestionIndex();
@@ -147,7 +149,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
       _simulatorTestProvider!.setVisibleCueCard(false);
       _simulatorTestProvider!.setVisibleRecord(false);
-      _recordController!.stop();
+
+      if (null != _recorder) {
+        _recorder!.stop();
+      }
+
       _audioPlayerController!.stop();
     } else {
       if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
@@ -223,7 +229,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _startToDoTest() {
     if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
-      // _simulatorTestProvider!.setTopicsQueue(_simulatorTestProvider!.topicsQueue);
       _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
@@ -239,7 +244,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     await _stopRecord();
-    await _recordController!.dispose();
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -307,9 +311,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }) async {
     _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-    String path = await Utils.getAudioPathToPlay(
-        question, _simulatorTestProvider!.currentTestDetail.testId.toString());
-    _playAudio(path);
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    String url = '';
+
+    if (question.repeatIndex == question.answers.length) {
+      url = question.answers.last.url;
+    } else {
+      url = question.answers.elementAt(question.repeatIndex).url;
+    }
+
+    String path = "${appDocDirectory.path}/$url";
+    if (kDebugMode) {
+      print("Play file: $path.wav");
+    }
+    _playAudio("$path.wav");
   }
 
   Future<void> _playAnswerAudio(
@@ -416,7 +431,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
-    Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(true, GlobalScaffoldKey.showTipScaffoldKey);
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+            true, GlobalScaffoldKey.showTipScaffoldKey);
 
     showModalBottomSheet(
       context: context,
@@ -448,11 +465,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Stop record
     _setVisibleRecord(false, null, null);
 
-    _countRepeat++;
-
     //Add question into List Question & show it
     _simulatorTestProvider!.addCurrentQuestionIntoList(
-        questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+      questionTopic: _currentQuestion!,
+      repeatIndex: _countRepeat,
+      isRepeat: true,
+    );
+
+    _countRepeat++;
 
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
@@ -834,7 +854,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _stopRecord() async {
-    await _recordController!.stop();
+    var result = await _recorder!.stop();
+    if (kDebugMode) {
+      print("Stop recording: ${result!.path}");
+      print("Stop recording: ${result.duration}");
+    }
   }
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
@@ -846,33 +870,75 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // _simulatorTestProvider!.setCountDownTimer(count); //TODO
   }
 
-  Future<void> _recordAnswer(String fileName) async {
-    String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
-    String path = await FileStorageHelper.getFilePath(
-        newFileName,
-        MediaType.audio,
-        _simulatorTestProvider!.currentTestDetail.testId.toString());
+  Future<String> _getCustomFileName(
+    String type,
+    String testId,
+    String fileName,
+  ) async {
+    String newFileName = await _createLocalAudioFileName(fileName);
+    return "${type}_${testId}_${newFileName}_";
+  }
 
-    if (kDebugMode) {
-      print("DEBUG: RECORD AS FILE PATH: $path");
-    }
+  Future<void> _initRecorder(String fileName) async {
+    try {
+      bool hasPermission = await FlutterAudioRecorder3.hasPermissions ?? false;
 
-    if (await _recordController!.hasPermission()) {
-      await _recordController!.start(
-        path: path,
-        encoder: AudioEncoder.wav,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
+      if (hasPermission) {
+        String newFileName = await _getCustomFileName(
+            StringClass.audio,
+            _simulatorTestProvider!.currentTestDetail.testId.toString(),
+            fileName);
+        String customPath =
+            '${newFileName}_${DateTime.now().millisecondsSinceEpoch.toString()}';
+        Directory appDocDirectory = await getApplicationDocumentsDirectory();
+        String path = "${appDocDirectory.path}/$customPath";
 
-      List<FileTopicModel> temp = _currentQuestion!.answers;
-      if (!_checkAnswerFileExist(newFileName, temp)) {
-        temp.add(
-            FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-        _currentQuestion!.answers = temp;
-        _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+        _recorder = FlutterAudioRecorder3(path,
+            audioFormat: AudioFormat.WAV, sampleRate: 44100);
+        await _recorder!.initialized;
+
+        if (kDebugMode) {
+          print("Start recording: $path");
+        }
+
+        //Create and add answer into current question
+        List<FileTopicModel> temp = _currentQuestion!.answers;
+        if (!_checkAnswerFileExist(customPath, temp)) {
+          temp.add(
+              FileTopicModel.fromJson({'id': 0, 'url': customPath, 'type': 0}));
+          _currentQuestion!.answers = temp;
+          _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+        }
+      } else {
+        if (kDebugMode) {
+          print("You must accept permissions");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
       }
     }
+  }
+
+  void _startRecording(String fileName) async {
+    await _initRecorder(fileName);
+
+    try {
+      await _recorder!.start();
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  Future<void> _resumeRecording() async {
+    await _recorder!.resume();
+  }
+
+  Future<void> _pauseRecording() async {
+    await _recorder!.pause();
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
@@ -1115,7 +1181,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required bool isPart2,
   }) async {
     //Stop old record
-    await _stopRecord();
+    // await _stopRecord();
 
     TopicModel? topicModel = _getCurrentPart();
 
@@ -1138,7 +1204,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _setVisibleRecord(true, _countDown, fileName);
 
-    _recordAnswer(fileName);
+    // _recordAnswer(fileName); //TODO
+    _startRecording(fileName);
   }
 
   void _setVisibleSaveTest(bool isVisible) {
@@ -1181,14 +1248,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
-    //Reset count repeat
-    _countRepeat = 0;
-
     //Enable repeat button
     _simulatorTestProvider!.setEnableRepeatButton(true);
 
     //Stop record
     _setVisibleRecord(false, null, null);
+
+    //Mark last index for last answer
+    if (_countRepeat > 0) {
+      _countRepeat++;
+    }
 
     if (_simulatorTestProvider!.visibleCueCard) {
       //Has cue card case
@@ -1197,7 +1266,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Add question into List Question & show it
         _simulatorTestProvider!.addCurrentQuestionIntoList(
-            questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+          questionTopic: _currentQuestion!,
+          repeatIndex: _countRepeat,
+          isRepeat: false,
+        );
 
         _playNextQuestion();
       } else {
@@ -1210,7 +1282,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     } else {
       //Add question or followup into List Question & show it
       _simulatorTestProvider!.addCurrentQuestionIntoList(
-          questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+        questionTopic: _currentQuestion!,
+        repeatIndex: _countRepeat,
+        isRepeat: false,
+      );
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
@@ -1230,6 +1305,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
+
+    //Reset count repeat
+    _countRepeat = 0;
   }
 
   @override
