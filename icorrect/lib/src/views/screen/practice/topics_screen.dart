@@ -29,13 +29,6 @@ class _TopicsScreenState extends State<TopicsScreen> {
           centerTitle: true,
           elevation: 0.0,
           iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
-          // bottom: PreferredSize(
-          //   preferredSize: _tabBar.preferredSize,
-          //   child: Material(
-          //     color: defaultWhiteColor,
-          //     child: _tabBar,
-          //   ),
-          // ),
           backgroundColor: AppColor.defaultWhiteColor,
         ),
         body: Stack(
@@ -57,10 +50,13 @@ class _TopicsScreenState extends State<TopicsScreen> {
                       children: [
                         const Expanded(
                           flex: 1,
-                          child: Icon(
-                            Icons.check_box_outlined,
-                            color: AppColor.defaultPurpleColor,
-                            size: CustomSize.size_30,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.check_box_outlined,
+                              color: AppColor.defaultPurpleColor,
+                              size: CustomSize.size_30,
+                            ),
+                            onPressed: null,
                           ),
                         ),
                         const Expanded(
@@ -111,8 +107,7 @@ Widget _buildInTopicCard(BuildContext context, {required String topic}) {
     onTap: () {},
     child: Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: CustomSize.size_10,
-        vertical: CustomSize.size_5,
+        horizontal: CustomSize.size_5,
       ),
       child: Card(
         elevation: 0,
@@ -123,10 +118,13 @@ Widget _buildInTopicCard(BuildContext context, {required String topic}) {
           children: [
             const Expanded(
               flex: 1,
-              child: Icon(
-                Icons.check_box_outlined,
-                color: AppColor.defaultPurpleColor,
-                size: CustomSize.size_30,
+              child: IconButton(
+                icon: Icon(
+                  Icons.check_box_outlined,
+                  color: AppColor.defaultPurpleColor,
+                  size: CustomSize.size_30,
+                ),
+                onPressed: null,
               ),
             ),
             Expanded(
@@ -139,10 +137,13 @@ Widget _buildInTopicCard(BuildContext context, {required String topic}) {
             ),
             const Expanded(
               flex: 1,
-              child: Icon(
-                Icons.download_outlined,
-                color: AppColor.defaultGrayColor,
-                size: CustomSize.size_30,
+              child: IconButton(
+                icon: Icon(
+                  Icons.download_outlined,
+                  color: AppColor.defaultGrayColor,
+                  size: CustomSize.size_30,
+                ),
+                onPressed: null,
               ),
             ),
           ],
