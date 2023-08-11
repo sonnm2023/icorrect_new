@@ -6,4 +6,6 @@ enum AppSharedKeys {
   currentUser,
   listClassFilter,
   listStatusFilter,
+  secretkey,
+  logApiUrl,
 }

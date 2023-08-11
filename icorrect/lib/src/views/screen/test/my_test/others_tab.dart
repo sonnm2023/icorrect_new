@@ -12,13 +12,13 @@ import '../../../../data_sources/utils.dart';
 import '../../../../models/user_data_models/user_data_model.dart';
 import '../../../../presenters/special_homeworks_presenter.dart';
 import '../../../../provider/my_test_provider.dart';
-import '../../../widget/default_text.dart';
 import '../../../widget/empty_widget.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
 class OtherTab extends StatefulWidget {
   MyTestProvider provider;
   ActivitiesModel homeWorkModel;
+
   OtherTab({super.key, required this.provider, required this.homeWorkModel});
 
   @override
@@ -89,66 +89,73 @@ class _OtherTabState extends State<OtherTab>
       } else {
         return EmptyWidget.init().buildNothingWidget(
             'Nothing other homeworks in here',
-            widthSize: 100,
-            heightSize: 100);
+            widthSize: CustomSize.size_100,
+            heightSize: CustomSize.size_100);
       }
     });
   }
 
   Widget _othersItem(StudentResultModel resultModel) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CustomSize.size_10,
+        vertical: CustomSize.size_5,
+      ),
+      margin: const EdgeInsets.only(
+        top: CustomSize.size_20,
+        left: CustomSize.size_10,
+        right: CustomSize.size_10,
+      ),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 0.3,
-              spreadRadius: 0.3,
-            )
-          ]),
+          color: AppColor.defaultWhiteColor,
+          borderRadius: BorderRadius.circular(CustomSize.size_10),
+          border: Border.all(
+            color: AppColor.defaultPurpleColor,
+            style: BorderStyle.solid,
+            width: 0.5,
+          )),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const CircleAvatar(
-            foregroundImage: AssetImage(AppAsset.defaultAvt),
-            radius: 30,
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DefaultText(
-                  text: resultModel.students!.name.toString(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                  color: Colors.black,
+          Row(
+            children: [
+              const CircleAvatar(
+                foregroundImage: AssetImage(AppAsset.defaultAvt),
+                radius: CustomSize.size_30,
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: CustomSize.size_20,
                 ),
-                const SizedBox(height: 10),
-                DefaultText(
-                  text: resultModel.createdAt.toString(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
-                  color: AppColor.defaultGrayColor,
-                )
-              ],
-            ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      resultModel.students!.name.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CustomTextStyle.textBoldBlack_15,
+                    ),
+                    const SizedBox(height: CustomSize.size_10,),
+                    Text(
+                      resultModel.createdAt.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CustomTextStyle.textGrey_14,
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-          DefaultText(
-            text: resultModel.overallScore.toString(),
+          Text(
+            resultModel.aiScore.toString().isNotEmpty
+                ? resultModel.aiScore.toString()
+                : resultModel.overallScore.toString(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            fontWeight: FontWeight.bold,
-            fontSize: 17,
-            color: Colors.green,
-          )
+            style: CustomTextStyle.textBoldGreen_16,
+          ),
         ],
       ),
     );

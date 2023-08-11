@@ -10,6 +10,7 @@ abstract class AuthRepository {
   Future<String> getUserInfo(String deviceId, String appVersion, String os);
   Future<String> changePassword(
       String oldPassword, String newPassword, String confirmNewPassword);
+  Future<String> getAppConfigInfo();
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -96,6 +97,22 @@ class AuthRepositoryImpl implements AuthRepository {
             'password': newPassword,
             'password_confirmation': confirmNewPassword,
           },
+        )
+        .timeout(const Duration(seconds: 15))
+        .then((http.Response response) {
+          return response.body;
+        });
+  }
+  
+  @override
+  Future<String> getAppConfigInfo() {
+    String url = '$icorrectDomain$appConfigEP';
+
+    return AppRepository.init()
+        .sendRequest(
+          RequestMethod.get,
+          url,
+          false,
         )
         .timeout(const Duration(seconds: 15))
         .then((http.Response response) {

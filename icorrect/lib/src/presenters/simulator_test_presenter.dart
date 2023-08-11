@@ -18,6 +18,7 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
@@ -221,8 +222,7 @@ class SimulatorTestPresenter {
               if (kDebugMode) {
                 print("DEBUG: Downloading file at index = $index");
               }
-
-              // http.Response response = await _sendRequest(fileNameForDownload);
+              
               String url = downloadFileEP(fileNameForDownload);
 
               client!
@@ -365,6 +365,8 @@ class SimulatorTestPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
   }) async {
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -422,10 +424,8 @@ class SimulatorTestPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        File audioFile = File(
-          await FileStorageHelper.getFilePath(
-              q.answers.elementAt(i).url.toString(), MediaType.audio, testId),
-        );
+        String path = "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+        File audioFile = File(path);
 
         if (await audioFile.exists()) {
           request.files.add(

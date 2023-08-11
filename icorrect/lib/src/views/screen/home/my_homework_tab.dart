@@ -1,5 +1,8 @@
+
+import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -16,7 +19,6 @@ import 'package:icorrect/src/views/widget/homework_widget.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:grouped_list/sliver_grouped_list.dart';
 
 class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
@@ -74,23 +76,25 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       decoration: const BoxDecoration(
         color: AppColor.defaultGraySlightColor,
         border: Border(
-          top: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
-          bottom: BorderSide(color: AppColor.defaultPurpleColor, width: 1.5),
+          top: BorderSide(
+            color: AppColor.defaultPurpleColor,
+            width: 1.5,
+          ),
+          bottom: BorderSide(
+            color: AppColor.defaultPurpleColor,
+            width: 1.5,
+          ),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: 80),
+          const SizedBox(width: CustomSize.size_80),
           Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
               return Text(
                 homeworkProvider.filterString,
-                style: const TextStyle(
-                  color: AppColor.defaultBlackColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.0,
-                ),
+                style: CustomTextStyle.textBoldBlack_14,
               );
             },
           ),
@@ -101,20 +105,19 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             ),
             child: Image.asset(
               'assets/images/ic_filter.png',
-              height: 25,
-              width: 25,
+              height: CustomSize.size_25,
+              width: CustomSize.size_25,
             ),
             onPressed: () {
               Provider.of<AuthProvider>(context, listen: false)
                   .setShowDialogWithGlobalScaffoldKey(
                       true, GlobalScaffoldKey.filterScaffoldKey);
-
               showModalBottomSheet<void>(
                 context: context,
                 isDismissible: true,
                 builder: (BuildContext context) {
                   return SizedBox(
-                    height: 400,
+                    height: CustomSize.size_400,
                     child: _buildFilterBottomSheet(),
                   );
                 },
@@ -146,14 +149,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     return Row(
       children: [
         Container(
-          height: 50,
+          height: CustomSize.size_50,
           width: w,
           decoration: const BoxDecoration(
             border: Border(
               top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
               right:
                   BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
-            ),
+        ),
           ),
           child: InkWell(
             onTap: () {
@@ -171,11 +174,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           ),
         ),
         Container(
-          height: 50,
+          height: CustomSize.size_50,
           width: w,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
+              top: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
             ),
           ),
           child: InkWell(
@@ -195,10 +201,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             child: const Center(
               child: Text(
                 "Done",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColor.defaultPurpleColor,
-                ),
+                style: CustomTextStyle.textBoldPurple_14,
               ),
             ),
           ),
@@ -210,7 +213,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   Widget _buildListHomeWork() {
     return Expanded(
       child: Container(
-        color: AppColor.defaultGraySlightColor,
+        color: AppColor.defaultWhiteColor,
         child: Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
@@ -231,16 +234,16 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
                   return Padding(
                     padding: const EdgeInsets.only(
-                      left: 10,
-                      top: 5,
-                      right: 10,
-                      bottom: 5,
+                      left: CustomSize.size_15,
+                      top: CustomSize.size_5,
+                      right: CustomSize.size_10,
+                      bottom: CustomSize.size_5,
                     ),
                     child: Text(
                       className,
                       textAlign: TextAlign.left,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: CustomSize.size_20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -261,11 +264,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
-    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-    AndroidDeviceInfo android = await deviceInfoPlugin.androidInfo;
 
-    if (android.version.sdkInt >= 33) {
-      _storagePermission = Permission.manageExternalStorage;
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+      int sdk = android.version.sdkInt;
+
+      sdk >= 33
+          ? _storagePermission = Permission.manageExternalStorage
+          : _storagePermission = Permission.storage;
     } else {
       _storagePermission = Permission.storage;
     }

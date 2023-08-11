@@ -25,12 +25,9 @@ import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
-import 'package:icorrect/src/views/screen/test/my_test/video_my_test.dart';
-import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../../presenters/my_test_presenter.dart';
 import '../../other_views/dialog/alert_dialog.dart';
@@ -39,6 +36,7 @@ import '../../other_views/dialog/circle_loading.dart';
 class MyTestTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
   final MyTestProvider provider;
+
   const MyTestTab(
       {super.key, required this.homeWorkModel, required this.provider});
 
@@ -104,6 +102,7 @@ class _MyTestTabState extends State<MyTestTab>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
+    _presenter!.closeClientRequest();
     super.dispose();
   }
 
@@ -114,118 +113,134 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _buildMyTest() {
-    return Consumer<MyTestProvider>(builder: (context, provider, child) {
-      if (provider.isDownloading) {
-        return const DownloadProgressingWidget();
-      } else {
-        return Stack(
-          children: [
-            Column(
-              children: [
-                // Expanded(flex: 5, child: VideoMyTest()),
-                Expanded(
-                    flex: 9,
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: provider.myAnswerOfQuestions.length,
-                        itemBuilder: (context, index) {
-                          return _questionItem(
-                              provider.myAnswerOfQuestions[index]);
-                        })),
-                Stack(
-                  children: [
-                    (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
-                        ? Expanded(
-                            child: LayoutBuilder(builder: (_, constraint) {
-                            return InkWell(
-                              onTap: () {
-                                _showAiResponse();
-                              },
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                color: Colors.green,
-                                width: constraint.maxWidth,
-                                child: const Center(
-                                  child: Text(
-                                    'View AI Response',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 19),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }))
-                        : Container(),
-                    Expanded(
-                        child: Stack(children: [
-                      TestRecordWidget(
-                        finishAnswer: (currentQuestion) {
-                          _onFinishReanswer(currentQuestion);
-                        },
-                        cancelAnswer: () {
-                          _onCancelReAnswer();
-                        },
-                      ),
-                      (provider.reAnswerOfQuestions.isNotEmpty &&
-                              !provider.visibleRecord)
-                          ? LayoutBuilder(builder: (_, constraint) {
-                              return InkWell(
-                                onTap: () {
-                                  _showDialogConfirmSaveChange(
-                                      provider: provider);
-                                },
-                                child: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  color: AppColor.defaultPurpleColor,
-                                  width: constraint.maxWidth,
-                                  child: const Center(
-                                    child: Text(
-                                      'Update Your Answer',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 19),
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.isDownloading) {
+          return const DownloadProgressingWidget();
+        } else {
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  // Expanded(flex: 5, child: VideoMyTest()),
+                  Expanded(
+                      flex: 9,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: provider.myAnswerOfQuestions.length,
+                          itemBuilder: (context, index) {
+                            return _questionItem(
+                                provider.myAnswerOfQuestions[index]);
+                          })),
+                  Stack(
+                    children: [
+                      (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
+                          ? Expanded(
+                              child: LayoutBuilder(
+                                builder: (_, constraint) {
+                                  return InkWell(
+                                    onTap: () {
+                                      _showAiResponse();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: CustomSize.size_10,
+                                      ),
+                                      color: Colors.green,
+                                      width: constraint.maxWidth,
+                                      child: const Center(
+                                        child: Text(
+                                          'View AI Response',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 19,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            })
-                          : Container()
-                    ])),
-                  ],
-                )
-              ],
-            ),
-            provider.needDownloadAgain
-                ? DownloadAgainWidget(
-                    simulatorTestPresenter: null,
-                    myTestPresenter: _presenter!,
+                                  );
+                                },
+                              ),
+                            )
+                          : Container(),
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            TestRecordWidget(
+                              finishAnswer: (currentQuestion) {
+                                _onFinishReanswer(currentQuestion);
+                              },
+                              cancelAnswer: () {
+                                _onCancelReAnswer();
+                              },
+                            ),
+                            (provider.reAnswerOfQuestions.isNotEmpty &&
+                                    !provider.visibleRecord)
+                                ? LayoutBuilder(
+                                    builder: (_, constraint) {
+                                      return InkWell(
+                                        onTap: () {
+                                          _showDialogConfirmSaveChange(
+                                              provider: provider);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: CustomSize.size_10,
+                                          ),
+                                          color: AppColor.defaultPurpleColor,
+                                          width: constraint.maxWidth,
+                                          child: const Center(
+                                            child: Text(
+                                              'Update Your Answer',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 19,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container()
+                          ],
+                        ),
+                      ),
+                    ],
                   )
-                : const SizedBox(),
-          ],
-        );
-      }
-    });
+                ],
+              ),
+              provider.needDownloadAgain
+                  ? DownloadAgainWidget(
+                      simulatorTestPresenter: null,
+                      myTestPresenter: _presenter!,
+                    )
+                  : const SizedBox(),
+            ],
+          );
+        }
+      },
+    );
   }
 
   void _showDialogConfirmSaveChange({required MyTestProvider provider}) {
     showDialog(
-        context: context,
-        builder: (builder) {
-          return ConfirmDialogWidget(
-              title: "Confirm",
-              message: "Are you sure to save change your answers?",
-              cancelButtonTitle: "Cancel",
-              okButtonTitle: "Save",
-              cancelButtonTapped: () {},
-              okButtonTapped: () {
-                _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
-              });
-        });
+      context: context,
+      builder: (builder) {
+        return ConfirmDialogWidget(
+          title: "Confirm",
+          message: "Are you sure to save change your answers?",
+          cancelButtonTitle: "Cancel",
+          okButtonTitle: "Save",
+          cancelButtonTapped: () {},
+          okButtonTapped: () {
+            _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -313,12 +328,12 @@ class _MyTestTabState extends State<MyTestTab>
       barrierColor: AppColor.defaultGrayColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(CustomSize.size_20),
+          topRight: Radius.circular(CustomSize.size_20),
         ),
       ),
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+      constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height - CustomSize.size_20),
       builder: (_) {
         return FutureBuilder(
           future: aiResponseEP(
@@ -331,19 +346,19 @@ class _MyTestTabState extends State<MyTestTab>
                   alignment: Alignment.topRight,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(top: 10),
+                      margin: const EdgeInsets.only(top: CustomSize.size_10),
                       child: AiResponse(url: snapshot.data.toString()),
                     ),
                     Container(
-                      margin: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(CustomSize.size_10),
                       child: InkWell(
                         onTap: () {
                           Navigator.pop(context);
                         },
                         child: const Icon(
                           Icons.cancel_outlined,
-                          color: Colors.black,
-                          size: 25,
+                          color: AppColor.defaultBlackColor,
+                          size: CustomSize.size_25,
                         ),
                       ),
                     ),
@@ -352,14 +367,13 @@ class _MyTestTabState extends State<MyTestTab>
               );
             }
             return Container(
-              height: 400,
+              height: CustomSize.size_400,
               color: Colors.white,
               child: const Center(
-                child: Text('Nothing in here',
-                    style: TextStyle(
-                        color: AppColor.defaultGrayColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400)),
+                child: Text(
+                  'Nothing in here',
+                  style: CustomTextStyle.textGrey_15,
+                ),
               ),
             );
           },
@@ -369,113 +383,117 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _questionItem(QuestionTopicModel question) {
-    return Consumer<MyTestProvider>(builder: (context, provider, child) {
-      return Card(
-        elevation: 2,
-        child: LayoutBuilder(builder: (_, constraint) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            margin: const EdgeInsets.only(top: 10),
-            width: constraint.maxWidth,
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                (provider.playAnswer &&
-                        question.id.toString() == provider.questionId)
-                    ? InkWell(
-                        onTap: () async {
-                          widget.provider
-                              .setPlayAnswer(false, question.id.toString());
-                          _stopAudio();
-                        },
-                        child: const Image(
-                          image: AssetImage(AppAsset.play),
-                          width: 50,
-                          height: 50,
-                        ),
-                      )
-                    : InkWell(
-                        onTap: () async {
-                          widget.provider
-                              .setPlayAnswer(true, question.id.toString());
-
-                          if (question.answers.isNotEmpty) {
-                            _preparePlayAudio(
-                                fileName: Utils.convertFileName(
-                                    question.answers.last.url.toString()),
-                                questionId: question.id.toString());
-                          }
-                        },
-                        child: const Image(
-                          image: AssetImage(AppAsset.stop),
-                          width: 50,
-                          height: 50,
-                        ),
-                      ),
-                Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(0),
-                        width: 280,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              question.content.toString(),
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          (widget.homeWorkModel.canReanswer())
-                              ? InkWell(
-                                  onTap: () async {
-                                    _onClickReanswer(provider, question);
-                                  },
-                                  child: const DefaultText(
-                                      text: 'Reanswer',
-                                      color: AppColor.defaultPurpleColor,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              : Container(),
-                          const SizedBox(width: 20),
-                          InkWell(
-                            onTap: () {
-                              _showTips(question);
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        return Card(
+          elevation: 2,
+          child: LayoutBuilder(
+            builder: (_, constraint) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: CustomSize.size_10,
+                  vertical: CustomSize.size_10,
+                ),
+                margin: const EdgeInsets.only(top: CustomSize.size_10),
+                width: constraint.maxWidth,
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    (provider.playAnswer &&
+                            question.id.toString() == provider.questionId)
+                        ? InkWell(
+                            onTap: () async {
+                              widget.provider
+                                  .setPlayAnswer(false, question.id.toString());
+                              _stopAudio();
                             },
-                            child: (question.tips.isNotEmpty)
-                                ? const DefaultText(
-                                    text: 'View Tips',
-                                    color: AppColor.defaultPurpleColor,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold)
-                                : Container(),
+                            child: const Image(
+                              image: AssetImage(AppAsset.play),
+                              width: CustomSize.size_50,
+                              height: CustomSize.size_50,
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () async {
+                              widget.provider
+                                  .setPlayAnswer(true, question.id.toString());
+
+                              if (question.answers.isNotEmpty) {
+                                _preparePlayAudio(
+                                    fileName: Utils.convertFileName(
+                                        question.answers.last.url.toString()),
+                                    questionId: question.id.toString());
+                              }
+                            },
+                            child: const Image(
+                              image: AssetImage(AppAsset.stop),
+                              width: CustomSize.size_50,
+                              height: CustomSize.size_50,
+                            ),
                           ),
+                    Container(
+                      margin: const EdgeInsets.only(left: CustomSize.size_20),
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(0),
+                            width: MediaQuery.of(context).size.width*0.7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  question.content.toString(),
+                                  style: CustomTextStyle.textBlack_15,
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: CustomSize.size_10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              (widget.homeWorkModel.canReanswer())
+                                  ? InkWell(
+                                      onTap: () async {
+                                        _onClickReanswer(provider, question);
+                                      },
+                                      child: const Text(
+                                        'Re-answer',
+                                        style:
+                                            CustomTextStyle.textBoldPurple_14,
+                                      ),
+                                    )
+                                  : Container(),
+                              const SizedBox(width: CustomSize.size_20),
+                              InkWell(
+                                onTap: () {
+                                  _showTips(question);
+                                },
+                                child: (question.tips.isNotEmpty)
+                                    ? const Text(
+                                        'View Tips',
+                                        style:
+                                            CustomTextStyle.textBoldPurple_15,
+                                      )
+                                    : Container(),
+                              ),
+                            ],
+                          )
                         ],
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        }),
-      );
-    });
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
@@ -499,12 +517,12 @@ class _MyTestTabState extends State<MyTestTab>
         barrierColor: AppColor.defaultGrayColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(CustomSize.size_20),
+            topRight: Radius.circular(CustomSize.size_20),
           ),
         ),
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height - CustomSize.size_20),
         builder: (_) {
           return TipQuestionDialog.tipQuestionDialog(
               context, questionTopicModel);
@@ -522,7 +540,7 @@ class _MyTestTabState extends State<MyTestTab>
           path:
               '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
               '\\$audioFile',
-          encoder: AudioEncoder.wav,
+          // encoder: AudioEncoder.wav,
           bitRate: 128000,
           samplingRate: 44100,
         );
@@ -606,7 +624,7 @@ class _MyTestTabState extends State<MyTestTab>
     Fluttertoast.showToast(
         msg: alertInfo.description,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
+        textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM);
     if (kDebugMode) {
@@ -620,7 +638,7 @@ class _MyTestTabState extends State<MyTestTab>
     Fluttertoast.showToast(
         msg: alertInfo.description,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
+        textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM);
     if (kDebugMode) {
@@ -666,7 +684,7 @@ class _MyTestTabState extends State<MyTestTab>
     Fluttertoast.showToast(
         msg: info.description,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
+        textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM);
   }

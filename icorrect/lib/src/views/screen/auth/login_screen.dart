@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -45,10 +48,20 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //TODO: For test
-    // emailController.text = "luan@testing.com";
-    // passwordController.text = "123456";
+    emailController.text = "luan@testing.com";
+    passwordController.text = "nvl12345";
 
-    _autoLogin();
+    _getAppConfigInfo();
+  }
+
+  void _getAppConfigInfo() async {
+    String appConfigInfo =
+        await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
+    if (appConfigInfo.isEmpty) {
+      _loginPresenter!.getAppConfigInfo();
+    } else {
+      _autoLogin();
+    }
   }
 
   void _autoLogin() async {
@@ -89,18 +102,24 @@ class _LoginScreenState extends State<LoginScreen>
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Padding(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(CustomSize.size_30),
                     child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 40),
+                          const SizedBox(
+                            height: CustomSize.size_40,
+                          ),
                           const LogoWidget(),
                           const LogoTextWidget(),
-                          const SizedBox(height: 60),
-                          EmailInputWidget(emailController: emailController),
+                          const SizedBox(
+                            height: CustomSize.size_60,
+                          ),
+                          EmailInputWidget(
+                            emailController: emailController,
+                          ),
                           PasswordInputWidget(
                             passwordController: passwordController,
                             type: PasswordType.password,
@@ -150,10 +169,10 @@ class _LoginScreenState extends State<LoginScreen>
           );
         }
       },
-      background: AppColor.defaultPurpleColor,
       text: 'Sign In',
-      fontSize: 15,
-      height: 60,
+      background: AppColor.defaultPurpleColor,
+      fontSize: FontsSize.fontSize_14,
+      height: CustomSize.size_50,
     );
   }
 
@@ -219,5 +238,24 @@ class _LoginScreenState extends State<LoginScreen>
         builder: (builder) {
           return MessageDialog.alertDialog(context, message);
         });
+  }
+
+  @override
+  void onGetAppConfigInfoFail(String message) {
+    if (kDebugMode) {
+      print("DEBUG: onGetAppConfigInfoFail $message");
+    }
+    //Show get app config info error
+    showToastMsg(
+        msg: "Has an error when getting app config information!",
+        toastState: ToastStatesType.error);
+  }
+
+  @override
+  void onGetAppConfigInfoSuccess() {
+    if (kDebugMode) {
+      print("DEBUG: onGetAppConfigInfoSuccess");
+    }
+    _autoLogin();
   }
 }

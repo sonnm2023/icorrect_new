@@ -8,6 +8,8 @@ import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/password_input_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../widget/divider.dart';
+
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
@@ -66,7 +68,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       appBar: AppBar(
         title: const Text(
           'Change password',
-          style: TextStyle(color: AppColor.defaultPurpleColor),
+          style: TextStyle(
+            color: AppColor.defaultPurpleColor,
+          ),
         ),
         centerTitle: true,
         leading: const BackButton(color: AppColor.defaultPurpleColor),
@@ -83,7 +87,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(CustomSize.size_30),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -138,8 +142,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       },
       background: AppColor.defaultPurpleColor,
       text: 'Save change',
-      fontSize: 17,
-      height: 50,
+      fontSize: FontsSize.fontSize_14,
+      height: CustomSize.size_50,
       radius: 20,
     );
   }
@@ -153,8 +157,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       background: AppColor.defaultWhiteColor,
       textColor: AppColor.defaultPurpleColor,
       text: 'Cancel',
-      fontSize: 17,
-      height: 50,
+      fontSize: FontsSize.fontSize_14,
+      height: CustomSize.size_50,
       radius: 20,
       hasBorder: true,
     );

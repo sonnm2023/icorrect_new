@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -41,16 +42,26 @@ class _ContactInfoWidgetState extends State<ContactInfoWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('${_packageInfo.appName} version ${_packageInfo.version}'),
-          const Text('Contact: support@ielts-correction.com'),
-          const SizedBox(height: 8,),
-          const Text('@Csupporter JSC', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(
+            '${_packageInfo.appName} version ${_packageInfo.version}',
+            style: CustomTextStyle.textGrey_14,
+          ),
+          const Text(
+            'Contact: support@ielts-correction.com',
+            style: CustomTextStyle.textGrey_14,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            '@Csupporter JSC',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
   }
 }
-
 
 // class ContactInfoWidget extends StatelessWidget {
 //   const ContactInfoWidget({super.key});

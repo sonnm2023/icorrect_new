@@ -13,9 +13,13 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 abstract class HomeWorkViewContract {
   void onNewGetListHomeworkComplete(
       List<ActivitiesModel> homeworks, List<NewClassModel> classes);
+
   void onGetListHomeworkError(String message);
+
   void onLogoutComplete();
+
   void onLogoutError(String message);
+
   void onUpdateCurrentUserInfo(UserDataModel userDataModel);
 }
 
@@ -49,9 +53,9 @@ class HomeWorkPresenter {
         print(jsonEncode(dataMap).toString());
       }
       if (dataMap['error_code'] == 200) {
-        List<NewClassModel> classes = await _generateListNewClass(dataMap['data']);
-        List<ActivitiesModel> homeworks =
-            await _generateListHomeWork(classes);
+        List<NewClassModel> classes =
+            await _generateListNewClass(dataMap['data']);
+        List<ActivitiesModel> homeworks = await _generateListHomeWork(classes);
         _view!.onNewGetListHomeworkComplete(homeworks, classes);
       } else {
         _view!.onGetListHomeworkError(
@@ -72,7 +76,8 @@ class HomeWorkPresenter {
     return temp;
   }
 
-  Future<List<ActivitiesModel>> _generateListHomeWork(List<NewClassModel> data) async {
+  Future<List<ActivitiesModel>> _generateListHomeWork(
+      List<NewClassModel> data) async {
     List<ActivitiesModel> temp = [];
     for (int i = 0; i < data.length; i++) {
       NewClassModel classModel = data[i];
