@@ -216,7 +216,15 @@ class MyTestPresenter {
           if (fileType.isNotEmpty &&
               !await _isExist(fileTopic, _mediaType(fileType))) {
             try {
-              http.Response response = await _sendRequest(fileNameForDownload);
+              String url = downloadFileEP(fileNameForDownload);
+
+              client!
+                  .head(Uri.parse(url), headers: headers)
+                  .timeout(const Duration(seconds: 10));
+              // use client.get as you would http.get
+              http.Response response = await client!.get(
+                Uri.parse(url),
+              );
 
               if (response.statusCode == 200) {
                 String contentString = await Utils.convertVideoToBase64(response);

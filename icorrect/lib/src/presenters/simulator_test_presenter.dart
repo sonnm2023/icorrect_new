@@ -222,8 +222,7 @@ class SimulatorTestPresenter {
               if (kDebugMode) {
                 print("DEBUG: Downloading file at index = $index");
               }
-
-              // http.Response response = await _sendRequest(fileNameForDownload);
+              
               String url = downloadFileEP(fileNameForDownload);
 
               client!
