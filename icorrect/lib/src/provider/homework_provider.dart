@@ -9,14 +9,15 @@ import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
 class HomeWorkProvider with ChangeNotifier {
   bool isDisposed = false;
 
   @override
   void dispose() {
-    isDisposed = true;
     super.dispose();
+    isDisposed = true;
   }
 
   @override
@@ -318,9 +319,9 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  bool _isShowFilter = false;
-  bool get isShowFilter => _isShowFilter;
-  void setShowFilter(bool isShowing) {
-    _isShowFilter = isShowing;
+  SimulatorTestPresenter? _simulatorTestPresenter;
+  SimulatorTestPresenter? get simulatorTestPresenter => _simulatorTestPresenter;
+  void setSimulatorTestPresenter(SimulatorTestPresenter? presenter) {
+    _simulatorTestPresenter = presenter;
   }
 }

@@ -241,14 +241,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
-  f_logs:
-    dependency: "direct main"
-    description:
-      name: f_logs
-      sha256: "8ccf733949dcc934d7c7425e94a973cee71af1d7675b94dd1fbd6cbe707a3ce7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -856,14 +848,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
-  sembast:
-    dependency: transitive
-    description:
-      name: sembast
-      sha256: "85ff944434f7b566fdc388be4f85b23e954736b7d6e51f965f4f419d966c15b1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.5.0+1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1157,14 +1141,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.3.0"
-  xxtea:
-    dependency: transitive
-    description:
-      name: xxtea
-      sha256: edd57229638e16e88f4bb299737fe76a235d0f11da6df8573b3c7f28dec283ce
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   yaml:
     dependency: transitive
     description:

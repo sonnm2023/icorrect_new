@@ -151,9 +151,10 @@ class _HighLightTabState extends State<HighLightTab>
             ],
           ),
           DefaultText(
-            text: resultModel.aiScore.toString().isNotEmpty
-                ? resultModel.aiScore.toString()
-                : resultModel.overallScore.toString(),
+            text: (resultModel.overallScore.toString().isNotEmpty &&
+                    resultModel.overallScore != "0.0")
+                ? resultModel.overallScore
+                : resultModel.aiScore,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             fontWeight: FontWeight.bold,

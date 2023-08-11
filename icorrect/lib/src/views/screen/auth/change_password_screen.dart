@@ -33,6 +33,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
     _changePasswordPresenter = ChangePasswordPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     /*
     confirmNewPasswordController.addListener(() {
     if (confirmNewPasswordController.text.trim() != newPasswordController.text.trim()) {

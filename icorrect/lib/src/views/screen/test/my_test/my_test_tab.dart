@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart'
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
@@ -252,18 +253,10 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Future _onAppInBackground() async {
-    //TODO
-    // VideoPlayerController videoController =
-    //     _simulatorTestProvider!.videoPlayController!;
-    // if (videoController.value.isPlaying) {
-    //   videoController.pause();
-    //   _simulatorTestProvider!.setPlayController(videoController);
-    // }
-
     if (widget.provider.visibleRecord) {
       _record.stop();
     }
-    
+
     if (_player!.state == PlayerState.playing) {
       QuestionTopicModel q = widget.provider.currentQuestion;
       widget.provider.setPlayAnswer(false, q.id.toString());
@@ -272,28 +265,12 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Future _onAppActive() async {
-    //TODO
-    // VideoPlayerController videoController =
-    //     _simulatorTestProvider!.videoPlayController!;
-    // _simulatorTestProvider!.setPlayController(videoController);
-
     if (widget.provider.visibleRecord) {
-      QuestionTopicModel currentQuestion =
-          widget.provider.currentQuestion;
-      
-      //TODO
-      // _initVideoController(
-      //     fileName: currentQuestion.files.first.url,
-      //     handleWhenFinishType: HandleWhenFinish.questionVideoType);
+      QuestionTopicModel currentQuestion = widget.provider.currentQuestion;
 
       widget.provider.setVisibleRecord(false);
       _record.stop();
       _player!.stop();
-    } else {
-      //TODO
-      // if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
-      //   videoController.play();
-      // }
     }
   }
 
@@ -324,6 +301,10 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   _showAiResponse() {
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+            true, GlobalScaffoldKey.aiResponseScaffoldKey);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -351,7 +332,7 @@ class _MyTestTabState extends State<MyTestTab>
                   children: [
                     Container(
                       margin: const EdgeInsets.only(top: 10),
-                      child: AIResponse(url: snapshot.data.toString()),
+                      child: AiResponse(url: snapshot.data.toString()),
                     ),
                     Container(
                       margin: const EdgeInsets.all(10),
@@ -506,6 +487,10 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   _showTips(QuestionTopicModel questionTopicModel) {
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+            true, GlobalScaffoldKey.showTipScaffoldKey);
+
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,

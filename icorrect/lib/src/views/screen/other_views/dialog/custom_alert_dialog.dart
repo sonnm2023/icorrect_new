@@ -24,12 +24,15 @@ class CustomAlertDialog extends StatefulWidget {
   final Function? cancelButtonTapped;
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomAlertDialogState createState() => _CustomAlertDialogState();
 }
 
 class _CustomAlertDialogState extends State<CustomAlertDialog> {
   @override
   Widget build(BuildContext context) {
+    const double fontSize_15 = 15.0;
+
     return Dialog(
       elevation: 0,
       backgroundColor: const Color(0xffffffff),
@@ -40,21 +43,25 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 15),
               Text(
                 widget.title,
                 style: const TextStyle(
-                  fontSize: 18.0,
+                  fontSize: fontSize_15,
                   fontWeight: FontWeight.bold,
                   color: AppColor.defaultPurpleColor,
                 ),
               ),
-              const SizedBox(height: 15),
-              Text(widget.description),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Text(widget.description, textAlign: TextAlign.center, style: const TextStyle(fontSize: fontSize_15),),
+              ),
+              const SizedBox(height: 5),
               const Divider(
-                height: 1,
+                thickness: 0.5,
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
@@ -71,13 +78,16 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                             onTap: () {
                               widget.cancelButtonTapped!();
                             },
-                            child: Center(
-                              child: Text(
-                                widget.cancelButtonTitle ?? "Cancel",
-                                style: const TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColor.defaultGrayColor,
+                            child: SizedBox(
+                              width: 100,
+                              child: Center(
+                                child: Text(
+                                  widget.cancelButtonTitle ?? "Cancel",
+                                  style: const TextStyle(
+                                    fontSize: fontSize_15,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColor.defaultGrayColor,
+                                  ),
                                 ),
                               ),
                             ),
@@ -91,13 +101,16 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               Navigator.of(context).pop();
                               widget.okButtonTapped!();
                             },
-                            child: Center(
-                              child: Text(
-                                widget.okButtonTitle ?? "OK",
-                                style: const TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColor.defaultPurpleColor,
+                            child: SizedBox(
+                              width: 100,
+                              child: Center(
+                                child: Text(
+                                  widget.okButtonTitle ?? "OK",
+                                  style: const TextStyle(
+                                    fontSize: fontSize_15,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColor.defaultPurpleColor,
+                                  ),
                                 ),
                               ),
                             ),
@@ -113,13 +126,16 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        child: Center(
-                          child: Text(
-                            widget.okButtonTitle ?? "OK",
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.defaultPurpleColor,
+                        child: SizedBox(
+                          width: 150,
+                          child: Center(
+                            child: Text(
+                              widget.okButtonTitle ?? "OK",
+                              style: const TextStyle(
+                                fontSize: fontSize_15,
+                                fontWeight: FontWeight.bold,
+                                color: AppColor.defaultPurpleColor,
+                              ),
                             ),
                           ),
                         ),

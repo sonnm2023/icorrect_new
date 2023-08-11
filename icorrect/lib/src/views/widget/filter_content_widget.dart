@@ -35,7 +35,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
     _listSelectedClass = widget.homeWorkProvider.listSelectedClassFilter;
     _listSelectedStatus = widget.homeWorkProvider.listSelectedStatusFilter;
-
+ 
     _listSelectedClassTemp = widget.homeWorkProvider.listSelectedClassFilter;
     _listSelectedStatusTemp = widget.homeWorkProvider.listSelectedStatusFilter;
   }

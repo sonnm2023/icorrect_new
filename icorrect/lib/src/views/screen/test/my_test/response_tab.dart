@@ -62,7 +62,8 @@ class _ResponseTabState extends State<ResponseTab>
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
             _loading?.show(context);
-            _presenter!.getResponse(widget.homeWorkModel.activityAnswer!.orderId.toString());
+            _presenter!.getResponse(
+                widget.homeWorkModel.activityAnswer!.orderId.toString());
           });
         },
         child: _buildResponseTab());
@@ -123,11 +124,7 @@ class _ResponseTabState extends State<ResponseTab>
               margin: const EdgeInsets.symmetric(vertical: 10),
               alignment: Alignment.centerRight,
               width: constraint.maxWidth,
-              child: (appState.responseModel.overallComment !=
-                          'Nothing overall comment in here' &&
-                      appState.responseModel.overallComment
-                          .toString()
-                          .isNotEmpty)
+              child: (appState.responseModel.isTooLong())
                   ? InkWell(
                       onTap: () {
                         widget.provider.setVisibleOverviewComment(
@@ -195,55 +192,75 @@ class _ResponseTabState extends State<ResponseTab>
           ? BorderRadius.only(bottomLeft: radius, bottomRight: radius)
           : BorderRadius.circular(0);
     }
-    return InkWell(
-      onTap: () {
-        _setVisibleProblem(index: index);
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            alignment: Alignment.topLeft,
-            decoration: BoxDecoration(
-                color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DefaultText(
-                  text: title,
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-                LayoutBuilder(builder: (_, constraint) {
-                  if (index != 0) {
-                    if (visible!) {
-                      return const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 30,
-                        color: Colors.white,
-                      );
+    return (problems != null && problems.isNotEmpty)
+        ? InkWell(
+            onTap: () {
+              _setVisibleProblem(index: index);
+            },
+            child: _overallScoreTitle(
+                index: index,
+                title: title,
+                visible: visible,
+                borderRadius: borderRadius))
+        : _overallScoreTitle(
+            index: index,
+            title: title,
+            visible: visible,
+            borderRadius: borderRadius);
+  }
+
+  Widget _overallScoreTitle(
+      {required int index,
+      required String title,
+      List<SkillProblem>? problems,
+      bool? visible,
+      var borderRadius}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          alignment: Alignment.topLeft,
+          decoration: BoxDecoration(
+              color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DefaultText(
+                text: title,
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+              Visibility(
+                  visible: (problems != null && problems.isNotEmpty),
+                  child: LayoutBuilder(builder: (_, constraint) {
+                    if (index != 0) {
+                      if (visible!) {
+                        return const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 30,
+                          color: Colors.white,
+                        );
+                      } else {
+                        return const Icon(
+                          Icons.navigate_next_rounded,
+                          size: 30,
+                          color: Colors.white,
+                        );
+                      }
                     } else {
-                      return const Icon(
-                        Icons.navigate_next_rounded,
-                        size: 30,
-                        color: Colors.white,
-                      );
+                      return Container();
                     }
-                  } else {
-                    return Container();
-                  }
-                }),
-              ],
-            ),
+                  })),
+            ],
           ),
-          index != 0 && visible!
-              ? _overallDetail(problems: problems!)
-              : Container()
-        ],
-      ),
+        ),
+        index != 0 && visible! && problems != null
+            ? _overallDetail(problems: problems)
+            : Container()
+      ],
     );
   }
 

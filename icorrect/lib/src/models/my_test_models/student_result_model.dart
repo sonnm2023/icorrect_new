@@ -76,7 +76,7 @@ class StudentResultModel {
 
   set publishResponse(value) => this._publishResponse = value;
 
-  get overallScore => this._overallScore;
+  get overallScore => this._overallScore ?? "";
 
   set overallScore(value) => this._overallScore = value;
 
@@ -100,7 +100,7 @@ class StudentResultModel {
 
   set aiOrder(value) => this._aiOrder = value;
 
-  get aiScore => this._aiScore;
+  get aiScore => this._aiScore ?? "";
 
   set aiScore(value) => this._aiScore = value;
 
@@ -131,7 +131,7 @@ class StudentResultModel {
     _updateAt = item['updated_at'] ?? '';
     _orderId = item['order_id'] ?? 0;
     _publishResponse = item['publish_response'] ?? 0;
-    _overallScore = item['overall_score'] ?? '0.0';
+    _overallScore = item['overall_score'] ?? '';
     _publish = item['pushlis'] ?? 0;
     _realActivityId = item['real_activity_id'] ?? 0;
     _example = item['example'] ?? 0;

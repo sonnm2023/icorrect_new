@@ -1,7 +1,8 @@
+import 'dart:collection';
 import 'dart:core';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -12,17 +13,16 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
-import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
-import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeWorkScreen extends StatefulWidget {
@@ -44,8 +44,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
-  late MyTestProvider _myTestProvider;
-  late SimulatorTestProvider _simulatorTestProvider;
+  late AuthProvider _authProvider;
 
   CircleLoading? _loading;
 
@@ -56,9 +55,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkPresenter = HomeWorkPresenter(this);
 
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
-    _myTestProvider = Provider.of<MyTestProvider>(context, listen: false);
-    _simulatorTestProvider =
-        Provider.of<SimulatorTestProvider>(context, listen: false);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     _getListHomeWork();
   }
@@ -68,6 +65,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     Future.delayed(Duration.zero, () {
       _homeWorkProvider.updateProcessingStatus();
+      _authProvider
+          .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
     });
   }
 
@@ -115,7 +114,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           leading: const Icon(Icons.logout_outlined),
           onTap: () {
             toggleDrawer();
-            showAlertDialog(context);
+            _showLogoutConfirmDialog();
           },
         ),
       ],
@@ -123,30 +122,25 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     return WillPopScope(
       onWillPop: () async {
-        if (_homeWorkProvider.isShowFilter) {
-          //Filter bottom sheet
-          _homeWorkProvider.setShowFilter(false);
-          Navigator.of(
-                  GlobalScaffoldKey.filterScaffoldKey.currentState!.context)
-              .pop();
-        } else if (_myTestProvider.isShowAIResponse) {
-          //AI Response
-          _myTestProvider.setShowAIResponse(false);
-          Navigator.of(
-                  GlobalScaffoldKey.aiResponseScaffoldKey.currentState!.context)
-              .pop();
-        } else if (_simulatorTestProvider.isShowViewTips) {
-          _simulatorTestProvider.setShowViewTips(false);
-          Navigator.of(
-                  GlobalScaffoldKey.viewTipScaffoldKey.currentState!.context)
-              .pop();
+        if (_authProvider.isShowDialog) {
+          GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
+          _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
+
+          Navigator.of(key.currentState!.context).pop();
+        } else if (Provider.of<SimulatorTestProvider>(context, listen: false)
+                .doingStatus ==
+            DoingStatus.doing) {
+          _showQuitTheTestConfirmDialog();
         } else {
-          //TODO: Show confirm dialog to quit the application here
-          if (kDebugMode) {
-            print(
-                "DEBUG: TODO: Show confirm dialog to quit the application here");
+          Queue<GlobalKey<ScaffoldState>> scaffoldKeys =
+              _authProvider.scaffoldKeys;
+          GlobalKey<ScaffoldState> key = scaffoldKeys.first;
+          if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
+            _showQuitAppConfirmDialog();
+          } else {
+            Navigator.of(key.currentState!.context).pop();
+            scaffoldKeys.removeFirst();
           }
-          _showQuitAppConfirmDialog();
         }
 
         return false;
@@ -220,18 +214,62 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  _showQuitAppConfirmDialog() {
-    showDialog(
+  void _showQuitAppConfirmDialog() async {
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return ConfirmDialogWidget(
-          title: "Confirm",
-          message: "Are you sure to quit this application?",
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "Do you want to exit app?",
+          okButtonTitle: "OK",
           cancelButtonTitle: "Cancel",
-          okButtonTitle: "Ok",
-          cancelButtonTapped: () {},
+          borderRadius: 8,
+          hasCloseButton: false,
           okButtonTapped: () {
-            Navigator.of(context).pop(true);
+            exit(0);
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  void _handleEventBackButtonSystem({required bool isQuitTheTest}) {
+    SimulatorTestPresenter? presenter =
+        Provider.of<HomeWorkProvider>(context, listen: false)
+            .simulatorTestPresenter;
+    if (null == presenter) return;
+
+    presenter.handleEventBackButtonSystem(isQuitTheTest: isQuitTheTest);
+  }
+
+  void _showQuitTheTestConfirmDialog() async {
+    SimulatorTestPresenter? presenter =
+        Provider.of<HomeWorkProvider>(context, listen: false)
+            .simulatorTestPresenter;
+
+    if (null == presenter) return;
+
+    presenter.handleBackButtonSystemTapped();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "The test is not completed! Are you sure to quit?",
+          okButtonTitle: "OK",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            _handleEventBackButtonSystem(isQuitTheTest: true);
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+            _handleEventBackButtonSystem(isQuitTheTest: false);
           },
         );
       },
@@ -349,56 +387,24 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     }
   }
 
-  void showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton(
-      child: const Text(
-        "Cancel",
-        style: TextStyle(
-            color: AppColor.defaultGrayColor, fontWeight: FontWeight.w800),
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-      },
-    );
-    Widget continueButton = TextButton(
-      child: const Text(
-        "OK",
-        style: TextStyle(
-            color: AppColor.defaultPurpleColor, fontWeight: FontWeight.w800),
-      ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-        _homeWorkProvider.updateProcessingStatus();
-        _homeWorkPresenter!.logout();
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      title: const Text(
-        "Notification",
-        style: TextStyle(
-          color: AppColor.defaultBlackColor,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-      content: const Text(
-        "Do you want to logout?",
-        style: TextStyle(fontSize: 17),
-      ),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
+  void _showLogoutConfirmDialog() async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "Do you want to logout?",
+          okButtonTitle: "OK",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
       },
     );
   }

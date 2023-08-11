@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -5,6 +6,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
@@ -103,7 +105,10 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               width: 25,
             ),
             onPressed: () {
-              widget.homeWorkProvider.setShowFilter(true);
+              Provider.of<AuthProvider>(context, listen: false)
+                  .setShowDialogWithGlobalScaffoldKey(
+                      true, GlobalScaffoldKey.filterScaffoldKey);
+
               showModalBottomSheet<void>(
                 context: context,
                 isDismissible: true,
@@ -256,7 +261,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
-    _storagePermission = Permission.storage;
+    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    AndroidDeviceInfo android = await deviceInfoPlugin.androidInfo;
+
+    if (android.version.sdkInt >= 33) {
+      _storagePermission = Permission.manageExternalStorage;
+    } else {
+      _storagePermission = Permission.storage;
+    }
   }
 
   void _listenForPermissionStatus() async {
@@ -301,16 +313,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() {
-    //TODO: For test
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => SimulatorTestScreen(
-    //       homeWorkModel: _selectedHomeWorkModel!,
-    //     ),
-    //   ),
-    // );
-
     Map<String, dynamic> statusMap =
         Utils.getHomeWorkStatus(_selectedHomeWorkModel!);
 

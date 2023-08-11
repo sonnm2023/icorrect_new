@@ -203,9 +203,22 @@ class AlertClass {
 }
 
 class GlobalScaffoldKey {
-  static final filterScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'FilterScaffoldKeys');
-  static final aiResponseScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'AIResponseScaffoldKeys');
-  static final viewTipScaffoldKey = GlobalKey<ScaffoldState>(debugLabel: 'ViewTipScaffoldKey');
+  static final filterScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'FilterScaffoldKeys');
+  static final aiResponseScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'AIResponseScaffoldKeys');
+  static final showTipScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'ShowTipScaffoldKey');
+  static final showQuitTheTestScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'ShowQuitTheTestScaffoldKey');
+  static final myTestScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'MyTestScaffoldKey');
+  static final studentOtherScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'StudentOtherScaffoldKey');
+  static final homeScreenScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'HomeScreenScaffoldKey');
+  static final simulatorTestScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'SimulatorTestScaffoldKey');
 }
 
 class FontsSize {

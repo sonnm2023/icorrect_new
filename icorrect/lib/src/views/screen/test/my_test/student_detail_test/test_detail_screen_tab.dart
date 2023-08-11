@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/other_student_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +24,9 @@ import '../../../../../presenters/my_test_presenter.dart';
 import '../../../../../provider/my_test_provider.dart';
 import '../../../../widget/default_text.dart';
 import '../../../other_views/dialog/circle_loading.dart';
+import '../../../other_views/dialog/custom_alert_dialog.dart';
 import '../../../other_views/dialog/tip_question_dialog.dart';
+import 'download_again_widget.dart';
 import 'download_progressing_widget.dart';
 
 class TestDetailScreen extends StatefulWidget {
@@ -33,32 +40,100 @@ class TestDetailScreen extends StatefulWidget {
 }
 
 class _TestDetailScreenState extends State<TestDetailScreen>
-    with AutomaticKeepAliveClientMixin<TestDetailScreen>
+    with AutomaticKeepAliveClientMixin<TestDetailScreen>, WidgetsBindingObserver
     implements OtherStudentTestContract {
   CircleLoading? _loading;
   OtherStudentTestPresenter? _presenter;
   AudioPlayer? _player;
 
+  bool isOffline = false;
+  StreamSubscription? connection;
+
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+
+    connection = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      // when every connection status is changed.
+      if (result == ConnectivityResult.none) {
+        isOffline = true;
+      } else if (result == ConnectivityResult.mobile) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.wifi) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.ethernet) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.bluetooth) {
+        isOffline = false;
+      }
+
+      if (kDebugMode) {
+        print("DEBUG: NO INTERNET === $isOffline");
+      }
+    });
     _loading = CircleLoading();
     _presenter = OtherStudentTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
 
-    print("tetst: ${widget.studentResultModel.testId.toString()}");
-    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
-
+    _getData();
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
   }
 
+  void _getData() async {
+    await _presenter!.initializeData();
+    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _onAppActive();
+        break;
+      case AppLifecycleState.paused:
+        if (kDebugMode) {
+          print('DEBUG: App paused');
+        }
+        break;
+      case AppLifecycleState.inactive:
+        _onAppInBackground();
+        break;
+      case AppLifecycleState.detached:
+        if (kDebugMode) {
+          print('DEBUG:App detached');
+        }
+        break;
+    }
+  }
+
+  Future _onAppInBackground() async {
+    if (_player!.state == PlayerState.playing) {
+      QuestionTopicModel q = widget.provider.currentQuestion;
+      widget.provider.setPlayAnswer(false, q.id.toString());
+      _stopAudio();
+    }
+  }
+
+  Future _onAppActive() async {
+    if (widget.provider.visibleRecord) {
+      widget.provider.setVisibleRecord(false);
+      _player!.stop();
+    }
+  }
+
   @override
   void dispose() {
-    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,17 +147,28 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       if (provider.isDownloading) {
         return const DownloadProgressingWidget();
       } else {
-        return Column(
+        return Stack(
           children: [
-            // Expanded(flex: 5, child: VideoMyTest()),
-            Expanded(
-                flex: 9,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: provider.myAnswerOfQuestions.length,
-                    itemBuilder: (context, index) {
-                      return _questionItem(provider.myAnswerOfQuestions[index]);
-                    })),
+            Column(
+              children: [
+                // Expanded(flex: 5, child: VideoMyTest()),
+                Expanded(
+                    flex: 9,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: provider.myAnswerOfQuestions.length,
+                        itemBuilder: (context, index) {
+                          return _questionItem(
+                              provider.myAnswerOfQuestions[index]);
+                        })),
+              ],
+            ),
+            provider.needDownloadAgain
+                ? DownloadAgainWidget(
+                    simulatorTestPresenter: null,
+                    otherStudentTestPresenter: _presenter,
+                  )
+                : const SizedBox(),
           ],
         );
       }
@@ -200,7 +286,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
-       await _player!.play(DeviceFileSource(audioPath));
+      await _player!.play(DeviceFileSource(audioPath));
       await _player!.setVolume(2.5);
       _player!.onPlayerComplete.listen((event) {
         widget.provider.setPlayAnswer(false, questionId);
@@ -217,6 +303,10 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   _showTips(QuestionTopicModel questionTopicModel) {
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+            true, GlobalScaffoldKey.showTipScaffoldKey);
+
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -260,6 +350,52 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       widget.provider.updateDownloadingPercent(0.0);
       widget.provider.updateDownloadingIndex(0);
     }
+  }
+
+  @override
+  void onReDownload() {
+    widget.provider.setDownloadingFile(false);
+    widget.provider.setNeedDownloadAgain(true);
+  }
+
+  @override
+  void onTryAgainToDownload() {
+    if (isOffline) {
+      _showCheckNetworkDialog();
+    } else {
+      if (null != _presenter!.testDetail && null != _presenter!.filesTopic) {
+        updateStatusForReDownload();
+        if (null == _presenter!.client) {
+          _presenter!.initializeData();
+        }
+        _presenter!.reDownloadFiles();
+      }
+    }
+  }
+
+  void updateStatusForReDownload() {
+    widget.provider.setDownloadingFile(true);
+    widget.provider.setNeedDownloadAgain(false);
+  }
+
+  void _showCheckNetworkDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur. Please check your connection!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
   }
 
   @override
