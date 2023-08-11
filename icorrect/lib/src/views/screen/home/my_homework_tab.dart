@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
@@ -270,12 +272,16 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
-    AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
-    int sdk = android.version.sdkInt;
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+      int sdk = android.version.sdkInt;
 
-    sdk >= 33
-        ? _storagePermission = Permission.manageExternalStorage
-        : _storagePermission = Permission.storage;
+      sdk >= 33
+          ? _storagePermission = Permission.manageExternalStorage
+          : _storagePermission = Permission.storage;
+    } else {
+      _storagePermission = Permission.storage;
+    }
   }
 
   void _listenForPermissionStatus() async {
