@@ -102,6 +102,7 @@ class _MyTestTabState extends State<MyTestTab>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
+    _presenter!.closeClientRequest();
     super.dispose();
   }
 
