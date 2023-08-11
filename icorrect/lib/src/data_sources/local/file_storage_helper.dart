@@ -107,4 +107,19 @@ class FileStorageHelper {
       return false;
     }
   }
+
+  static Future<bool> newDeleteFile(String path) async {
+    try {
+      File file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('DEBUG: Error when delete file: ${e.toString()}');
+      }
+      return false;
+    }
+  }
 }
