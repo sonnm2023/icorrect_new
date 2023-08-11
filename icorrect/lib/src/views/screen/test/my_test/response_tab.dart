@@ -19,10 +19,10 @@ import 'package:provider/provider.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
 class ResponseTab extends StatefulWidget {
-  ActivitiesModel homeWorkModel;
-  MyTestProvider provider;
+  final ActivitiesModel homeWorkModel;
+  final MyTestProvider provider;
 
-  ResponseTab({super.key, required this.homeWorkModel, required this.provider});
+  const ResponseTab({super.key, required this.homeWorkModel, required this.provider});
 
   @override
   State<ResponseTab> createState() => _ResponseTabState();
@@ -357,10 +357,16 @@ class _ResponseTabState extends State<ResponseTab>
         _onTapViewSample(fileName);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 6,
+          vertical: 3,
+        ),
         decoration: BoxDecoration(
-            border: Border.all(color: AppColor.defaultPurpleColor),
-            borderRadius: BorderRadius.circular(CustomSize.size_20)),
+          border: Border.all(
+            color: AppColor.defaultPurpleColor,
+          ),
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
+        ),
         child: const Text(
           'View Sample',
           style: CustomTextStyle.textBoldPurple_14,

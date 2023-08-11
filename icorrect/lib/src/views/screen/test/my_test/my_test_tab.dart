@@ -379,7 +379,7 @@ class _MyTestTabState extends State<MyTestTab>
                         },
                         child: const Icon(
                           Icons.cancel_outlined,
-                          color: Colors.black,
+                          color: AppColor.defaultBlackColor,
                           size: CustomSize.size_25,
                         ),
                       ),
@@ -391,10 +391,10 @@ class _MyTestTabState extends State<MyTestTab>
             return Container(
               height: CustomSize.size_400,
               color: Colors.white,
-              child: Center(
+              child: const Center(
                 child: Text(
                   'Nothing in here',
-                  style: CustomTextStyle.textGrey_16,
+                  style: CustomTextStyle.textGrey_15,
                 ),
               ),
             );
@@ -463,13 +463,13 @@ class _MyTestTabState extends State<MyTestTab>
                         children: [
                           Container(
                             padding: const EdgeInsets.all(0),
-                            width: 280,
+                            width: MediaQuery.of(context).size.width*0.7,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   question.content.toString(),
-                                  style: CustomTextStyle.textBlack_16,
+                                  style: CustomTextStyle.textBlack_15,
                                 )
                               ],
                             ),
@@ -646,7 +646,7 @@ class _MyTestTabState extends State<MyTestTab>
     Fluttertoast.showToast(
         msg: alertInfo.description,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
+        textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM);
     if (kDebugMode) {
@@ -660,7 +660,7 @@ class _MyTestTabState extends State<MyTestTab>
     Fluttertoast.showToast(
         msg: alertInfo.description,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
+        textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM);
     if (kDebugMode) {
@@ -706,7 +706,7 @@ class _MyTestTabState extends State<MyTestTab>
     Fluttertoast.showToast(
         msg: info.description,
         backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
+        textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM);
   }

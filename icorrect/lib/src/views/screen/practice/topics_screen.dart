@@ -24,11 +24,15 @@ class _TopicsScreenState extends State<TopicsScreen> {
           ),
           title: const Text(
             "Topics",
-            style: TextStyle(color: AppColor.defaultPurpleColor),
+            style: TextStyle(
+              color: AppColor.defaultPurpleColor,
+            ),
           ),
           centerTitle: true,
           elevation: 0.0,
-          iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
+          iconTheme: const IconThemeData(
+            color: AppColor.defaultPurpleColor,
+          ),
           backgroundColor: AppColor.defaultWhiteColor,
         ),
         body: Stack(
