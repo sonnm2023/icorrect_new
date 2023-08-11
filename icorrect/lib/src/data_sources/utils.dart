@@ -14,6 +14,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class Utils {
   static Future<String> getDeviceIdentifier() async {
@@ -364,7 +365,7 @@ class Utils {
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
 
-  static Future<String> getAudioPathToPlay(
+  static Future<String> getPathToRecordReAnswer(
       QuestionTopicModel question, String? testId) async {
     String fileName = '';
     if (question.answers.length > 1) {
@@ -376,8 +377,9 @@ class Utils {
     } else {
       fileName = question.answers.first.url;
     }
-    String path =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
+
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    String path = "${appDocDirectory.path}/$fileName.wav";
     return path;
   }
 
