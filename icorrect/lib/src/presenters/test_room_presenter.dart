@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 abstract class TestRoomViewContract {
   void onPlayIntroduceFile(String fileName);
@@ -228,6 +229,8 @@ class TestRoomPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
   }) async {
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -285,10 +288,8 @@ class TestRoomPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        File audioFile = File(
-          await FileStorageHelper.getFilePath(
-              q.answers.elementAt(i).url.toString(), MediaType.audio, testId),
-        );
+        String path = "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+        File audioFile = File(path);
 
         if (await audioFile.exists()) {
           request.files
