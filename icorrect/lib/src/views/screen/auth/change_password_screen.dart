@@ -67,10 +67,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       appBar: AppBar(
         title: const Text(
           'Change password',
-          style: TextStyle(color: AppColor.defaultPurpleColor),
+          style: TextStyle(
+            color: AppColor.defaultPurpleColor,
+          ),
         ),
         centerTitle: true,
-        leading: const BackButton(color: AppColor.defaultPurpleColor),
+        leading: const BackButton(
+          color: AppColor.defaultPurpleColor,
+        ),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: CustomDivider(),
