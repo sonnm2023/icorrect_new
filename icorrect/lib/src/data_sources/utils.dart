@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,13 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+import '../../core/app_asset.dart';
+import '../../core/app_color.dart';
+import '../provider/homework_provider.dart';
+import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'api_urls.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Utils {
@@ -403,4 +411,144 @@ class Utils {
 
     return "";
   }
+
+  //huy copied functions
+  static Widget drawHeader(UserDataModel user) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: CustomSize.size_30,
+        horizontal: CustomSize.size_10,
+      ),
+      color: AppColor.defaultPurpleColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: CustomSize.size_60,
+            height: CustomSize.size_60,
+            child: CircleAvatar(
+              child: Consumer<HomeWorkProvider>(
+                  builder: (context, homeWorkProvider, child) {
+                    return CachedNetworkImage(
+                      imageUrl:
+                      fileEP(homeWorkProvider.currentUser.profileModel.avatar),
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(CustomSize.size_100),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.transparent,
+                              BlendMode.colorBurn,
+                            ),
+                          ),
+                        ),
+                      ),
+                      placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => CircleAvatar(
+                        child: Image.asset(
+                          AppAsset.defaultAvt,
+                          width: CustomSize.size_40,
+                          height: CustomSize.size_40,
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+          ),
+          Container(
+            width: CustomSize.size_200,
+            margin: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_10,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_10,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user.profileModel.displayName.toString(),
+                  style: CustomTextStyle.textWhiteBold_15,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: CustomSize.size_5),
+                Row(
+                  children: [
+                    Text(
+                      "Dimond: ${user.profileModel.wallet.usd.toString()}",
+                      style: CustomTextStyle.textWhite_14,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: CustomSize.size_10,
+                      ),
+                      child: const Image(
+                        width: CustomSize.size_20,
+                        image: AssetImage(AppAsset.dimond),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: CustomSize.size_5),
+                Row(
+                  children: [
+                    Text(
+                      "Gold: ${user.profileModel.pointTotal.toString()}",
+                      style: CustomTextStyle.textWhite_14,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: CustomSize.size_10,
+                      ),
+                      child: const Image(
+                        width: CustomSize.size_20,
+                        image: AssetImage(
+                          AppAsset.gold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  static void toggleDrawer() async {
+    if (GlobalKey<ScaffoldState>().currentState!.isDrawerOpen) {
+      GlobalKey<ScaffoldState>().currentState!.openEndDrawer();
+    } else {
+      GlobalKey<ScaffoldState>().currentState!.openDrawer();
+    }
+  }
+
+  static void showLogoutConfirmDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "Do you want to logout?",
+          okButtonTitle: "OK",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
 }
