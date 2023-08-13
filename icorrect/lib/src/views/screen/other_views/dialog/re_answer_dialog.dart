@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -125,7 +126,7 @@ class ReAnswerDialog extends Dialog {
     if (await _record.hasPermission()) {
       await _record.start(
         path: path,
-        encoder: AudioEncoder.wav,
+        encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
         bitRate: 128000,
         samplingRate: 44100,
       );

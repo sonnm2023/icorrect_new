@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
@@ -327,6 +328,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _playAudio(String audioPath) async {
+    if (kDebugMode) {
+      print("DEBUG: Play audio as FILE PATH $audioPath");
+    }
     try {
       await _audioPlayerController!.play(DeviceFileSource(audioPath));
       await _audioPlayerController!.setVolume(2.5);
@@ -834,7 +838,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _stopRecord() async {
-    await _recordController!.stop();
+    String? path = await _recordController!.stop();
+    if (kDebugMode) {
+      print("DEBUG: RECORD FILE PATH: $path");
+    }
   }
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
@@ -860,7 +867,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (await _recordController!.hasPermission()) {
       await _recordController!.start(
         path: path,
-        encoder: AudioEncoder.wav,
+        encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
         bitRate: 128000,
         samplingRate: 44100,
       );
@@ -915,7 +922,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 _simulatorTestProvider!.setVisibleRecord(false);
                 _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
 
-                int time = 60; //3 for test, 60 for product
+                int time = 3; //3 for test, 60 for product
                 String timeString = Utils.getTimeRecordString(time);
                 _simulatorTestProvider!.setCountDownCueCard(timeString);
 
