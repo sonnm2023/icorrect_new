@@ -21,8 +21,10 @@ import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
+
+import '../../../data_sources/utils.dart';
+import '../../widget/drawer_items.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   const HomeWorkScreen({super.key});
@@ -75,47 +77,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
-    final drawerItems = ListView(
-      children: [
-        Consumer<HomeWorkProvider>(builder: (context, homeWorkProvider, child) {
-          return _drawHeader(homeWorkProvider.currentUser);
-        }),
-        ListTile(
-          title: const Text(
-            "Home",
-          ),
-          leading: const Icon(Icons.home),
-          onTap: () {
-            toggleDrawer();
-          },
-        ),
-        ListTile(
-          title: const Text(
-            "Change password",
-          ),
-          leading: const Icon(Icons.password),
-          onTap: () {
-            toggleDrawer();
-
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ChangePasswordScreen(),
-              ),
-            );
-          },
-        ),
-        ListTile(
-          title: const Text(
-            "Logout",
-          ),
-          leading: const Icon(Icons.logout_outlined),
-          onTap: () {
-            toggleDrawer();
-            _showLogoutConfirmDialog();
-          },
-        ),
-      ],
-    );
+    final drawerItems = items(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -144,10 +106,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           tabBarTheme: const TabBarTheme(
             labelColor: AppColor.defaultPurpleColor,
             labelStyle: TextStyle(
-                color: AppColor.defaultPurpleColor,
-                fontWeight: FontWeight.w800),
+              color: AppColor.defaultPurpleColor,
+              fontWeight: FontWeight.w800,
+            ),
             indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: AppColor.defaultPurpleColor),
+              borderSide: BorderSide(
+                color: AppColor.defaultPurpleColor,
+              ),
             ),
           ),
           primaryColor: AppColor.defaultPurpleColor,
@@ -270,14 +235,17 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   static Widget _drawHeader(UserDataModel user) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+      padding: const EdgeInsets.symmetric(
+        vertical: CustomSize.size_30,
+        horizontal: CustomSize.size_10,
+      ),
       color: AppColor.defaultPurpleColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: 60,
-            height: 60,
+            width: CustomSize.size_60,
+            height: CustomSize.size_60,
             child: CircleAvatar(
               child: Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
@@ -286,7 +254,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                       fileEP(homeWorkProvider.currentUser.profileModel.avatar),
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(CustomSize.size_100),
                       image: DecorationImage(
                         image: imageProvider,
                         fit: BoxFit.cover,
@@ -302,8 +270,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                   errorWidget: (context, url, error) => CircleAvatar(
                     child: Image.asset(
                       AppAsset.defaultAvt,
-                      width: 42,
-                      height: 42,
+                      width: CustomSize.size_40,
+                      height: CustomSize.size_40,
                     ),
                   ),
                 );
@@ -311,51 +279,51 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             ),
           ),
           Container(
-            width: 200,
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            width: CustomSize.size_200,
+            margin: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_10,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_10,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DefaultText(
-                  text: user.profileModel.displayName.toString(),
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                Text(
+                  user.profileModel.displayName.toString(),
+                  style: CustomTextStyle.textWhiteBold_15,
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: CustomSize.size_5),
                 Row(
                   children: [
-                    DefaultText(
-                      text:
-                          "Dimond: ${user.profileModel.wallet.usd.toString()}",
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
+                    Text(
+                      "Dimond: ${user.profileModel.wallet.usd.toString()}",
+                      style: CustomTextStyle.textWhite_14,
                     ),
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: CustomSize.size_10,
+                      ),
                       child: const Image(
-                        width: 20,
+                        width: CustomSize.size_20,
                         image: AssetImage(AppAsset.dimond),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: CustomSize.size_5),
                 Row(
                   children: [
                     Text(
                       "Gold: ${user.profileModel.pointTotal.toString()}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w300,
-                        fontSize: 15,
-                      ),
+                      style: CustomTextStyle.textWhite_14,
                     ),
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: CustomSize.size_10,
+                      ),
                       child: const Image(
-                        width: 20,
+                        width: CustomSize.size_20,
                         image: AssetImage(
                           AppAsset.gold,
                         ),

@@ -55,7 +55,8 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _getAppConfigInfo() async {
-    String appConfigInfo = await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
+    String appConfigInfo =
+        await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
     if (appConfigInfo.isEmpty) {
       _loginPresenter!.getAppConfigInfo();
     } else {
@@ -101,18 +102,24 @@ class _LoginScreenState extends State<LoginScreen>
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Padding(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(CustomSize.size_30),
                     child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 40),
+                          const SizedBox(
+                            height: CustomSize.size_40,
+                          ),
                           const LogoWidget(),
                           const LogoTextWidget(),
-                          const SizedBox(height: 60),
-                          EmailInputWidget(emailController: emailController),
+                          const SizedBox(
+                            height: CustomSize.size_60,
+                          ),
+                          EmailInputWidget(
+                            emailController: emailController,
+                          ),
                           PasswordInputWidget(
                             passwordController: passwordController,
                             type: PasswordType.password,
@@ -162,10 +169,10 @@ class _LoginScreenState extends State<LoginScreen>
           );
         }
       },
-      background: AppColor.defaultPurpleColor,
       text: 'Sign In',
-      fontSize: 15,
-      height: 60,
+      background: AppColor.defaultPurpleColor,
+      fontSize: FontsSize.fontSize_14,
+      height: CustomSize.size_50,
     );
   }
 
@@ -232,16 +239,18 @@ class _LoginScreenState extends State<LoginScreen>
           return MessageDialog.alertDialog(context, message);
         });
   }
-  
+
   @override
   void onGetAppConfigInfoFail(String message) {
     if (kDebugMode) {
       print("DEBUG: onGetAppConfigInfoFail $message");
     }
     //Show get app config info error
-    showToastMsg(msg: "Has an error when getting app config infomation!", toastState: ToastStatesType.error);
+    showToastMsg(
+        msg: "Has an error when getting app config information!",
+        toastState: ToastStatesType.error);
   }
-  
+
   @override
   void onGetAppConfigInfoSuccess() {
     if (kDebugMode) {

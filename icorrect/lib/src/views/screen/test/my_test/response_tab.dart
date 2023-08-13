@@ -16,13 +16,13 @@ import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../provider/student_test_detail_provider.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
 class ResponseTab extends StatefulWidget {
-  ActivitiesModel homeWorkModel;
-  MyTestProvider provider;
-  ResponseTab({super.key, required this.homeWorkModel, required this.provider});
+  final ActivitiesModel homeWorkModel;
+  final MyTestProvider provider;
+
+  const ResponseTab({super.key, required this.homeWorkModel, required this.provider});
 
   @override
   State<ResponseTab> createState() => _ResponseTabState();
@@ -62,7 +62,8 @@ class _ResponseTabState extends State<ResponseTab>
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
             _loading?.show(context);
-            _presenter!.getResponse(widget.homeWorkModel.activityAnswer!.orderId.toString());
+            _presenter!.getResponse(
+                widget.homeWorkModel.activityAnswer!.orderId.toString());
           });
         },
         child: _buildResponseTab());
@@ -72,11 +73,14 @@ class _ResponseTabState extends State<ResponseTab>
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+          horizontal: CustomSize.size_20,
+          vertical: CustomSize.size_10,
+        ),
         child: Column(
           children: [
             _buildOverview(),
-            const SizedBox(height: 20),
+            const SizedBox(height: CustomSize.size_20),
             _buildOverallScore()
           ],
         ),
@@ -96,31 +100,27 @@ class _ResponseTabState extends State<ResponseTab>
               text: 'Overview',
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: 18,
+              fontSize: FontsSize.fontSize_18,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: CustomSize.size_10),
           Container(
             child: (appState.visibleOverviewComment)
                 ? Text(
                     appState.responseModel.overallComment ?? '',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),
+                    style: CustomTextStyle.textBlack_15,
                   )
-                : DefaultText(
-                    text: appState.responseModel.overallComment ?? '',
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+                : Text(
+                    appState.responseModel.overallComment ?? '',
+                    style: CustomTextStyle.textBlack_15,
                     maxLines: 4,
                   ),
           ),
           LayoutBuilder(builder: (context, constraint) {
             return Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
+              margin: const EdgeInsets.symmetric(
+                vertical: CustomSize.size_10,
+              ),
               alignment: Alignment.centerRight,
               width: constraint.maxWidth,
               child: (appState.responseModel.overallComment !=
@@ -133,14 +133,13 @@ class _ResponseTabState extends State<ResponseTab>
                         widget.provider.setVisibleOverviewComment(
                             !appState.visibleOverviewComment);
                       },
-                      child: DefaultText(
-                          text: (appState.visibleOverviewComment)
-                              ? 'Show less'
-                              : 'Show more',
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          maxLines: 4),
+                      child: Text(
+                        (appState.visibleOverviewComment)
+                            ? 'Show less'
+                            : 'Show more',
+                        style: CustomTextStyle.textBoldBlack_15,
+                        maxLines: 4,
+                      ),
                     )
                   : Container(),
             );
@@ -181,18 +180,27 @@ class _ResponseTabState extends State<ResponseTab>
     });
   }
 
-  Widget _scoreItem(
-      {required int index,
-      required String title,
-      List<SkillProblem>? problems,
-      bool? visible}) {
-    var radius = const Radius.circular(20);
+  Widget _scoreItem({
+    required int index,
+    required String title,
+    List<SkillProblem>? problems,
+    bool? visible,
+  }) {
+    var radius = const Radius.circular(
+      CustomSize.size_20,
+    );
     var borderRadius = BorderRadius.circular(0);
     if (index == 0) {
-      borderRadius = BorderRadius.only(topLeft: radius, topRight: radius);
+      borderRadius = BorderRadius.only(
+        topLeft: radius,
+        topRight: radius,
+      );
     } else if (index == 4) {
       borderRadius = !visible!
-          ? BorderRadius.only(bottomLeft: radius, bottomRight: radius)
+          ? BorderRadius.only(
+              bottomLeft: radius,
+              bottomRight: radius,
+            )
           : BorderRadius.circular(0);
     }
     return InkWell(
@@ -204,44 +212,49 @@ class _ResponseTabState extends State<ResponseTab>
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_20,
+              vertical: CustomSize.size_10,
+            ),
             alignment: Alignment.topLeft,
             decoration: BoxDecoration(
-                color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
+              color: AppColor.defaultPurpleColor,
+              borderRadius: borderRadius,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DefaultText(
-                  text: title,
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+                Text(
+                  title,
+                  style: CustomTextStyle.textWhiteBold_15,
                 ),
-                LayoutBuilder(builder: (_, constraint) {
-                  if (index != 0) {
-                    if (visible!) {
-                      return const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 30,
-                        color: Colors.white,
-                      );
+                LayoutBuilder(
+                  builder: (_, constraint) {
+                    if (index != 0) {
+                      if (visible!) {
+                        return const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: CustomSize.size_30,
+                          color: AppColor.defaultWhiteColor,
+                        );
+                      } else {
+                        return const Icon(
+                          Icons.navigate_next_rounded,
+                          size: CustomSize.size_30,
+                          color: AppColor.defaultWhiteColor,
+                        );
+                      }
                     } else {
-                      return const Icon(
-                        Icons.navigate_next_rounded,
-                        size: 30,
-                        color: Colors.white,
-                      );
+                      return Container();
                     }
-                  } else {
-                    return Container();
-                  }
-                }),
+                  },
+                ),
               ],
             ),
           ),
           index != 0 && visible!
               ? _overallDetail(problems: problems!)
-              : Container()
+              : Container(),
         ],
       ),
     );
@@ -266,7 +279,10 @@ class _ResponseTabState extends State<ResponseTab>
 
   Widget _overallDetail({required List<SkillProblem> problems}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CustomSize.size_10,
+        vertical: CustomSize.size_15,
+      ),
       decoration: BoxDecoration(
           border: Border.all(color: AppColor.defaultPurpleColor, width: 1)),
       child: (problems.isNotEmpty)
@@ -282,42 +298,44 @@ class _ResponseTabState extends State<ResponseTab>
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.warning_amber_outlined,
-                            color: Colors.orangeAccent, size: 20),
-                        SizedBox(width: 10),
-                        DefaultText(
-                          text: 'Problem',
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        Icon(
+                          Icons.warning_amber_outlined,
+                          color: Colors.orangeAccent,
+                          size: CustomSize.size_20,
+                        ),
+                        SizedBox(width: CustomSize.size_10),
+                        Text(
+                          'Problem',
+                          style: CustomTextStyle.textBoldBlack_15,
                         )
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: CustomSize.size_5),
                     DefaultText(
                       text: problemModel.problem.toString(),
                       color: Colors.black,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: CustomSize.size_15),
                     Row(
                       children: [
-                        const Icon(Icons.light_mode_outlined,
-                            color: Colors.orangeAccent, size: 20),
-                        const SizedBox(width: 10),
-                        const DefaultText(
-                          text: 'Solution',
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        const Icon(
+                          Icons.light_mode_outlined,
+                          color: Colors.orangeAccent,
+                          size: CustomSize.size_20,
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: CustomSize.size_10),
+                        const Text(
+                          'Solution',
+                          style: CustomTextStyle.textBoldBlack_15,
+                        ),
+                        const SizedBox(width: CustomSize.size_10),
                         (problemModel.fileName.toString().isNotEmpty)
                             ? _viewSampleButton(
                                 problemModel.fileName.toString())
                             : Container()
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: CustomSize.size_5),
                     DefaultText(
                       text: problemModel.solution.toString(),
                       color: Colors.black,
@@ -325,8 +343,11 @@ class _ResponseTabState extends State<ResponseTab>
                   ],
                 );
               })
-          : EmptyWidget.init().buildNothingWidget('Nothing Problem in here',
-              widthSize: 100, heightSize: 100),
+          : EmptyWidget.init().buildNothingWidget(
+              'Nothing Problem in here',
+              widthSize: CustomSize.size_100,
+              heightSize: CustomSize.size_100,
+            ),
     );
   }
 
@@ -336,15 +357,19 @@ class _ResponseTabState extends State<ResponseTab>
         _onTapViewSample(fileName);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 6,
+          vertical: 3,
+        ),
         decoration: BoxDecoration(
-            border: Border.all(color: AppColor.defaultPurpleColor),
-            borderRadius: BorderRadius.circular(20)),
-        child: const DefaultText(
-          text: 'View Sample',
-          color: AppColor.defaultPurpleColor,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
+          border: Border.all(
+            color: AppColor.defaultPurpleColor,
+          ),
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
+        ),
+        child: const Text(
+          'View Sample',
+          style: CustomTextStyle.textBoldPurple_14,
         ),
       ),
     );
@@ -354,13 +379,14 @@ class _ResponseTabState extends State<ResponseTab>
     String url = fileEP(fileName);
     String typeFile = Utils.fileType(fileName);
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (builder) {
-          return (typeFile == StringClass.audio)
-              ? SliderAudio(url: url)
-              : SampleVideo(url: url);
-        });
+      context: context,
+      barrierDismissible: false,
+      builder: (builder) {
+        return (typeFile == StringClass.audio)
+            ? SliderAudio(url: url)
+            : SampleVideo(url: url);
+      },
+    );
   }
 
   @override
@@ -376,11 +402,12 @@ class _ResponseTabState extends State<ResponseTab>
   void getErrorResponse(String message) {
     _loading!.hide();
     Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: message,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: Colors.black,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   @override
