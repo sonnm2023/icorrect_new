@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -540,7 +541,7 @@ class _MyTestTabState extends State<MyTestTab>
           path:
               '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
               '\\$audioFile',
-          // encoder: AudioEncoder.wav,
+          encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
           bitRate: 128000,
           samplingRate: 44100,
         );
