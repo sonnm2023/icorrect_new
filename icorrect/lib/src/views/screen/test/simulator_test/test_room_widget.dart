@@ -6,10 +6,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_audio_recorder3/flutter_audio_recorder3.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
@@ -34,6 +34,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/video_player_wid
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
@@ -58,7 +59,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   PlayAnswerProvider? _playAnswerProvider;
   VideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
-  FlutterAudioRecorder3? _recorder;
+  Record? _recordController;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -124,8 +125,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (_simulatorTestProvider!.visibleRecord) {
-      if (null != _recorder) {
-        _recorder!.stop();
+      if (null != _recordController) {
+        _recordController!.stop();
       }
     }
 
@@ -150,8 +151,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setVisibleCueCard(false);
       _simulatorTestProvider!.setVisibleRecord(false);
 
-      if (null != _recorder) {
-        _recorder!.stop();
+      if (null != _recordController) {
+        _recordController!.stop();
       }
 
       _audioPlayerController!.stop();
@@ -257,6 +258,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       await _videoPlayerController!.dispose();
       _simulatorTestProvider!.setPlayController(null);
     }
+
+    // if (null != _recordController) {
+    //   _recordController = null;
+    // }
   }
 
   void _playAnswerCallBack(
@@ -854,11 +859,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _stopRecord() async {
-    var result = await _recorder!.stop();
-    if (kDebugMode) {
-      print("Stop recording: ${result!.path}");
-      print("Stop recording: ${result.duration}");
-    }
+    await _recordController!.stop();
   }
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
@@ -877,68 +878,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   ) async {
     String newFileName = await _createLocalAudioFileName(fileName);
     return "${type}_${testId}_${newFileName}_";
-  }
-
-  Future<void> _initRecorder(String fileName) async {
-    try {
-      bool hasPermission = await FlutterAudioRecorder3.hasPermissions ?? false;
-
-      if (hasPermission) {
-        String newFileName = await _getCustomFileName(
-            StringClass.audio,
-            _simulatorTestProvider!.currentTestDetail.testId.toString(),
-            fileName);
-        String customPath =
-            '${newFileName}_${DateTime.now().millisecondsSinceEpoch.toString()}';
-        Directory appDocDirectory = await getApplicationDocumentsDirectory();
-        String path = "${appDocDirectory.path}/$customPath";
-
-        _recorder = FlutterAudioRecorder3(path,
-            audioFormat: AudioFormat.WAV, sampleRate: 44100);
-        await _recorder!.initialized;
-
-        if (kDebugMode) {
-          print("Start recording: $path");
-        }
-
-        //Create and add answer into current question
-        List<FileTopicModel> temp = _currentQuestion!.answers;
-        if (!_checkAnswerFileExist(customPath, temp)) {
-          temp.add(
-              FileTopicModel.fromJson({'id': 0, 'url': customPath, 'type': 0}));
-          _currentQuestion!.answers = temp;
-          _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
-        }
-      } else {
-        if (kDebugMode) {
-          print("You must accept permissions");
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
-  void _startRecording(String fileName) async {
-    await _initRecorder(fileName);
-
-    try {
-      await _recorder!.start();
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
-  Future<void> _resumeRecording() async {
-    await _recorder!.resume();
-  }
-
-  Future<void> _pauseRecording() async {
-    await _recorder!.pause();
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
@@ -1204,8 +1143,36 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _setVisibleRecord(true, _countDown, fileName);
 
-    // _recordAnswer(fileName); //TODO
-    _startRecording(fileName);
+    _recordAnswer(fileName); //TODO
+  }
+
+  Future<void> _recordAnswer(String fileName) async {
+    String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
+    String path = await FileStorageHelper.getFilePath(
+        newFileName,
+        MediaType.audio,
+        _simulatorTestProvider!.currentTestDetail.testId.toString());
+
+    if (kDebugMode) {
+      print("DEBUG: RECORD AS FILE PATH: $path");
+    }
+
+    if (await _recordController!.hasPermission()) {
+      await _recordController!.start(
+        path: path,
+        encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+
+      List<FileTopicModel> temp = _currentQuestion!.answers;
+      if (!_checkAnswerFileExist(newFileName, temp)) {
+        temp.add(
+            FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
+        _currentQuestion!.answers = temp;
+        _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+      }
+    }
   }
 
   void _setVisibleSaveTest(bool isVisible) {
