@@ -35,6 +35,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
     _changePasswordPresenter = ChangePasswordPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     /*
     confirmNewPasswordController.addListener(() {
     if (confirmNewPasswordController.text.trim() != newPasswordController.text.trim()) {
@@ -67,14 +68,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       appBar: AppBar(
         title: const Text(
           'Change password',
-          style: TextStyle(color: AppColor.defaultPurpleColor),
+          style: TextStyle(
+            color: AppColor.defaultPurpleColor,
+          ),
         ),
         centerTitle: true,
         leading: const BackButton(color: AppColor.defaultPurpleColor),
         bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: CustomDivider(),
-        ),
+            preferredSize: Size.fromHeight(4.0),
+            child: Divider(
+              color: AppColor.defaultPurpleColor,
+              thickness: 1,
+            )),
       ),
       body: SafeArea(
         child: CustomScrollView(
@@ -97,8 +102,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                       PasswordInputWidget(
                           passwordController: confirmNewPasswordController,
                           type: PasswordType.confirmNewPassword),
+                      const SizedBox(height: 20),
                       _buildSaveButton(),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       _buildCancelButton(),
                     ],
                   ),
@@ -138,6 +144,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       text: 'Save change',
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
+      radius: 20,
     );
   }
 
@@ -152,6 +159,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       text: 'Cancel',
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
+      radius: 20,
       hasBorder: true,
     );
   }

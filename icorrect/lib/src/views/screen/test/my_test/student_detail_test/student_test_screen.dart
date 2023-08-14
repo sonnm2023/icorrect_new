@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/student_test_correction_tab.dart';
 import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/test_detail_screen_tab.dart';
+import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/app_color.dart';
@@ -36,9 +40,16 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
         tabs: _tabsLabel(),
       );
 
+  AuthProvider? _authProvider;
   @override
   void initState() {
     super.initState();
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.studentOtherScaffoldKey);
+    });
   }
 
   @override
@@ -48,36 +59,33 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
-          key: scaffoldKey,
-          appBar: AppBar(
-            elevation: 0.0,
-            iconTheme: const IconThemeData(
-              color: AppColor.defaultPurpleColor,
-            ),
-            centerTitle: true,
-            leading: BackButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Text(
-              widget.studentResultModel.email.toString(),
-              style: const TextStyle(
+            key: GlobalScaffoldKey.studentOtherScaffoldKey,
+            appBar: AppBar(
+              elevation: 0.0,
+              iconTheme:
+                  const IconThemeData(color: AppColor.defaultPurpleColor),
+              centerTitle: true,
+              leading: BackButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: DefaultText(
+                text: widget.studentResultModel.students.name.toString(),
                 color: AppColor.defaultPurpleColor,
+                fontWeight: FontWeight.w500,
               ),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(CustomSize.size_50),
-              child: Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: AppColor.defaultPurpleColor),
-                  ),
-                ),
-                child: _tabBar,
-              ),
-            ),
-            backgroundColor: AppColor.defaultWhiteColor,
+              bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(50),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                color: AppColor.defaultPurpleColor))),
+                    child: _tabBar,
+                  )),
+              backgroundColor: AppColor.defaultWhiteColor,
+
           ),
           body: Consumer<StudentTestProvider>(
             builder: (context, provider, child) {

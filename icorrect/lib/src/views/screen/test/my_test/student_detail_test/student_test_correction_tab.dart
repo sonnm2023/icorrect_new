@@ -119,53 +119,51 @@ class _StudentCorrectionState extends State<StudentCorrection>
                 fontSize: FontsSize.fontSize_18,
               ),
             ),
-            const SizedBox(
-              height: CustomSize.size_10,
-            ),
+            const SizedBox(height: 10),
             Container(
               child: (appState.visibleOverviewComment)
                   ? Text(
                       appState.responseModel.overallComment ?? '',
-                      style: CustomTextStyle.textBlack_15,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontSize: FontsSize.fontSize_16,
+                      ),
                     )
-                  : Text(
-                      appState.responseModel.overallComment ?? '',
-                      style: CustomTextStyle.textBlack_15,
+                  : DefaultText(
+                      text: appState.responseModel.overallComment ?? '',
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: FontsSize.fontSize_16,
                       maxLines: 4,
                     ),
             ),
             LayoutBuilder(
-              builder: (
-                context,
-                constraint,
-              ) {
+              builder: (context, constraint) {
                 return Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: CustomSize.size_10,
-                  ),
+                  margin: const EdgeInsets.symmetric(vertical: CustomSize.size_10),
                   alignment: Alignment.centerRight,
                   width: constraint.maxWidth,
-                  child: (appState.responseModel.overallComment !=
-                              'Nothing overall comment in here' &&
-                          appState.responseModel.overallComment
-                              .toString()
-                              .isNotEmpty)
+                  child: (appState.responseModel.isTooLong())
                       ? InkWell(
                           onTap: () {
                             widget.provider.setVisibleOverviewComment(
                                 !appState.visibleOverviewComment);
                           },
                           child: DefaultText(
-                            text: (appState.visibleOverviewComment)
-                                ? 'Show less'
-                                : 'Show more',
-                            color: AppColor.defaultBlackColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: FontsSize.fontSize_16,
-                            maxLines: 4,
-                          ),
+                              text: (appState.visibleOverviewComment)
+                                  ? 'Show less'
+                                  : 'Show more',
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: FontsSize.fontSize_16,
+                              maxLines: 4),
                         )
-                      : Container(),
+                      : Text(
+                          appState.responseModel.overallComment ?? '',
+                          style: CustomTextStyle.textBlack_15,
+                          maxLines: 4,
+                        ),
                 );
               },
             ),
@@ -223,58 +221,76 @@ class _StudentCorrectionState extends State<StudentCorrection>
           ? BorderRadius.only(bottomLeft: radius, bottomRight: radius)
           : BorderRadius.circular(0);
     }
-    return InkWell(
-      onTap: () {
-        _setVisibleProblem(index: index);
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_20,
-              vertical: CustomSize.size_10,
-            ),
-            alignment: Alignment.topLeft,
-            decoration: BoxDecoration(
-              color: AppColor.defaultPurpleColor,
-              borderRadius: borderRadius,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: CustomTextStyle.textWhiteBold_15,
-                ),
-                LayoutBuilder(builder: (_, constraint) {
-                  if (index != 0) {
-                    if (visible!) {
-                      return const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: CustomSize.size_30,
-                        color: AppColor.defaultWhiteColor,
-                      );
+    return (problems != null && problems.isNotEmpty)
+        ? InkWell(
+            onTap: () {
+              _setVisibleProblem(index: index);
+            },
+            child: _overallScoreTitle(
+                index: index,
+                title: title,
+                visible: visible,
+                borderRadius: borderRadius))
+        : _overallScoreTitle(
+            index: index,
+            title: title,
+            visible: visible,
+            borderRadius: borderRadius);
+  }
+
+  Widget _overallScoreTitle(
+      {required int index,
+      required String title,
+      List<SkillProblem>? problems,
+      bool? visible,
+      var borderRadius}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_20, vertical: CustomSize.size_10),
+          alignment: Alignment.topLeft,
+          decoration: BoxDecoration(
+              color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DefaultText(
+                text: title,
+                color: Colors.white,
+                fontSize: FontsSize.fontSize_18,
+                fontWeight: FontWeight.w500,
+              ),
+              Visibility(
+                  visible: (problems != null && problems.isNotEmpty),
+                  child: LayoutBuilder(builder: (_, constraint) {
+                    if (index != 0) {
+                      if (visible!) {
+                        return const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: CustomSize.size_30,
+                          color: AppColor.defaultWhiteColor,
+                        );
+                      } else {
+                        return const Icon(
+                          Icons.navigate_next_rounded,
+                          size: CustomSize.size_30,
+                          color: AppColor.defaultWhiteColor,
+                        );
+                      }
                     } else {
-                      return const Icon(
-                        Icons.navigate_next_rounded,
-                        size: CustomSize.size_30,
-                        color: AppColor.defaultWhiteColor,
-                      );
+                      return Container();
                     }
-                  } else {
-                    return Container();
-                  }
-                }),
-              ],
-            ),
+                  })),
+            ],
           ),
-          index != 0 && visible!
-              ? _overallDetail(problems: problems!)
-              : Container()
-        ],
-      ),
+        ),
+        index != 0 && visible! && problems != null
+            ? _overallDetail(problems: problems)
+            : Container()
+      ],
     );
   }
 

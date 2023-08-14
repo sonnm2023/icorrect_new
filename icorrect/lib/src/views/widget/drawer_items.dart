@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/views/screen/home/homework_screen.dart';
-import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../data_sources/constants.dart';
@@ -27,32 +26,33 @@ Widget items(BuildContext context) {
         onTap: () {
           Utils.toggleDrawer();
 
-          Navigator.of(context).push(
+          /*Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const HomeWorkScreen(),
             ),
-          );
+          );*/
         },
       ),
-      ListTile(
-        title: const Text(
-          "Practice",
-          style: CustomTextStyle.textGrey_15,
-        ),
-        leading: const Icon(
-          Icons.menu_book_outlined,
-          color: AppColor.defaultGrayColor,
-        ),
-        onTap: () {
-          Utils.toggleDrawer();
-
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const PracticeScreen(),
-            ),
-          );
-        },
-      ),
+      //TODO: PHRASE 2
+      // ListTile(
+      //   title: const Text(
+      //     "Practice",
+      //     style: CustomTextStyle.textGrey_15,
+      //   ),
+      //   leading: const Icon(
+      //     Icons.menu_book_outlined,
+      //     color: AppColor.defaultGrayColor,
+      //   ),
+      //   onTap: () {
+      //     Utils.toggleDrawer();
+      //
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(
+      //         builder: (context) => const PracticeScreen(),
+      //       ),
+      //     );
+      //   },
+      // ),
       ListTile(
         title: const Text(
           "Change password",
