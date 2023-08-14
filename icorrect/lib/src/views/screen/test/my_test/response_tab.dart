@@ -22,7 +22,8 @@ class ResponseTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
   final MyTestProvider provider;
 
-  const ResponseTab({super.key, required this.homeWorkModel, required this.provider});
+  const ResponseTab(
+      {super.key, required this.homeWorkModel, required this.provider});
 
   @override
   State<ResponseTab> createState() => _ResponseTabState();
@@ -123,11 +124,7 @@ class _ResponseTabState extends State<ResponseTab>
               ),
               alignment: Alignment.centerRight,
               width: constraint.maxWidth,
-              child: (appState.responseModel.overallComment !=
-                          'Nothing overall comment in here' &&
-                      appState.responseModel.overallComment
-                          .toString()
-                          .isNotEmpty)
+              child: (appState.responseModel.isTooLong())
                   ? InkWell(
                       onTap: () {
                         widget.provider.setVisibleOverviewComment(
@@ -203,33 +200,51 @@ class _ResponseTabState extends State<ResponseTab>
             )
           : BorderRadius.circular(0);
     }
-    return InkWell(
-      onTap: () {
-        _setVisibleProblem(index: index);
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_20,
-              vertical: CustomSize.size_10,
-            ),
-            alignment: Alignment.topLeft,
-            decoration: BoxDecoration(
-              color: AppColor.defaultPurpleColor,
-              borderRadius: borderRadius,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: CustomTextStyle.textWhiteBold_15,
-                ),
-                LayoutBuilder(
-                  builder: (_, constraint) {
+    return (problems != null && problems.isNotEmpty)
+        ? InkWell(
+            onTap: () {
+              _setVisibleProblem(index: index);
+            },
+            child: _overallScoreTitle(
+                index: index,
+                title: title,
+                visible: visible,
+                borderRadius: borderRadius))
+        : _overallScoreTitle(
+            index: index,
+            title: title,
+            visible: visible,
+            borderRadius: borderRadius);
+  }
+
+  Widget _overallScoreTitle(
+      {required int index,
+      required String title,
+      List<SkillProblem>? problems,
+      bool? visible,
+      var borderRadius}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_20, vertical: CustomSize.size_10),
+          alignment: Alignment.topLeft,
+          decoration: BoxDecoration(
+              color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DefaultText(
+                text: title,
+                color: Colors.white,
+                fontSize: FontsSize.fontSize_18,
+                fontWeight: FontWeight.w500,
+              ),
+              Visibility(
+                  visible: (problems != null && problems.isNotEmpty),
+                  child: LayoutBuilder(builder: (_, constraint) {
                     if (index != 0) {
                       if (visible!) {
                         return const Icon(
@@ -247,16 +262,14 @@ class _ResponseTabState extends State<ResponseTab>
                     } else {
                       return Container();
                     }
-                  },
-                ),
-              ],
-            ),
+                  })),
+            ],
           ),
-          index != 0 && visible!
-              ? _overallDetail(problems: problems!)
-              : Container(),
-        ],
-      ),
+        ),
+        index != 0 && visible! && problems != null
+            ? _overallDetail(problems: problems)
+            : Container()
+      ],
     );
   }
 

@@ -119,6 +119,14 @@ class ResultResponseModel {
 
   set orderType(value) => this._orderType = value;
 
+  bool isTooLong() {
+    if (_overallComment != null && _overallComment!.isNotEmpty) {
+      var character = _overallComment!.split(" ");
+      return character.length >= 50;
+    }
+    return false;
+  }
+
   ResultResponseModel.fromJson(Map<String, dynamic> json) {
     _id = json['id'] ?? 0;
     _orderId = json['order_id'] ?? 0;
