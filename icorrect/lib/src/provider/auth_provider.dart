@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -18,22 +19,43 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-
   void updateProcessingStatus() {
     _isProcessing = !_isProcessing;
     notifyListeners();
   }
 
+  Queue<GlobalKey<ScaffoldState>> _scaffoldKeys = Queue();
+  Queue<GlobalKey<ScaffoldState>> get scaffoldKeys => _scaffoldKeys;
+  void setQueueScaffoldKeys(GlobalKey<ScaffoldState> key,
+      {Queue<GlobalKey<ScaffoldState>>? scaffoldKeys}) {
+    _scaffoldKeys.addFirst(key);
+    if (scaffoldKeys != null) {
+      _scaffoldKeys.clear();
+      _scaffoldKeys.addAll(scaffoldKeys);
+    }
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   GlobalKey<ScaffoldState> _globalScaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<ScaffoldState> get globalScaffoldKey => _globalScaffoldKey;
-  void _setGlobalScaffoldKey(GlobalKey<ScaffoldState> key) {
+  void setGlobalScaffoldKey(GlobalKey<ScaffoldState> key) {
     _globalScaffoldKey = key;
+    setQueueScaffoldKeys(key);
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   bool _isShowDialog = false;
   bool get isShowDialog => _isShowDialog;
-  void setShowDialogWithGlobalScaffoldKey(bool isShowing, GlobalKey<ScaffoldState> key) {
+  void setShowDialogWithGlobalScaffoldKey(
+      bool isShowing, GlobalKey<ScaffoldState> key) {
     _isShowDialog = isShowing;
-    _setGlobalScaffoldKey(key);
+    setGlobalScaffoldKey(key);
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 }
