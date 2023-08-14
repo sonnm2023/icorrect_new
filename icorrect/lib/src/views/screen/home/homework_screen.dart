@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:core';
 import 'dart:io';
 
@@ -16,14 +17,11 @@ import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:provider/provider.dart';
-
-import '../../../data_sources/utils.dart';
 import '../../widget/drawer_items.dart';
 
 class HomeWorkScreen extends StatefulWidget {
@@ -66,6 +64,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     Future.delayed(Duration.zero, () {
       _homeWorkProvider.updateProcessingStatus();
+      _authProvider
+          .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
     });
   }
 
@@ -83,10 +83,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       onWillPop: () async {
         if (_authProvider.isShowDialog) {
           GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
-
-          //Reset global key
-          _authProvider.setShowDialogWithGlobalScaffoldKey(
-              false, GlobalKey<ScaffoldState>());
+          _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
 
           Navigator.of(key.currentState!.context).pop();
         } else if (Provider.of<SimulatorTestProvider>(context, listen: false)
@@ -94,7 +91,15 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             DoingStatus.doing) {
           _showQuitTheTestConfirmDialog();
         } else {
-          _showQuitAppConfirmDialog();
+          Queue<GlobalKey<ScaffoldState>> scaffoldKeys =
+              _authProvider.scaffoldKeys;
+          GlobalKey<ScaffoldState> key = scaffoldKeys.first;
+          if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
+            _showQuitAppConfirmDialog();
+          } else {
+            Navigator.of(key.currentState!.context).pop();
+            scaffoldKeys.removeFirst();
+          }
         }
 
         return false;

@@ -52,7 +52,6 @@ dependencies:
   audioplayers: ^5.0.0
   permission_handler: ^10.2.0
   record: ^4.4.4
-  flutter_audio_recorder3: ^0.0.5
   path_provider: ^2.0.14
   video_player: ^2.6.1 #video play
   video_player_win: ^1.1.0

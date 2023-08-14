@@ -129,6 +129,16 @@ class StudentTestProvider extends ChangeNotifier {
   }
 
   ///////////////////CORRECTION SCREEN /////////////////////////////////////////
+  
+   bool _needDownloadAgain = false;
+  bool get needDownloadAgain => _needDownloadAgain;
+  void setNeedDownloadAgain(bool need) {
+    _needDownloadAgain = need;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 
   bool _visibleOverViewComment = false;
   bool get visibleOverviewComment => _visibleOverViewComment;
