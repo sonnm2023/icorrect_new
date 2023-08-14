@@ -1143,7 +1143,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _setVisibleRecord(true, _countDown, fileName);
 
-    _recordAnswer(fileName); //TODO
+    _recordAnswer(fileName);
   }
 
   Future<void> _recordAnswer(String fileName) async {

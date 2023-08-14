@@ -3,14 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_audio_recorder3/flutter_audio_recorder3.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:record/record.dart';
 
 // ignore: must_be_immutable
 class ReAnswerDialog extends Dialog {
@@ -18,13 +16,12 @@ class ReAnswerDialog extends Dialog {
   final QuestionTopicModel _question;
   Timer? _countDown;
   int _timeRecord = 30;
-  late FlutterAudioRecorder3 _recorder;
+  late Record _record;
   final String _filePath = '';
   final TestRoomPresenter _testPresenter;
   final String _currentTestId;
 
-  ReAnswerDialog(
-      this._context, this._question, this._testPresenter, this._currentTestId,
+  ReAnswerDialog(this._context, this._question, this._testPresenter, this._currentTestId,
       {super.key});
 
   @override
@@ -39,29 +36,12 @@ class ReAnswerDialog extends Dialog {
   @override
   Widget? get child => _buildDialog();
 
-  Future<String> _getFilePath() async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String url = '';
-
-    if (_question.repeatIndex == _question.answers.length) {
-      url = _question.answers.last.url;
-    } else {
-      url = _question.answers.elementAt(_question.repeatIndex).url;
-    }
-
-    String path = "${appDocDirectory.path}/$url";
-    if (kDebugMode) {
-      print("Play file: $path.wav");
-    }
-    return path;
-  }
-
   Widget _buildDialog() {
     _timeRecord = Utils.getRecordTime(_question.numPart);
 
-    _getFilePath().then((value) {
-      _startRecording(value);
-    });
+    _record = Record();
+    _startCountDown();
+    _startRecord();
 
     return Container(
       width: 400,
@@ -126,7 +106,7 @@ class ReAnswerDialog extends Dialog {
   }
 
   void _finishReAnswer() {
-    _stopRecord();
+    _record.stop();
     _countDown!.cancel();
     _testPresenter.clickEndReAnswer(_question, _filePath);
     Navigator.pop(_context);
@@ -141,52 +121,24 @@ class ReAnswerDialog extends Dialog {
     });
   }
 
-  Future<void> _initRecorder(String path) async {
-    try {
-      bool hasPermission = await FlutterAudioRecorder3.hasPermissions ?? false;
-
-      if (hasPermission) {
-        _recorder = FlutterAudioRecorder3(
-          path,
-          audioFormat: AudioFormat.WAV,
-          sampleRate: 44100,
-        );
-        await _recorder.initialized;
-
-        if (kDebugMode) {
-          print("Start recording: $path");
-        }
-      } else {
-        if (kDebugMode) {
-          print("You must accept permissions");
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
-  void _startRecording(String path) async {
-    //Delete old file before new record
-    await FileStorageHelper.newDeleteFile("$path.wav");
-    await _initRecorder(path);
-    try {
-      _startCountDown();
-      await _recorder.start();
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
-  Future<void> _stopRecord() async {
-    var result = await _recorder.stop();
+  void _startRecord() async {
     if (kDebugMode) {
-      print("Stop recording: ${result!.path}");
-      print("Stop recording: ${result.duration}");
+      print("DEBUG: $_question");
+    }
+    // String path = await Utils.getAudioPathToPlay(_question, _currentTestId);
+    // String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
+    // String path = await FileStorageHelper.getFilePath(
+    //     newFileName,
+    //     MediaType.audio,
+    //     _simulatorTestProvider!.currentTestDetail.testId.toString());
+
+    if (await _record.hasPermission()) {
+      await _record.start(
+        path: "path",
+        encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
     }
   }
 
@@ -216,3 +168,4 @@ class ReAnswerDialog extends Dialog {
     });
   }
 }
+
