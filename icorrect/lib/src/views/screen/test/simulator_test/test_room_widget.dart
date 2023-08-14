@@ -127,7 +127,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.visibleRecord) {
       _recordController!.stop();
     }
-    
+
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
       _playAnswerProvider!.resetSelectedQuestionIndex();
@@ -420,7 +420,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
-    Provider.of<AuthProvider>(context, listen: false).setShowDialogWithGlobalScaffoldKey(true, GlobalScaffoldKey.showTipScaffoldKey);
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+            true, GlobalScaffoldKey.showTipScaffoldKey);
 
     showModalBottomSheet(
       context: context,
@@ -452,11 +454,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Stop record
     _setVisibleRecord(false, null, null);
 
-    _countRepeat++;
-
     //Add question into List Question & show it
     _simulatorTestProvider!.addCurrentQuestionIntoList(
-        questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+      questionTopic: _currentQuestion!,
+      repeatIndex: _countRepeat,
+      isRepeat: true,
+    );
+
+    _countRepeat++;
 
     TopicModel? topicModel = _getCurrentPart();
     if (null != topicModel) {
@@ -867,7 +872,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (await _recordController!.hasPermission()) {
       await _recordController!.start(
         path: path,
-        encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
+        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
         bitRate: 128000,
         samplingRate: 44100,
       );
@@ -1204,7 +1209,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Add question into List Question & show it
         _simulatorTestProvider!.addCurrentQuestionIntoList(
-            questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+          questionTopic: _currentQuestion!,
+          repeatIndex: _countRepeat,
+          isRepeat: false,
+        );
 
         _playNextQuestion();
       } else {
@@ -1217,7 +1225,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     } else {
       //Add question or followup into List Question & show it
       _simulatorTestProvider!.addCurrentQuestionIntoList(
-          questionTopic: _currentQuestion!, repeatIndex: _countRepeat);
+        questionTopic: _currentQuestion!,
+        repeatIndex: _countRepeat,
+        isRepeat: false,
+      );
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
@@ -1237,6 +1248,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
+
+    //Reset count repeat
+    _countRepeat = 0;
   }
 
   @override
