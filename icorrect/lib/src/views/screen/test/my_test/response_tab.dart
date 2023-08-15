@@ -100,11 +100,9 @@ class _ResponseTabState extends State<ResponseTab>
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            child: const DefaultText(
-              text: 'Overview',
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: FontsSize.fontSize_15,
+            child: const Text(
+              'Overview',
+              style: CustomTextStyle.textBoldBlack_15,
             ),
           ),
           const SizedBox(height: CustomSize.size_10),
@@ -150,34 +148,43 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   Widget _buildOverallScore() {
-    return Consumer<MyTestProvider>(builder: (context, appState, child) {
-      ResultResponseModel result = appState.responseModel;
-      return Column(
-        children: [
-          _scoreItem(index: 0, title: 'Overall score: ${result.overallScore}'),
-          _scoreItem(
+    return Consumer<MyTestProvider>(
+      builder: (context, appState, child) {
+        ResultResponseModel result = appState.responseModel;
+        return Column(
+          children: [
+            _scoreItem(
+              index: 0,
+              title: 'Overall score: ${result.overallScore}',
+            ),
+            _scoreItem(
               index: 1,
               title: 'Fluency : ${result.fluency}',
               problems: result.fluencyProblem,
-              visible: appState.visibleFluency),
-          _scoreItem(
+              visible: appState.visibleFluency,
+            ),
+            _scoreItem(
               index: 2,
               title: 'Lexical Resource : ${result.lexicalResource}',
               problems: result.lexicalResourceProblem,
-              visible: appState.visibleLexical),
-          _scoreItem(
+              visible: appState.visibleLexical,
+            ),
+            _scoreItem(
               index: 3,
               title: 'Grammatical : ${result.grammatical}',
               problems: result.grammaticalProblem,
-              visible: appState.visibleGramatical),
-          _scoreItem(
+              visible: appState.visibleGramatical,
+            ),
+            _scoreItem(
               index: 4,
               title: 'Pronunciation : ${result.pronunciation}',
               problems: result.pronunciationProblem,
-              visible: appState.visiblePronunciation),
-        ],
-      );
-    });
+              visible: appState.visiblePronunciation,
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _scoreItem({

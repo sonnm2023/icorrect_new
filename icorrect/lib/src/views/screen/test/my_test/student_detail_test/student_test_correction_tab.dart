@@ -112,36 +112,30 @@ class _StudentCorrectionState extends State<StudentCorrection>
           children: [
             Container(
               alignment: Alignment.centerLeft,
-              child: const DefaultText(
-                text: 'Overview',
-                color: AppColor.defaultBlackColor,
-                fontWeight: FontWeight.w600,
-                fontSize: FontsSize.fontSize_18,
+              child: const Text(
+                'Overview',
+                style: CustomTextStyle.textBoldBlack_15,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: CustomSize.size_10),
             Container(
               child: (appState.visibleOverviewComment)
                   ? Text(
                       appState.responseModel.overallComment ?? '',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: FontsSize.fontSize_16,
-                      ),
+                      style: CustomTextStyle.textBlack_14,
                     )
-                  : DefaultText(
-                      text: appState.responseModel.overallComment ?? '',
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400,
-                      fontSize: FontsSize.fontSize_16,
+                  : Text(
+                      appState.responseModel.overallComment ?? '',
+                      style: CustomTextStyle.textBlack_14,
                       maxLines: 4,
                     ),
             ),
             LayoutBuilder(
               builder: (context, constraint) {
                 return Container(
-                  margin: const EdgeInsets.symmetric(vertical: CustomSize.size_10),
+                  margin: const EdgeInsets.symmetric(
+                    vertical: CustomSize.size_10,
+                  ),
                   alignment: Alignment.centerRight,
                   width: constraint.maxWidth,
                   child: (appState.responseModel.isTooLong())
@@ -150,18 +144,17 @@ class _StudentCorrectionState extends State<StudentCorrection>
                             widget.provider.setVisibleOverviewComment(
                                 !appState.visibleOverviewComment);
                           },
-                          child: DefaultText(
-                              text: (appState.visibleOverviewComment)
-                                  ? 'Show less'
-                                  : 'Show more',
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: FontsSize.fontSize_16,
-                              maxLines: 4),
+                          child: Text(
+                            (appState.visibleOverviewComment)
+                                ? 'Show less'
+                                : 'Show more',
+                            style: CustomTextStyle.textBoldBlack_14,
+                            maxLines: 4,
+                          ),
                         )
                       : Text(
                           appState.responseModel.overallComment ?? '',
-                          style: CustomTextStyle.textBlack_15,
+                          style: CustomTextStyle.textBlack_14,
                           maxLines: 4,
                         ),
                 );
@@ -180,27 +173,33 @@ class _StudentCorrectionState extends State<StudentCorrection>
         return Column(
           children: [
             _scoreItem(
-                index: 0, title: 'Overall score: ${result.overallScore}'),
+              index: 0,
+              title: 'Overall score: ${result.overallScore}',
+            ),
             _scoreItem(
-                index: 1,
-                title: 'Fluency : ${result.fluency}',
-                problems: result.fluencyProblem,
-                visible: appState.visibleFluency),
+              index: 1,
+              title: 'Fluency : ${result.fluency}',
+              problems: result.fluencyProblem,
+              visible: appState.visibleFluency,
+            ),
             _scoreItem(
-                index: 2,
-                title: 'Lexical Resource : ${result.lexicalResource}',
-                problems: result.lexicalResourceProblem,
-                visible: appState.visibleLexical),
+              index: 2,
+              title: 'Lexical Resource : ${result.lexicalResource}',
+              problems: result.lexicalResourceProblem,
+              visible: appState.visibleLexical,
+            ),
             _scoreItem(
-                index: 3,
-                title: 'Grammatical : ${result.grammatical}',
-                problems: result.grammaticalProblem,
-                visible: appState.visibleGramatical),
+              index: 3,
+              title: 'Grammatical : ${result.grammatical}',
+              problems: result.grammaticalProblem,
+              visible: appState.visibleGramatical,
+            ),
             _scoreItem(
-                index: 4,
-                title: 'Pronunciation : ${result.pronunciation}',
-                problems: result.pronunciationProblem,
-                visible: appState.visiblePronunciation),
+              index: 4,
+              title: 'Pronunciation : ${result.pronunciation}',
+              problems: result.pronunciationProblem,
+              visible: appState.visiblePronunciation,
+            ),
           ],
         );
       },
@@ -250,18 +249,20 @@ class _StudentCorrectionState extends State<StudentCorrection>
       children: [
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_20, vertical: CustomSize.size_10),
+            horizontal: CustomSize.size_20,
+            vertical: CustomSize.size_10,
+          ),
           alignment: Alignment.topLeft,
           decoration: BoxDecoration(
-              color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
+            color: AppColor.defaultPurpleColor,
+            borderRadius: borderRadius,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DefaultText(
-                text: title,
-                color: Colors.white,
-                fontSize: FontsSize.fontSize_18,
-                fontWeight: FontWeight.w500,
+              Text(
+                title,
+                style: CustomTextStyle.textWhiteBold_15,
               ),
               Visibility(
                   visible: (problems != null && problems.isNotEmpty),
@@ -344,7 +345,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         SizedBox(width: CustomSize.size_10),
                         Text(
                           'Problem',
-                          style: CustomTextStyle.textBoldBlack_15,
+                          style: CustomTextStyle.textBoldBlack_14,
                         )
                       ],
                     ),
@@ -364,7 +365,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         const SizedBox(width: CustomSize.size_10),
                         const Text(
                           'Solution',
-                          style: CustomTextStyle.textBoldBlack_15,
+                          style: CustomTextStyle.textBoldBlack_14,
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         (problemModel.fileName.toString().isNotEmpty)
