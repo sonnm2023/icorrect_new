@@ -60,20 +60,26 @@ class _HighLightTabState extends State<HighLightTab>
     return RefreshIndicator(
         color: AppColor.defaultPurpleColor,
         onRefresh: () {
-          return Future.delayed(const Duration(seconds: 1), () {
-            _loading!.show(context);
-            _getHighLightHomeWork();
-          });
+          return Future.delayed(
+            const Duration(
+              seconds: 1,
+            ),
+            () {
+              _loading!.show(context);
+              _getHighLightHomeWork();
+            },
+          );
         },
         child: _buildHighLightList());
   }
 
   Widget _buildHighLightList() {
-    return Consumer<MyTestProvider>(builder: (context, provider, child) {
-      if (provider.highLightHomeworks.isNotEmpty) {
-        return ListView.builder(
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.highLightHomeworks.isNotEmpty) {
+          return ListView.builder(
             shrinkWrap: true,
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(CustomSize.size_5),
             itemCount: provider.highLightHomeworks.length,
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
@@ -81,28 +87,34 @@ class _HighLightTabState extends State<HighLightTab>
                   StudentResultModel resultModel =
                       provider.highLightHomeworks.elementAt(index);
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => StudentTestDetail(
-                              studentResultModel: resultModel)));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          StudentTestDetail(studentResultModel: resultModel),
+                    ),
+                  );
                 },
                 child: _highlightItem(
-                    provider.highLightHomeworks.elementAt(index)),
+                  provider.highLightHomeworks.elementAt(index),
+                ),
               );
-            });
-      } else {
-        return EmptyWidget.init().buildNothingWidget(
+            },
+          );
+        } else {
+          return EmptyWidget.init().buildNothingWidget(
             'Nothing HighLight Homeworks in here',
             widthSize: CustomSize.size_100,
-            heightSize: CustomSize.size_100);
-      }
-    });
+            heightSize: CustomSize.size_100,
+          );
+        }
+      },
+    );
   }
 
   Widget _highlightItem(StudentResultModel resultModel) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: CustomSize.size_10,
+        horizontal: CustomSize.size_5,
         vertical: CustomSize.size_5,
       ),
       margin: const EdgeInsets.only(
@@ -123,13 +135,16 @@ class _HighLightTabState extends State<HighLightTab>
         children: [
           Row(
             children: [
-              const CircleAvatar(
-                foregroundImage: AssetImage(AppAsset.defaultAvt),
-                radius: CustomSize.size_30,
+              const SizedBox(
+                height: CustomSize.size_50,
+                child: CircleAvatar(
+                  foregroundImage: AssetImage(AppAsset.defaultAvt),
+                  radius: CustomSize.size_30,
+                ),
               ),
               Container(
                 margin: const EdgeInsets.symmetric(
-                  horizontal: CustomSize.size_20,
+                  horizontal: CustomSize.size_5,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,9 +153,9 @@ class _HighLightTabState extends State<HighLightTab>
                       resultModel.students!.name.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: CustomTextStyle.textBoldBlack_15,
+                      style: CustomTextStyle.textBoldBlack_14,
                     ),
-                    const SizedBox(height: CustomSize.size_10),
+                    const SizedBox(height: CustomSize.size_5),
                     Text(
                       resultModel.createdAt.toString(),
                       maxLines: 1,
@@ -158,7 +173,7 @@ class _HighLightTabState extends State<HighLightTab>
                 : resultModel.overallScore.toString(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: CustomTextStyle.textBoldGreen_16,
+            style: CustomTextStyle.textBoldGreen_15,
           ),
         ],
       ),

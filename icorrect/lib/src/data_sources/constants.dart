@@ -279,6 +279,12 @@ class CustomTextStyle {
     fontSize: FontsSize.fontSize_16,
   );
 
+  static const TextStyle textBoldGreen_15 = TextStyle(
+    color: Colors.green,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_15,
+  );
+
   static TextStyle textGrey_16 = TextStyle(
     color: Colors.grey.withOpacity(0.6),
     fontWeight: FontWeight.w400,
