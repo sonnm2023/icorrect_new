@@ -61,7 +61,10 @@ class _ResponseTabState extends State<ResponseTab>
     return RefreshIndicator(
         color: AppColor.defaultPurpleColor,
         onRefresh: () {
-          return Future.delayed(const Duration(seconds: 1), () {
+          return Future.delayed(
+              const Duration(
+                seconds: 1,
+              ), () {
             _loading?.show(context);
             _presenter!.getResponse(
                 widget.homeWorkModel.activityAnswer!.orderId.toString());
@@ -101,7 +104,7 @@ class _ResponseTabState extends State<ResponseTab>
               text: 'Overview',
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: FontsSize.fontSize_18,
+              fontSize: FontsSize.fontSize_15,
             ),
           ),
           const SizedBox(height: CustomSize.size_10),
@@ -109,11 +112,11 @@ class _ResponseTabState extends State<ResponseTab>
             child: (appState.visibleOverviewComment)
                 ? Text(
                     appState.responseModel.overallComment ?? '',
-                    style: CustomTextStyle.textBlack_15,
+                    style: CustomTextStyle.textBlack_14,
                   )
                 : Text(
                     appState.responseModel.overallComment ?? '',
-                    style: CustomTextStyle.textBlack_15,
+                    style: CustomTextStyle.textBlack_14,
                     maxLines: 4,
                   ),
           ),
@@ -134,7 +137,7 @@ class _ResponseTabState extends State<ResponseTab>
                         (appState.visibleOverviewComment)
                             ? 'Show less'
                             : 'Show more',
-                        style: CustomTextStyle.textBoldBlack_15,
+                        style: CustomTextStyle.textBoldBlack_14,
                         maxLines: 4,
                       ),
                     )
@@ -229,18 +232,20 @@ class _ResponseTabState extends State<ResponseTab>
       children: [
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_20, vertical: CustomSize.size_10),
+            horizontal: CustomSize.size_20,
+            vertical: CustomSize.size_10,
+          ),
           alignment: Alignment.topLeft,
           decoration: BoxDecoration(
-              color: AppColor.defaultPurpleColor, borderRadius: borderRadius),
+            color: AppColor.defaultPurpleColor,
+            borderRadius: borderRadius,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DefaultText(
-                text: title,
-                color: Colors.white,
-                fontSize: FontsSize.fontSize_18,
-                fontWeight: FontWeight.w500,
+              Text(
+                title,
+                style: CustomTextStyle.textWhiteBold_15,
               ),
               Visibility(
                   visible: (problems != null && problems.isNotEmpty),
@@ -297,7 +302,11 @@ class _ResponseTabState extends State<ResponseTab>
         vertical: CustomSize.size_15,
       ),
       decoration: BoxDecoration(
-          border: Border.all(color: AppColor.defaultPurpleColor, width: 1)),
+        border: Border.all(
+          color: AppColor.defaultPurpleColor,
+          width: 1,
+        ),
+      ),
       child: (problems.isNotEmpty)
           ? ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
@@ -319,14 +328,14 @@ class _ResponseTabState extends State<ResponseTab>
                         SizedBox(width: CustomSize.size_10),
                         Text(
                           'Problem',
-                          style: CustomTextStyle.textBoldBlack_15,
+                          style: CustomTextStyle.textBoldBlack_14,
                         )
                       ],
                     ),
                     const SizedBox(height: CustomSize.size_5),
-                    DefaultText(
-                      text: problemModel.problem.toString(),
-                      color: Colors.black,
+                    Text(
+                      problemModel.problem.toString(),
+                      style: CustomTextStyle.textBlack_14,
                     ),
                     const SizedBox(height: CustomSize.size_15),
                     Row(
@@ -339,7 +348,7 @@ class _ResponseTabState extends State<ResponseTab>
                         const SizedBox(width: CustomSize.size_10),
                         const Text(
                           'Solution',
-                          style: CustomTextStyle.textBoldBlack_15,
+                          style: CustomTextStyle.textBoldBlack_14,
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         (problemModel.fileName.toString().isNotEmpty)
