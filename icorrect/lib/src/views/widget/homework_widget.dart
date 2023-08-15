@@ -35,7 +35,9 @@ class HomeWorkWidget extends StatelessWidget {
               callBack(homeWorkModel);
             },
             contentPadding: const EdgeInsets.symmetric(
-                horizontal: CustomSize.size_15, vertical: CustomSize.size_10),
+              horizontal: CustomSize.size_10,
+              vertical: CustomSize.size_5,
+            ),
             leading: Container(
               width: CustomSize.size_50,
               height: CustomSize.size_50,
@@ -79,7 +81,10 @@ class HomeWorkWidget extends StatelessWidget {
                     style: CustomTextStyle.textBlack_15,
                   ),
                 ),
-                const SizedBox(height: CustomSize.size_10),
+                Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty &&
+                        Utils.haveAiResponse(homeWorkModel).length < 11
+                    ? const SizedBox(height: CustomSize.size_10)
+                    : const SizedBox(height: CustomSize.size_5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
