@@ -193,11 +193,8 @@ class _MyTestTabState extends State<MyTestTab>
                                           child: const Center(
                                             child: Text(
                                               'Update Your Answer',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 19,
-                                              ),
+                                              style: CustomTextStyle
+                                                  .textWhiteBold_18,
                                             ),
                                           ),
                                         ),
@@ -369,8 +366,12 @@ class _MyTestTabState extends State<MyTestTab>
                   alignment: Alignment.topRight,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(top: CustomSize.size_10),
-                      child: AiResponse(url: snapshot.data.toString()),
+                      margin: const EdgeInsets.only(
+                        top: CustomSize.size_10,
+                      ),
+                      child: AiResponse(
+                        url: snapshot.data.toString(),
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.all(CustomSize.size_10),
@@ -417,7 +418,9 @@ class _MyTestTabState extends State<MyTestTab>
                   horizontal: CustomSize.size_10,
                   vertical: CustomSize.size_10,
                 ),
-                margin: const EdgeInsets.only(top: CustomSize.size_10),
+                margin: const EdgeInsets.only(
+                  top: CustomSize.size_10,
+                ),
                 width: constraint.maxWidth,
                 color: Colors.white,
                 child: Row(
@@ -470,12 +473,12 @@ class _MyTestTabState extends State<MyTestTab>
                               children: [
                                 Text(
                                   question.content.toString(),
-                                  style: CustomTextStyle.textBlack_15,
+                                  style: CustomTextStyle.textBlack_14,
                                 )
                               ],
                             ),
                           ),
-                          const SizedBox(height: CustomSize.size_10),
+                          const SizedBox(height: CustomSize.size_10,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -491,7 +494,7 @@ class _MyTestTabState extends State<MyTestTab>
                                       ),
                                     )
                                   : Container(),
-                              const SizedBox(width: CustomSize.size_20),
+                              const SizedBox(width: CustomSize.size_20,),
                               InkWell(
                                 onTap: () {
                                   _showTips(question);
@@ -500,7 +503,7 @@ class _MyTestTabState extends State<MyTestTab>
                                     ? const Text(
                                         'View Tips',
                                         style:
-                                            CustomTextStyle.textBoldPurple_15,
+                                            CustomTextStyle.textBoldPurple_14,
                                       )
                                     : Container(),
                               ),
