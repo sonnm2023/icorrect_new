@@ -41,6 +41,7 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       );
 
   AuthProvider? _authProvider;
+
   @override
   void initState() {
     super.initState();
@@ -59,44 +60,49 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
-            key: GlobalScaffoldKey.studentOtherScaffoldKey,
-            appBar: AppBar(
-              elevation: 0.0,
-              iconTheme:
-                  const IconThemeData(color: AppColor.defaultPurpleColor),
-              centerTitle: true,
-              leading: BackButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              title: DefaultText(
-                text: widget.studentResultModel.students.name.toString(),
+          key: GlobalScaffoldKey.studentOtherScaffoldKey,
+          appBar: AppBar(
+            elevation: 0.0,
+            iconTheme: const IconThemeData(
+              color: AppColor.defaultPurpleColor,
+            ),
+            centerTitle: true,
+            leading: BackButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: Text(
+              widget.studentResultModel.students.name.toString(),
+              style: const TextStyle(
                 color: AppColor.defaultPurpleColor,
-                fontWeight: FontWeight.w500,
               ),
-              bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(50),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: AppColor.defaultPurpleColor))),
-                    child: _tabBar,
-                  )),
-              backgroundColor: AppColor.defaultWhiteColor,
-
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(CustomSize.size_50),
+              child: Container(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: AppColor.defaultPurpleColor),
+                  ),
+                ),
+                child: _tabBar,
+              ),
+            ),
+            backgroundColor: AppColor.defaultWhiteColor,
           ),
           body: Consumer<StudentTestProvider>(
             builder: (context, provider, child) {
               return TabBarView(
                 children: [
                   TestDetailScreen(
-                      provider: provider,
-                      studentResultModel: widget.studentResultModel),
+                    provider: provider,
+                    studentResultModel: widget.studentResultModel,
+                  ),
                   StudentCorrection(
-                      provider: provider,
-                      studentResultModel: widget.studentResultModel)
+                    provider: provider,
+                    studentResultModel: widget.studentResultModel,
+                  ),
                 ],
               );
             },
@@ -111,13 +117,13 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       Tab(
         child: Text(
           'Test Detail',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          style: CustomTextStyle.textBoldPurple_15,
         ),
       ),
       Tab(
         child: Text(
           'Correction',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          style: CustomTextStyle.textBoldPurple_15,
         ),
       ),
     ];

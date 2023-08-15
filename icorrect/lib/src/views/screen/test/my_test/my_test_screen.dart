@@ -96,7 +96,9 @@ class _MyTestScreenState extends State<MyTestScreen> {
             }),
             title: const Text(
               "ICORRECT",
-              style: TextStyle(color: AppColor.defaultPurpleColor),
+              style: TextStyle(
+                color: AppColor.defaultPurpleColor,
+              ),
             ),
             bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(50),
