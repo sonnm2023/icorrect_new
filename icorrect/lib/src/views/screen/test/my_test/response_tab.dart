@@ -110,11 +110,13 @@ class _ResponseTabState extends State<ResponseTab>
             child: (appState.visibleOverviewComment)
                 ? Text(
                     appState.responseModel.overallComment ?? '',
+                    textAlign: TextAlign.justify,
                     style: CustomTextStyle.textBlack_14,
                   )
                 : Text(
                     appState.responseModel.overallComment ?? '',
                     style: CustomTextStyle.textBlack_14,
+                    textAlign: TextAlign.justify,
                     maxLines: 4,
                   ),
           ),
@@ -136,6 +138,7 @@ class _ResponseTabState extends State<ResponseTab>
                             ? 'Show less'
                             : 'Show more',
                         style: CustomTextStyle.textBoldBlack_14,
+                        textAlign: TextAlign.justify,
                         maxLines: 4,
                       ),
                     )

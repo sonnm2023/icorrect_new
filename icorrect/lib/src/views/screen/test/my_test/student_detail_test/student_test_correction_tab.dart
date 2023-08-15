@@ -149,12 +149,14 @@ class _StudentCorrectionState extends State<StudentCorrection>
                                 ? 'Show less'
                                 : 'Show more',
                             style: CustomTextStyle.textBoldBlack_14,
+                            textAlign: TextAlign.justify,
                             maxLines: 4,
                           ),
                         )
                       : Text(
                           appState.responseModel.overallComment ?? '',
                           style: CustomTextStyle.textBlack_14,
+                          textAlign: TextAlign.justify,
                           maxLines: 4,
                         ),
                 );
