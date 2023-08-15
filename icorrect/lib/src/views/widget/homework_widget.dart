@@ -89,19 +89,37 @@ class HomeWorkWidget extends StatelessWidget {
                           : '0000-00-00 00:00',
                       style: CustomTextStyle.textGrey_14,
                     ),
-                    Text(
-                      (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
-                          ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']} ${Utils.haveAiResponse(homeWorkModel)}'
-                          : '',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: (Utils.getHomeWorkStatus(homeWorkModel)
-                                .isNotEmpty)
-                            ? Utils.getHomeWorkStatus(homeWorkModel)['color']
-                            : AppColor.defaultPurpleColor,
-                      ),
-                    ),
+                    Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty &&
+                            Utils.haveAiResponse(homeWorkModel).length < 11
+                        ? Text(
+                            (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
+                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']} ${Utils.haveAiResponse(homeWorkModel)}'
+                                : '',
+                            style: TextStyle(
+                              fontSize: FontsSize.fontSize_14,
+                              fontWeight: FontWeight.w400,
+                              color: (Utils.getHomeWorkStatus(homeWorkModel)
+                                      .isNotEmpty)
+                                  ? Utils.getHomeWorkStatus(
+                                      homeWorkModel)['color']
+                                  : AppColor.defaultPurpleColor,
+                            ),
+                          )
+                        : Text(
+                            (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
+                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}\n${Utils.haveAiResponse(homeWorkModel)}'
+                                : '',
+                            style: TextStyle(
+                              fontSize: FontsSize.fontSize_14,
+                              fontWeight: FontWeight.w400,
+                              color: (Utils.getHomeWorkStatus(homeWorkModel)
+                                      .isNotEmpty)
+                                  ? Utils.getHomeWorkStatus(
+                                      homeWorkModel)['color']
+                                  : AppColor.defaultPurpleColor,
+                            ),
+                            maxLines: 2,
+                          ),
                   ],
                 )
               ],
