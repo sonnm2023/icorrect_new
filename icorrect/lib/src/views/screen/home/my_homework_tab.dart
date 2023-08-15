@@ -73,6 +73,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
   Widget _buildTopFilter() {
     return Container(
+      height: CustomSize.size_40,
       decoration: const BoxDecoration(
         color: AppColor.defaultGraySlightColor,
         border: Border(
@@ -82,14 +83,16 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           ),
           bottom: BorderSide(
             color: AppColor.defaultPurpleColor,
-            width: 1.5,
+            width: 1.3,
           ),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: CustomSize.size_80),
+          const SizedBox(
+            width: CustomSize.size_80,
+          ),
           Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
               return Text(
