@@ -119,34 +119,48 @@ class _MyTestScreenState extends State<MyTestScreen> {
     return widget.homeWorkModel.activityAnswer!.hasTeacherResponse()
         ? const [
             Tab(
-              child: Text('MY TEST',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'MY TEST',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
             Tab(
-              child: Text('RESPONSE',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'RESPONSE',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
             Tab(
-              child: Text('HIGHLIGHT',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'HIGHLIGHT',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
             Tab(
-              child: Text('OTHERS',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'OTHERS',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
           ]
         : const [
             Tab(
-              child: Text('MY TEST',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'MY TEST',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
             Tab(
-              child: Text('HIGHLIGHT',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'HIGHLIGHT',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
             Tab(
-              child: Text('OTHERS',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Text(
+                'OTHERS',
+                style: CustomTextStyle.textBoldPurple_15,
+              ),
             ),
           ];
   }

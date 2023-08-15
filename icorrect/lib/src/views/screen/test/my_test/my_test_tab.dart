@@ -125,14 +125,16 @@ class _MyTestTabState extends State<MyTestTab>
                 children: [
                   // Expanded(flex: 5, child: VideoMyTest()),
                   Expanded(
-                      flex: 9,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: provider.myAnswerOfQuestions.length,
-                          itemBuilder: (context, index) {
-                            return _questionItem(
-                                provider.myAnswerOfQuestions[index]);
-                          })),
+                    flex: 9,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: provider.myAnswerOfQuestions.length,
+                      itemBuilder: (context, index) {
+                        return _questionItem(
+                            provider.myAnswerOfQuestions[index]);
+                      },
+                    ),
+                  ),
                   Stack(
                     children: [
                       (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
@@ -152,11 +154,8 @@ class _MyTestTabState extends State<MyTestTab>
                                       child: const Center(
                                         child: Text(
                                           'View AI Response',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 19,
-                                          ),
+                                          style:
+                                              CustomTextStyle.textWhiteBold_18,
                                         ),
                                       ),
                                     ),
@@ -465,7 +464,7 @@ class _MyTestTabState extends State<MyTestTab>
                         children: [
                           Container(
                             padding: const EdgeInsets.all(0),
-                            width: MediaQuery.of(context).size.width*0.7,
+                            width: MediaQuery.of(context).size.width * 0.7,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -564,7 +563,8 @@ class _MyTestTabState extends State<MyTestTab>
           path:
               '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
               '\\$audioFile',
-          encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
+          encoder:
+              Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
           bitRate: 128000,
           samplingRate: 44100,
         );

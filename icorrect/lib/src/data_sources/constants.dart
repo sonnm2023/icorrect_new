@@ -347,8 +347,14 @@ class CustomTextStyle {
 
   static const TextStyle textWhiteBold_15 = TextStyle(
     color: AppColor.defaultWhiteColor,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textWhiteBold_18 = TextStyle(
+    color: AppColor.defaultWhiteColor,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_18,
   );
 
   static const TextStyle textGrey_14 = TextStyle(
