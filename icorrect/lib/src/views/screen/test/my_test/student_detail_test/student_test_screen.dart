@@ -117,13 +117,13 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       Tab(
         child: Text(
           'Test Detail',
-          style: CustomTextStyle.textBoldPurple_15,
+          style: TextStyle(fontSize: FontsSize.fontSize_14),
         ),
       ),
       Tab(
         child: Text(
           'Correction',
-          style: CustomTextStyle.textBoldPurple_15,
+          style: TextStyle(fontSize: FontsSize.fontSize_14),
         ),
       ),
     ];

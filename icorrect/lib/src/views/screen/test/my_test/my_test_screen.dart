@@ -35,10 +35,16 @@ class _MyTestScreenState extends State<MyTestScreen> {
   AuthProvider? _authProvider;
 
   TabBar get _tabBar => TabBar(
+        isScrollable: true,
         indicator: const UnderlineTabIndicator(
-            borderSide:
-                BorderSide(width: 3.0, color: AppColor.defaultPurpleColor),
-            insets: EdgeInsets.symmetric(horizontal: 10.0)),
+          borderSide: BorderSide(
+            width: 3.0,
+            color: AppColor.defaultPurpleColor,
+          ),
+          insets: EdgeInsets.symmetric(
+            horizontal: CustomSize.size_5,
+          ),
+        ),
         tabs: _tabsLabel(),
       );
 
@@ -71,7 +77,9 @@ class _MyTestScreenState extends State<MyTestScreen> {
           key: GlobalScaffoldKey.myTestScaffoldKey,
           appBar: AppBar(
             elevation: 0.0,
-            iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
+            iconTheme: const IconThemeData(
+              color: AppColor.defaultPurpleColor,
+            ),
             centerTitle: true,
             leading: Consumer<MyTestProvider>(
                 builder: (context, myTestprovider, child) {
@@ -101,12 +109,15 @@ class _MyTestScreenState extends State<MyTestScreen> {
               ),
             ),
             bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(50),
+                preferredSize: const Size.fromHeight(CustomSize.size_50),
                 child: Container(
                   decoration: const BoxDecoration(
-                      border: Border(
-                          bottom:
-                              BorderSide(color: AppColor.defaultPurpleColor))),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: AppColor.defaultPurpleColor,
+                      ),
+                    ),
+                  ),
                   child: _tabBar,
                 )),
             backgroundColor: AppColor.defaultWhiteColor,
@@ -123,25 +134,25 @@ class _MyTestScreenState extends State<MyTestScreen> {
             Tab(
               child: Text(
                 'MY TEST',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
             Tab(
               child: Text(
                 'RESPONSE',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
             Tab(
               child: Text(
                 'HIGHLIGHT',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
             Tab(
               child: Text(
                 'OTHERS',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
           ]
@@ -149,19 +160,19 @@ class _MyTestScreenState extends State<MyTestScreen> {
             Tab(
               child: Text(
                 'MY TEST',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
             Tab(
               child: Text(
                 'HIGHLIGHT',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
             Tab(
               child: Text(
                 'OTHERS',
-                style: CustomTextStyle.textBoldPurple_15,
+                style: TextStyle(fontSize: FontsSize.fontSize_14),
               ),
             ),
           ];

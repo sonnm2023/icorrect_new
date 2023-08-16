@@ -82,7 +82,7 @@ class HomeWorkWidget extends StatelessWidget {
                   ),
                 ),
                 Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty &&
-                        Utils.haveAiResponse(homeWorkModel).length < 11
+                        Utils.haveAiResponse(homeWorkModel).length < 9
                     ? const SizedBox(height: CustomSize.size_10)
                     : const SizedBox(height: CustomSize.size_5),
                 Row(
@@ -95,10 +95,11 @@ class HomeWorkWidget extends StatelessWidget {
                       style: CustomTextStyle.textGrey_14,
                     ),
                     Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty &&
-                            Utils.haveAiResponse(homeWorkModel).length < 11
+                            Utils.haveAiResponse(homeWorkModel).length < 9
                         ? Text(
                             (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
-                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']} ${Utils.haveAiResponse(homeWorkModel)}'
+                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']} '
+                                    '${Utils.haveAiResponse(homeWorkModel)}'
                                 : '',
                             style: TextStyle(
                               fontSize: FontsSize.fontSize_14,
@@ -112,7 +113,8 @@ class HomeWorkWidget extends StatelessWidget {
                           )
                         : Text(
                             (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
-                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}\n${Utils.haveAiResponse(homeWorkModel)}'
+                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}'
+                                    '\n${Utils.haveAiResponse(homeWorkModel)}'
                                 : '',
                             style: TextStyle(
                               fontSize: FontsSize.fontSize_14,
