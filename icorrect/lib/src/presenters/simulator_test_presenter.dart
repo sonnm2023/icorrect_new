@@ -19,6 +19,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
@@ -50,20 +51,21 @@ class SimulatorTestPresenter {
     _autoRequestDownloadTimes += 1;
   }
 
-  http.Client? client;
+  // http.Client? client;
+  Dio? dio;
   final Map<String, String> headers = {
     'Accept': 'application/json',
   };
 
   Future<void> initializeData() async {
-    client ??= http.Client();
+    dio ??= Dio();
     resetAutoRequestDownloadTimes();
   }
 
   void closeClientRequest() {
-    if (null != client) {
-      client!.close();
-      client = null;
+    if (null != dio) {
+      dio!.close();
+      dio = null;
     }
   }
 
@@ -83,7 +85,7 @@ class SimulatorTestPresenter {
 
     String distributeCode = currentUser.userInfoModel.distributorCode;
 
-    _testRepository! 
+    _testRepository!
         .getTestDetail(homeworkId, distributeCode)
         .then((value) async {
       Map<String, dynamic> map = jsonDecode(value);
@@ -206,7 +208,7 @@ class SimulatorTestPresenter {
 
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
-    if (null != client) {
+    if (null != dio) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
@@ -222,23 +224,23 @@ class SimulatorTestPresenter {
               if (kDebugMode) {
                 print("DEBUG: Downloading file at index = $index");
               }
-              
+
               String url = downloadFileEP(fileNameForDownload);
 
-              client!
-                  .head(Uri.parse(url), headers: headers)
-                  .timeout(const Duration(seconds: 10));
+              dio!.head(url).timeout(const Duration(seconds: 10));
               // use client.get as you would http.get
-              http.Response response = await client!.get(
-                Uri.parse(url),
-              );
+
+               String savePath =
+                  '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileTopic';
+              Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
                 //Save file using file_storage
-                String contentString =
-                    await Utils.convertVideoToBase64(response);
-                await FileStorageHelper.writeVideo(
-                    contentString, fileTopic, MediaType.video);
+                // String contentString =
+                //     await Utils.convertVideoToBase64(response);
+                // await FileStorageHelper.writeVideo(
+                //     contentString, fileTopic, MediaType.video);
+                print('DEBUG : save Path : $savePath');
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
@@ -366,7 +368,7 @@ class SimulatorTestPresenter {
     required List<QuestionTopicModel> questions,
   }) async {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    
+
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -424,7 +426,8 @@ class SimulatorTestPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        String path = "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+        String path =
+            "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
         File audioFile = File(path);
 
         if (await audioFile.exists()) {

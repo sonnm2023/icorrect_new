@@ -534,7 +534,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (null != _simulatorTestPresenter!.testDetail &&
           null != _simulatorTestPresenter!.filesTopic) {
         updateStatusForReDownload();
-        if (null == _simulatorTestPresenter!.client) {
+        if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
         }
         _simulatorTestPresenter!.reDownloadFiles();

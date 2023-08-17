@@ -817,7 +817,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       //Initialize new player for new video
-      _videoPlayerController = VideoPlayerController.file(value)
+      _videoPlayerController = VideoPlayerController.file(File(
+          '/data/user/0/com.example.icorrect/files\\videos\\class-6-unit11-00129.mp4'))
         ..initialize().then((value) {
           _simulatorTestProvider!.setIsLoadingVideo(false);
           if (_countRepeat != 0) {

@@ -58,7 +58,6 @@ class MyTestPresenterDio {
   List<FileTopicModel>? filesTopic;
 
   Future<void> initializeData() async {
-    //client ??= http.Client();
     dio ??= Dio();
     resetAutoRequestDownloadTimes();
   }
@@ -68,10 +67,6 @@ class MyTestPresenterDio {
   }
 
   void closeClientRequest() {
-    // if (null != client) {
-    //   client!.close();
-    //   client = null;
-    // }
     if (null != dio) {
       dio!.close();
       dio = null;
@@ -109,8 +104,6 @@ class MyTestPresenterDio {
         _view!.getMyTestFail(AlertClass.getTestDetailAlert);
       }
     }).catchError(
-        // ignore: invalid_return_type_for_catch_error
-
         (onError) {
       if (kDebugMode) {
         print("DEBUG: fail meomoe");
