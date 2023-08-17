@@ -54,6 +54,29 @@ class FileStorageHelper {
     return hideDirectory.path;
   }
 
+   static Future<String> getFolderPathVideoDIO(
+      MediaType mediaType, String? testId) async {
+    final path = await _getRootPath;
+
+    String folder = '';
+    if (mediaType == MediaType.video) {
+      folder = StringClass.video;
+    } else {
+      folder = StringClass.audio;
+    }
+
+    String filePath = '';
+
+    if (null != testId) {
+      filePath = '$path/$folder/$testId';
+    } else {
+      filePath = '$path/$folder';
+    }
+
+    Directory hideDirectory = Directory(filePath);
+    return hideDirectory.path;
+  }
+
   static Future<File> writeVideo(
       String bytes, String name, MediaType mediaType) async {
     final path = await getFolderPath(mediaType, null);

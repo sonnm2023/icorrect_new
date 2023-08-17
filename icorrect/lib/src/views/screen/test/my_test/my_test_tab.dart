@@ -26,9 +26,11 @@ import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
+import 'package:icorrect/src/views/screen/test/my_test/video_my_test.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../presenters/my_test_presenter.dart';
 import '../../../../presenters/my_test_presenter_dio.dart';
@@ -107,7 +109,7 @@ class _MyTestTabState extends State<MyTestTab>
     _player!.dispose();
     _record.dispose();
     _presenter!.closeClientRequest();
-    if(widget.provider.countDownTimer != null){
+    if (widget.provider.countDownTimer != null) {
       widget.provider.countDownTimer!.cancel();
     }
     super.dispose();
@@ -125,22 +127,40 @@ class _MyTestTabState extends State<MyTestTab>
         if (provider.isDownloading) {
           return const DownloadProgressingWidget();
         } else {
+          VideoPlayerController playerController = VideoPlayerController.file(File(
+              '/data/user/0/com.example.icorrect/files\\videos\\class-ky1-l9C0043.mp4'))
+            ..initialize();
+          playerController.play();
           return Stack(
             children: [
-              Container(
-                padding: const EdgeInsets.only(bottom: 60),
-                alignment: Alignment.topCenter,
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height,
-                  maxWidth: MediaQuery.of(context).size.width,
-                ),
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: provider.myAnswerOfQuestions.length,
-                    itemBuilder: (context, index) {
-                      return _questionItem(
-                          provider.myAnswerOfQuestions[index], index);
-                    }),
+              Column(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: AspectRatio(
+                            aspectRatio: playerController.value.aspectRatio,
+                            child: VideoPlayer(playerController)),
+                      )),
+                  Expanded(
+                      flex: 4,
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 60),
+                        alignment: Alignment.topCenter,
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height,
+                          maxWidth: MediaQuery.of(context).size.width,
+                        ),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: provider.myAnswerOfQuestions.length,
+                            itemBuilder: (context, index) {
+                              return _questionItem(
+                                  provider.myAnswerOfQuestions[index], index);
+                            }),
+                      ))
+                ],
               ),
               Align(
                 alignment: Alignment.bottomCenter,

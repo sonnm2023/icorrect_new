@@ -258,33 +258,14 @@ class MyTestPresenterDio {
               !await _isExist(fileTopic, _mediaType(fileType))) {
             try {
               String url = downloadFileEP(fileNameForDownload);
-
-              // client!
-              //     .head(Uri.parse(url), headers: headers)
-              //     .timeout(const Duration(seconds: 10));
-              // // use client.get as you would http.get
-              // http.Response response = await client!.get(
-              //   Uri.parse(url),
-              // );
-
+              print('DEBUG : fileDownload : $url');
               dio!.head(url).timeout(const Duration(seconds: 10));
               String savePath =
-                  '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}\\$fileTopic';
+                  '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}/$fileTopic';
               Response response = await dio!.download(url, savePath);
 
-              print("savePath : ${savePath}");
               if (response.statusCode == 200) {
-                // String contentString =
-                //     await Utils.convertVideoToBase64(response);
-                // if (kDebugMode) {
-                //   print('DEBUG: content String:$contentString');
-                //   print('DEBUG: file topic :$fileTopic');
-                // }
-
-                // await FileStorageHelper.writeVideo(
-                //     contentString, fileTopic, _mediaType(fileType));
-                File file = File(savePath);
-                print('file.lengthSync(): ${file.lengthSync()}');
+                print("DEBUG savePath : ${savePath}");
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
