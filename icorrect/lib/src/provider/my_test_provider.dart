@@ -104,14 +104,23 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
+  String _pathRecorded = '';
+  String get pathRecorded => _pathRecorded;
+  void setPathRecord(String path) {
+    _pathRecorded = path;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   bool _playAnswer = false;
-  String _questionId = '';
-  String get questionId => _questionId;
+  int _questionIndex = 0;
+  int get questionIndex => _questionIndex;
 
   bool get playAnswer => _playAnswer;
-  void setPlayAnswer(bool visible, String questionId) {
+  void setPlayAnswer(bool visible, int questionIndex) {
     _playAnswer = visible;
-    _questionId = questionId;
+    _questionIndex = questionIndex;
     if (!isDisposed) {
       notifyListeners();
     }

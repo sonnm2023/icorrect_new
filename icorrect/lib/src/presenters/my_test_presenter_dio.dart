@@ -18,8 +18,9 @@ import '../data_sources/utils.dart';
 import '../models/simulator_test_models/topic_model.dart';
 import '../models/ui_models/alert_info.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
-abstract class MyTestContract {
+abstract class MyTestContractDio {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
@@ -33,15 +34,16 @@ abstract class MyTestContract {
   void onTryAgainToDownload();
 }
 
-class MyTestPresenter {
-  final MyTestContract? _view;
+class MyTestPresenterDio {
+  final MyTestContractDio? _view;
   MyTestRepository? _repository;
 
-  MyTestPresenter(this._view) {
+  MyTestPresenterDio(this._view) {
     _repository = Injector().getMyTestRepository();
   }
 
-  http.Client? client;
+  //http.Client? client;
+  Dio? dio;
   final Map<String, String> headers = {
     'Accept': 'application/json',
   };
@@ -56,7 +58,8 @@ class MyTestPresenter {
   List<FileTopicModel>? filesTopic;
 
   Future<void> initializeData() async {
-    client ??= http.Client();
+    //client ??= http.Client();
+    dio ??= Dio();
     resetAutoRequestDownloadTimes();
   }
 
@@ -64,11 +67,14 @@ class MyTestPresenter {
     _autoRequestDownloadTimes = 0;
   }
 
-
   void closeClientRequest() {
-    if (null != client) {
-      client!.close();
-      client = null;
+    // if (null != client) {
+    //   client!.close();
+    //   client = null;
+    // }
+    if (null != dio) {
+      dio!.close();
+      dio = null;
     }
   }
 
@@ -89,10 +95,9 @@ class MyTestPresenter {
           testDetail = TestDetailModel.fromMyTestJson(dataMap);
 
           List<FileTopicModel> tempFilesTopic =
-          _prepareFileTopicListForDownload(testDetailModel);
-
-          filesTopic =
               _prepareFileTopicListForDownload(testDetailModel);
+
+          filesTopic = _prepareFileTopicListForDownload(testDetailModel);
 
           downloadFiles(testDetailModel, tempFilesTopic);
 
@@ -115,7 +120,7 @@ class MyTestPresenter {
     });
   }
 
-    List<QuestionTopicModel> _getQuestionsAnswer(
+  List<QuestionTopicModel> _getQuestionsAnswer(
       TestDetailModel testDetailModel) {
     List<QuestionTopicModel> questions = [];
     List<QuestionTopicModel> questionsAllAnswers = [];
@@ -234,7 +239,7 @@ class MyTestPresenter {
 
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
-    if (null != client) {
+    if (null != dio) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
@@ -254,26 +259,35 @@ class MyTestPresenter {
             try {
               String url = downloadFileEP(fileNameForDownload);
 
-              client!
-                  .head(Uri.parse(url), headers: headers)
-                  .timeout(const Duration(seconds: 10));
-              // use client.get as you would http.get
-              http.Response response = await client!.get(
-                Uri.parse(url),
-              );
+              // client!
+              //     .head(Uri.parse(url), headers: headers)
+              //     .timeout(const Duration(seconds: 10));
+              // // use client.get as you would http.get
+              // http.Response response = await client!.get(
+              //   Uri.parse(url),
+              // );
 
+              dio!.head(url).timeout(const Duration(seconds: 10));
+              String savePath =
+                  '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}\\$fileTopic';
+              Response response = await dio!.download(url, savePath);
+
+              print("savePath : ${savePath}");
               if (response.statusCode == 200) {
-                String contentString = await Utils.convertVideoToBase64(response);
-                if (kDebugMode) {
-                  print('DEBUG: content String:$contentString');
-                  print('DEBUG: file topic :$fileTopic');
-                }
+                // String contentString =
+                //     await Utils.convertVideoToBase64(response);
+                // if (kDebugMode) {
+                //   print('DEBUG: content String:$contentString');
+                //   print('DEBUG: file topic :$fileTopic');
+                // }
 
-                await FileStorageHelper.writeVideo(
-                    contentString, fileTopic, _mediaType(fileType));
-
+                // await FileStorageHelper.writeVideo(
+                //     contentString, fileTopic, _mediaType(fileType));
+                File file = File(savePath);
+                print('file.lengthSync(): ${file.lengthSync()}');
                 double percent = _getPercent(index + 1, filesTopic.length);
-                _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
+                _view!.onDownloadSuccess(testDetail, fileTopic, percent,
+                    index + 1, filesTopic.length);
               } else {
                 _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(testDetail, filesTopic);
@@ -294,7 +308,8 @@ class MyTestPresenter {
             }
           } else {
             double percent = _getPercent(index + 1, filesTopic.length);
-            _view!.onDownloadSuccess(testDetail, fileTopic, percent, index + 1, filesTopic.length);
+            _view!.onDownloadSuccess(
+                testDetail, fileTopic, percent, index + 1, filesTopic.length);
           }
         }
       }
@@ -305,7 +320,8 @@ class MyTestPresenter {
     }
   }
 
-  void reDownloadAutomatic(TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+  void reDownloadAutomatic(
+      TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {

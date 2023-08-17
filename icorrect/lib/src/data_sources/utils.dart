@@ -22,7 +22,6 @@ import '../../core/app_color.dart';
 import '../provider/homework_provider.dart';
 import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'api_urls.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Utils {
   static Future<String> getDeviceIdentifier() async {
@@ -373,7 +372,7 @@ class Utils {
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
 
-  static Future<String> getPathToRecordReAnswer(
+  static Future<String> getAudioPathToPlay(
       QuestionTopicModel question, String? testId) async {
     String fileName = '';
     if (question.answers.length > 1) {
@@ -385,9 +384,8 @@ class Utils {
     } else {
       fileName = question.answers.first.url;
     }
-
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String path = "${appDocDirectory.path}/$fileName.wav";
+    String path =
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
     return path;
   }
 
@@ -429,33 +427,33 @@ class Utils {
             child: CircleAvatar(
               child: Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
-                    return CachedNetworkImage(
-                      imageUrl:
+                return CachedNetworkImage(
+                  imageUrl:
                       fileEP(homeWorkProvider.currentUser.profileModel.avatar),
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(CustomSize.size_100),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.transparent,
-                              BlendMode.colorBurn,
-                            ),
-                          ),
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(CustomSize.size_100),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.transparent,
+                          BlendMode.colorBurn,
                         ),
                       ),
-                      placeholder: (context, url) =>
+                    ),
+                  ),
+                  placeholder: (context, url) =>
                       const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => CircleAvatar(
-                        child: Image.asset(
-                          AppAsset.defaultAvt,
-                          width: CustomSize.size_40,
-                          height: CustomSize.size_40,
-                        ),
-                      ),
-                    );
-                  }),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    child: Image.asset(
+                      AppAsset.defaultAvt,
+                      width: CustomSize.size_40,
+                      height: CustomSize.size_40,
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
           Container(
@@ -522,10 +520,12 @@ class Utils {
   }
 
   static void toggleDrawer() async {
-    if (GlobalKey<ScaffoldState>().currentState!.isDrawerOpen) {
-      GlobalKey<ScaffoldState>().currentState!.openEndDrawer();
-    } else {
-      GlobalKey<ScaffoldState>().currentState!.openDrawer();
+    if (GlobalKey<ScaffoldState>().currentState != null) {
+      if (GlobalKey<ScaffoldState>().currentState!.isDrawerOpen) {
+        GlobalKey<ScaffoldState>().currentState!.openEndDrawer();
+      } else {
+        GlobalKey<ScaffoldState>().currentState!.openDrawer();
+      }
     }
   }
 
@@ -550,5 +550,4 @@ class Utils {
       },
     );
   }
-
 }

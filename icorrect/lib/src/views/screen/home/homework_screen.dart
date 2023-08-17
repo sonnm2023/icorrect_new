@@ -17,14 +17,11 @@ import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:provider/provider.dart';
-
-import '../../../data_sources/utils.dart';
 import '../../widget/drawer_items.dart';
 
 class HomeWorkScreen extends StatefulWidget {
@@ -99,6 +96,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           GlobalKey<ScaffoldState> key = scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
             _showQuitAppConfirmDialog();
+          } else if (key == GlobalScaffoldKey.myTestScaffoldKey &&
+              _authProvider.isRecordAnswer) {
+            _showQuitReanswerConfirmDialog(key.currentState!.context);
           } else {
             Navigator.of(key.currentState!.context).pop();
             scaffoldKeys.removeFirst();
@@ -192,6 +192,29 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           hasCloseButton: false,
           okButtonTapped: () {
             exit(0);
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+  void _showQuitReanswerConfirmDialog(BuildContext contextOfKey) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: "This app is recording your answer. Are you sure exit ?",
+          okButtonTitle: "Exit",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 10,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(contextOfKey).pop();
+            _authProvider.setRecordAnswer(false);
           },
           cancelButtonTapped: () {
             Navigator.of(context).pop();

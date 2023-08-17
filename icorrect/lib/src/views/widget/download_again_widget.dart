@@ -3,11 +3,13 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/presenters/my_test_presenter.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
+import '../../presenters/my_test_presenter_dio.dart';
+
 class DownloadAgainWidget extends StatelessWidget {
   const DownloadAgainWidget({super.key, required this.simulatorTestPresenter, required this.myTestPresenter});
 
   final SimulatorTestPresenter? simulatorTestPresenter;
-  final MyTestPresenter? myTestPresenter;
+  final MyTestPresenterDio? myTestPresenter;
 
   @override
   Widget build(BuildContext context) {

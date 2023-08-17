@@ -112,6 +112,16 @@ class QuestionTopicModel {
     }
   }
 
+  String contentQuestion() {
+    if (_answers!.isNotEmpty) {
+      if ((_answers!.length == 2 && _repeatIndex == 0) ||
+          (_answers!.length == 3 && (_repeatIndex == 0 || _repeatIndex == 1))) {
+        return "Ask for repeat question";
+      }
+    }
+    return _content!;
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = _id;

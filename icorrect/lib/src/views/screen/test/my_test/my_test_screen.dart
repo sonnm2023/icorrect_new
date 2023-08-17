@@ -189,15 +189,17 @@ class _MyTestScreenState extends State<MyTestScreen> {
         context: context,
         builder: (builder) {
           return ConfirmDialogWidget(
-              title: "Are you sure to back ?",
-              message: "Your re-answers will not be saved ",
-              cancelButtonTitle: "Cancel",
-              okButtonTitle: "Back",
-              cancelButtonTapped: () {},
-              okButtonTapped: () {
-                deleteFileAnswers(provider.reAnswerOfQuestions);
-                Navigator.pop(context);
-              });
+            title: "Notify",
+            message:
+                "Your answer have changed. Do you want to save this change ?",
+            cancelButtonTitle: "Don't Save",
+            okButtonTitle: "Save",
+            cancelButtonTapped: () {},
+            okButtonTapped: () {
+              deleteFileAnswers(provider.reAnswerOfQuestions);
+              Navigator.pop(context);
+            },
+          );
         });
   }
 

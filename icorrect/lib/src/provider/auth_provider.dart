@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isProcessing = false;
@@ -24,6 +23,15 @@ class AuthProvider with ChangeNotifier {
   void updateProcessingStatus() {
     _isProcessing = !_isProcessing;
     notifyListeners();
+  }
+
+  bool _isRecordAnswer = false;
+  bool get isRecordAnswer => _isRecordAnswer;
+  void setRecordAnswer(bool record) {
+    _isRecordAnswer = record;
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   Queue<GlobalKey<ScaffoldState>> _scaffoldKeys = Queue();
