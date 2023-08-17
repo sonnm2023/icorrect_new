@@ -1,28 +1,24 @@
-import 'dart:collection';
-import 'dart:core';
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:core';
+import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/app_asset.dart';
-import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
-import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
-import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
-import 'package:icorrect/src/presenters/homework_presenter.dart';
-import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/views/screen/auth/login_screen.dart';
-import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:provider/provider.dart';
-import '../../widget/drawer_items.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/views/widget/drawer_items.dart';
+import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
+import 'package:icorrect/src/views/screen/auth/login_screen.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   const HomeWorkScreen({super.key});
@@ -40,7 +36,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   //         Tab(text: 'NEXT HOMEWORK'),
   //       ],
   //     );
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = /*GlobalKey<ScaffoldState>()*/
+      GlobalScaffoldKey.homeScreenScaffoldKey;
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
@@ -77,7 +74,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
-    final drawerItems = items(context);
+    final drawerItems = navbar(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -132,19 +129,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             appBar: AppBar(
               title: const Text(
                 "MY HOMEWORK",
-                style: TextStyle(color: AppColor.defaultPurpleColor),
+                style: CustomTextStyle.appbarTitle,
               ),
               centerTitle: true,
               elevation: 0.0,
-              iconTheme:
-                  const IconThemeData(color: AppColor.defaultPurpleColor),
-              // bottom: PreferredSize(
-              //   preferredSize: _tabBar.preferredSize,
-              //   child: Material(
-              //     color: defaultWhiteColor,
-              //     child: _tabBar,
-              //   ),
-              // ),
+              iconTheme: const IconThemeData(
+                color: AppColor.defaultPurpleColor,
+              ),
               backgroundColor: AppColor.defaultWhiteColor,
             ),
             body: Stack(
@@ -238,7 +229,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  static Widget _drawHeader(UserDataModel user) {
+/*  static Widget _drawHeader(UserDataModel user) {
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: CustomSize.size_30,
@@ -372,7 +363,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         );
       },
     );
-  }
+  }*/
 
   @override
   void onGetListHomeworkError(String message) {

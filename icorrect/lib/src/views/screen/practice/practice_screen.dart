@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/views/screen/practice/topics_screen.dart';
-import 'package:path/path.dart';
 import '../../../../core/app_color.dart';
 import '../../widget/divider.dart';
 import '../../widget/drawer_items.dart';
@@ -15,31 +14,37 @@ class PracticeScreen extends StatefulWidget {
 
 class _PracticeScreenState extends State<PracticeScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final drawerItems = items(context);
+    final drawerItems = navbar(context);
     return DefaultTabController(
       length: 1,
       child: Scaffold(
+        key: GlobalScaffoldKey.practiceScreenScaffoldKey,
         appBar: AppBar(
+          title: const Text(
+            "Practice",
+            style: CustomTextStyle.appbarTitle,
+          ),
+          centerTitle: true,
+          elevation: 0.0,
+          iconTheme: const IconThemeData(
+            color: AppColor.defaultPurpleColor,
+          ),
+          backgroundColor: AppColor.defaultWhiteColor,
           bottom: const PreferredSize(
             preferredSize: Size.fromHeight(1),
             child: CustomDivider(),
           ),
-          title: const Text(
-            "Practice",
-            style: TextStyle(color: AppColor.defaultPurpleColor),
-          ),
-          centerTitle: true,
-          elevation: 0.0,
-          iconTheme: const IconThemeData(color: AppColor.defaultPurpleColor),
-          // bottom: PreferredSize(
-          //   preferredSize: _tabBar.preferredSize,
-          //   child: Material(
-          //     color: defaultWhiteColor,
-          //     child: _tabBar,
-          //   ),
-          // ),
-          backgroundColor: AppColor.defaultWhiteColor,
         ),
         body: Stack(
           children: [
@@ -51,7 +56,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   _buildInPracticeCard(
                     context,
                     title: 'Part I',
-                    des: 'Examiner will ask general questions on familar topic',
+                    des:
+                        'Examiner will ask general questions on familiar topic',
                   ),
                   _buildInPracticeCard(
                     context,
@@ -75,7 +81,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     context,
                     title: 'Full test',
                     des:
-                        'You will take a full sample test of lelts Speaking Test',
+                        'You will take a full sample test of IELTS Speaking Test',
                   ),
                 ],
               ),
@@ -92,7 +98,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 }
 
-Widget _buildInPracticeCard(BuildContext context,{required String title, required String des}) {
+Widget _buildInPracticeCard(
+  BuildContext context, {
+  required String title,
+  required String des,
+}) {
   return GestureDetector(
     onTap: () => Navigator.push(
       context,

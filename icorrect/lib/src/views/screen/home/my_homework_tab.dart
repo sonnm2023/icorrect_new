@@ -253,10 +253,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                     child: Text(
                       className,
                       textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: CustomSize.size_20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: CustomTextStyle.textBoldBlack_16,
                     ),
                   );
                 },

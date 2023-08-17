@@ -60,6 +60,7 @@ enum PartOfTest {
   endOfTest(5);
 
   const PartOfTest(this.get);
+
   final int get;
 }
 
@@ -69,6 +70,7 @@ enum DoingStatus {
   finish(1);
 
   const DoingStatus(this.get);
+
   final int get;
 }
 
@@ -79,6 +81,7 @@ enum SubmitStatus {
   submitting(2);
 
   const SubmitStatus(this.get);
+
   final int get;
 }
 
@@ -89,6 +92,7 @@ enum ReviewingStatus {
   restart(2);
 
   const ReviewingStatus(this.get);
+
   final int get;
 }
 
@@ -98,31 +102,26 @@ enum Alert {
     Alert.actionTitle: 'Try again',
     Alert.icon: 'assets/images/img_no_internet.png'
   }),
-
   serverError({
     Alert.cancelTitle: 'Exit',
     Alert.actionTitle: 'Contact with us',
     Alert.icon: 'assets/images/img_server_error.png'
   }),
-
   warning({
     Alert.cancelTitle: 'Cancel',
     Alert.actionTitle: 'Out the test',
     Alert.icon: 'assets/images/img_warning.png'
   }),
-
   downloadError({
     Alert.cancelTitle: 'Exit',
     Alert.actionTitle: 'Try again',
     Alert.icon: 'assets/images/img_server_error.png'
   }),
-
   dataNotFound({
     Alert.cancelTitle: 'Exit',
     Alert.actionTitle: 'Try again',
     Alert.icon: 'assets/images/img_not_found.png'
   }),
-
   permissionDenied({
     Alert.cancelTitle: 'Exit',
     Alert.actionTitle: 'Go to setting',
@@ -130,6 +129,7 @@ enum Alert {
   });
 
   const Alert(this.type);
+
   static const cancelTitle = 'cancel_title';
   static const actionTitle = 'action_title';
   static const icon = 'icon';
@@ -221,12 +221,13 @@ class GlobalScaffoldKey {
       GlobalKey<ScaffoldState>(debugLabel: 'HomeScreenScaffoldKey');
   static final simulatorTestScaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'SimulatorTestScaffoldKey');
+  static final practiceScreenScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenScaffoldKey');
 }
-
-
 
 class FontsSize {
   static const double fontSize_8 = 8.0;
+  static const double fontSize_12 = 12.0;
   static const double fontSize_13 = 13.0;
   static const double fontSize_14 = 14.0;
   static const double fontSize_15 = 15.0;
@@ -267,10 +268,10 @@ class CustomSize {
 }
 
 class CustomTextStyle {
-  static const TextStyle appbarContent = TextStyle(
+  static const TextStyle appbarTitle = TextStyle(
     color: AppColor.defaultPurpleColor,
-    fontWeight: FontWeight.w800,
-    fontSize: FontsSize.fontSize_18,
+    fontWeight: FontWeight.w600,
+    fontSize: FontsSize.fontSize_20,
   );
 
   static const TextStyle textBoldGreen_16 = TextStyle(
@@ -377,6 +378,12 @@ class CustomTextStyle {
 
   static const TextStyle textBlack_14 = TextStyle(
     color: AppColor.defaultBlackColor,
+    fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_14,
+  );
+
+  static const TextStyle textPurple_14 = TextStyle(
+    color: AppColor.defaultPurpleColor,
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_14,
   );
