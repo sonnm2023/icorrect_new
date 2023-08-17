@@ -13,8 +13,10 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_asset.dart';
@@ -158,7 +160,7 @@ class Utils {
   }
 
   static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel) {
-    if (null == homeWorkModel.activityAnswer) {
+    if (homeWorkModel.activityAnswer == null) {
       //TODO: Check time end so voi time hien tai
       //Can server tra ve time hien tai - de thong nhat, do phai check timezone
       //End time > time hien tai ==> out of date
@@ -168,8 +170,9 @@ class Utils {
         'color': const Color.fromARGB(255, 237, 179, 3)
       };
     } else {
-      if (homeWorkModel.activityAnswer!.aiOrder != 0 ||
-          homeWorkModel.activityAnswer!.orderId != 0) {
+      if (/*homeWorkModel.activityAnswer!.aiOrder != 0 ||*/
+          // homeWorkModel.activityAnswer!.orderId != 0 &&
+          homeWorkModel.activityAnswer!.hasTeacherResponse()) {
         return {
           'title': 'Corrected',
           'color': const Color.fromARGB(255, 12, 201, 110)
@@ -207,9 +210,10 @@ class Utils {
   }
 
   static String haveAiResponse(ActivitiesModel homeWorkModel) {
-    if (null != homeWorkModel.activityAnswer) {
+    if (homeWorkModel.activityAnswer != null &&
+        homeWorkModel.activityAnswer!.aiOrder != 0) {
       if (homeWorkModel.activityAnswer!.aiResponseLink.isNotEmpty) {
-        return "& AI Scored";
+        return "AI Scored";
       } else {
         return '';
       }
@@ -410,7 +414,15 @@ class Utils {
     return "";
   }
 
-  //huy copied functions
+  static Widget navbar(BuildContext context) {
+    return Drawer(
+      elevation: 0,
+      shape: const ContinuousRectangleBorder(),
+      backgroundColor: AppColor.defaultWhiteColor,
+      child: navbarItems(context),
+    );
+  }
+
   static Widget drawHeader(UserDataModel user) {
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -427,33 +439,33 @@ class Utils {
             child: CircleAvatar(
               child: Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
-                    return CachedNetworkImage(
-                      imageUrl:
+                return CachedNetworkImage(
+                  imageUrl:
                       fileEP(homeWorkProvider.currentUser.profileModel.avatar),
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(CustomSize.size_100),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.transparent,
-                              BlendMode.colorBurn,
-                            ),
-                          ),
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(CustomSize.size_100),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.transparent,
+                          BlendMode.colorBurn,
                         ),
                       ),
-                      placeholder: (context, url) =>
+                    ),
+                  ),
+                  placeholder: (context, url) =>
                       const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => CircleAvatar(
-                        child: Image.asset(
-                          AppAsset.defaultAvt,
-                          width: CustomSize.size_40,
-                          height: CustomSize.size_40,
-                        ),
-                      ),
-                    );
-                  }),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    child: Image.asset(
+                      AppAsset.defaultAvt,
+                      width: CustomSize.size_40,
+                      height: CustomSize.size_40,
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
           Container(
@@ -520,10 +532,12 @@ class Utils {
   }
 
   static void toggleDrawer() async {
-    if (GlobalKey<ScaffoldState>().currentState!.isDrawerOpen) {
-      GlobalKey<ScaffoldState>().currentState!.openEndDrawer();
-    } else {
-      GlobalKey<ScaffoldState>().currentState!.openDrawer();
+    if (GlobalKey<ScaffoldState>().currentState != null) {
+      if (GlobalKey<ScaffoldState>().currentState!.isDrawerOpen) {
+        GlobalKey<ScaffoldState>().currentState!.openEndDrawer();
+      } else {
+        GlobalKey<ScaffoldState>().currentState!.openDrawer();
+      }
     }
   }
 
@@ -536,10 +550,10 @@ class Utils {
           description: "Do you want to logout?",
           okButtonTitle: "OK",
           cancelButtonTitle: "Cancel",
-          borderRadius: 8,
+          borderRadius: CustomSize.size_10,
           hasCloseButton: false,
           okButtonTapped: () {
-            Navigator.of(context).pop();
+            exit(0);
           },
           cancelButtonTapped: () {
             Navigator.of(context).pop();
@@ -548,5 +562,4 @@ class Utils {
       },
     );
   }
-
 }

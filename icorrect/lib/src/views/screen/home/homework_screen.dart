@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:core';
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -74,7 +75,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
-    final drawerItems = navbar(context);
+    final drawerItems = navbarItems(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -156,10 +157,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ),
               ],
             ),
-            drawer: Drawer(
-              backgroundColor: AppColor.defaultWhiteColor,
-              child: drawerItems,
-            ),
+            drawer: Utils.navbar(context),
             drawerEnableOpenDragGesture: false,
           ),
         ),
