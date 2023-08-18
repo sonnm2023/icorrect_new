@@ -23,6 +23,7 @@ class HomeWorkWidget extends StatelessWidget {
       child: Card(
         elevation: 0,
         child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(CustomSize.size_10),
               border: Border.all(
@@ -94,39 +95,32 @@ class HomeWorkWidget extends StatelessWidget {
                           : '0000-00-00 00:00',
                       style: CustomTextStyle.textGrey_14,
                     ),
-                    Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty &&
-                            Utils.haveAiResponse(homeWorkModel).length < 9
-                        ? Text(
-                            (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
-                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']} '
-                                    '${Utils.haveAiResponse(homeWorkModel)}'
-                                : '',
-                            style: TextStyle(
-                              fontSize: FontsSize.fontSize_14,
-                              fontWeight: FontWeight.w400,
-                              color: (Utils.getHomeWorkStatus(homeWorkModel)
-                                      .isNotEmpty)
-                                  ? Utils.getHomeWorkStatus(
-                                      homeWorkModel)['color']
-                                  : AppColor.defaultPurpleColor,
+                    Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: CustomSize.size_20,
+                              ),
+                              child: Text(
+                                (Utils.getHomeWorkStatus(homeWorkModel)
+                                        .isNotEmpty)
+                                    ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}'
+                                        '${Utils.haveAiResponse(homeWorkModel)}'
+                                    : '',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontSize: FontsSize.fontSize_14,
+                                  fontWeight: FontWeight.w400,
+                                  color: (Utils.getHomeWorkStatus(homeWorkModel)
+                                          .isNotEmpty)
+                                      ? Utils.getHomeWorkStatus(
+                                          homeWorkModel)['color']
+                                      : AppColor.defaultPurpleColor,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.clip,
+                              ),
                             ),
-                          )
-                        : Text(
-                            (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
-                                ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}'
-                                    '\n${Utils.haveAiResponse(homeWorkModel)}'
-                                : '',
-                            style: TextStyle(
-                              fontSize: FontsSize.fontSize_14,
-                              fontWeight: FontWeight.w400,
-                              color: (Utils.getHomeWorkStatus(homeWorkModel)
-                                      .isNotEmpty)
-                                  ? Utils.getHomeWorkStatus(
-                                      homeWorkModel)['color']
-                                  : AppColor.defaultPurpleColor,
-                            ),
-                            maxLines: 2,
-                          ),
+                        ),
                   ],
                 )
               ],

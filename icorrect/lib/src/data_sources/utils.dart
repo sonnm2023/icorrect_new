@@ -213,7 +213,7 @@ class Utils {
     if (homeWorkModel.activityAnswer != null &&
         homeWorkModel.activityAnswer!.aiOrder != 0) {
       if (homeWorkModel.activityAnswer!.aiResponseLink.isNotEmpty) {
-        return "AI Scored";
+        return " & AI Scored";
       } else {
         return '';
       }
