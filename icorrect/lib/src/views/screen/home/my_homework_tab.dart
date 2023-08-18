@@ -87,48 +87,50 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
-          const SizedBox(
-            width: CustomSize.size_80,
-          ),
-          Consumer<HomeWorkProvider>(
-            builder: (context, homeworkProvider, child) {
-              return Text(
-                homeworkProvider.filterString,
-                style: CustomTextStyle.textBoldBlack_14,
-              );
-            },
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.defaultGraySlightColor,
-              elevation: 0.0,
-            ),
-            child: Image.asset(
-              'assets/images/ic_filter.png',
-              height: CustomSize.size_25,
-              width: CustomSize.size_25,
-            ),
-            onPressed: () {
-              Provider.of<AuthProvider>(context, listen: false)
-                  .setShowDialogWithGlobalScaffoldKey(
-                true,
-                GlobalScaffoldKey.filterScaffoldKey,
-              );
-
-              showModalBottomSheet<void>(
-                context: context,
-                isDismissible: true,
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    height: CustomSize.size_400,
-                    child: _buildFilterBottomSheet(),
+             Container(
+              alignment: Alignment.center,
+              child: Consumer<HomeWorkProvider>(
+                builder: (context, homeworkProvider, child) {
+                  return Text(
+                    homeworkProvider.filterString,
+                    style: CustomTextStyle.textBoldBlack_14,
                   );
                 },
-              );
-            },
+              ),
+            ),
+          Container(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.defaultGraySlightColor,
+                elevation: 0.0,
+              ),
+              child: Image.asset(
+                'assets/images/ic_filter.png',
+                height: CustomSize.size_25,
+                width: CustomSize.size_25,
+              ),
+              onPressed: () {
+                Provider.of<AuthProvider>(context, listen: false)
+                    .setShowDialogWithGlobalScaffoldKey(
+                  true,
+                  GlobalScaffoldKey.filterScaffoldKey,
+                );
+
+                showModalBottomSheet<void>(
+                  context: context,
+                  isDismissible: true,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: CustomSize.size_400,
+                      child: _buildFilterBottomSheet(),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

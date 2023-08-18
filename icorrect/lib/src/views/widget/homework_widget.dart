@@ -82,18 +82,18 @@ class HomeWorkWidget extends StatelessWidget {
                     style: CustomTextStyle.textBlack_15,
                   ),
                 ),
-                Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty &&
-                        Utils.haveAiResponse(homeWorkModel).length < 9
-                    ? const SizedBox(height: CustomSize.size_10)
-                    : const SizedBox(height: CustomSize.size_5),
+                const SizedBox(height: CustomSize.size_5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      (homeWorkModel.activityEndTime.isNotEmpty)
-                          ? homeWorkModel.activityEndTime
-                          : '0000-00-00 00:00',
-                      style: CustomTextStyle.textGrey_14,
+                    Expanded(
+                      child: Text(
+                        (homeWorkModel.activityEndTime.isNotEmpty)
+                            ? homeWorkModel.activityEndTime
+                            : '0000-00-00 00:00',
+                        style: CustomTextStyle.textGrey_14,
+                        overflow: TextOverflow.clip,
+                      ),
                     ),
                     Expanded(
                           child: Padding(
