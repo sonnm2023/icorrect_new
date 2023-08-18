@@ -217,40 +217,34 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                           height: CustomSize.size_50,
                         ),
                       ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: CustomSize.size_10,
-                  ),
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(0),
-                        width: constraint.maxWidth*0.8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              question.content.toString(),
-                              style: CustomTextStyle.textBlack_14,
-                            )
-                          ],
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: CustomSize.size_10,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          question.content.toString(),
+                          style: CustomTextStyle.textBlack_14,
                         ),
-                      ),
-                      const SizedBox(height: CustomSize.size_10),
-                      InkWell(
-                        onTap: () {
-                          _showTips(question);
-                        },
-                        child: (question.tips.isNotEmpty)
-                            ? const Text(
-                                'View Tips',
-                                style: CustomTextStyle.textBoldPurple_14,)
-                            : Container(),
-                      ),
-                    ],
+                        const SizedBox(height: CustomSize.size_10),
+                        InkWell(
+                          onTap: () {
+                            _showTips(question);
+                          },
+                          child: (question.tips.isNotEmpty)
+                              ? const Text(
+                                  'View Tips',
+                                  style: CustomTextStyle.textBoldPurple_14,
+                                )
+                              : Container(),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
