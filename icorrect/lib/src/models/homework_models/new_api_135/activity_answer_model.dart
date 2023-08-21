@@ -134,4 +134,22 @@ class ActivityAnswer {
     data['ai_response_link'] = _aiResponseLink;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'ActivityAnswer{'
+        '\n _activityId: $_activityId,'
+        '\n _testId: $_testId,'
+        '\n _createdAt: $_createdAt,'
+        '\n _updatedAt: $_updatedAt,'
+        '\n _orderId: $_orderId,'
+        '\n _publis: $_publis,'
+        '\n _realActivityId: $_realActivityId,'
+        '\n _aiOrder: $_aiOrder,'
+        '\n _email: $_email,'
+        '\n _id: $_id,'
+        '\n _late: $_late,'
+        '\n _aiResponseLink: $_aiResponseLink'
+        '\n}';
+  }
 }

@@ -155,7 +155,7 @@ class _MyTestTabState extends State<MyTestTab>
                                         child: Text(
                                           'View AI Response',
                                           style:
-                                              CustomTextStyle.textWhiteBold_18,
+                                              CustomTextStyle.textWhiteBold_15,
                                         ),
                                       ),
                                     ),
@@ -194,7 +194,7 @@ class _MyTestTabState extends State<MyTestTab>
                                             child: Text(
                                               'Update Your Answer',
                                               style: CustomTextStyle
-                                                  .textWhiteBold_18,
+                                                  .textWhiteBold_15,
                                             ),
                                           ),
                                         ),
