@@ -5,8 +5,6 @@ import '../../data_sources/constants.dart';
 import '../../data_sources/utils.dart';
 import '../../provider/homework_provider.dart';
 import '../screen/auth/change_password_screen.dart';
-import '../screen/home/homework_screen.dart';
-import '../screen/practice/practice_screen.dart';
 
 Widget navbarItems(BuildContext context) {
   return ListView(
@@ -85,7 +83,6 @@ Widget navbarItems(BuildContext context) {
           color: AppColor.defaultGrayColor,
         ),
         onTap: () {
-          Utils.toggleDrawer();
           Utils.showLogoutConfirmDialog(context);
         },
       ),
