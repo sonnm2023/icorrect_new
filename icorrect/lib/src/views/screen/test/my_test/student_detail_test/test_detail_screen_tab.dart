@@ -31,6 +31,7 @@ import 'download_progressing_widget.dart';
 class TestDetailScreen extends StatefulWidget {
   StudentTestProvider provider;
   StudentResultModel studentResultModel;
+
   TestDetailScreen(
       {super.key, required this.provider, required this.studentResultModel});
 
@@ -180,8 +181,13 @@ class _TestDetailScreenState extends State<TestDetailScreen>
         elevation: 2,
         child: LayoutBuilder(builder: (_, constraint) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.symmetric(
+              horizontal: CustomSize.size_10,
+              vertical: CustomSize.size_10,
+            ),
+            margin: const EdgeInsets.only(
+              top: CustomSize.size_10,
+            ),
             width: constraint.maxWidth,
             color: Colors.white,
             child: Row(
@@ -197,8 +203,8 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                         },
                         child: const Image(
                           image: AssetImage(AppAsset.play),
-                          width: 50,
-                          height: 50,
+                          width: CustomSize.size_50,
+                          height: CustomSize.size_50,
                         ),
                       )
                     : InkWell(
@@ -207,47 +213,38 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                         },
                         child: const Image(
                           image: AssetImage(AppAsset.stop),
-                          width: 50,
-                          height: 50,
+                          width: CustomSize.size_50,
+                          height: CustomSize.size_50,
                         ),
                       ),
-                Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(0),
-                        width: 280,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              question.content.toString(),
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          ],
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: CustomSize.size_10,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          question.content.toString(),
+                          style: CustomTextStyle.textBlack_14,
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      InkWell(
-                        onTap: () {
-                          _showTips(question);
-                        },
-                        child: (question.tips.isNotEmpty)
-                            ? const DefaultText(
-                                text: 'View Tips',
-                                color: AppColor.defaultPurpleColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold)
-                            : Container(),
-                      ),
-                    ],
+                        const SizedBox(height: CustomSize.size_10),
+                        InkWell(
+                          onTap: () {
+                            _showTips(question);
+                          },
+                          child: (question.tips.isNotEmpty)
+                              ? const Text(
+                                  'View Tips',
+                                  style: CustomTextStyle.textBoldPurple_14,
+                                )
+                              : Container(),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

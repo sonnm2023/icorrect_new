@@ -8,8 +8,6 @@ import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/password_input_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../widget/divider.dart';
-
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
@@ -68,9 +66,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       appBar: AppBar(
         title: const Text(
           'Change password',
-          style: TextStyle(
-            color: AppColor.defaultPurpleColor,
-          ),
+          style: CustomTextStyle.appbarTitle,
         ),
         centerTitle: true,
         leading: const BackButton(color: AppColor.defaultPurpleColor),

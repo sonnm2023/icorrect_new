@@ -15,6 +15,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_asset.dart';
@@ -22,6 +23,7 @@ import '../../core/app_color.dart';
 import '../provider/homework_provider.dart';
 import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'api_urls.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Utils {
   static Future<String> getDeviceIdentifier() async {
@@ -385,7 +387,25 @@ class Utils {
       fileName = question.answers.first.url;
     }
     String path =
-        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
+    await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
+    return path;
+  }
+
+  static Future<String> getPathToRecordReAnswer(
+      QuestionTopicModel question, String? testId) async {
+    String fileName = '';
+    if (question.answers.length > 1) {
+      if (question.repeatIndex == 0) {
+        fileName = question.answers.last.url;
+      } else {
+        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
+      }
+    } else {
+      fileName = question.answers.first.url;
+    }
+
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    String path = "${appDocDirectory.path}/$fileName.wav";
     return path;
   }
 
@@ -411,6 +431,14 @@ class Utils {
   }
 
   //huy copied functions
+
+  static Widget navbar(BuildContext context) {
+    return Drawer(
+      backgroundColor: AppColor.defaultWhiteColor,
+      child: navbarItems(context),
+    );
+  }
+
   static Widget drawHeader(UserDataModel user) {
     return Container(
       padding: const EdgeInsets.symmetric(

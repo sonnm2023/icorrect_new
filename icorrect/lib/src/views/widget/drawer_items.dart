@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:provider/provider.dart';
-
 import '../../data_sources/constants.dart';
 import '../../data_sources/utils.dart';
 import '../../provider/homework_provider.dart';
 import '../screen/auth/change_password_screen.dart';
 
-Widget items(BuildContext context) {
+Widget navbarItems(BuildContext context) {
   return ListView(
+    // padding: EdgeInsets.zero,
     children: [
-      Consumer<HomeWorkProvider>(builder: (context, homeWorkProvider, child) {
-        return Utils.drawHeader(homeWorkProvider.currentUser);
-      }),
+      Consumer<HomeWorkProvider>(
+        builder: (context, homeWorkProvider, child) {
+          return Utils.drawHeader(homeWorkProvider.currentUser);
+        },
+      ),
       ListTile(
         title: const Text(
           "Home",
@@ -26,7 +27,7 @@ Widget items(BuildContext context) {
         onTap: () {
           Utils.toggleDrawer();
 
-          /*Navigator.of(context).push(
+          /*Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => const HomeWorkScreen(),
             ),
@@ -34,25 +35,25 @@ Widget items(BuildContext context) {
         },
       ),
       //TODO: PHRASE 2
-      // ListTile(
-      //   title: const Text(
-      //     "Practice",
-      //     style: CustomTextStyle.textGrey_15,
-      //   ),
-      //   leading: const Icon(
-      //     Icons.menu_book_outlined,
-      //     color: AppColor.defaultGrayColor,
-      //   ),
-      //   onTap: () {
-      //     Utils.toggleDrawer();
-      //
-      //     Navigator.of(context).push(
-      //       MaterialPageRoute(
-      //         builder: (context) => const PracticeScreen(),
-      //       ),
-      //     );
-      //   },
-      // ),
+      /*ListTile(
+        title: const Text(
+          "Practice",
+          style: CustomTextStyle.textGrey_15,
+        ),
+        leading: const Icon(
+          Icons.menu_book_outlined,
+          color: AppColor.defaultGrayColor,
+        ),
+        onTap: () {
+          Utils.toggleDrawer();
+
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const PracticeScreen(),
+            ),
+          );
+        },
+      ),*/
       ListTile(
         title: const Text(
           "Change password",
@@ -82,7 +83,6 @@ Widget items(BuildContext context) {
           color: AppColor.defaultGrayColor,
         ),
         onTap: () {
-          Utils.toggleDrawer();
           Utils.showLogoutConfirmDialog(context);
         },
       ),

@@ -1,5 +1,5 @@
-
 import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
@@ -73,6 +73,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
   Widget _buildTopFilter() {
     return Container(
+      height: CustomSize.size_40,
       decoration: const BoxDecoration(
         color: AppColor.defaultGraySlightColor,
         border: Border(
@@ -82,47 +83,54 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           ),
           bottom: BorderSide(
             color: AppColor.defaultPurpleColor,
-            width: 1.5,
+            width: 1.3,
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
-          const SizedBox(width: CustomSize.size_80),
-          Consumer<HomeWorkProvider>(
-            builder: (context, homeworkProvider, child) {
-              return Text(
-                homeworkProvider.filterString,
-                style: CustomTextStyle.textBoldBlack_14,
-              );
-            },
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.defaultGraySlightColor,
-              elevation: 0.0,
-            ),
-            child: Image.asset(
-              'assets/images/ic_filter.png',
-              height: CustomSize.size_25,
-              width: CustomSize.size_25,
-            ),
-            onPressed: () {
-              Provider.of<AuthProvider>(context, listen: false)
-                  .setShowDialogWithGlobalScaffoldKey(
-                      true, GlobalScaffoldKey.filterScaffoldKey);
-              showModalBottomSheet<void>(
-                context: context,
-                isDismissible: true,
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    height: CustomSize.size_400,
-                    child: _buildFilterBottomSheet(),
+             Container(
+              alignment: Alignment.center,
+              child: Consumer<HomeWorkProvider>(
+                builder: (context, homeworkProvider, child) {
+                  return Text(
+                    homeworkProvider.filterString,
+                    style: CustomTextStyle.textBoldBlack_14,
                   );
                 },
-              );
-            },
+              ),
+            ),
+          Container(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.defaultGraySlightColor,
+                elevation: 0.0,
+              ),
+              child: Image.asset(
+                'assets/images/ic_filter.png',
+                height: CustomSize.size_25,
+                width: CustomSize.size_25,
+              ),
+              onPressed: () {
+                Provider.of<AuthProvider>(context, listen: false)
+                    .setShowDialogWithGlobalScaffoldKey(
+                  true,
+                  GlobalScaffoldKey.filterScaffoldKey,
+                );
+
+                showModalBottomSheet<void>(
+                  context: context,
+                  isDismissible: true,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: CustomSize.size_400,
+                      child: _buildFilterBottomSheet(),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -153,10 +161,15 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           width: w,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
-              right:
-                  BorderSide(color: AppColor.defaultGraySlightColor, width: 1),
-        ),
+              top: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
+              right: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
+            ),
           ),
           child: InkWell(
             onTap: () {
@@ -242,10 +255,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                     child: Text(
                       className,
                       textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: CustomSize.size_20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: CustomTextStyle.textBoldBlack_16,
                     ),
                   );
                 },
@@ -264,7 +274,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
-
     if (Platform.isAndroid) {
       AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
       int sdk = android.version.sdkInt;
@@ -319,6 +328,16 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() {
+    //TODO: For test
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => SimulatorTestScreen(
+    //       homeWorkModel: _selectedHomeWorkModel!,
+    //     ),
+    //   ),
+    // );
+
     Map<String, dynamic> statusMap =
         Utils.getHomeWorkStatus(_selectedHomeWorkModel!);
 

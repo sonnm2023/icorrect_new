@@ -23,6 +23,7 @@ class HomeWorkWidget extends StatelessWidget {
       child: Card(
         elevation: 0,
         child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(CustomSize.size_10),
               border: Border.all(
@@ -35,7 +36,9 @@ class HomeWorkWidget extends StatelessWidget {
               callBack(homeWorkModel);
             },
             contentPadding: const EdgeInsets.symmetric(
-                horizontal: CustomSize.size_15, vertical: CustomSize.size_10),
+              horizontal: CustomSize.size_10,
+              vertical: CustomSize.size_5,
+            ),
             leading: Container(
               width: CustomSize.size_50,
               height: CustomSize.size_50,
@@ -79,29 +82,45 @@ class HomeWorkWidget extends StatelessWidget {
                     style: CustomTextStyle.textBlack_15,
                   ),
                 ),
-                const SizedBox(height: CustomSize.size_10),
+                const SizedBox(height: CustomSize.size_5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      (homeWorkModel.activityEndTime.isNotEmpty)
-                          ? homeWorkModel.activityEndTime
-                          : '0000-00-00 00:00',
-                      style: CustomTextStyle.textGrey_14,
-                    ),
-                    Text(
-                      (Utils.getHomeWorkStatus(homeWorkModel).isNotEmpty)
-                          ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']} ${Utils.haveAiResponse(homeWorkModel)}'
-                          : '',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: (Utils.getHomeWorkStatus(homeWorkModel)
-                                .isNotEmpty)
-                            ? Utils.getHomeWorkStatus(homeWorkModel)['color']
-                            : AppColor.defaultPurpleColor,
+                    Expanded(
+                      child: Text(
+                        (homeWorkModel.activityEndTime.isNotEmpty)
+                            ? homeWorkModel.activityEndTime
+                            : '0000-00-00 00:00',
+                        style: CustomTextStyle.textGrey_14,
+                        overflow: TextOverflow.clip,
                       ),
                     ),
+                    Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: CustomSize.size_20,
+                              ),
+                              child: Text(
+                                (Utils.getHomeWorkStatus(homeWorkModel)
+                                        .isNotEmpty)
+                                    ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}'
+                                        '${Utils.haveAiResponse(homeWorkModel)}'
+                                    : '',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontSize: FontsSize.fontSize_14,
+                                  fontWeight: FontWeight.w400,
+                                  color: (Utils.getHomeWorkStatus(homeWorkModel)
+                                          .isNotEmpty)
+                                      ? Utils.getHomeWorkStatus(
+                                          homeWorkModel)['color']
+                                      : AppColor.defaultPurpleColor,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.clip,
+                              ),
+                            ),
+                        ),
                   ],
                 )
               ],

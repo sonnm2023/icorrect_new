@@ -221,6 +221,8 @@ class GlobalScaffoldKey {
       GlobalKey<ScaffoldState>(debugLabel: 'HomeScreenScaffoldKey');
   static final simulatorTestScaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'SimulatorTestScaffoldKey');
+  static final practiceScreenScaffoldKey =
+  GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
 }
 
 
@@ -267,7 +269,7 @@ class CustomSize {
 }
 
 class CustomTextStyle {
-  static const TextStyle appbarContent = TextStyle(
+  static const TextStyle appbarTitle = TextStyle(
     color: AppColor.defaultPurpleColor,
     fontWeight: FontWeight.w800,
     fontSize: FontsSize.fontSize_18,
@@ -348,6 +350,12 @@ class CustomTextStyle {
   static const TextStyle textWhiteBold_15 = TextStyle(
     color: AppColor.defaultWhiteColor,
     fontWeight: FontWeight.w400,
+    fontSize: FontsSize.fontSize_15,
+  );
+
+  static const TextStyle textBoldGreen_15 = TextStyle(
+    color: Colors.green,
+    fontWeight: FontWeight.w600,
     fontSize: FontsSize.fontSize_15,
   );
 

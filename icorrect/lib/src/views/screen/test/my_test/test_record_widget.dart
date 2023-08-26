@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:provider/provider.dart';
@@ -29,32 +30,40 @@ class TestRecordWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              width: w,
-              height: 200,
+              width: w*0.8,
+              height: CustomSize.size_200,
               alignment: Alignment.center,
               color: AppColor.defaultGraySlightColor,
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(
+                    height: CustomSize.size_20,
+                  ),
                   const Text('You answer is being recorded'),
-                  const SizedBox(height: 20),
+                  const SizedBox(
+                    height: CustomSize.size_20,
+                  ),
                   Image.asset(
                     AppAsset.record,
-                    width: 25,
-                    height: 25,
+                    width: CustomSize.size_25,
+                    height: CustomSize.size_25,
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(
+                    height: CustomSize.size_5,
+                  ),
                   Text(
                     testProvider.timerCount,
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontSize: CustomSize.size_20,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: CustomSize.size_20),
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: CustomSize.size_40,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -63,7 +72,7 @@ class TestRecordWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: CustomSize.size_20),
                 ],
               ),
             ),
@@ -79,20 +88,16 @@ class TestRecordWidget extends StatelessWidget {
         finishAnswer(questionTopicModel);
       },
       child: Container(
-        width: 100,
-        height: 44,
+        width: CustomSize.size_100,
+        height: CustomSize.size_40,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
           color: Colors.green,
         ),
         alignment: Alignment.center,
         child: const Text(
           'Finish',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
+          style: CustomTextStyle.textWhiteBold_15,
         ),
       ),
     );
@@ -104,20 +109,16 @@ class TestRecordWidget extends StatelessWidget {
         cancelAnswer();
       },
       child: Container(
-        width: 100,
-        height: 44,
+        width: CustomSize.size_100,
+        height: CustomSize.size_40,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
           color: AppColor.defaultLightGrayColor,
         ),
         alignment: Alignment.center,
         child: const Text(
           'Cancel',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
+          style: CustomTextStyle.textWhiteBold_15,
         ),
       ),
     );

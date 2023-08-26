@@ -26,14 +26,11 @@ import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
-import 'package:icorrect/src/views/screen/test/my_test/video_my_test.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../../presenters/my_test_presenter.dart';
-import '../../../../presenters/my_test_presenter_dio.dart';
 import '../../other_views/dialog/alert_dialog.dart';
 import '../../other_views/dialog/circle_loading.dart';
 
@@ -50,10 +47,9 @@ class MyTestTab extends StatefulWidget {
 
 class _MyTestTabState extends State<MyTestTab>
     with AutomaticKeepAliveClientMixin<MyTestTab>, WidgetsBindingObserver
-    implements MyTestContractDio, ActionAlertListener {
-  MyTestPresenterDio? _presenter;
+    implements MyTestContract, ActionAlertListener {
+  MyTestPresenter? _presenter;
   CircleLoading? _loading;
-  AuthProvider? _authProvider;
 
   AudioPlayer? _player;
   final Record _record = Record();
@@ -64,7 +60,7 @@ class _MyTestTabState extends State<MyTestTab>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     connection = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -87,7 +83,7 @@ class _MyTestTabState extends State<MyTestTab>
     });
 
     _loading = CircleLoading();
-    _presenter = MyTestPresenterDio(this);
+    _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
     _getMyTest();
@@ -107,11 +103,7 @@ class _MyTestTabState extends State<MyTestTab>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
-    _record.dispose();
     _presenter!.closeClientRequest();
-    if (widget.provider.countDownTimer != null) {
-      widget.provider.countDownTimer!.cancel();
-    }
     super.dispose();
   }
 
@@ -127,127 +119,95 @@ class _MyTestTabState extends State<MyTestTab>
         if (provider.isDownloading) {
           return const DownloadProgressingWidget();
         } else {
-          VideoPlayerController playerController = VideoPlayerController.file(File(
-              '/data/user/0/com.example.icorrect/files\\videos\\class-ky1-l9C0043.mp4'))
-            ..initialize();
-          playerController.play();
           return Stack(
             children: [
               Column(
                 children: [
+                  // Expanded(flex: 5, child: VideoMyTest()),
                   Expanded(
-                      flex: 2,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: AspectRatio(
-                            aspectRatio: playerController.value.aspectRatio,
-                            child: VideoPlayer(playerController)),
-                      )),
-                  Expanded(
-                      flex: 4,
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 60),
-                        alignment: Alignment.topCenter,
-                        constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height,
-                          maxWidth: MediaQuery.of(context).size.width,
-                        ),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: provider.myAnswerOfQuestions.length,
-                            itemBuilder: (context, index) {
-                              return _questionItem(
-                                  provider.myAnswerOfQuestions[index], index);
-                            }),
-                      ))
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 50,
-                  child: Stack(
+                    flex: 9,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: provider.myAnswerOfQuestions.length,
+                      itemBuilder: (context, index) {
+                        return _questionItem(
+                            provider.myAnswerOfQuestions[index]);
+                      },
+                    ),
+                  ),
+                  Stack(
                     children: [
                       (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
-                          ? LayoutBuilder(
-                              builder: (_, constraint) {
-                                return InkWell(
-                                  onTap: () {
-                                    _showAiResponse();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: CustomSize.size_10,
-                                    ),
-                                    color: Colors.green,
-                                    width: constraint.maxWidth,
-                                    child: const Center(
-                                      child: Text(
-                                        'View AI Response',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 19,
+                          ? Expanded(
+                              child: LayoutBuilder(
+                                builder: (_, constraint) {
+                                  return InkWell(
+                                    onTap: () {
+                                      _showAiResponse();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: CustomSize.size_10,
+                                      ),
+                                      color: Colors.green,
+                                      width: constraint.maxWidth,
+                                      child: const Center(
+                                        child: Text(
+                                          'View AI Response',
+                                          style:
+                                              CustomTextStyle.textWhiteBold_15,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             )
                           : Container(),
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            TestRecordWidget(
+                              finishAnswer: (currentQuestion) {
+                                _onFinishReanswer(currentQuestion);
+                              },
+                              cancelAnswer: () {
+                                _onCancelReAnswer();
+                              },
+                            ),
+                            (provider.reAnswerOfQuestions.isNotEmpty &&
+                                    !provider.visibleRecord)
+                                ? LayoutBuilder(
+                                    builder: (_, constraint) {
+                                      return InkWell(
+                                        onTap: () {
+                                          _showDialogConfirmSaveChange(
+                                              provider: provider);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: CustomSize.size_10,
+                                          ),
+                                          color: AppColor.defaultPurpleColor,
+                                          width: constraint.maxWidth,
+                                          child: const Center(
+                                            child: Text(
+                                              'Update Your Answer',
+                                              style: CustomTextStyle
+                                                  .textWhiteBold_15,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container()
+                          ],
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TestRecordWidget(
-                      finishAnswer: (currentQuestion) {
-                        _onFinishReanswer(currentQuestion);
-                        _authProvider!.setRecordAnswer(false);
-                      },
-                      cancelAnswer: () {
-                        _onCancelReAnswer();
-                        _authProvider!.setRecordAnswer(false);
-                      },
-                    ),
-                    (provider.reAnswerOfQuestions.isNotEmpty &&
-                            !provider.visibleRecord)
-                        ? LayoutBuilder(
-                            builder: (_, constraint) {
-                              return InkWell(
-                                onTap: () {
-                                  _showDialogConfirmSaveChange(
-                                      provider: provider);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: CustomSize.size_10,
-                                  ),
-                                  color: AppColor.defaultPurpleColor,
-                                  width: constraint.maxWidth,
-                                  height: 50,
-                                  child: const Center(
-                                    child: Text(
-                                      'Update Your Answer',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 19,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : Container()
-                  ],
-                ),
+                  )
+                ],
               ),
               provider.needDownloadAgain
                   ? DownloadAgainWidget(
@@ -269,7 +229,7 @@ class _MyTestTabState extends State<MyTestTab>
         return ConfirmDialogWidget(
           title: "Confirm",
           message: "Are you sure to save change your answers?",
-          cancelButtonTitle: "Don't Save",
+          cancelButtonTitle: "Cancel",
           okButtonTitle: "Save",
           cancelButtonTapped: () {},
           okButtonTapped: () {
@@ -305,23 +265,47 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Future _onAppInBackground() async {
+    //TODO
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // if (videoController.value.isPlaying) {
+    //   videoController.pause();
+    //   _simulatorTestProvider!.setPlayController(videoController);
+    // }
+
     if (widget.provider.visibleRecord) {
       _record.stop();
     }
 
     if (_player!.state == PlayerState.playing) {
-      widget.provider.setPlayAnswer(false, widget.provider.questionIndex);
+      QuestionTopicModel q = widget.provider.currentQuestion;
+      widget.provider.setPlayAnswer(false, q.id.toString());
       _stopAudio();
     }
   }
 
   Future _onAppActive() async {
+    //TODO
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // _simulatorTestProvider!.setPlayController(videoController);
+
     if (widget.provider.visibleRecord) {
       QuestionTopicModel currentQuestion = widget.provider.currentQuestion;
+
+      //TODO
+      // _initVideoController(
+      //     fileName: currentQuestion.files.first.url,
+      //     handleWhenFinishType: HandleWhenFinish.questionVideoType);
 
       widget.provider.setVisibleRecord(false);
       _record.stop();
       _player!.stop();
+    } else {
+      //TODO
+      // if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+      //   videoController.play();
+      // }
     }
   }
 
@@ -335,16 +319,6 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _onFinishReanswer(QuestionTopicModel question) {
-    if (question.answers.isNotEmpty) {
-      question.answers.last.url = widget.provider.pathRecorded;
-    } else {
-      FileTopicModel fileTopicModel = FileTopicModel();
-      fileTopicModel.url = widget.provider.pathRecorded;
-      question.answers.add(fileTopicModel);
-    }
-    question.reAnswerCount++;
-    widget.provider.setCurrentQuestion(question);
-
     widget.provider.setReAnswerOfQuestions(question);
     int index = widget.provider.myAnswerOfQuestions
         .indexWhere((q) => q.id == question.id);
@@ -356,9 +330,7 @@ class _MyTestTabState extends State<MyTestTab>
   void _onCancelReAnswer() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
-    if (widget.provider.countDownTimer != null) {
-      widget.provider.countDownTimer!.cancel();
-    }
+    widget.provider.countDownTimer!.cancel();
     widget.provider.setCountDownTimer(null);
     _record.stop();
   }
@@ -394,8 +366,12 @@ class _MyTestTabState extends State<MyTestTab>
                   alignment: Alignment.topRight,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(top: CustomSize.size_10),
-                      child: AiResponse(url: snapshot.data.toString()),
+                      margin: const EdgeInsets.only(
+                        top: CustomSize.size_10,
+                      ),
+                      child: AiResponse(
+                        url: snapshot.data.toString(),
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.all(CustomSize.size_10),
@@ -430,7 +406,7 @@ class _MyTestTabState extends State<MyTestTab>
     );
   }
 
-  Widget _questionItem(QuestionTopicModel question, int index) {
+  Widget _questionItem(QuestionTopicModel question) {
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         return Card(
@@ -442,16 +418,20 @@ class _MyTestTabState extends State<MyTestTab>
                   horizontal: CustomSize.size_10,
                   vertical: CustomSize.size_10,
                 ),
-                margin: const EdgeInsets.only(top: CustomSize.size_10),
+                margin: const EdgeInsets.only(
+                  top: CustomSize.size_10,
+                ),
                 width: constraint.maxWidth,
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    (provider.playAnswer && index == provider.questionIndex)
+                    (provider.playAnswer &&
+                            question.id.toString() == provider.questionId)
                         ? InkWell(
                             onTap: () async {
-                              widget.provider.setPlayAnswer(false, index);
+                              widget.provider
+                                  .setPlayAnswer(false, question.id.toString());
                               _stopAudio();
                             },
                             child: const Image(
@@ -462,14 +442,14 @@ class _MyTestTabState extends State<MyTestTab>
                           )
                         : InkWell(
                             onTap: () async {
-                              widget.provider.setPlayAnswer(true, index);
+                              widget.provider
+                                  .setPlayAnswer(true, question.id.toString());
 
                               if (question.answers.isNotEmpty) {
-                                int index = question.repeatIndex;
                                 _preparePlayAudio(
                                     fileName: Utils.convertFileName(
-                                        question.answers[index].url.toString()),
-                                    questionIndex: index);
+                                        question.answers.last.url.toString()),
+                                    questionId: question.id.toString());
                               }
                             },
                             child: const Image(
@@ -478,58 +458,57 @@ class _MyTestTabState extends State<MyTestTab>
                               height: CustomSize.size_50,
                             ),
                           ),
-                    Container(
-                      margin: const EdgeInsets.only(left: CustomSize.size_20),
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(0),
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  question.contentQuestion(),
-                                  style: CustomTextStyle.textBlack_15,
-                                )
-                              ],
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          left: CustomSize.size_20,
+                        ),
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              question.content.toString(),
+                              style: CustomTextStyle.textBlack_14,
                             ),
-                          ),
-                          const SizedBox(height: CustomSize.size_10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              (widget.homeWorkModel.canReanswer())
-                                  ? InkWell(
-                                      onTap: () async {
-                                        _onClickReanswer(provider, question);
-                                      },
-                                      child: const Text(
-                                        'Re-answer',
-                                        style:
-                                            CustomTextStyle.textBoldPurple_14,
-                                      ),
-                                    )
-                                  : Container(),
-                              const SizedBox(width: CustomSize.size_20),
-                              InkWell(
-                                onTap: () {
-                                  _showTips(question);
-                                },
-                                child: (question.tips.isNotEmpty)
-                                    ? const Text(
-                                        'View Tips',
-                                        style:
-                                            CustomTextStyle.textBoldPurple_15,
+                            const SizedBox(
+                              height: CustomSize.size_10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                (widget.homeWorkModel.canReanswer())
+                                    ? InkWell(
+                                        onTap: () async {
+                                          _onClickReanswer(provider, question);
+                                        },
+                                        child: const Text(
+                                          'Re-answer',
+                                          style:
+                                              CustomTextStyle.textBoldPurple_14,
+                                        ),
                                       )
                                     : Container(),
-                              ),
-                            ],
-                          )
-                        ],
+                                const SizedBox(
+                                  width: CustomSize.size_20,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    _showTips(question);
+                                  },
+                                  child: (question.tips.isNotEmpty)
+                                      ? const Text(
+                                          'View Tips',
+                                          style:
+                                              CustomTextStyle.textBoldPurple_14,
+                                        )
+                                      : Container(),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     )
                   ],
@@ -542,23 +521,11 @@ class _MyTestTabState extends State<MyTestTab>
     );
   }
 
-  void _onClickReanswer(
-      MyTestProvider provider, QuestionTopicModel question) async {
-    _stopAudio();
-
-    if (widget.provider.countDownTimer != null) {
-      widget.provider.countDownTimer!.cancel();
-      widget.provider.setTimerCount("00:00");
-      _authProvider!.setRecordAnswer(false);
-    }
-
+  void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
     if (!provider.visibleRecord) {
       widget.provider.setCurrentQuestion(question);
-      if (await _record.hasPermission()) {
-        widget.provider.setVisibleRecord(true);
-        _recordReAnswer(provider.visibleRecord, question);
-        _authProvider!.setRecordAnswer(true);
-      }
+      widget.provider.setVisibleRecord(true);
+      _recordReAnswer(provider.visibleRecord, question);
     }
   }
 
@@ -591,38 +558,50 @@ class _MyTestTabState extends State<MyTestTab>
       bool visibleRecord, QuestionTopicModel question) async {
     if (visibleRecord) {
       String audioFile = '${await Utils.generateAudioFileName()}.wav';
-
-      Timer timer = _presenter!.startCountDown(context, 30);
-      widget.provider.setCountDownTimer(timer);
-      await _record.start(
-        path: '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
-            '\\$audioFile',
-        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
-      widget.provider.setPathRecord(audioFile);
+      if (await _record.hasPermission()) {
+        Timer timer = _presenter!.startCountDown(context, 30);
+        widget.provider.setCountDownTimer(timer);
+        await _record.start(
+          path:
+              '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+              '\\$audioFile',
+          encoder:
+              Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+          bitRate: 128000,
+          samplingRate: 44100,
+        );
+        if (question.answers.isNotEmpty) {
+          question.answers.last.url = audioFile;
+        } else {
+          FileTopicModel fileTopicModel = FileTopicModel();
+          fileTopicModel.url = audioFile;
+          question.answers.add(fileTopicModel);
+        }
+        question.reAnswerCount++;
+        widget.provider.setCurrentQuestion(question);
+      }
     } else {
       _record.stop();
     }
   }
 
   Future _preparePlayAudio(
-      {required String fileName, required int questionIndex}) async {
+      {required String fileName, required String questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
+      //TODO
       if (kDebugMode) {
         print('DEBUG: _playAudio:${value.path.toString()}');
       }
-      _playAudio(value.path.toString(), questionIndex);
+      _playAudio(value.path.toString(), questionId);
     });
   }
 
-  Future<void> _playAudio(String audioPath, int questionIndex) async {
+  Future<void> _playAudio(String audioPath, String questionId) async {
     try {
       await _player!.play(DeviceFileSource(audioPath));
       await _player!.setVolume(2.5);
       _player!.onPlayerComplete.listen((event) {
-        widget.provider.setPlayAnswer(false, questionIndex);
+        widget.provider.setPlayAnswer(false, questionId);
       });
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -633,7 +612,6 @@ class _MyTestTabState extends State<MyTestTab>
 
   Future<void> _stopAudio() async {
     await _player!.stop();
-    widget.provider.setPlayAnswer(false, widget.provider.questionIndex);
   }
 
   @override
@@ -757,7 +735,7 @@ class _MyTestTabState extends State<MyTestTab>
     } else {
       if (null != _presenter!.testDetail && null != _presenter!.filesTopic) {
         updateStatusForReDownload();
-        if (null == _presenter!.dio) {
+        if (null == _presenter!.client) {
           _presenter!.initializeData();
         }
         _presenter!.reDownloadFiles();

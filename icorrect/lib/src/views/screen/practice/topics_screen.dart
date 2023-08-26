@@ -24,9 +24,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
           ),
           title: const Text(
             "Topics",
-            style: TextStyle(
-              color: AppColor.defaultPurpleColor,
-            ),
+            style: CustomTextStyle.appbarTitle,
           ),
           centerTitle: true,
           elevation: 0.0,

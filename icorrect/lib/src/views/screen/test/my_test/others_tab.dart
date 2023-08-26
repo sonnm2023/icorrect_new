@@ -98,7 +98,7 @@ class _OtherTabState extends State<OtherTab>
   Widget _othersItem(StudentResultModel resultModel) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: CustomSize.size_10,
+        horizontal: CustomSize.size_5,
         vertical: CustomSize.size_5,
       ),
       margin: const EdgeInsets.only(
@@ -119,13 +119,16 @@ class _OtherTabState extends State<OtherTab>
         children: [
           Row(
             children: [
-              const CircleAvatar(
-                foregroundImage: AssetImage(AppAsset.defaultAvt),
-                radius: CustomSize.size_30,
+              const SizedBox(
+                height: CustomSize.size_50,
+                child: CircleAvatar(
+                  foregroundImage: AssetImage(AppAsset.defaultAvt),
+                  radius: CustomSize.size_30,
+                ),
               ),
               Container(
                 margin: const EdgeInsets.symmetric(
-                  horizontal: CustomSize.size_20,
+                  horizontal: CustomSize.size_5,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,9 +137,11 @@ class _OtherTabState extends State<OtherTab>
                       resultModel.students!.name.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: CustomTextStyle.textBoldBlack_15,
+                      style: CustomTextStyle.textBoldBlack_14,
                     ),
-                    const SizedBox(height: CustomSize.size_10,),
+                    const SizedBox(
+                      height: CustomSize.size_5
+                    ),
                     Text(
                       resultModel.createdAt.toString(),
                       maxLines: 1,
@@ -154,7 +159,7 @@ class _OtherTabState extends State<OtherTab>
                 : resultModel.overallScore.toString(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: CustomTextStyle.textBoldGreen_16,
+            style: CustomTextStyle.textBoldGreen_15,
           ),
         ],
       ),
