@@ -29,10 +29,6 @@ class MyTestProvider extends ChangeNotifier {
     setCountDownTimer(null);
     setCurrentQuestion(QuestionTopicModel());
     setVisibleRecord(false);
-
-    setTotal(0);
-    updateDownloadingPercent(0.0);
-    updateDownloadingIndex(0);
     if (!isDisposed) {
       notifyListeners();
     }
@@ -104,23 +100,14 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
-  String _pathRecorded = '';
-  String get pathRecorded => _pathRecorded;
-  void setPathRecord(String path) {
-    _pathRecorded = path;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   bool _playAnswer = false;
-  int _questionIndex = 0;
-  int get questionIndex => _questionIndex;
+  String _questionId = '';
+  String get questionId => _questionId;
 
   bool get playAnswer => _playAnswer;
-  void setPlayAnswer(bool visible, int questionIndex) {
+  void setPlayAnswer(bool visible, String questionId) {
     _playAnswer = visible;
-    _questionIndex = questionIndex;
+    _questionId = questionId;
     if (!isDisposed) {
       notifyListeners();
     }

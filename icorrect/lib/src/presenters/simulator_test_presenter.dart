@@ -240,7 +240,9 @@ class SimulatorTestPresenter {
                 //     await Utils.convertVideoToBase64(response);
                 // await FileStorageHelper.writeVideo(
                 //     contentString, fileTopic, MediaType.video);
-                print('DEBUG : save Path : $savePath');
+                if (kDebugMode) {
+                  print('DEBUG : save Path : $savePath');
+                }
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);

@@ -210,9 +210,9 @@ class _MyTestTabState extends State<MyTestTab>
                 ],
               ),
               provider.needDownloadAgain
-                  ? DownloadAgainWidget(
+                  ? const DownloadAgainWidget(
                       simulatorTestPresenter: null,
-                      myTestPresenter: _presenter!,
+                      myTestPresenter: null, //_presenter!, //TODO
                     )
                   : const SizedBox(),
             ],
