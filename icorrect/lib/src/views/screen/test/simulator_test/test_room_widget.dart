@@ -135,27 +135,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future _onAppActive() async {
-    VideoPlayerController videoController =
-        _simulatorTestProvider!.videoPlayController!;
+    if (null != _simulatorTestProvider!.videoPlayController) {
+      VideoPlayerController videoController =
+      _simulatorTestProvider!.videoPlayController!;
 
-    if (_simulatorTestProvider!.visibleRecord ||
-        _simulatorTestProvider!.visibleCueCard) {
-      QuestionTopicModel currentQuestion =
-          _simulatorTestProvider!.currentQuestion;
-      _initVideoController(
-          fileName: currentQuestion.files.first.url,
-          handleWhenFinishType: HandleWhenFinish.questionVideoType);
+      if (_simulatorTestProvider!.visibleRecord ||
+          _simulatorTestProvider!.visibleCueCard) {
+        QuestionTopicModel currentQuestion =
+            _simulatorTestProvider!.currentQuestion;
+        _initVideoController(
+            fileName: currentQuestion.files.first.url,
+            handleWhenFinishType: HandleWhenFinish.questionVideoType);
 
-      _simulatorTestProvider!.setVisibleCueCard(false);
-      _simulatorTestProvider!.setVisibleRecord(false);
-      _recordController!.stop();
-      _audioPlayerController!.stop();
-    } else {
-      if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
-        videoController.play();
+        _simulatorTestProvider!.setVisibleCueCard(false);
+        _simulatorTestProvider!.setVisibleRecord(false);
+        _recordController!.stop();
+        _audioPlayerController!.stop();
+      } else {
+        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+          videoController.play();
+        }
       }
+      _simulatorTestProvider!.setPlayController(videoController);
     }
-    _simulatorTestProvider!.setPlayController(videoController);
   }
 
   @override
@@ -817,8 +819,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       //Initialize new player for new video
-      _videoPlayerController = VideoPlayerController.file(File(
-          '/data/user/0/com.example.icorrect/files\\videos\\class-6-unit11-00129.mp4'))
+      _videoPlayerController = VideoPlayerController.file(value)
         ..initialize().then((value) {
           _simulatorTestProvider!.setIsLoadingVideo(false);
           if (_countRepeat != 0) {

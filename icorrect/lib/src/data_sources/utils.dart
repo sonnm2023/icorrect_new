@@ -297,21 +297,25 @@ class Utils {
   }
 
   static Future<File> prepareVideoFile(String fileName) async {
-    File decodedVideoFile;
-    String bs4str =
-        await FileStorageHelper.readVideoFromFile(fileName, MediaType.video);
-    Uint8List decodedBytes = base64.decode(bs4str);
     String filePath =
-        await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+    await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+    return File(filePath);
 
-    if (decodedBytes.isEmpty) {
-      //From second time and before
-      decodedVideoFile = File(filePath);
-    } else {
-      //Convert for first time
-      decodedVideoFile = await File(filePath).writeAsBytes(decodedBytes);
-    }
-    return decodedVideoFile;
+    // File decodedVideoFile;
+    // String bs4str =
+    //     await FileStorageHelper.readVideoFromFile(fileName, MediaType.video);
+    // Uint8List decodedBytes = base64.decode(bs4str);
+    // String filePath =
+    //     await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+    //
+    // if (decodedBytes.isEmpty) {
+    //   //From second time and before
+    //   decodedVideoFile = File(filePath);
+    // } else {
+    //   //Convert for first time
+    //   decodedVideoFile = await File(filePath).writeAsBytes(decodedBytes);
+    // }
+    // return decodedVideoFile;
   }
 
   static Future<File> prepareAudioFile(String fileName, String? testId) async {
