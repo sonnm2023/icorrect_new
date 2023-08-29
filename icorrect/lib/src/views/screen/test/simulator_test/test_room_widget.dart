@@ -16,6 +16,7 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/video_source_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -26,13 +27,13 @@ import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
+import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
-import 'package:icorrect/src/views/widget/simulator_test_widget/video_player_widget.dart';
+import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
@@ -56,7 +57,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
-  VideoPlayerController? _videoPlayerController;
+  NativeVideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
   Record? _recordController;
 
@@ -66,6 +67,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _countRepeat = 0;
   final List<dynamic> _reviewingList = [];
   List<dynamic> _reviewingQuestionList = [];
+  String _oldFileName = '';
+  HandleWhenFinish _oldHandleWhenFinish = HandleWhenFinish.introVideoType;
 
   @override
   void initState() {
@@ -81,8 +84,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         Provider.of<PlayAnswerProvider>(context, listen: false);
 
     _testRoomPresenter = TestRoomPresenter(this);
-
-    _startToDoTest();
   }
 
   @override
@@ -117,28 +118,43 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future _onAppInBackground() async {
-    VideoPlayerController videoController =
-        _simulatorTestProvider!.videoPlayController!;
-    if (videoController.value.isPlaying) {
-      videoController.pause();
-      _simulatorTestProvider!.setPlayController(videoController);
+    //TODO
+    if (null != _videoPlayerController) {
+      bool isPlaying = await _videoPlayerController!.isPlaying();
+      if (isPlaying) {
+        _videoPlayerController!.pause();
+      }
+
+      if (_simulatorTestProvider!.visibleRecord) {
+        _recordController!.stop();
+      }
+
+      if (_audioPlayerController!.state == PlayerState.playing) {
+        _audioPlayerController!.stop();
+        _playAnswerProvider!.resetSelectedQuestionIndex();
+      }
     }
 
-    if (_simulatorTestProvider!.visibleRecord) {
-      _recordController!.stop();
-    }
+    // VideoPlayerController videoController =
+    //     _simulatorTestProvider!.videoPlayController!;
+    // if (videoController.value.isPlaying) {
+    //   videoController.pause();
+    //   _simulatorTestProvider!.setPlayController(videoController);
+    // }
 
-    if (_audioPlayerController!.state == PlayerState.playing) {
-      _audioPlayerController!.stop();
-      _playAnswerProvider!.resetSelectedQuestionIndex();
-    }
+    // if (_simulatorTestProvider!.visibleRecord) {
+    //   _recordController!.stop();
+    // }
+
+    // if (_audioPlayerController!.state == PlayerState.playing) {
+    //   _audioPlayerController!.stop();
+    //   _playAnswerProvider!.resetSelectedQuestionIndex();
+    // }
   }
 
   Future _onAppActive() async {
-    if (null != _simulatorTestProvider!.videoPlayController) {
-      VideoPlayerController videoController =
-      _simulatorTestProvider!.videoPlayController!;
-
+    //TODO
+    if (null != _videoPlayerController) {
       if (_simulatorTestProvider!.visibleRecord ||
           _simulatorTestProvider!.visibleCueCard) {
         QuestionTopicModel currentQuestion =
@@ -153,11 +169,33 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _audioPlayerController!.stop();
       } else {
         if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
-          videoController.play();
+          _videoPlayerController!.play();
         }
       }
-      _simulatorTestProvider!.setPlayController(videoController);
     }
+    // if (null != _simulatorTestProvider!.videoPlayController) {
+    //   VideoPlayerController videoController =
+    //       _simulatorTestProvider!.videoPlayController!;
+
+    //   if (_simulatorTestProvider!.visibleRecord ||
+    //       _simulatorTestProvider!.visibleCueCard) {
+    //     QuestionTopicModel currentQuestion =
+    //         _simulatorTestProvider!.currentQuestion;
+    //     _initVideoController(
+    //         fileName: currentQuestion.files.first.url,
+    //         handleWhenFinishType: HandleWhenFinish.questionVideoType);
+
+    //     _simulatorTestProvider!.setVisibleCueCard(false);
+    //     _simulatorTestProvider!.setVisibleRecord(false);
+    //     _recordController!.stop();
+    //     _audioPlayerController!.stop();
+    //   } else {
+    //     if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+    //       videoController.play();
+    //     }
+    //   }
+    //   _simulatorTestProvider!.setPlayController(videoController);
+    // }
   }
 
   @override
@@ -176,12 +214,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               fit: BoxFit.cover,
             ),
           ),
-          child: VideoPlayerWidget(
-            startToPlayVideo: _startToPlayVideo,
-            pauseToPlayVideo: _pauseToPlayVideo,
-            restartToPlayVideo: _restartToPlayVideo,
-            continueToPlayVideo: _continueToPlayVideo,
-          ),
+          child: _buildVideoPlayerView(),
         ),
         Expanded(
           child: Stack(
@@ -224,9 +257,210 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
+  Widget _buildVideoPlayerView() {
+    double w = MediaQuery.of(context).size.width;
+    double h = 200;
+
+    return Consumer<SimulatorTestProvider>(
+        builder: (context, simulatorTestProvider, child) {
+      if (kDebugMode) {
+        print("DEBUG: VideoPlayerWidget --- build");
+      }
+
+      if (simulatorTestProvider.isLoadingVideo) {
+        return SizedBox(
+          width: w,
+          height: h,
+          child: const Center(
+            child: DefaultLoadingIndicator(
+              color: AppColor.defaultPurpleColor,
+            ),
+          ),
+        );
+      } else {
+        Widget buttonsControllerSubView = Container();
+
+        switch (simulatorTestProvider.reviewingStatus.get) {
+          case -1: //None
+            {
+              buttonsControllerSubView = SizedBox(
+                width: w,
+                height: h,
+                child: Center(
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: InkWell(
+                      onTap: () {
+                        simulatorTestProvider
+                            .updateReviewingStatus(ReviewingStatus.playing);
+                        _startToPlayVideo();
+                      },
+                      child: const Icon(
+                        Icons.play_arrow,
+                        color: AppColor.defaultAppColor,
+                        size: 50,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+              break;
+            }
+          case 0: //Playing
+            {
+              buttonsControllerSubView = SizedBox(
+                width: w,
+                height: h,
+                child: GestureDetector(onTap: () {
+                  //Update reviewing status from playing -> pause
+                  //show/hide pause button
+                  if (simulatorTestProvider.doingStatus != DoingStatus.doing) {
+                    if (simulatorTestProvider.reviewingStatus ==
+                        ReviewingStatus.playing) {
+                      simulatorTestProvider
+                          .updateReviewingStatus(ReviewingStatus.pause);
+                    }
+                  }
+                }),
+              );
+              break;
+            }
+          case 1: //Pause
+            {
+              buttonsControllerSubView = InkWell(
+                onTap: () {
+                  if (simulatorTestProvider.reviewingStatus ==
+                      ReviewingStatus.pause) {
+                    simulatorTestProvider
+                        .updateReviewingStatus(ReviewingStatus.playing);
+                  }
+                },
+                child: SizedBox(
+                  width: w,
+                  height: h,
+                  child: Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: InkWell(
+                        onTap: () {
+                          //Update reviewing status from pause -> restart
+                          //TODO
+                          // simulatorTestProvider
+                          //     .updateReviewingStatus(ReviewingStatus.restart);
+                          // pauseToPlayVideo();
+                        },
+                        child: const Icon(
+                          Icons.pause,
+                          color: AppColor.defaultAppColor,
+                          size: 50,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+              break;
+            }
+          case 2: //Restart
+            {
+              buttonsControllerSubView = SizedBox(
+                width: w,
+                height: h,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: InkWell(
+                          onTap: () {
+                            //TODO
+                            // restartToPlayVideo();
+                          },
+                          child: const Icon(
+                            Icons.restart_alt,
+                            color: AppColor.defaultAppColor,
+                            size: 50,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: InkWell(
+                          onTap: () {
+                            //TODO
+                            // continueToPlayVideo();
+                          },
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: AppColor.defaultAppColor,
+                            size: 50,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+              break;
+            }
+        }
+
+        return Stack(
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: NativeVideoPlayerView(
+                onViewReady: _initController,
+              ),
+            ),
+
+            //Play video controller buttons
+            buttonsControllerSubView,
+
+            //TODO
+            // Visibility(
+            //   visible: simulatorTestProvider.isReviewingPlayAnswer,
+            //   child: playAudioBackground(w, h),
+            // )
+          ],
+        );
+      }
+    });
+  }
+
+  Future<void> _initController(NativeVideoPlayerController controller) async {
+    _videoPlayerController = controller;
+    _videoPlayerController!.setVolume(1.0);
+    await _loadVideoSource(_simulatorTestProvider!.videoSources[0].path)
+        .then((_) {
+      _videoPlayerController!.stop();
+    });
+  }
+
+  Future<void> _loadVideoSource(String fileName) async {
+    final videoSource = await _createVideoSource(fileName);
+    await _videoPlayerController!.loadVideoSource(videoSource);
+  }
+
+  Future<VideoSource> _createVideoSource(String fileName) async {
+    // VideoSourceModel videoSourceModel =
+    //     _simulatorTestProvider!.videoSources[_playingIndex];
+    String path =
+        await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+    return VideoSource.init(
+      path: path,
+      type: VideoSourceType.file,
+    );
+  }
+
   void _startToDoTest() {
     if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
-      // _simulatorTestProvider!.setTopicsQueue(_simulatorTestProvider!.topicsQueue);
       _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
@@ -249,12 +483,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (null != _videoPlayerController) {
-      if (_videoPlayerController!.value.isPlaying) {
-        _videoPlayerController!.pause();
-      }
+      //TODO
+      _videoPlayerController = null;
 
-      await _videoPlayerController!.dispose();
-      _simulatorTestProvider!.setPlayController(null);
+      // if (_videoPlayerController!.value.isPlaying) {
+      //   _videoPlayerController!.pause();
+      // }
+
+      // await _videoPlayerController!.dispose();
+      // _simulatorTestProvider!.setPlayController(null);
     }
   }
 
@@ -559,27 +796,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       );
     } else {
       //Start to do the test
-      if (null != _simulatorTestProvider!.videoPlayController) {
-        _simulatorTestProvider!.videoPlayController!.play();
-      }
-    }
-  }
-
-  void _pauseToPlayVideo() {
-    if (kDebugMode) {
-      print("DEBUG: _pauseToPlayVideo");
-    }
-  }
-
-  void _restartToPlayVideo() {
-    if (kDebugMode) {
-      print("DEBUG: _restartToPlayVideo");
-    }
-  }
-
-  void _continueToPlayVideo() {
-    if (kDebugMode) {
-      print("DEBUG: _continueToPlayVideo");
+      _startToDoTest();
     }
   }
 
@@ -793,7 +1010,33 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required HandleWhenFinish handleWhenFinishType,
   }) async {
-    _simulatorTestProvider!.setIsLoadingVideo(true);
+    if (kDebugMode) {
+      print("DEBUG: playing: ======file = $fileName");
+    }
+
+    if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
+      // _videoPlayerController = null;
+      _videoPlayerController!.onPlaybackEnded.removeListener(() => _checkVideo(_oldFileName, _oldHandleWhenFinish));
+    }
+    
+    _videoPlayerController!.onPlaybackEnded.addListener((() => _checkVideo(fileName, handleWhenFinishType)));
+    
+    _oldFileName = fileName;
+    _oldHandleWhenFinish = handleWhenFinishType;
+
+    if (fileName == _simulatorTestProvider!.videoSources[0].path) {
+      _videoPlayerController!.play();
+    } else {
+      if (_countRepeat != 0) {
+        _videoPlayerController!.setPlaybackSpeed(0.9);
+      }
+
+      _createVideoSource(fileName).then((value) async {
+        _videoPlayerController!.loadVideoSource(value).then((_) {
+          _videoPlayerController!.play();
+        });
+      });
+    }
 
     if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
         handleWhenFinishType == HandleWhenFinish.endOfTestVideoType ||
@@ -808,40 +1051,43 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     //Dispose old video play controller before create new one
-    if (null != _simulatorTestProvider!.videoPlayController) {
-      _simulatorTestProvider!.videoPlayController!.dispose();
-      _simulatorTestProvider!.setPlayController(null);
-    }
+    //TODO
+    // if (null != _simulatorTestProvider!.videoPlayController) {
+    //   _simulatorTestProvider!.videoPlayController!.dispose();
+    //   _simulatorTestProvider!.setPlayController(null);
+    // }
 
-    Utils.prepareVideoFile(fileName).then((value) {
-      if (kDebugMode) {
-        print("DEBUG: Playing ---- $fileName");
-      }
+    //TODO
+    // Utils.prepareVideoFile(fileName).then((value) {
+    //   if (kDebugMode) {
+    //     print("DEBUG: Playing ---- $fileName");
+    //   }
 
-      //Initialize new player for new video
-      _videoPlayerController = VideoPlayerController.file(value)
-        ..initialize().then((value) {
-          _simulatorTestProvider!.setIsLoadingVideo(false);
-          if (_countRepeat != 0) {
-            _videoPlayerController!.setPlaybackSpeed(0.9);
-          }
-          _videoPlayerController!.play();
+    //Initialize new player for new video
+    //TODO
+    // _videoPlayerController = VideoPlayerController.file(value)
+    //   ..initialize().then((value) {
+    //     _simulatorTestProvider!.setIsLoadingVideo(false);
+    //     if (_countRepeat != 0) {
+    //       _videoPlayerController!.setPlaybackSpeed(0.9);
+    //     }
+    //     _videoPlayerController!.play();
 
-          if (ReviewingStatus.none == _simulatorTestProvider!.reviewingStatus) {
-            Future.delayed(const Duration(milliseconds: 1), () {
-              _videoPlayerController!.pause();
-            });
-          }
+    //     if (ReviewingStatus.none == _simulatorTestProvider!.reviewingStatus) {
+    //       Future.delayed(const Duration(milliseconds: 1), () {
+    //         _videoPlayerController!.pause();
+    //       });
+    //     }
 
-          if (null != _videoPlayerController) {
-            _simulatorTestProvider!.setPlayController(_videoPlayerController!);
-          }
+    //     if (null != _videoPlayerController) {
+    //       _simulatorTestProvider!.setPlayController(_videoPlayerController!);
+    //     }
 
-          _videoPlayerController!
-              .addListener((() => _checkVideo(fileName, handleWhenFinishType)));
-        })
-        ..setLooping(false);
-    });
+    //     _videoPlayerController!
+    //         .addListener((() => _checkVideo(fileName, handleWhenFinishType)));
+    //   })
+    //   ..setLooping(false);
+    // });
   }
 
   Future<void> _stopRecord() async {
@@ -915,90 +1161,168 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _checkVideo(
       String fileName, HandleWhenFinish handleWhenFinishType) async {
-    if (null != _simulatorTestProvider!.videoPlayController) {
-      if (_simulatorTestProvider!.videoPlayController!.value.position ==
-          _simulatorTestProvider!.videoPlayController!.value.duration) {
-        _simulatorTestProvider!.videoPlayController!.pause();
+    //TODO
+    switch (handleWhenFinishType) {
+      case HandleWhenFinish.questionVideoType:
+        {
+          if (_currentQuestion!.cueCard.isNotEmpty &&
+              (false == _simulatorTestProvider!.visibleCueCard)) {
+            //Has Cue Card case
+            _simulatorTestProvider!.setVisibleRecord(false);
+            _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
 
-        switch (handleWhenFinishType) {
-          case HandleWhenFinish.questionVideoType:
-            {
-              if (_currentQuestion!.cueCard.isNotEmpty &&
-                  (false == _simulatorTestProvider!.visibleCueCard)) {
-                //Has Cue Card case
-                _simulatorTestProvider!.setVisibleRecord(false);
-                _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+            int time = 3; //3 for test, 60 for product
+            String timeString = Utils.getTimeRecordString(time);
+            _simulatorTestProvider!.setCountDownCueCard(timeString);
 
-                int time = 3; //3 for test, 60 for product
-                String timeString = Utils.getTimeRecordString(time);
-                _simulatorTestProvider!.setCountDownCueCard(timeString);
-
-                _countDownCueCard =
-                    _testRoomPresenter!.startCountDownForCueCard(
-                  context: context,
-                  count: time,
-                  isPart2: false,
-                );
-                _simulatorTestProvider!.setVisibleCueCard(true);
-              } else {
-                //Normal case
-                if (false == _simulatorTestProvider!.visibleRecord &&
-                    false == _simulatorTestProvider!.visibleCueCard) {
-                  _startRecordAnswer(fileName: fileName, isPart2: false);
-                }
-              }
-
-              if (_countRepeat == 0) {
-                _calculateIndexOfHeader();
-              }
-
-              break;
-            }
-          case HandleWhenFinish.introVideoType:
-            {
-              TopicModel? topicModel = _getCurrentPart();
-              if (null != topicModel) {
-                if (topicModel.numPart == PartOfTest.part3.get) {
-                  _startToPlayFollowup();
-                } else {
-                  _startToPlayQuestion();
-                }
-              }
-              break;
-            }
-          case HandleWhenFinish.cueCardVideoType:
-            {
-              _startRecordAnswer(fileName: fileName, isPart2: true);
-              break;
-            }
-          case HandleWhenFinish.followupVideoType:
-            {
+            _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
+              context: context,
+              count: time,
+              isPart2: false,
+            );
+            _simulatorTestProvider!.setVisibleCueCard(true);
+          } else {
+            //Normal case
+            if (false == _simulatorTestProvider!.visibleRecord &&
+                false == _simulatorTestProvider!.visibleCueCard) {
               _startRecordAnswer(fileName: fileName, isPart2: false);
-              if (_countRepeat == 0) {
-                _calculateIndexOfHeader();
-              }
-              break;
             }
-          case HandleWhenFinish.endOfTestVideoType:
-            {
-              _prepareToEndTheTest();
-              break;
-            }
-          case HandleWhenFinish.reviewingVideoType:
-            {
-              _reviewingProcess();
-              break;
-            }
-          case HandleWhenFinish.reviewingPlayTheQuestionType:
-            {
-              QuestionTopicModel question =
-                  _reviewingList[_simulatorTestProvider!.reviewingCurrentIndex];
-              _playTheAnswerOfQuestion(question);
-              break;
-            }
+          }
+
+          if (_countRepeat == 0) {
+            _calculateIndexOfHeader();
+          }
+
+          break;
         }
-      }
+      case HandleWhenFinish.introVideoType:
+        {
+          TopicModel? topicModel = _getCurrentPart();
+          if (null != topicModel) {
+            if (topicModel.numPart == PartOfTest.part3.get) {
+              _startToPlayFollowup();
+            } else {
+              _startToPlayQuestion();
+            }
+          }
+          break;
+        }
+      case HandleWhenFinish.cueCardVideoType:
+        {
+          _startRecordAnswer(fileName: fileName, isPart2: true);
+          break;
+        }
+      case HandleWhenFinish.followupVideoType:
+        {
+          _startRecordAnswer(fileName: fileName, isPart2: false);
+          if (_countRepeat == 0) {
+            _calculateIndexOfHeader();
+          }
+          break;
+        }
+      case HandleWhenFinish.endOfTestVideoType:
+        {
+          _prepareToEndTheTest();
+          break;
+        }
+      case HandleWhenFinish.reviewingVideoType:
+        {
+          _reviewingProcess();
+          break;
+        }
+      case HandleWhenFinish.reviewingPlayTheQuestionType:
+        {
+          QuestionTopicModel question =
+              _reviewingList[_simulatorTestProvider!.reviewingCurrentIndex];
+          _playTheAnswerOfQuestion(question);
+          break;
+        }
     }
+
+    // if (null != _simulatorTestProvider!.videoPlayController) {
+    //   if (_simulatorTestProvider!.videoPlayController!.value.position ==
+    //       _simulatorTestProvider!.videoPlayController!.value.duration) {
+    //     _simulatorTestProvider!.videoPlayController!.pause();
+
+    //     switch (handleWhenFinishType) {
+    //       case HandleWhenFinish.questionVideoType:
+    //         {
+    //           if (_currentQuestion!.cueCard.isNotEmpty &&
+    //               (false == _simulatorTestProvider!.visibleCueCard)) {
+    //             //Has Cue Card case
+    //             _simulatorTestProvider!.setVisibleRecord(false);
+    //             _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+
+    //             int time = 3; //3 for test, 60 for product
+    //             String timeString = Utils.getTimeRecordString(time);
+    //             _simulatorTestProvider!.setCountDownCueCard(timeString);
+
+    //             _countDownCueCard =
+    //                 _testRoomPresenter!.startCountDownForCueCard(
+    //               context: context,
+    //               count: time,
+    //               isPart2: false,
+    //             );
+    //             _simulatorTestProvider!.setVisibleCueCard(true);
+    //           } else {
+    //             //Normal case
+    //             if (false == _simulatorTestProvider!.visibleRecord &&
+    //                 false == _simulatorTestProvider!.visibleCueCard) {
+    //               _startRecordAnswer(fileName: fileName, isPart2: false);
+    //             }
+    //           }
+
+    //           if (_countRepeat == 0) {
+    //             _calculateIndexOfHeader();
+    //           }
+
+    //           break;
+    //         }
+    //       case HandleWhenFinish.introVideoType:
+    //         {
+    //           TopicModel? topicModel = _getCurrentPart();
+    //           if (null != topicModel) {
+    //             if (topicModel.numPart == PartOfTest.part3.get) {
+    //               _startToPlayFollowup();
+    //             } else {
+    //               _startToPlayQuestion();
+    //             }
+    //           }
+    //           break;
+    //         }
+    //       case HandleWhenFinish.cueCardVideoType:
+    //         {
+    //           _startRecordAnswer(fileName: fileName, isPart2: true);
+    //           break;
+    //         }
+    //       case HandleWhenFinish.followupVideoType:
+    //         {
+    //           _startRecordAnswer(fileName: fileName, isPart2: false);
+    //           if (_countRepeat == 0) {
+    //             _calculateIndexOfHeader();
+    //           }
+    //           break;
+    //         }
+    //       case HandleWhenFinish.endOfTestVideoType:
+    //         {
+    //           _prepareToEndTheTest();
+    //           break;
+    //         }
+    //       case HandleWhenFinish.reviewingVideoType:
+    //         {
+    //           _reviewingProcess();
+    //           break;
+    //         }
+    //       case HandleWhenFinish.reviewingPlayTheQuestionType:
+    //         {
+    //           QuestionTopicModel question =
+    //               _reviewingList[_simulatorTestProvider!.reviewingCurrentIndex];
+    //           _playTheAnswerOfQuestion(question);
+    //           break;
+    //         }
+    //     }
+    //   }
+    // }
   }
 
   void _reviewingProcess() {

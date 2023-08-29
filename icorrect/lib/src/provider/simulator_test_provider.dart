@@ -5,6 +5,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/video_source_model.dart';
 import 'package:video_player/video_player.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
@@ -260,16 +261,17 @@ class SimulatorTestProvider with ChangeNotifier {
     _questionList.clear();
   }
 
-  VideoPlayerController? _videoPlayerController;
-  VideoPlayerController? get videoPlayController => _videoPlayerController;
-  void setPlayController(VideoPlayerController? videoPlayerController) {
-    _videoPlayerController = null;
-    _videoPlayerController = videoPlayerController;
+//TODO
+  // VideoPlayerController? _videoPlayerController;
+  // VideoPlayerController? get videoPlayController => _videoPlayerController;
+  // void setPlayController(VideoPlayerController? videoPlayerController) {
+  //   _videoPlayerController = null;
+  //   _videoPlayerController = videoPlayerController;
 
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
+  //   if (!isDisposed) {
+  //     notifyListeners();
+  //   }
+  // }
 
   QuestionTopicModel _currentQuestion = QuestionTopicModel();
   QuestionTopicModel get currentQuestion => _currentQuestion;
@@ -427,6 +429,21 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  final List<VideoSourceModel> _videoSources = [];
+  List<VideoSourceModel> get videoSources => _videoSources;
+  void setVideoSources(List<VideoSourceModel> list) {
+    _videoSources.clear();
+    _videoSources.addAll(list);
+  }
+
+  void addVideoSource(VideoSourceModel videoSourceModel) {
+    _videoSources.add(videoSourceModel);
+  }
+
+  void clearVideoSources() {
+    _videoSources.clear();
+  }
+
   void resetAll() {
     _needDownloadAgain = false;
     _isLoadingVideo = false;
@@ -453,13 +470,13 @@ class SimulatorTestProvider with ChangeNotifier {
     _visibleRepeat = true;
     _isVisibleSave = false;
     _countRepeat = 0;
-    _videoPlayerController = null;
+    // _videoPlayerController = null; //TODO
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
     resetTopicsQueue();
     clearQuestionList();
     resetTopicsList();
-    resetTopicsQueue();
+    clearVideoSources();
   }
 }

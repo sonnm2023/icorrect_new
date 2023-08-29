@@ -35,6 +35,7 @@ abstract class SimulatorTestViewContract {
   void onTryAgainToDownload();
   void onHandleBackButtonSystemTapped();
   void onHandleEventBackButtonSystem({required bool isQuitTheTest});
+  void onPrepareListOfVideoPaths(List<FileTopicModel> filesTopic);
 }
 
 class SimulatorTestPresenter {
@@ -208,6 +209,9 @@ class SimulatorTestPresenter {
 
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
+
+    _view!.onPrepareListOfVideoPaths(filesTopic);
+    
     if (null != dio) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {

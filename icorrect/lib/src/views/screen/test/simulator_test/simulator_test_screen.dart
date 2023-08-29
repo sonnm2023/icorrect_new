@@ -10,15 +10,15 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/video_source_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
@@ -27,6 +27,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widg
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
+import 'package:native_video_player/native_video_player.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -563,5 +564,20 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       print("DEBUG: onHandleBackButtonSystemTapped");
     }
     //Pause video player
+  }
+
+  @override
+  void onPrepareListOfVideoPaths(List<FileTopicModel> filesTopic) async {
+    // for (int i = 0; i < filesTopic.length; i++) {
+    //   FileTopicModel fileTopicModel = filesTopic[i];
+    //   String path = await FileStorageHelper.getFilePath(fileTopicModel.url, MediaType.video, null);
+    //   VideoSourceModel videoSourceModel = VideoSourceModel(path: path, type: VideoSourceType.file);
+    //   _simulatorTestProvider!.addVideoSource(videoSourceModel);
+    // }
+    for (int i = 0; i < filesTopic.length; i++) {
+      FileTopicModel fileTopicModel = filesTopic[i];
+      VideoSourceModel videoSourceModel = VideoSourceModel(path: fileTopicModel.url, type: VideoSourceType.file);
+      _simulatorTestProvider!.addVideoSource(videoSourceModel);
+    }
   }
 }
