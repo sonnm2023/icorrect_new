@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //TODO: For test
-    emailController.text = "hocsinh01@testing.com";
+    emailController.text = "hocvien02@nguyenhuytuong.com";
     passwordController.text = "123456";
 
     _getAppConfigInfo();
