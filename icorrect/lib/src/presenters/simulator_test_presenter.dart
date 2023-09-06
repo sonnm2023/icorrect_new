@@ -398,9 +398,7 @@ class SimulatorTestPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
-  }) async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    
+  }) async {    
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -459,12 +457,13 @@ class SimulatorTestPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        String path = "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+        String path = await FileStorageHelper.getFilePath(
+            q.answers.elementAt(i).url.toString(), MediaType.audio, testId);
         File audioFile = File(path);
 
         if (await audioFile.exists()) {
-          request.files
-              .add(await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          request.files.add(
+              await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
     }
@@ -473,86 +472,6 @@ class SimulatorTestPresenter {
 
     return request;
   }
-
-  // Future<http.MultipartRequest> _formDataRequest({
-  //   required String testId,
-  //   required String activityId,
-  //   required List<QuestionTopicModel> questions,
-  // }) async {
-  //   Directory appDocDirectory = await getApplicationDocumentsDirectory();
-
-  //   String url = submitHomeWorkV2EP();
-  //   http.MultipartRequest request =
-  //       http.MultipartRequest(RequestMethod.post, Uri.parse(url));
-  //   request.headers.addAll({
-  //     'Content-Type': 'multipart/form-data',
-  //     'Authorization': 'Bearer ${await Utils.getAccessToken()}'
-  //   });
-
-  //   Map<String, String> formData = {};
-
-  //   formData.addEntries([MapEntry('test_id', testId)]);
-  //   formData.addEntries([MapEntry('activity_id', activityId)]);
-  //   formData.addEntries([const MapEntry('is_update', '0')]);
-
-  //   if (Platform.isAndroid) {
-  //     formData.addEntries([const MapEntry('os', "android")]);
-  //   } else {
-  //     formData.addEntries([const MapEntry('os', "ios")]);
-  //   }
-  //   formData.addEntries([const MapEntry('app_version', '2.0.2')]);
-
-  //   for (QuestionTopicModel q in questions) {
-  //     String part = '';
-  //     switch (q.numPart) {
-  //       case 0:
-  //         {
-  //           part = "introduce";
-  //           break;
-  //         }
-  //       case 1:
-  //         {
-  //           part = "part1";
-  //           break;
-  //         }
-  //       case 2:
-  //         {
-  //           part = "part2";
-  //           break;
-  //         }
-  //       case 3:
-  //         {
-  //           part = "part3";
-  //           if (q.isFollowUp == 1) {
-  //             part = "followup";
-  //           }
-  //           break;
-  //         }
-  //     }
-
-  //     String prefix = "$part[${q.id}]";
-
-  //     List<MapEntry<String, String>> temp = _generateFormat(q, prefix);
-  //     if (temp.isNotEmpty) {
-  //       formData.addEntries(temp);
-  //     }
-
-  //     for (int i = 0; i < q.answers.length; i++) {
-  //       String path =
-  //           "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
-  //       File audioFile = File(path);
-
-  //       if (await audioFile.exists()) {
-  //         request.files.add(
-  //             await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
-  //       }
-  //     }
-  //   }
-
-  //   request.fields.addAll(formData);
-
-  //   return request;
-  // }
 
   void handleEventBackButtonSystem({required bool isQuitTheTest}) {
     _view!.onHandleEventBackButtonSystem(isQuitTheTest: isQuitTheTest);

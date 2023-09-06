@@ -234,8 +234,6 @@ class TestRoomPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
   }) async {
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
