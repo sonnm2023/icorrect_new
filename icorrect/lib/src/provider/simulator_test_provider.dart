@@ -2,11 +2,10 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/video_source_model.dart';
-import 'package:video_player/video_player.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;
@@ -316,7 +315,7 @@ class SimulatorTestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
+  
   int _indexOfCurrentQuestion = 0;
   int get indexOfCurrentQuestion => _indexOfCurrentQuestion;
   void setIndexOfCurrentQuestion(int i) {
@@ -429,19 +428,35 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  final List<VideoSourceModel> _videoSources = [];
-  List<VideoSourceModel> get videoSources => _videoSources;
-  void setVideoSources(List<VideoSourceModel> list) {
-    _videoSources.clear();
-    _videoSources.addAll(list);
+  // final List<VideoSourceModel> _videoSources = [];
+  // List<VideoSourceModel> get videoSources => _videoSources;
+  // void setVideoSources(List<VideoSourceModel> list) {
+  //   _videoSources.clear();
+  //   _videoSources.addAll(list);
+  // }
+
+  // void addVideoSource(VideoSourceModel videoSourceModel) {
+  //   _videoSources.add(videoSourceModel);
+  // }
+
+  // void clearVideoSources() {
+  //   _videoSources.clear();
+  // }
+
+  //TODO
+  final List<FileTopicModel> _listVideoSource = [];
+  List<FileTopicModel> get listVideoSource => _listVideoSource;
+  void setListVideoSource(List<FileTopicModel> list) {
+    _listVideoSource.clear();
+    _listVideoSource.addAll(list);
   }
 
-  void addVideoSource(VideoSourceModel videoSourceModel) {
-    _videoSources.add(videoSourceModel);
+  void addVideoSource(FileTopicModel fileTopicModel) {
+    _listVideoSource.add(fileTopicModel);
   }
 
-  void clearVideoSources() {
-    _videoSources.clear();
+  void clearListVideoSource() {
+    _listVideoSource.clear();
   }
 
   void resetAll() {
@@ -477,6 +492,7 @@ class SimulatorTestProvider with ChangeNotifier {
     resetTopicsQueue();
     clearQuestionList();
     resetTopicsList();
-    clearVideoSources();
+    // clearVideoSources(); //TODO
+    clearListVideoSource();
   }
 }

@@ -16,7 +16,6 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/video_source_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -67,8 +66,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _countRepeat = 0;
   final List<dynamic> _reviewingList = [];
   List<dynamic> _reviewingQuestionList = [];
-  String _oldFileName = '';
-  HandleWhenFinish _oldHandleWhenFinish = HandleWhenFinish.introVideoType;
+  int _playingIndex = 0;
 
   @override
   void initState() {
@@ -134,22 +132,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
-
-    // VideoPlayerController videoController =
-    //     _simulatorTestProvider!.videoPlayController!;
-    // if (videoController.value.isPlaying) {
-    //   videoController.pause();
-    //   _simulatorTestProvider!.setPlayController(videoController);
-    // }
-
-    // if (_simulatorTestProvider!.visibleRecord) {
-    //   _recordController!.stop();
-    // }
-
-    // if (_audioPlayerController!.state == PlayerState.playing) {
-    //   _audioPlayerController!.stop();
-    //   _playAnswerProvider!.resetSelectedQuestionIndex();
-    // }
   }
 
   Future _onAppActive() async {
@@ -159,9 +141,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _simulatorTestProvider!.visibleCueCard) {
         QuestionTopicModel currentQuestion =
             _simulatorTestProvider!.currentQuestion;
-        _initVideoController(
-            fileName: currentQuestion.files.first.url,
-            handleWhenFinishType: HandleWhenFinish.questionVideoType);
 
         _simulatorTestProvider!.setVisibleCueCard(false);
         _simulatorTestProvider!.setVisibleRecord(false);
@@ -173,29 +152,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
-    // if (null != _simulatorTestProvider!.videoPlayController) {
-    //   VideoPlayerController videoController =
-    //       _simulatorTestProvider!.videoPlayController!;
-
-    //   if (_simulatorTestProvider!.visibleRecord ||
-    //       _simulatorTestProvider!.visibleCueCard) {
-    //     QuestionTopicModel currentQuestion =
-    //         _simulatorTestProvider!.currentQuestion;
-    //     _initVideoController(
-    //         fileName: currentQuestion.files.first.url,
-    //         handleWhenFinishType: HandleWhenFinish.questionVideoType);
-
-    //     _simulatorTestProvider!.setVisibleCueCard(false);
-    //     _simulatorTestProvider!.setVisibleRecord(false);
-    //     _recordController!.stop();
-    //     _audioPlayerController!.stop();
-    //   } else {
-    //     if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
-    //       videoController.play();
-    //     }
-    //   }
-    //   _simulatorTestProvider!.setPlayController(videoController);
-    // }
   }
 
   @override
@@ -437,7 +393,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Future<void> _initController(NativeVideoPlayerController controller) async {
     _videoPlayerController = controller;
     _videoPlayerController!.setVolume(1.0);
-    await _loadVideoSource(_simulatorTestProvider!.videoSources[0].path)
+    await _loadVideoSource(
+            _simulatorTestProvider!.listVideoSource[_playingIndex].url)
         .then((_) {
       _videoPlayerController!.stop();
     });
@@ -449,8 +406,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<VideoSource> _createVideoSource(String fileName) async {
-    // VideoSourceModel videoSourceModel =
-    //     _simulatorTestProvider!.videoSources[_playingIndex];
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
     return VideoSource.init(
@@ -460,9 +415,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startToDoTest() {
-    if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
-      _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
-    }
+    _initVideoController();
   }
 
   void _deallocateMemory() async {
@@ -483,15 +436,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (null != _videoPlayerController) {
-      //TODO
       _videoPlayerController = null;
-
-      // if (_videoPlayerController!.value.isPlaying) {
-      //   _videoPlayerController!.pause();
-      // }
-
-      // await _videoPlayerController!.dispose();
-      // _simulatorTestProvider!.setPlayController(null);
     }
   }
 
@@ -742,9 +687,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _reviewingQuestionList[_simulatorTestProvider!.reviewingCurrentIndex];
     if (item is String) {
       _simulatorTestProvider!.setIsReviewingPlayAnswer(false);
-      _initVideoController(
-          fileName: item,
-          handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
+
+      //TODO
+      // _initVideoController(
+      //     fileName: item,
+      //     handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
     }
   }
 
@@ -754,9 +701,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playTheQuestionBeforePlayTheAnswer(String fileName) {
-    _initVideoController(
-        fileName: fileName,
-        handleWhenFinishType: HandleWhenFinish.reviewingPlayTheQuestionType);
+    //TODO
+    // _initVideoController(
+    //     fileName: fileName,
+    //     handleWhenFinishType: HandleWhenFinish.reviewingPlayTheQuestionType);
   }
 
   void _playTheAnswerOfQuestion(QuestionTopicModel question) async {
@@ -776,9 +724,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _reviewingQuestionList[_simulatorTestProvider!.reviewingCurrentIndex];
     if (item is String) {
       _simulatorTestProvider!.setIsReviewingPlayAnswer(false);
-      _initVideoController(
-          fileName: item,
-          handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
+
+      //TODO
+      // _initVideoController(
+      //     fileName: item,
+      //     handleWhenFinishType: HandleWhenFinish.reviewingVideoType);
     } else if (item is QuestionTopicModel) {
       _playReviewingQuestionAndAnswer(item);
     }
@@ -860,7 +810,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           {
             //For part 2
             if (kDebugMode) {
-              print("DEBUG: onPlayEndOfTakeNoteFile(fileName)");
+              print("DEBUG: onPlayEndOfTakeNote(fileName)");
             }
             break;
           }
@@ -889,19 +839,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         question.numPart = topicModel.numPart;
         _currentQuestion = question;
 
-        if (question.files.isEmpty) {
-          if (kDebugMode) {
-            print("DEBUG: This is DATA ERROR");
-          }
-        } else {
-          FileTopicModel file = question.files.first;
-
-          //Start initialize video
-          _initVideoController(
-            fileName: file.url,
-            handleWhenFinishType: HandleWhenFinish.questionVideoType,
-          );
-        }
+        //Play next video
+        _playingIndex++;
+        _initVideoController();
       }
     }
   }
@@ -911,10 +851,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.removeTopicsQueueFirst();
     _simulatorTestProvider!.resetIndexOfCurrentQuestion();
 
-    //No part for next play
-    //Finish the test
+    _playingIndex++;
     if (_simulatorTestProvider!.topicsQueue.isEmpty) {
-      //TODO: Finish the test
+      //No part for next play
       _prepareToEndTheTest();
     } else {
       _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
@@ -970,13 +909,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             print("DEBUG: This is DATA ERROR");
           }
         } else {
-          FileTopicModel file = question.files.first;
-
-          //Start initialize video
-          _initVideoController(
-            fileName: file.url,
-            handleWhenFinishType: HandleWhenFinish.followupVideoType,
-          );
+          _playingIndex++;
+          _initVideoController();
         }
       }
     }
@@ -1006,88 +940,134 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return false;
   }
 
-  Future<void> _initVideoController({
+  void _prepareToRecordAnswer({
     required String fileName,
-    required HandleWhenFinish handleWhenFinishType,
-  }) async {
+    required bool isPart2,
+  }) {
+    if (isPart2) {
+      //Has Cue Card case
+      _simulatorTestProvider!.setVisibleRecord(false);
+      _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+
+      int time = 3; //3 for test, 60 for product
+      String timeString = Utils.getTimeRecordString(time);
+      _simulatorTestProvider!.setCountDownCueCard(timeString);
+
+      _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
+        context: context,
+        count: time,
+        isPart2: false,
+      );
+      _simulatorTestProvider!.setVisibleCueCard(true);
+    } else {
+      TopicModel? topicModel = _getCurrentPart();
+      List<QuestionTopicModel> questionList = topicModel!.questionList;
+      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+      QuestionTopicModel question = questionList.elementAt(index);
+      question.numPart = topicModel.numPart;
+      _currentQuestion = question;
+
+      _startRecordAnswer(fileName: fileName, isPart2: isPart2);
+    }
+
+    if (_countRepeat == 0) {
+      _calculateIndexOfHeader();
+    }
+  }
+
+  void _checkStatusWhenFinishVideo() {
+    FileTopicModel current =
+        _simulatorTestProvider!.listVideoSource[_playingIndex];
+    //Check type of video
+    switch (current.fileTopicType) {
+      case FileTopicType.introduce:
+        {
+          // _playNextVideo();
+          TopicModel? topicModel = _getCurrentPart();
+          if (null != topicModel) {
+            if (topicModel.numPart == PartOfTest.part3.get) {
+              _startToPlayFollowup();
+            } else {
+              _startToPlayQuestion();
+            }
+          }
+          break;
+        }
+      case FileTopicType.question:
+        {
+          //prepare to record answer
+          bool isPart2 = current.numPart == PartOfTest.part2.get;
+          _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
+          break;
+        }
+      case FileTopicType.answer:
+      case FileTopicType.followup:
+        {
+          _startRecordAnswer(fileName: current.url, isPart2: false);
+          if (_countRepeat == 0) {
+            _calculateIndexOfHeader();
+          }
+          break;
+        }
+      case FileTopicType.end_of_take_note:
+        {
+          _startRecordAnswer(fileName: current.url, isPart2: true);
+          break;
+        }
+      case FileTopicType.end_of_test:
+        {
+          _prepareToEndTheTest();
+          break;
+        }
+      case FileTopicType.none:
+        {
+          break;
+        }
+    }
+  }
+
+  Future<void> _initVideoController() async {
+    FileTopicModel currentPlayingFile =
+        _simulatorTestProvider!.listVideoSource[_playingIndex];
     if (kDebugMode) {
-      print("DEBUG: playing: ======file = $fileName");
+      print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
     }
 
+    //Remove old listener
     if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
-      // _videoPlayerController = null;
-      _videoPlayerController!.onPlaybackEnded.removeListener(() => _checkVideo(_oldFileName, _oldHandleWhenFinish));
+      _videoPlayerController!.onPlaybackEnded
+          .removeListener(_checkStatusWhenFinishVideo);
     }
-    
-    _videoPlayerController!.onPlaybackEnded.addListener((() => _checkVideo(fileName, handleWhenFinishType)));
-    
-    _oldFileName = fileName;
-    _oldHandleWhenFinish = handleWhenFinishType;
 
-    if (fileName == _simulatorTestProvider!.videoSources[0].path) {
+    //Add new listener
+    _videoPlayerController!.onPlaybackEnded
+        .addListener(_checkStatusWhenFinishVideo);
+
+    if (_playingIndex == 0) {
       _videoPlayerController!.play();
     } else {
       if (_countRepeat != 0) {
         _videoPlayerController!.setPlaybackSpeed(0.9);
       }
 
-      _createVideoSource(fileName).then((value) async {
+      _createVideoSource(currentPlayingFile.url).then((value) async {
         _videoPlayerController!.loadVideoSource(value).then((_) {
           _videoPlayerController!.play();
         });
       });
-    }
 
-    if (handleWhenFinishType == HandleWhenFinish.introVideoType ||
-        handleWhenFinishType == HandleWhenFinish.endOfTestVideoType ||
-        handleWhenFinishType == HandleWhenFinish.cueCardVideoType) {
-      _reviewingList.add(fileName);
-    } else {
-      if (null != _currentQuestion) {
-        if (!_checkExist(_currentQuestion!)) {
-          _reviewingList.add(_currentQuestion!); //Add file
+      if (currentPlayingFile.fileTopicType == FileTopicType.introduce ||
+          currentPlayingFile.fileTopicType == FileTopicType.end_of_test ||
+          currentPlayingFile.fileTopicType == FileTopicType.end_of_take_note) {
+        _reviewingList.add(currentPlayingFile.url);
+      } else {
+        if (null != _currentQuestion) {
+          if (!_checkExist(_currentQuestion!)) {
+            _reviewingList.add(_currentQuestion!); //Add file
+          }
         }
       }
     }
-
-    //Dispose old video play controller before create new one
-    //TODO
-    // if (null != _simulatorTestProvider!.videoPlayController) {
-    //   _simulatorTestProvider!.videoPlayController!.dispose();
-    //   _simulatorTestProvider!.setPlayController(null);
-    // }
-
-    //TODO
-    // Utils.prepareVideoFile(fileName).then((value) {
-    //   if (kDebugMode) {
-    //     print("DEBUG: Playing ---- $fileName");
-    //   }
-
-    //Initialize new player for new video
-    //TODO
-    // _videoPlayerController = VideoPlayerController.file(value)
-    //   ..initialize().then((value) {
-    //     _simulatorTestProvider!.setIsLoadingVideo(false);
-    //     if (_countRepeat != 0) {
-    //       _videoPlayerController!.setPlaybackSpeed(0.9);
-    //     }
-    //     _videoPlayerController!.play();
-
-    //     if (ReviewingStatus.none == _simulatorTestProvider!.reviewingStatus) {
-    //       Future.delayed(const Duration(milliseconds: 1), () {
-    //         _videoPlayerController!.pause();
-    //       });
-    //     }
-
-    //     if (null != _videoPlayerController) {
-    //       _simulatorTestProvider!.setPlayController(_videoPlayerController!);
-    //     }
-
-    //     _videoPlayerController!
-    //         .addListener((() => _checkVideo(fileName, handleWhenFinishType)));
-    //   })
-    //   ..setLooping(false);
-    // });
   }
 
   Future<void> _stopRecord() async {
@@ -1238,91 +1218,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           break;
         }
     }
-
-    // if (null != _simulatorTestProvider!.videoPlayController) {
-    //   if (_simulatorTestProvider!.videoPlayController!.value.position ==
-    //       _simulatorTestProvider!.videoPlayController!.value.duration) {
-    //     _simulatorTestProvider!.videoPlayController!.pause();
-
-    //     switch (handleWhenFinishType) {
-    //       case HandleWhenFinish.questionVideoType:
-    //         {
-    //           if (_currentQuestion!.cueCard.isNotEmpty &&
-    //               (false == _simulatorTestProvider!.visibleCueCard)) {
-    //             //Has Cue Card case
-    //             _simulatorTestProvider!.setVisibleRecord(false);
-    //             _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
-
-    //             int time = 3; //3 for test, 60 for product
-    //             String timeString = Utils.getTimeRecordString(time);
-    //             _simulatorTestProvider!.setCountDownCueCard(timeString);
-
-    //             _countDownCueCard =
-    //                 _testRoomPresenter!.startCountDownForCueCard(
-    //               context: context,
-    //               count: time,
-    //               isPart2: false,
-    //             );
-    //             _simulatorTestProvider!.setVisibleCueCard(true);
-    //           } else {
-    //             //Normal case
-    //             if (false == _simulatorTestProvider!.visibleRecord &&
-    //                 false == _simulatorTestProvider!.visibleCueCard) {
-    //               _startRecordAnswer(fileName: fileName, isPart2: false);
-    //             }
-    //           }
-
-    //           if (_countRepeat == 0) {
-    //             _calculateIndexOfHeader();
-    //           }
-
-    //           break;
-    //         }
-    //       case HandleWhenFinish.introVideoType:
-    //         {
-    //           TopicModel? topicModel = _getCurrentPart();
-    //           if (null != topicModel) {
-    //             if (topicModel.numPart == PartOfTest.part3.get) {
-    //               _startToPlayFollowup();
-    //             } else {
-    //               _startToPlayQuestion();
-    //             }
-    //           }
-    //           break;
-    //         }
-    //       case HandleWhenFinish.cueCardVideoType:
-    //         {
-    //           _startRecordAnswer(fileName: fileName, isPart2: true);
-    //           break;
-    //         }
-    //       case HandleWhenFinish.followupVideoType:
-    //         {
-    //           _startRecordAnswer(fileName: fileName, isPart2: false);
-    //           if (_countRepeat == 0) {
-    //             _calculateIndexOfHeader();
-    //           }
-    //           break;
-    //         }
-    //       case HandleWhenFinish.endOfTestVideoType:
-    //         {
-    //           _prepareToEndTheTest();
-    //           break;
-    //         }
-    //       case HandleWhenFinish.reviewingVideoType:
-    //         {
-    //           _reviewingProcess();
-    //           break;
-    //         }
-    //       case HandleWhenFinish.reviewingPlayTheQuestionType:
-    //         {
-    //           QuestionTopicModel question =
-    //               _reviewingList[_simulatorTestProvider!.reviewingCurrentIndex];
-    //           _playTheAnswerOfQuestion(question);
-    //           break;
-    //         }
-    //     }
-    //   }
-    // }
   }
 
   void _reviewingProcess() {
@@ -1540,7 +1435,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           isRepeat: false,
         );
 
-        _playNextQuestion();
+        // _playNextQuestion();
+        _playNextPart();
       } else {
         //Start to play end_of_take_note video
         Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
@@ -1580,32 +1476,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onPlayEndOfTakeNoteFile(String fileName) {
+  void onPlayEndOfTakeNote(String fileName) {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _initVideoController(
-        fileName: fileName,
-        handleWhenFinishType: HandleWhenFinish.cueCardVideoType,
-      );
+      _playingIndex++;
+      _initVideoController();
     }
   }
 
   @override
   void onPlayEndOfTest(String fileName) {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _initVideoController(
-        fileName: fileName,
-        handleWhenFinishType: HandleWhenFinish.endOfTestVideoType,
-      );
+      _playingIndex++;
+      _initVideoController();
     }
   }
 
   @override
-  void onPlayIntroduceFile(String fileName) {
+  void onPlayIntroduce() {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _initVideoController(
-        fileName: fileName,
-        handleWhenFinishType: HandleWhenFinish.introVideoType,
-      );
+      _initVideoController();
     }
   }
 

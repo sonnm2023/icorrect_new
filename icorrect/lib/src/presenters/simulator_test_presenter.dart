@@ -35,7 +35,8 @@ abstract class SimulatorTestViewContract {
   void onTryAgainToDownload();
   void onHandleBackButtonSystemTapped();
   void onHandleEventBackButtonSystem({required bool isQuitTheTest});
-  void onPrepareListOfVideoPaths(List<FileTopicModel> filesTopic);
+  // void onPrepareListOfVideoPaths(List<FileTopicModel> filesTopic); //TODO
+  void onPrepareListVideoSource(List<FileTopicModel> filesTopic); //TODO
 }
 
 class SimulatorTestPresenter {
@@ -98,10 +99,13 @@ class SimulatorTestPresenter {
 
         _prepareTopicList(tempTestDetailModel);
 
+        //Save file info for re download
+        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
+
+        _view!.onPrepareListVideoSource(filesTopic!);
+
         List<FileTopicModel> tempFilesTopic =
             _prepareFileTopicListForDownload(tempTestDetailModel);
-
-        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
 
         downloadFiles(tempTestDetailModel, tempFilesTopic);
 
@@ -179,24 +183,46 @@ class SimulatorTestPresenter {
   List<FileTopicModel> getAllFilesOfTopic(TopicModel topic) {
     List<FileTopicModel> allFiles = [];
     //Add introduce file
-    allFiles.addAll(topic.files);
-
-    //Add question files
-    for (QuestionTopicModel q in topic.questionList) {
-      allFiles.add(q.files.first);
-      allFiles.addAll(q.answers);
+    for (FileTopicModel file in topic.files) {
+      file.numPart = topic.numPart;
+      file.fileTopicType = FileTopicType.introduce;
+      allFiles.add(file);
     }
 
     for (QuestionTopicModel q in topic.followUp) {
+      q.files.first.fileTopicType = FileTopicType.followup;
+      q.files.first.numPart = topic.numPart;
       allFiles.add(q.files.first);
-      allFiles.addAll(q.answers);
+
+      for (FileTopicModel a in q.answers) {
+        a.numPart = topic.numPart;
+        a.fileTopicType = FileTopicType.answer;
+        allFiles.add(a);
+      }
+    }
+
+    //Add question files
+    for (QuestionTopicModel q in topic.questionList) {
+      q.files.first.fileTopicType = FileTopicType.question;
+      q.files.first.numPart = topic.numPart;
+      allFiles.add(q.files.first);
+
+      for (FileTopicModel a in q.answers) {
+        a.numPart = topic.numPart;
+        a.fileTopicType = FileTopicType.answer;
+        allFiles.add(a);
+      }
     }
 
     if (topic.endOfTakeNote.url.isNotEmpty) {
+      topic.endOfTakeNote.fileTopicType = FileTopicType.end_of_take_note;
+      topic.endOfTakeNote.numPart = topic.numPart;
       allFiles.add(topic.endOfTakeNote);
     }
 
     if (topic.fileEndOfTest.url.isNotEmpty) {
+      topic.fileEndOfTest.fileTopicType = FileTopicType.end_of_test;
+      topic.fileEndOfTest.numPart = topic.numPart;
       allFiles.add(topic.fileEndOfTest);
     }
 
@@ -210,7 +236,7 @@ class SimulatorTestPresenter {
   Future downloadFiles(
       TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
 
-    _view!.onPrepareListOfVideoPaths(filesTopic);
+    // _view!.onPrepareListOfVideoPaths(filesTopic); //TODO
     
     if (null != dio) {
       loop:
@@ -374,7 +400,7 @@ class SimulatorTestPresenter {
     required List<QuestionTopicModel> questions,
   }) async {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
-
+    
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -394,7 +420,8 @@ class SimulatorTestPresenter {
     } else {
       formData.addEntries([const MapEntry('os', "ios")]);
     }
-    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+    String appVersion = await Utils.getAppVersion();
+    formData.addEntries([MapEntry('app_version', appVersion)]);
 
     for (QuestionTopicModel q in questions) {
       String part = '';
@@ -432,13 +459,12 @@ class SimulatorTestPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        String path =
-            "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+        String path = "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
         File audioFile = File(path);
 
         if (await audioFile.exists()) {
-          request.files.add(
-              await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          request.files
+              .add(await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
     }
@@ -447,6 +473,86 @@ class SimulatorTestPresenter {
 
     return request;
   }
+
+  // Future<http.MultipartRequest> _formDataRequest({
+  //   required String testId,
+  //   required String activityId,
+  //   required List<QuestionTopicModel> questions,
+  // }) async {
+  //   Directory appDocDirectory = await getApplicationDocumentsDirectory();
+
+  //   String url = submitHomeWorkV2EP();
+  //   http.MultipartRequest request =
+  //       http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+  //   request.headers.addAll({
+  //     'Content-Type': 'multipart/form-data',
+  //     'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+  //   });
+
+  //   Map<String, String> formData = {};
+
+  //   formData.addEntries([MapEntry('test_id', testId)]);
+  //   formData.addEntries([MapEntry('activity_id', activityId)]);
+  //   formData.addEntries([const MapEntry('is_update', '0')]);
+
+  //   if (Platform.isAndroid) {
+  //     formData.addEntries([const MapEntry('os', "android")]);
+  //   } else {
+  //     formData.addEntries([const MapEntry('os', "ios")]);
+  //   }
+  //   formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+
+  //   for (QuestionTopicModel q in questions) {
+  //     String part = '';
+  //     switch (q.numPart) {
+  //       case 0:
+  //         {
+  //           part = "introduce";
+  //           break;
+  //         }
+  //       case 1:
+  //         {
+  //           part = "part1";
+  //           break;
+  //         }
+  //       case 2:
+  //         {
+  //           part = "part2";
+  //           break;
+  //         }
+  //       case 3:
+  //         {
+  //           part = "part3";
+  //           if (q.isFollowUp == 1) {
+  //             part = "followup";
+  //           }
+  //           break;
+  //         }
+  //     }
+
+  //     String prefix = "$part[${q.id}]";
+
+  //     List<MapEntry<String, String>> temp = _generateFormat(q, prefix);
+  //     if (temp.isNotEmpty) {
+  //       formData.addEntries(temp);
+  //     }
+
+  //     for (int i = 0; i < q.answers.length; i++) {
+  //       String path =
+  //           "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+  //       File audioFile = File(path);
+
+  //       if (await audioFile.exists()) {
+  //         request.files.add(
+  //             await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+  //       }
+  //     }
+  //   }
+
+  //   request.fields.addAll(formData);
+
+  //   return request;
+  // }
 
   void handleEventBackButtonSystem({required bool isQuitTheTest}) {
     _view!.onHandleEventBackButtonSystem(isQuitTheTest: isQuitTheTest);

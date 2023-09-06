@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
 TestDetailModel testDetailModelFromJson(String str) =>
@@ -98,7 +99,13 @@ class TestDetailModel {
     _updateAt = json['updated_at'];
     _hasOrder = json['has_order'];
     _part2 = json['part2'] != null ? TopicModel.fromJson(json['part2']) : null;
+    if (_part2 != null) {
+      _part2!.numPart = PartOfTest.part2.get;
+    }
     _part3 = json['part3'] != null ? TopicModel.fromJson(json['part3']) : null;
+    if (_part3 != null) {
+      _part3!.numPart = PartOfTest.part3.get;
+    }
   }
 
   Map<String, dynamic> toJson() {

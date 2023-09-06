@@ -20,8 +20,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 abstract class TestRoomViewContract {
-  void onPlayIntroduceFile(String fileName);
-  void onPlayEndOfTakeNoteFile(String fileName);
+  void onPlayIntroduce();
+  void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
   void onCountDown(String countDownString);
   void onCountDownForCueCard(String countDownString);
@@ -54,7 +54,7 @@ class TestRoomPresenter {
       FileTopicModel file = files.first;
       bool isExist = await FileStorageHelper.checkExistFile(file.url, MediaType.video, null);
       if (isExist) {
-        _view!.onPlayIntroduceFile(file.url);
+        _view!.onPlayIntroduce();
       } else {
         //TODO: Download again
         _view!.onReDownload();
@@ -128,7 +128,7 @@ class TestRoomPresenter {
     if (fileName.isNotEmpty) {
       bool isExist = await FileStorageHelper.checkExistFile(fileName, MediaType.video, null);
       if (isExist) {
-        _view!.onPlayEndOfTakeNoteFile(fileName);
+        _view!.onPlayEndOfTakeNote(fileName);
       } else {
         //TODO: download again
         _view!.onReDownload();
@@ -250,7 +250,8 @@ class TestRoomPresenter {
     } else {
       formData.addEntries([const MapEntry('os', "ios")]);
     }
-    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+    String appVersion = await Utils.getAppVersion();
+    formData.addEntries([MapEntry('app_version', appVersion)]);
 
     for (QuestionTopicModel q in questions) {
       String part = '';
