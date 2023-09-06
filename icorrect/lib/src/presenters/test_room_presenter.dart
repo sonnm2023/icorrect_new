@@ -52,7 +52,8 @@ class TestRoomPresenter {
     List<FileTopicModel> files = topicModel.files;
     if (files.isNotEmpty) {
       FileTopicModel file = files.first;
-      bool isExist = await FileStorageHelper.checkExistFile(file.url, MediaType.video, null);
+      bool isExist = await FileStorageHelper.checkExistFile(
+          file.url, MediaType.video, null);
       if (isExist) {
         _view!.onPlayIntroduce();
       } else {
@@ -126,7 +127,8 @@ class TestRoomPresenter {
     String fileName = topic.endOfTakeNote.url;
 
     if (fileName.isNotEmpty) {
-      bool isExist = await FileStorageHelper.checkExistFile(fileName, MediaType.video, null);
+      bool isExist = await FileStorageHelper.checkExistFile(
+          fileName, MediaType.video, null);
       if (isExist) {
         _view!.onPlayEndOfTakeNote(fileName);
       } else {
@@ -155,7 +157,8 @@ class TestRoomPresenter {
     String fileName = topic.fileEndOfTest.url;
 
     if (fileName.isNotEmpty) {
-      bool isExist = await FileStorageHelper.checkExistFile(fileName, MediaType.video, null);
+      bool isExist = await FileStorageHelper.checkExistFile(
+          fileName, MediaType.video, null);
       if (isExist) {
         _view!.onPlayEndOfTest(fileName);
       } else {
@@ -194,8 +197,10 @@ class TestRoomPresenter {
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         if (json['error_code'] == 200) {
-          ActivityAnswer activityAnswer = ActivityAnswer.fromJson(json['data']['activities_answer']);
-          _view!.onSubmitTestSuccess('Save your answers successfully!', activityAnswer);
+          ActivityAnswer activityAnswer =
+              ActivityAnswer.fromJson(json['data']['activities_answer']);
+          _view!.onSubmitTestSuccess(
+              'Save your answers successfully!', activityAnswer);
         } else {
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
@@ -230,7 +235,7 @@ class TestRoomPresenter {
     required List<QuestionTopicModel> questions,
   }) async {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    
+
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -289,12 +294,13 @@ class TestRoomPresenter {
       }
 
       for (int i = 0; i < q.answers.length; i++) {
-        String path = "${appDocDirectory.path}/${q.answers.elementAt(i).url.toString()}.wav";
+        String path = await FileStorageHelper.getFilePath(
+            q.answers.elementAt(i).url.toString(), MediaType.audio, testId);
         File audioFile = File(path);
 
         if (await audioFile.exists()) {
-          request.files
-              .add(await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          request.files.add(
+              await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
     }
