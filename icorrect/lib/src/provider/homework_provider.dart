@@ -313,7 +313,8 @@ class HomeWorkProvider with ChangeNotifier {
     }
 
     String str =
-        'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1}) status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
+        'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1})'
+        ' status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
     updateFilterString(str);
     updateProcessingStatus();
   }

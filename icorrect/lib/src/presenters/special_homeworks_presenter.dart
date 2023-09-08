@@ -28,7 +28,7 @@ class SpecialHomeworksPresenter {
         .getSpecialHomeWorks(email, activityId, status, example)
         .then((value) {
       Map<String, dynamic> dataMap = jsonDecode(value) ?? [];
-
+      print("Map<String, dynamic> dataMap: ${dataMap.toString()}");
       if (dataMap.isNotEmpty) {
         if (dataMap['error_code'] == 200) {
           List<StudentResultModel> results =

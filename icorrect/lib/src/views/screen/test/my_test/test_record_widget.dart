@@ -30,7 +30,7 @@ class TestRecordWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              width: w*0.8,
+              width: w * 0.8,
               height: CustomSize.size_200,
               alignment: Alignment.center,
               color: AppColor.defaultGraySlightColor,

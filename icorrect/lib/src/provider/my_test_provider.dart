@@ -100,13 +100,13 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
-  bool _playAnswer = false;
-  String _questionId = '';
-  String get questionId => _questionId;
+  int _indexAudio = 0;
+  int _questionId = 0;
+  int get questionId => _questionId;
 
-  bool get playAnswer => _playAnswer;
-  void setPlayAnswer(bool visible, String questionId) {
-    _playAnswer = visible;
+  int get indexAudio => _indexAudio;
+  void setPlayAnswer(int indexAudio, int questionId) {
+    _indexAudio = indexAudio;
     _questionId = questionId;
     if (!isDisposed) {
       notifyListeners();

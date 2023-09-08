@@ -165,13 +165,12 @@ class Utils {
       //Can server tra ve time hien tai - de thong nhat, do phai check timezone
       //End time > time hien tai ==> out of date
       //End time < time hien tai ==> Not Complete
-      return {
+      return { 
         'title': 'Not Completed',
         'color': const Color.fromARGB(255, 237, 179, 3)
       };
     } else {
-      if (homeWorkModel.activityAnswer!.aiOrder != 0 ||
-          homeWorkModel.activityAnswer!.orderId != 0) {
+      if (homeWorkModel.activityAnswer!.orderId != 0) {
         return {
           'title': 'Corrected',
           'color': const Color.fromARGB(255, 12, 201, 110)
@@ -211,7 +210,7 @@ class Utils {
   static String haveAiResponse(ActivitiesModel homeWorkModel) {
     if (null != homeWorkModel.activityAnswer) {
       if (homeWorkModel.activityAnswer!.aiResponseLink.isNotEmpty) {
-        return "& AI Scored";
+        return "AI Scored";
       } else {
         return '';
       }
@@ -255,7 +254,7 @@ class Utils {
 
   static String convertFileName(String nameFile) {
     String letter = '/';
-    String newLetter = '-';
+    String newLetter = '_slash_';
     if (nameFile.contains(letter)) {
       nameFile = nameFile.replaceAll(letter, newLetter);
     }
@@ -264,7 +263,7 @@ class Utils {
   }
 
   static String reConvertFileName(String nameFile) {
-    String letter = '-';
+    String letter = '_slash_';
     String newLetter = '/';
     if (nameFile.contains(letter)) {
       nameFile = nameFile.replaceAll(letter, newLetter);
@@ -298,7 +297,7 @@ class Utils {
 
   static Future<File> prepareVideoFile(String fileName) async {
     String filePath =
-    await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+        await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
     return File(filePath);
 
     // File decodedVideoFile;
@@ -391,7 +390,7 @@ class Utils {
       fileName = question.answers.first.url;
     }
     String path =
-    await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
     return path;
   }
 

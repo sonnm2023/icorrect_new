@@ -292,7 +292,7 @@ class SimulatorTestPresenter {
               break loop;
             } on http.ClientException {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
-              //Download again
+              //Download again 
               reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             }

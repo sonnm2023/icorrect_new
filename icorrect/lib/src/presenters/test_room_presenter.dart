@@ -172,48 +172,6 @@ class TestRoomPresenter {
     }
   }
 
-   void recodingUserDoesTestListener(
-      {required TopicModel randomTopic,
-      required TopicModel currentTopic,
-      required QuestionTopicModel currentQuestion,
-      required Function startRecordingVideo,
-      required Function stopRecordingVideo}) {
-    print("DEBUG: part Topic : ${randomTopic.numPart.toString()}");
-    if (_canStartRecording(randomTopic, currentTopic)) {
-      startRecordingVideo();
-    }
-    List<QuestionTopicModel> questions = randomTopic.questionList;
-    QuestionTopicModel question = _questionForStopRecording(questions);
-    if (_isStopRecodingVideo(currentQuestion, question)) {
-      stopRecordingVideo();
-    }
-  }
-
-  TopicModel getTopicModelRandom({required List<TopicModel> topicsList}) {
-    Random random = Random();
-    int randomIndex = random.nextInt(topicsList.length);
-
-    return topicsList.elementAt(randomIndex);
-  }
-
-  bool _canStartRecording(TopicModel randomTopic, TopicModel currentTopic) {
-    return randomTopic.id == currentTopic.id;
-  }
-
-  final _limitedMaxQuestion = 3;
-  QuestionTopicModel _questionForStopRecording(
-      List<QuestionTopicModel> questions) {
-    return (questions.length - 1 >= _limitedMaxQuestion)
-        ? questions[_limitedMaxQuestion]
-        : questions[questions.length - 1];
-  }
-
-  bool _isStopRecodingVideo(
-      QuestionTopicModel currentQuestion, QuestionTopicModel questionLimited) {
-    return currentQuestion != QuestionTopicModel() &&
-        currentQuestion.id == questionLimited.id;
-  }
-
 
   Future<void> submitTest({
     required String testId,

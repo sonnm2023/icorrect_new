@@ -402,15 +402,6 @@ class SimulatorTestProvider with ChangeNotifier {
   }
   /*================================= Record =================================*/
 
-  TopicModel _topicRandom = TopicModel();
-  TopicModel get topicRandom => _topicRandom;
-  void setTopicRandom(TopicModel random) {
-    _topicRandom = random;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
   Queue<TopicModel> get topicsQueue => _topicsQueue;
   void setTopicsQueue(Queue<TopicModel> queue) {
@@ -506,7 +497,6 @@ class SimulatorTestProvider with ChangeNotifier {
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
-    _topicRandom = TopicModel();
     _startDoingTest = false;
     resetTopicsQueue();
     clearQuestionList();

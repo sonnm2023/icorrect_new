@@ -44,7 +44,8 @@ enum Status {
   highLight(1),
   others(0),
   hadScore(1),
-  allHomework(2);
+  allHomework(2),
+  playOff(10);
 
   const Status(this.get);
 
@@ -222,10 +223,8 @@ class GlobalScaffoldKey {
   static final simulatorTestScaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'SimulatorTestScaffoldKey');
   static final practiceScreenScaffoldKey =
-  GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
+      GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
 }
-
-
 
 class FontsSize {
   static const double fontSize_8 = 8.0;
