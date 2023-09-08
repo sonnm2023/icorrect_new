@@ -224,6 +224,11 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void onLoginComplete() {
     _authProvider.updateProcessingStatus();
+
+    //Reset textfield controllers
+    emailController.text = "";
+    passwordController.text = "";
+
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const HomeWorkScreen()),
     );
