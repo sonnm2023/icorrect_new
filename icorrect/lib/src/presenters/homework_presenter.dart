@@ -49,13 +49,17 @@ class HomeWorkPresenter {
 
     _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
-      if (kDebugMode) {
-        print(jsonEncode(dataMap).toString());
-      }
       if (dataMap['error_code'] == 200) {
         List<NewClassModel> classes =
             await _generateListNewClass(dataMap['data']);
         List<ActivitiesModel> homeworks = await _generateListHomeWork(classes);
+
+        if (kDebugMode) {
+          print("DEBUG: Homework: getListHomeWork class: ${classes.length}");
+          print(
+              "DEBUG: Homework: getListHomeWork homework: ${homeworks.length}");
+        }
+        
         _view!.onGetListHomeworkComplete(homeworks, classes);
       } else {
         _view!.onGetListHomeworkError(

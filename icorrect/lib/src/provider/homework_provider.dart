@@ -12,29 +12,12 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
 class HomeWorkProvider with ChangeNotifier {
-  bool isDisposed = false;
-
-  @override
-  void dispose() {
-    super.dispose();
-    isDisposed = true;
-  }
-
-  @override
-  void notifyListeners() {
-    if (!isDisposed) {
-      super.notifyListeners();
-    }
-  }
-
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
   void updateProcessingStatus() {
     _isProcessing = !_isProcessing;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   String _filterString = 'Add your filter!';
@@ -48,10 +31,10 @@ class HomeWorkProvider with ChangeNotifier {
   Future<void> setListHomeWorks(List<ActivitiesModel> list) async {
     if (_listHomeWorks.isNotEmpty) _listHomeWorks.clear();
     _listHomeWorks.addAll(list);
+  }
 
-    if (!isDisposed) {
-      notifyListeners();
-    }
+  void resetListHomeworks() {
+    _listHomeWorks.clear();
   }
 
   //List homework after filter
@@ -61,9 +44,11 @@ class HomeWorkProvider with ChangeNotifier {
     _listFilteredHomeWorks.clear();
     _listFilteredHomeWorks.addAll(list);
 
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    notifyListeners();
+  }
+
+  void resetListFilteredHomeWorks() {
+    _listFilteredHomeWorks.clear();
   }
 
   final List<NewClassModel> _listClassForFilter = [];
@@ -72,10 +57,10 @@ class HomeWorkProvider with ChangeNotifier {
     if (_listClassForFilter.isNotEmpty) _listClassForFilter.clear();
     _listClassForFilter.add(NewClassModel.fromJson(FilterJsonData.selectAll));
     _listClassForFilter.addAll(list);
+  }
 
-    if (!isDisposed) {
-      notifyListeners();
-    }
+  void resetListClassForFilter() {
+    _listClassForFilter.clear();
   }
 
   //List status (original) for filtering
@@ -95,22 +80,19 @@ class HomeWorkProvider with ChangeNotifier {
   void setListSelectedClassFilter(List<NewClassModel> list) {
     _listSelectedClassFilter.clear();
     _listSelectedClassFilter.addAll(list);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   //List selected class
   final List<HomeWorkStatusModel> _listSelectedStatusFilter = [];
-  List<HomeWorkStatusModel> get listSelectedStatusFilter => _listSelectedStatusFilter;
+  List<HomeWorkStatusModel> get listSelectedStatusFilter =>
+      _listSelectedStatusFilter;
   void setListSelectedStatusFilter(List<HomeWorkStatusModel> list) {
     _listSelectedStatusFilter.clear();
     _listSelectedStatusFilter.addAll(list);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   //Current user information
@@ -118,34 +100,30 @@ class HomeWorkProvider with ChangeNotifier {
   UserDataModel get currentUser => _currentUser;
   void setCurrentUser(UserDataModel user) {
     _currentUser = user;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   void addSelectedClass(NewClassModel c) {
     if (!_checkClassExits(c)) {
       _listSelectedClassFilter.add(c);
-
-      if (!isDisposed) {
-        notifyListeners();
-      }
+      
+      notifyListeners();
     }
   }
 
   void removeSelectedClass(NewClassModel c) {
     _listSelectedClassFilter.remove(c);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   bool _checkClassExits(NewClassModel c) {
     if (_listSelectedClassFilter.isEmpty) return false;
 
-    bool hasSelectAll = _listSelectedClassFilter.map((e) => e.id).contains(listClassForFilter.first.id);
+    bool hasSelectAll = _listSelectedClassFilter
+        .map((e) => e.id)
+        .contains(listClassForFilter.first.id);
     bool hasContain = _listSelectedClassFilter.map((e) => e.id).contains(c.id);
     if (hasSelectAll || hasContain) {
       return true;
@@ -157,25 +135,23 @@ class HomeWorkProvider with ChangeNotifier {
   void addSelectedStatus(HomeWorkStatusModel s) {
     if (!_checkStatusExits(s)) {
       _listSelectedStatusFilter.add(s);
-
-      if (!isDisposed) {
-        notifyListeners();
-      }
+      
+      notifyListeners();
     }
   }
 
   void removeSelectedStatus(HomeWorkStatusModel s) {
     _listSelectedStatusFilter.remove(s);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   bool _checkStatusExits(HomeWorkStatusModel s) {
     if (_listSelectedStatusFilter.isEmpty) return false;
 
-    bool hasSelectAll = _listSelectedStatusFilter.map((e) => e.id).contains(listStatusForFilter.first.id);
+    bool hasSelectAll = _listSelectedStatusFilter
+        .map((e) => e.id)
+        .contains(listStatusForFilter.first.id);
     bool hasContain = _listSelectedStatusFilter.map((e) => e.id).contains(s.id);
     if (hasSelectAll || hasContain) {
       return true;
@@ -192,10 +168,8 @@ class HomeWorkProvider with ChangeNotifier {
       _listSelectedStatusFilter.clear();
       _listSelectedStatusFilter.addAll(listStatusForFilter);
     }
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   void clearAllSelected(SelectType type) {
@@ -204,33 +178,35 @@ class HomeWorkProvider with ChangeNotifier {
     } else {
       _listSelectedStatusFilter.clear();
     }
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   Future<void> initializeListFilter() async {
-    await getListSelectedFilterFromLocal();
-    if (listSelectedClassFilter.isEmpty && listSelectedStatusFilter.isEmpty) {
-      setListSelectedFilterIntoLocal();
-    }
-    filterHomeWork();
+    getListSelectedFilterFromLocal().then((value) {
+      if (listSelectedClassFilter.isEmpty && listSelectedStatusFilter.isEmpty) {
+        setListSelectedFilterIntoLocal();
+      }
+      filterHomeWork();
+    });
   }
 
   Future<void> getListSelectedFilterFromLocal() async {
-    String jsonString1 = await AppSharedPref.instance().getString(key: AppSharedKeys.listClassFilter);
+    String jsonString1 = await AppSharedPref.instance()
+        .getString(key: AppSharedKeys.listClassFilter);
     if (jsonString1.isNotEmpty) {
       Iterable temp = jsonDecode(jsonString1);
-      // List<ClassModel> temp1 = List<ClassModel>.from(temp.map((e) => ClassModel.fromJson(e)));
-      List<NewClassModel> temp1 = List<NewClassModel>.from(temp.map((e) => NewClassModel.fromJson(e)));
+      List<NewClassModel> temp1 =
+          List<NewClassModel>.from(temp.map((e) => NewClassModel.fromJson(e)));
       setListSelectedClassFilter(temp1);
     }
 
-    String jsonString2 = await AppSharedPref.instance().getString(key: AppSharedKeys.listStatusFilter);
+    String jsonString2 = await AppSharedPref.instance()
+        .getString(key: AppSharedKeys.listStatusFilter);
     if (jsonString2.isNotEmpty) {
       Iterable temp = jsonDecode(jsonString2);
-      List<HomeWorkStatusModel> temp1 = List<HomeWorkStatusModel>.from(temp.map((e) => HomeWorkStatusModel.fromJson(e)));
+      List<HomeWorkStatusModel> temp1 = List<HomeWorkStatusModel>.from(
+          temp.map((e) => HomeWorkStatusModel.fromJson(e)));
       setListSelectedStatusFilter(temp1);
     }
 
@@ -245,25 +221,48 @@ class HomeWorkProvider with ChangeNotifier {
     if (listSelectedClassFilter.isEmpty && listSelectedStatusFilter.isEmpty) {
       //Save original data for first time
       String jsonString = json.encode(listClassForFilter);
-      AppSharedPref.instance().putString(key: AppSharedKeys.listClassFilter, value: jsonString);
+      AppSharedPref.instance()
+          .putString(key: AppSharedKeys.listClassFilter, value: jsonString);
 
       jsonString = json.encode(listStatusForFilter);
-      AppSharedPref.instance().putString(key: AppSharedKeys.listStatusFilter, value: jsonString);
+      AppSharedPref.instance()
+          .putString(key: AppSharedKeys.listStatusFilter, value: jsonString);
     } else {
-      String jsonString = jsonEncode(listSelectedClassFilter.map((i) => i.toJson()).toList()).toString();
-      AppSharedPref.instance().putString(key: AppSharedKeys.listClassFilter, value: jsonString);
+      String jsonString =
+          jsonEncode(listSelectedClassFilter.map((i) => i.toJson()).toList())
+              .toString();
+      AppSharedPref.instance()
+          .putString(key: AppSharedKeys.listClassFilter, value: jsonString);
 
-      jsonString = jsonEncode(listSelectedStatusFilter.map((i) => i.toJson()).toList()).toString();
-      AppSharedPref.instance().putString(key: AppSharedKeys.listStatusFilter, value: jsonString);
+      jsonString =
+          jsonEncode(listSelectedStatusFilter.map((i) => i.toJson()).toList())
+              .toString();
+      AppSharedPref.instance()
+          .putString(key: AppSharedKeys.listStatusFilter, value: jsonString);
     }
   }
 
-  void filterHomeWork() {
-    bool hasSelectAllClass = listSelectedClassFilter.map((e) => e.id).contains(listClassForFilter.first.id);
-    bool hasSelectAllStatus = listSelectedStatusFilter.map((e) => e.id).contains(listStatusForFilter.first.id);
+  // Future<void> resetListSelectedFilterIntoLocal() async {
+  //   AppSharedPref.instance()
+  //         .putString(key: AppSharedKeys.listClassFilter, value: "");
+  //     AppSharedPref.instance()
+  //         .putString(key: AppSharedKeys.listStatusFilter, value: "");
+  // }
 
-    int numberOfSelectedClassFilter = hasSelectAllClass ? listSelectedClassFilter.length - 1 : listSelectedClassFilter.length;
-    int numberOfSelectedStatusFilter = hasSelectAllStatus ? listSelectedStatusFilter.length - 1 : listSelectedStatusFilter.length;
+  void filterHomeWork() {
+    bool hasSelectAllClass = listSelectedClassFilter
+        .map((e) => e.id)
+        .contains(listClassForFilter.first.id);
+    bool hasSelectAllStatus = listSelectedStatusFilter
+        .map((e) => e.id)
+        .contains(listStatusForFilter.first.id);
+
+    int numberOfSelectedClassFilter = hasSelectAllClass
+        ? listSelectedClassFilter.length - 1
+        : listSelectedClassFilter.length;
+    int numberOfSelectedStatusFilter = hasSelectAllStatus
+        ? listSelectedStatusFilter.length - 1
+        : listSelectedStatusFilter.length;
 
     if (hasSelectAllClass && hasSelectAllStatus) {
       //Reset data
@@ -271,20 +270,24 @@ class HomeWorkProvider with ChangeNotifier {
 
       setListFilteredHomeWorks(listHomeWorks);
     } else {
-      List<ActivitiesModel> temp1 = listHomeWorks.where((e1) => listSelectedClassFilter.map((e2) => e2.id)
-          .contains(e1.classId)).toList();
+      List<ActivitiesModel> temp1 = listHomeWorks
+          .where((e1) =>
+              listSelectedClassFilter.map((e2) => e2.id).contains(e1.classId))
+          .toList();
 
       // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
       //     .contains(e1.activityStatus)).toList();
       List<ActivitiesModel> temp2 = temp1.where((e1) {
         Map<String, dynamic> activityStatusMap = Utils.getHomeWorkStatus(e1);
-        return listSelectedStatusFilter.map((e2) => e2.name)
+        return listSelectedStatusFilter
+            .map((e2) => e2.name)
             .contains(activityStatusMap['title']);
       }).toList();
       setListFilteredHomeWorks(temp2);
     }
 
-    String str = 'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1}) status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
+    String str =
+        'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1}) status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
     updateFilterString(str);
     updateProcessingStatus();
   }
@@ -303,20 +306,16 @@ class HomeWorkProvider with ChangeNotifier {
   bool get dialogShowing => _dialogShowing;
   void setDialogShowing(bool isShowing) {
     _dialogShowing = isShowing;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   int _permissionDeniedTime = 0;
   int get permissionDeniedTime => _permissionDeniedTime;
   void setPermissionDeniedTime() {
     _permissionDeniedTime++;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    
+    notifyListeners();
   }
 
   SimulatorTestPresenter? _simulatorTestPresenter;

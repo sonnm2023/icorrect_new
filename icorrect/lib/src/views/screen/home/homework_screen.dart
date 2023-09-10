@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -37,8 +36,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   //         Tab(text: 'NEXT HOMEWORK'),
   //       ],
   //     );
-  final scaffoldKey = /*GlobalKey<ScaffoldState>()*/
-      GlobalScaffoldKey.homeScreenScaffoldKey;
+  final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
@@ -58,6 +56,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   void _getListHomeWork() {
+    //Reset old data
+    _homeWorkProvider.resetListHomeworks();
+    _homeWorkProvider.resetListClassForFilter();
+    _homeWorkProvider.resetListFilteredHomeWorks();
+
     _homeWorkPresenter!.getListHomeWork();
 
     Future.delayed(Duration.zero, () {
@@ -69,13 +72,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void dispose() {
-    _homeWorkProvider.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final drawerItems = navbarItems(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -227,142 +228,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-/*  static Widget _drawHeader(UserDataModel user) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: CustomSize.size_30,
-        horizontal: CustomSize.size_10,
-      ),
-      color: AppColor.defaultPurpleColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: CustomSize.size_60,
-            height: CustomSize.size_60,
-            child: CircleAvatar(
-              child: Consumer<HomeWorkProvider>(
-                  builder: (context, homeWorkProvider, child) {
-                return CachedNetworkImage(
-                  imageUrl:
-                      fileEP(homeWorkProvider.currentUser.profileModel.avatar),
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(CustomSize.size_100),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.transparent,
-                          BlendMode.colorBurn,
-                        ),
-                      ),
-                    ),
-                  ),
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => CircleAvatar(
-                    child: Image.asset(
-                      AppAsset.defaultAvt,
-                      width: CustomSize.size_40,
-                      height: CustomSize.size_40,
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-          Container(
-            width: CustomSize.size_200,
-            margin: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_10,
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.profileModel.displayName.toString(),
-                  style: CustomTextStyle.textWhiteBold_15,
-                ),
-                const SizedBox(height: CustomSize.size_5),
-                Row(
-                  children: [
-                    Text(
-                      "Dimond: ${user.profileModel.wallet.usd.toString()}",
-                      style: CustomTextStyle.textWhite_14,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: CustomSize.size_10,
-                      ),
-                      child: const Image(
-                        width: CustomSize.size_20,
-                        image: AssetImage(AppAsset.dimond),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: CustomSize.size_5),
-                Row(
-                  children: [
-                    Text(
-                      "Gold: ${user.profileModel.pointTotal.toString()}",
-                      style: CustomTextStyle.textWhite_14,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: CustomSize.size_10,
-                      ),
-                      child: const Image(
-                        width: CustomSize.size_20,
-                        image: AssetImage(
-                          AppAsset.gold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  void toggleDrawer() async {
-    if (scaffoldKey.currentState!.isDrawerOpen) {
-      scaffoldKey.currentState!.openEndDrawer();
-    } else {
-      scaffoldKey.currentState!.openDrawer();
-    }
-  }
-
-  void _showLogoutConfirmDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-          title: "Notification",
-          description: "Do you want to logout?",
-          okButtonTitle: "OK",
-          cancelButtonTitle: "Cancel",
-          borderRadius: 8,
-          hasCloseButton: false,
-          okButtonTapped: () {
-            Navigator.of(context).pop();
-          },
-          cancelButtonTapped: () {
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
-  }*/
-
   @override
   void onGetListHomeworkError(String message) {
     _homeWorkProvider.updateProcessingStatus();
@@ -401,7 +266,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onNewGetListHomeworkComplete(
+  void onGetListHomeworkComplete(
       List<ActivitiesModel> activities, List<NewClassModel> classes) async {
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
