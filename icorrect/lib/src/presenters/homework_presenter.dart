@@ -11,7 +11,7 @@ import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
-  void onNewGetListHomeworkComplete(
+  void onGetListHomeworkComplete(
       List<ActivitiesModel> homeworks, List<NewClassModel> classes);
 
   void onGetListHomeworkError(String message);
@@ -56,7 +56,7 @@ class HomeWorkPresenter {
         List<NewClassModel> classes =
             await _generateListNewClass(dataMap['data']);
         List<ActivitiesModel> homeworks = await _generateListHomeWork(classes);
-        _view!.onNewGetListHomeworkComplete(homeworks, classes);
+        _view!.onGetListHomeworkComplete(homeworks, classes);
       } else {
         _view!.onGetListHomeworkError(
             "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}");
