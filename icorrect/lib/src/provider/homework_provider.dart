@@ -84,6 +84,10 @@ class HomeWorkProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void resetListSelectedClassFilter() {
+    _listSelectedClassFilter.clear();
+  }
+
   //List selected class
   final List<HomeWorkStatusModel> _listSelectedStatusFilter = [];
   List<HomeWorkStatusModel> get listSelectedStatusFilter =>
@@ -93,6 +97,10 @@ class HomeWorkProvider with ChangeNotifier {
     _listSelectedStatusFilter.addAll(list);
     
     notifyListeners();
+  }
+
+  void resetListSelectedStatusFilter() {
+    _listSelectedStatusFilter.clear();
   }
 
   //Current user information
@@ -242,12 +250,12 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  // Future<void> resetListSelectedFilterIntoLocal() async {
-  //   AppSharedPref.instance()
-  //         .putString(key: AppSharedKeys.listClassFilter, value: "");
-  //     AppSharedPref.instance()
-  //         .putString(key: AppSharedKeys.listStatusFilter, value: "");
-  // }
+  Future<void> resetListSelectedFilterIntoLocal() async {
+    AppSharedPref.instance()
+          .putString(key: AppSharedKeys.listClassFilter, value: null);
+      AppSharedPref.instance()
+          .putString(key: AppSharedKeys.listStatusFilter, value: null);
+  }
 
   void filterHomeWork() {
     bool hasSelectAllClass = listSelectedClassFilter

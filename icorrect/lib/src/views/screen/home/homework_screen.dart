@@ -57,6 +57,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   void _getListHomeWork() {
     //Reset old data
+    _homeWorkProvider.updateFilterString('Add your filter!');
+    _homeWorkProvider.resetListSelectedClassFilter();
+    _homeWorkProvider.resetListSelectedStatusFilter();
+    _homeWorkProvider.resetListSelectedFilterIntoLocal();
     _homeWorkProvider.resetListHomeworks();
     _homeWorkProvider.resetListClassForFilter();
     _homeWorkProvider.resetListFilteredHomeWorks();
