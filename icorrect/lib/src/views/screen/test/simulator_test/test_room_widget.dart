@@ -148,7 +148,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _recordController!.stop();
         _audioPlayerController!.stop();
       } else {
-        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish && _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none) {
           _videoPlayerController!.play();
         }
       }
