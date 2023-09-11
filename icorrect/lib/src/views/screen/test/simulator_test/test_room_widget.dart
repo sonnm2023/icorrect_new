@@ -153,7 +153,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Recording the answer for Part 2 ==> Re record the answer
       } else {
-        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
+        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish && _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none) {
           _videoPlayerController!.play();
         }
       }
