@@ -56,6 +56,7 @@ class _MyTestTabState extends State<MyTestTab>
   bool isOffline = false;
   StreamSubscription? connection;
   String audioFile = "";
+  Timer? timer;
 
   @override
   void initState() {
@@ -602,10 +603,11 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Future _recordReAnswer(bool visibleRecord) async {
-    if (visibleRecord) {
-      audioFile = '${await Utils.generateAudioFileName()}.wav';
-      if (await _record.hasPermission()) {
-        Timer timer = _presenter!.startCountDown(context, 30);
+    if (await _record.hasPermission()) {
+      if (visibleRecord) {
+        audioFile = '${await Utils.generateAudioFileName()}.wav';
+
+        timer = _presenter!.startCountDown(context, 30);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:
@@ -618,6 +620,11 @@ class _MyTestTabState extends State<MyTestTab>
         );
       }
     } else {
+      if (timer != null) {
+        timer!.cancel();
+        widget.provider.setCountDownTimer(null);
+        widget.provider.setTimerCount('00:00');
+      }
       _record.stop();
     }
   }
