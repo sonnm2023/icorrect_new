@@ -44,7 +44,8 @@ enum Status {
   highLight(1),
   others(0),
   hadScore(1),
-  allHomework(2);
+  allHomework(2),
+  playOff(10);
 
   const Status(this.get);
 
