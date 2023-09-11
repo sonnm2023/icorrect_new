@@ -234,10 +234,7 @@ class SimulatorTestPresenter {
   }
 
   Future downloadFiles(
-      TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
-
-    // _view!.onPrepareListOfVideoPaths(filesTopic); //TODO
-    
+      TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {    
     if (null != dio) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
@@ -251,10 +248,6 @@ class SimulatorTestPresenter {
               fileTopic, MediaType.video, null);
           if (fileType.isNotEmpty && !isExist) {
             try {
-              if (kDebugMode) {
-                print("DEBUG: Downloading file at index = $index");
-              }
-
               String url = downloadFileEP(fileNameForDownload);
 
               dio!.head(url).timeout(const Duration(seconds: 10));
@@ -262,6 +255,13 @@ class SimulatorTestPresenter {
 
                String savePath =
                   '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileTopic';
+
+              if (kDebugMode) {
+                print("DEBUG: Downloading file at index = $index");
+                print("DEBUG: Save as PATH = $savePath");
+              }
+
+              
               Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
@@ -355,6 +355,11 @@ class SimulatorTestPresenter {
       questions: questions,
     );
 
+    if (kDebugMode) {
+      print("DEBUG: testId = $testId");
+      print("DEBUG: activityId = $activityId");
+    }
+
     try {
       _testRepository!.submitTest(multiRequest).then((value) {
         if (kDebugMode) {
@@ -363,7 +368,8 @@ class SimulatorTestPresenter {
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         if (json['error_code'] == 200) {
-          ActivityAnswer activityAnswer = json[''];
+          ActivityAnswer activityAnswer =
+              ActivityAnswer.fromJson(json['data']['activities_answer']);
           _view!.onSubmitTestSuccess(
               'Save your answers successfully!', activityAnswer);
         } else {

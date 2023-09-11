@@ -68,6 +68,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   List<dynamic> _reviewingQuestionList = [];
   int _playingIndex = 0;
   bool _hasHeaderPart3 = false;
+  int _endOfTakeNoteIndex = 0;
 
   @override
   void initState() {
@@ -117,7 +118,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future _onAppInBackground() async {
-    //TODO
     if (null != _videoPlayerController) {
       bool isPlaying = await _videoPlayerController!.isPlaying();
       if (isPlaying) {
@@ -136,17 +136,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future _onAppActive() async {
-    //TODO
     if (null != _videoPlayerController) {
-      if (_simulatorTestProvider!.visibleRecord ||
-          _simulatorTestProvider!.visibleCueCard) {
-        QuestionTopicModel currentQuestion =
-            _simulatorTestProvider!.currentQuestion;
+      if (_simulatorTestProvider!.visibleCueCard) {
+        // QuestionTopicModel currentQuestion =
+        //     _simulatorTestProvider!.currentQuestion;
 
-        _simulatorTestProvider!.setVisibleCueCard(false);
-        _simulatorTestProvider!.setVisibleRecord(false);
-        _recordController!.stop();
-        _audioPlayerController!.stop();
+        // _simulatorTestProvider!.setVisibleCueCard(false);
+        // _simulatorTestProvider!.setVisibleRecord(false);
+        // _recordController!.stop();
+        // _audioPlayerController!.stop();
+        
+        //Playing end_of_take_note ==> replay end_of_take_note
+        if (_endOfTakeNoteIndex != 0) {
+          _rePlayEndOfTakeNote();
+        }
+
+        //Recording the answer for Part 2 ==> Re record the answer
       } else {
         if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
           _videoPlayerController!.play();
@@ -1014,6 +1019,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       case FileTopicType.end_of_take_note:
         {
+          _endOfTakeNoteIndex = 0;
           _startRecordAnswer(fileName: current.url, isPart2: true);
           break;
         }
@@ -1332,6 +1338,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return temp;
   }
 
+  void _rePlayEndOfTakeNote() {
+    _playingIndex = _endOfTakeNoteIndex;
+    _initVideoController();
+  }
+
   @override
   void onCountDown(String countDownString) {
     if (mounted) {
@@ -1411,6 +1422,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onPlayEndOfTakeNote(String fileName) {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
       _playingIndex++;
+      _endOfTakeNoteIndex = _playingIndex;
       _initVideoController();
     }
   }
