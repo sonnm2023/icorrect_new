@@ -114,6 +114,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print('DEBUG: App detached');
         }
         break;
+      
     }
   }
 

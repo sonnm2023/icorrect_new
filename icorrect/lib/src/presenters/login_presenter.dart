@@ -88,6 +88,7 @@ class LoginPresenter {
         print("DEBUG: getAppConfigInfo $value");
       }
       Map<String, dynamic> dataMap = jsonDecode(value);
+      
       if (dataMap['error_code'] == 200) {
         AppConfigInfoModel appConfigInfoModel = AppConfigInfoModel.fromJson(dataMap);
         String logApiUrl = appConfigInfoModel.data.logUrl.toString();
