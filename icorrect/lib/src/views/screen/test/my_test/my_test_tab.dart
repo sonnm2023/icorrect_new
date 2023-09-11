@@ -271,6 +271,8 @@ class _MyTestTabState extends State<MyTestTab>
           print('DEBUG:App detached');
         }
         break;
+      case AppLifecycleState.hidden:
+        // TODO: Handle this case.
     }
   }
 
