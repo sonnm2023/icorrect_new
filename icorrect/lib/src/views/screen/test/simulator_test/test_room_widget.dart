@@ -383,7 +383,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             ),
 
             //Play video controller buttons
-            buttonsControllerSubView,
+            _simulatorTestProvider!.doingStatus != DoingStatus.finish
+                ? buttonsControllerSubView
+                : Container(),
 
             //TODO
             // Visibility(
