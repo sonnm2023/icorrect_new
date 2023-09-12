@@ -114,8 +114,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print('DEBUG: App detached');
         }
         break;
-      case AppLifecycleState.hidden:
-      // TODO: Handle this case.
+
     }
   }
 
