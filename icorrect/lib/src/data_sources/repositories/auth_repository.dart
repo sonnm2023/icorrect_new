@@ -103,11 +103,13 @@ class AuthRepositoryImpl implements AuthRepository {
           return response.body;
         });
   }
-  
+
   @override
   Future<String> getAppConfigInfo() {
     String url = '$icorrectDomain$appConfigEP';
-
+    if (kDebugMode) {
+      print("DEBUG: url getAppConfigInfo: $url");
+    }
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,
@@ -116,7 +118,7 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: 15))
         .then((http.Response response) {
-          return response.body;
-        });
+      return response.body;
+    });
   }
 }

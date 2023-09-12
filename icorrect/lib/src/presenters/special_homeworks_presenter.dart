@@ -27,12 +27,12 @@ class SpecialHomeworksPresenter {
     _myTestRepository!
         .getSpecialHomeWorks(email, activityId, status, example)
         .then((value) {
-      Map<String, dynamic> dataMap = jsonDecode(value) ?? [];
+      Map<String, dynamic> dataMap = jsonDecode(value) ?? {};
 
       if (dataMap.isNotEmpty) {
         if (dataMap['error_code'] == 200) {
           List<StudentResultModel> results =
-              _getStudentResultsModel(dataMap['data'] ?? {});
+              _getStudentResultsModel(dataMap['data'] ?? []);
           _view!.getSpecialHomeWork(results);
         } else {
           _view!.getSpecialHomeWorksFail('Loading result response fail !');

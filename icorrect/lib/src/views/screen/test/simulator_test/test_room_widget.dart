@@ -114,6 +114,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print('DEBUG: App detached');
         }
         break;
+
     }
   }
 
@@ -145,7 +146,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         // _simulatorTestProvider!.setVisibleRecord(false);
         // _recordController!.stop();
         // _audioPlayerController!.stop();
-        
+
         //Playing end_of_take_note ==> replay end_of_take_note
         if (_endOfTakeNoteIndex != 0) {
           _rePlayEndOfTakeNote();
@@ -153,7 +154,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Recording the answer for Part 2 ==> Re record the answer
       } else {
-        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish && _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none) {
+        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
+            _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none) {
           _videoPlayerController!.play();
         }
       }

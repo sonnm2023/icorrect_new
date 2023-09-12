@@ -211,7 +211,7 @@ class Utils {
   static String haveAiResponse(ActivitiesModel homeWorkModel) {
     if (null != homeWorkModel.activityAnswer) {
       if (homeWorkModel.activityAnswer!.aiResponseLink.isNotEmpty) {
-        return "& AI Scored";
+        return " AI Scored";
       } else {
         return '';
       }

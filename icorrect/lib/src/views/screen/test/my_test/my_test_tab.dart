@@ -27,6 +27,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -56,6 +57,7 @@ class _MyTestTabState extends State<MyTestTab>
   bool isOffline = false;
   StreamSubscription? connection;
   String audioFile = "";
+  Timer? timer;
 
   @override
   void initState() {
@@ -87,17 +89,20 @@ class _MyTestTabState extends State<MyTestTab>
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
-    _getMyTest();
 
-    Future.delayed(Duration.zero, () {
-      widget.provider.setDownloadingFile(true);
-    });
+    _prepareDataForMyTestDetail();
   }
 
-  void _getMyTest() async {
+  void _prepareDataForMyTestDetail() async {
+    final status = await Permission.microphone.status;
     await _presenter!.initializeData();
     _presenter!
         .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
+
+    Future.delayed(Duration.zero, () {
+      widget.provider.setPermissionRecord(status);
+      widget.provider.setDownloadingFile(true);
+    });
   }
 
   @override
@@ -352,7 +357,7 @@ class _MyTestTabState extends State<MyTestTab>
   void _onCancelReAnswer() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
-    widget.provider.countDownTimer!.cancel();
+    _stopCountTimer();
     widget.provider.setCountDownTimer(null);
     _record.stop();
   }
@@ -570,8 +575,7 @@ class _MyTestTabState extends State<MyTestTab>
     } else {
       if (!provider.visibleRecord) {
         widget.provider.setCurrentQuestion(question);
-        widget.provider.setVisibleRecord(true);
-        _recordReAnswer(provider.visibleRecord);
+        _recordReAnswer();
       }
     }
   }
@@ -601,11 +605,14 @@ class _MyTestTabState extends State<MyTestTab>
         });
   }
 
-  Future _recordReAnswer(bool visibleRecord) async {
-    if (visibleRecord) {
-      audioFile = '${await Utils.generateAudioFileName()}.wav';
-      if (await _record.hasPermission()) {
-        Timer timer = _presenter!.startCountDown(context, 30);
+  Future _recordReAnswer() async {
+    if (widget.provider.recordPermission.isGranted) {
+      _stopCountTimer();
+      widget.provider.setVisibleRecord(true);
+      if (widget.provider.visibleRecord) {
+        audioFile = '${await Utils.generateAudioFileName()}.wav';
+
+        timer = _presenter!.startCountDown(context, 30);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:
@@ -618,7 +625,18 @@ class _MyTestTabState extends State<MyTestTab>
         );
       }
     } else {
+      final status = await Permission.microphone.request();
+      widget.provider.setPermissionRecord(status);
       _record.stop();
+    }
+  }
+
+  void _stopCountTimer() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    if (widget.provider.countDownTimer != null) {
+      widget.provider.countDownTimer!.cancel();
     }
   }
 

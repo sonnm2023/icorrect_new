@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../data_sources/constants.dart';
 
 class MyTestProvider extends ChangeNotifier {
   bool isDisposed = false;
@@ -100,7 +103,7 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
- int _indexAudio = 0;
+  int _indexAudio = Status.playOff.get;
   int _questionId = 0;
   int get questionId => _questionId;
 
@@ -112,10 +115,20 @@ class MyTestProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   QuestionTopicModel _currentQuestion = QuestionTopicModel();
   QuestionTopicModel get currentQuestion => _currentQuestion;
   void setCurrentQuestion(QuestionTopicModel question) {
     _currentQuestion = question;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  PermissionStatus _recordPermission = PermissionStatus.limited;
+  PermissionStatus get recordPermission => _recordPermission;
+  void setPermissionRecord(PermissionStatus permission) {
+    _recordPermission = permission;
     if (!isDisposed) {
       notifyListeners();
     }
