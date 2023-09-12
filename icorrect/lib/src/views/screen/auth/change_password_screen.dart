@@ -126,7 +126,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         } else {
           if (_formKey.currentState!.validate() &&
               _authProvider.isProcessing == false) {
-            _authProvider.updateProcessingStatus();
+            _authProvider.updateProcessingStatus(isProcessing: true);
 
             _changePasswordPresenter!.changePassword(
               currentPasswordController.text.trim(),
@@ -162,7 +162,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordComplete() {
-    _authProvider.updateProcessingStatus();
+    _authProvider.updateProcessingStatus(isProcessing: false);
 
     //Go back login screen
     Navigator.of(context).pop();
@@ -170,7 +170,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordError(String message) {
-    _authProvider.updateProcessingStatus();
+    _authProvider.updateProcessingStatus(isProcessing: false);
 
     //Show error message
     showToastMsg(
