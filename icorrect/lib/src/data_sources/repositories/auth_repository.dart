@@ -107,7 +107,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<String> getAppConfigInfo() {
     String url = '$icorrectDomain$appConfigEP';
-    print("url getAppConfigInfo: ${url}");
+    if (kDebugMode) {
+      print("DEBUG: url getAppConfigInfo: $url");
+    }
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,
