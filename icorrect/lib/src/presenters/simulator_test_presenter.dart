@@ -18,7 +18,6 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 
 abstract class SimulatorTestViewContract {
@@ -249,6 +248,10 @@ class SimulatorTestPresenter {
           if (fileType.isNotEmpty && !isExist) {
             try {
               String url = downloadFileEP(fileNameForDownload);
+
+              if (kDebugMode) {
+                print("DEBUG: download video: $url");
+              }
 
               dio!.head(url).timeout(const Duration(seconds: 10));
               // use client.get as you would http.get
