@@ -121,108 +121,84 @@ class _MyTestTabState extends State<MyTestTab>
 
   Widget _buildMyTest() {
     double w = MediaQuery.of(context).size.width;
-
+    double h = MediaQuery.of(context).size.height;
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         if (provider.isDownloading) {
           return const DownloadProgressingWidget();
         } else {
           return Stack(
+            alignment: Alignment.bottomCenter,
             children: [
-              Column(
-                children: [
-                  // Expanded(flex: 5, child: VideoMyTest()),
-                  Expanded(
-                    flex: 9,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: provider.myAnswerOfQuestions.length,
-                      itemBuilder: (context, index) {
-                        return _questionItem(
-                            provider.myAnswerOfQuestions[index]);
-                      },
-                    ),
-                  ),
-                  Stack(
-                    children: [
-                      (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
-                          ? Expanded(
-                              child: LayoutBuilder(
-                                builder: (_, constraint) {
-                                  return InkWell(
-                                    onTap: () {
-                                      _showAiResponse();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: CustomSize.size_10,
-                                      ),
-                                      color: Colors.green,
-                                      width: constraint.maxWidth,
-                                      child: const Center(
-                                        child: Text(
-                                          'View AI Response',
-                                          style:
-                                              CustomTextStyle.textWhiteBold_15,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : Container(),
-                      Expanded(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              width: w,
-                              color: AppColor.defaultGraySlightColor,
-                              child: TestRecordWidget(
-                                finishAnswer: (currentQuestion) {
-                                  _onFinishReanswer(currentQuestion);
-                                },
-                                cancelAnswer: () {
-                                  _onCancelReAnswer();
-                                },
+              Container(
+                padding: const EdgeInsets.only(top: 10, bottom: 70),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: provider.myAnswerOfQuestions.length,
+                  itemBuilder: (context, index) {
+                    return _questionItem(provider.myAnswerOfQuestions[index]);
+                  },
+                ),
+              ),
+              (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
+                  ? LayoutBuilder(
+                      builder: (_, constraint) {
+                        return InkWell(
+                          onTap: () {
+                            _showAiResponse();
+                          },
+                          child: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: CustomSize.size_10,
+                            ),
+                            color: Colors.green,
+                            width: constraint.maxWidth,
+                            child: const Center(
+                              child: Text(
+                                'View AI Response',
+                                style: CustomTextStyle.textWhiteBold_16,
                               ),
                             ),
-                            (provider.reAnswerOfQuestions.isNotEmpty &&
-                                    !provider.visibleRecord)
-                                ? LayoutBuilder(
-                                    builder: (_, constraint) {
-                                      return InkWell(
-                                        onTap: () {
-                                          _showDialogConfirmSaveChange(
-                                              provider: provider);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: CustomSize.size_10,
-                                          ),
-                                          color: AppColor.defaultPurpleColor,
-                                          width: constraint.maxWidth,
-                                          child: const Center(
-                                            child: Text(
-                                              'Update Your Answer',
-                                              style: CustomTextStyle
-                                                  .textWhiteBold_15,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+                          ),
+                        );
+                      },
+                    )
+                  : Container(),
+              TestRecordWidget(
+                finishAnswer: (currentQuestion) {
+                  _onFinishReanswer(currentQuestion);
+                },
+                cancelAnswer: () {
+                  _onCancelReanswer();
+                },
               ),
+              (provider.reAnswerOfQuestions.isNotEmpty &&
+                      !provider.visibleRecord)
+                  ? LayoutBuilder(
+                      builder: (_, constraint) {
+                        return InkWell(
+                          onTap: () {
+                            _showDialogConfirmSaveChange(provider: provider);
+                          },
+                          child: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: CustomSize.size_10,
+                            ),
+                            color: AppColor.defaultPurpleColor,
+                            width: constraint.maxWidth,
+                            child: const Center(
+                              child: Text(
+                                'Update Your Answer',
+                                style: CustomTextStyle.textWhiteBold_16,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Container(),
               provider.needDownloadAgain
                   ? const DownloadAgainWidget(
                       simulatorTestPresenter: null,
@@ -351,10 +327,21 @@ class _MyTestTabState extends State<MyTestTab>
       }
       widget.provider.setCurrentQuestion(question);
     }
-    _onCancelReAnswer();
+    _resetReanswerData();
   }
 
-  void _onCancelReAnswer() {
+  Future<void> _onCancelReanswer() async {
+    String path =
+        '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+        '\\$audioFile';
+    if (File(path).existsSync()) {
+      await File(path).delete();
+      print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+    }
+    _resetReanswerData();
+  }
+
+  void _resetReanswerData() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
     _stopCountTimer();

@@ -17,7 +17,7 @@ class TestRecordWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-
+    double h = MediaQuery.of(context).size.height;
     return Consumer<MyTestProvider>(builder: (context, testProvider, child) {
       QuestionTopicModel currentQuestion = testProvider.currentQuestion;
       if (kDebugMode) {
@@ -26,57 +26,63 @@ class TestRecordWidget extends StatelessWidget {
 
       return Visibility(
         visible: testProvider.visibleRecord,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              width: w*0.8,
-              height: CustomSize.size_200,
-              alignment: Alignment.center,
-              color: AppColor.defaultGraySlightColor,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: CustomSize.size_20,
-                  ),
-                  const Text('You answer is being recorded'),
-                  const SizedBox(
-                    height: CustomSize.size_20,
-                  ),
-                  Image.asset(
-                    AppAsset.record,
-                    width: CustomSize.size_25,
-                    height: CustomSize.size_25,
-                  ),
-                  const SizedBox(
-                    height: CustomSize.size_5,
-                  ),
-                  Text(
-                    testProvider.timerCount,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: CustomSize.size_20,
-                      fontWeight: FontWeight.w600,
+        child: Container(
+          width: w,
+          height: h / 4,
+          alignment: Alignment.center,
+          color: AppColor.defaultGraySlightColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                width: w * 0.8,
+                height: CustomSize.size_200,
+                alignment: Alignment.center,
+                color: AppColor.defaultGraySlightColor,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: CustomSize.size_20,
                     ),
-                  ),
-                  const SizedBox(height: CustomSize.size_20),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: CustomSize.size_40,
+                    const Text('Your answer is being recorded'),
+                    const SizedBox(
+                      height: CustomSize.size_20,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildFinishButton(currentQuestion),
-                        _buildCancelButton()
-                      ],
+                    Image.asset(
+                      AppAsset.record,
+                      width: CustomSize.size_25,
+                      height: CustomSize.size_25,
                     ),
-                  ),
-                  const SizedBox(height: CustomSize.size_20),
-                ],
+                    const SizedBox(
+                      height: CustomSize.size_5,
+                    ),
+                    Text(
+                      testProvider.timerCount,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: CustomSize.size_20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: CustomSize.size_20),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: CustomSize.size_40,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildFinishButton(currentQuestion),
+                          _buildCancelButton()
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: CustomSize.size_20),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     });

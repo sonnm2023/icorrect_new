@@ -120,6 +120,10 @@ class StudentResultModel {
 
   set teacherName(value) => this._teacherName = value;
 
+  bool haveResponse() {
+    return _orderId != null && _orderId != 0;
+  }
+
   StudentResultModel.fromJson(Map<String, dynamic> item) {
     StudentModel studentModel = StudentModel.fromJson(item['student']);
     ActivityResult activityResult = ActivityResult.fromJson(item['activity']);

@@ -9,6 +9,10 @@ import 'package:icorrect/src/provider/re_answer_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
+import '../../../../../core/app_color.dart';
+import '../../../../data_sources/constants.dart';
+import '../../../../data_sources/local/file_storage_helper.dart';
+
 // ignore: must_be_immutable
 class ReAnswerDialog extends Dialog {
   final BuildContext _context;
@@ -16,11 +20,14 @@ class ReAnswerDialog extends Dialog {
   Timer? _countDown;
   int _timeRecord = 30;
   late Record _record;
-  final String _filePath = '';
+  String _filePath = '';
   final TestRoomPresenter _testPresenter;
   final String _currentTestId;
 
-  ReAnswerDialog(this._context, this._question, this._testPresenter, this._currentTestId,
+  final Function(QuestionTopicModel question) _onReanswerCallBack;
+
+  ReAnswerDialog(this._context, this._question, this._testPresenter,
+      this._currentTestId, this._onReanswerCallBack,
       {super.key});
 
   @override
@@ -42,63 +49,106 @@ class ReAnswerDialog extends Dialog {
     _startCountDown();
     _startRecord();
 
-    return Container(
-      width: 400,
-      height: 280,
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
+    return Wrap(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+          child: Container(
+            alignment: Alignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Your answers are being recorded',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 20),
+                const Image(
+                  image: AssetImage("assets/images/img_mic.png"),
+                  width: 60,
+                  height: 60,
+                ),
+                const SizedBox(height: 10),
+                Consumer<ReAnswerProvider>(
+                  builder: (context, reAnswerProvider, child) {
+                    return Text(
+                      reAnswerProvider.strCount,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 38,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildCancelButton(),
+                    _buildFinishButton(),
+                  ],
+                )
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildFinishButton() {
+    return InkWell(
+      onTap: () {
+        _finishReAnswer();
+      },
+      child: Container(
+        width: CustomSize.size_100,
+        height: CustomSize.size_40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
+          color: Colors.green,
+        ),
+        alignment: Alignment.center,
+        child: const Text(
+          'Finish',
+          style: CustomTextStyle.textWhiteBold_16,
         ),
       ),
+    );
+  }
+
+  Widget _buildCancelButton() {
+    return InkWell(
+      onTap: () async {
+        String path =
+            '${await FileStorageHelper.getFolderPath(MediaType.audio, _currentTestId)}'
+            '\\$_filePath';
+        if (File(path).existsSync()) {
+          await File(path).delete();
+          print("DEGUG : file record exist : ${File(_filePath).existsSync()}");
+        }
+
+        _record.stop();
+        _countDown!.cancel();
+        // ignore: use_build_context_synchronously
+        Navigator.pop(_context);
+      },
       child: Container(
-        margin: const EdgeInsets.only(top: 20),
+        width: CustomSize.size_100,
+        height: CustomSize.size_40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
+          color: AppColor.defaultLightGrayColor,
+        ),
         alignment: Alignment.center,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'Your answers are being recorded',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 20),
-            const Image(image: AssetImage("assets/images/img_mic.png")),
-            const SizedBox(height: 10),
-            Consumer<ReAnswerProvider>(
-              builder: (context, reAnswerProvider, child) {
-                return Text(
-                  reAnswerProvider.strCount,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 38,
-                    fontWeight: FontWeight.w600,
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                _finishReAnswer();
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: const Text("Finish"),
-              ),
-            )
-          ],
+        child: const Text(
+          'Cancel',
+          style: CustomTextStyle.textWhiteBold_16,
         ),
       ),
     );
@@ -107,7 +157,17 @@ class ReAnswerDialog extends Dialog {
   void _finishReAnswer() {
     _record.stop();
     _countDown!.cancel();
-    _testPresenter.clickEndReAnswer(_question, _filePath);
+    if (_question.answers.length > 1) {
+      if (_question.repeatIndex == 0) {
+        _question.answers.last.url = _filePath;
+      } else {
+        _question.answers.elementAt(_question.repeatIndex - 1).url = _filePath;
+      }
+    } else {
+      _question.answers.first.url = _filePath;
+    }
+    _question.reAnswerCount + 1;
+    _onReanswerCallBack(_question);
     Navigator.pop(_context);
   }
 
@@ -121,12 +181,14 @@ class ReAnswerDialog extends Dialog {
   }
 
   void _startRecord() async {
-    String path = await Utils.getAudioPathToPlay(_question, _currentTestId);
+    _filePath = '${await Utils.generateAudioFileName()}.wav';
 
     if (await _record.hasPermission()) {
       await _record.start(
-        path: path,
-        encoder: Platform.isAndroid ?  AudioEncoder.wav :  AudioEncoder.pcm16bit,
+        path:
+            '${await FileStorageHelper.getFolderPath(MediaType.audio, _currentTestId)}'
+            '\\$_filePath',
+        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
         bitRate: 128000,
         samplingRate: 44100,
       );
