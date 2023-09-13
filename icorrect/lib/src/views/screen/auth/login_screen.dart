@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen>
         _authProvider.updateProcessingStatus(isProcessing: false);
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => const HomeWorkScreen(),
+            builder: (_) => HomeWorkScreen(),
           ),
           ModalRoute.withName('/'),
         );
@@ -233,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen>
     _resetTextFieldControllers();
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const HomeWorkScreen()),
+      MaterialPageRoute(builder: (context) => HomeWorkScreen()),
     );
   }
 

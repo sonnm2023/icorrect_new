@@ -21,7 +21,9 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 
 class HomeWorkScreen extends StatefulWidget {
-  const HomeWorkScreen({super.key});
+  final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
+
+  HomeWorkScreen({super.key});
 
   @override
   State<HomeWorkScreen> createState() => _HomeWorkScreenState();
@@ -36,7 +38,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   //         Tab(text: 'NEXT HOMEWORK'),
   //       ],
   //     );
-  final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
+  
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
@@ -131,7 +133,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         home: DefaultTabController(
           length: 1,
           child: Scaffold(
-            key: scaffoldKey,
+            key: widget.scaffoldKey,
             appBar: AppBar(
               title: const Text(
                 "MY HOMEWORK",

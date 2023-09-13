@@ -102,7 +102,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
                     if (widget.isFromSimulatorTest) {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (_) => const HomeWorkScreen(),
+                          builder: (_) => HomeWorkScreen(),
                         ),
                         (route) => false,
                       );
