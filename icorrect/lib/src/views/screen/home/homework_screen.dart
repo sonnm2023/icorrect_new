@@ -273,7 +273,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onGetListHomeworkComplete(
-      List<ActivitiesModel> activities, List<NewClassModel> classes) async {
+      List<ActivitiesModel> activities, List<NewClassModel> classes, String serverCurrentTime) async {
+    _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
     await _homeWorkProvider.initializeListFilter();

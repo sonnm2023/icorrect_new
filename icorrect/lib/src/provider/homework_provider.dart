@@ -12,6 +12,12 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
 class HomeWorkProvider with ChangeNotifier {
+  String _serverCurrentTime = '';
+  String get serverCurrentTime => _serverCurrentTime;
+  void setServerCurrentTime(String time) {
+    _serverCurrentTime = time;
+  }
+
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
   void updateProcessingStatus() {
@@ -286,7 +292,7 @@ class HomeWorkProvider with ChangeNotifier {
       // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
       //     .contains(e1.activityStatus)).toList();
       List<ActivitiesModel> temp2 = temp1.where((e1) {
-        Map<String, dynamic> activityStatusMap = Utils.getHomeWorkStatus(e1);
+        Map<String, dynamic> activityStatusMap = Utils.getHomeWorkStatus(e1, serverCurrentTime);
         return listSelectedStatusFilter
             .map((e2) => e2.name)
             .contains(activityStatusMap['title']);

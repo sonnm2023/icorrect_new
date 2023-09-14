@@ -263,6 +263,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                   return HomeWorkWidget(
                     homeWorkModel: element,
                     callBack: clickOnHomeWorkItem,
+                    homeWorkProvider: homeworkProvider,
                   );
                 },
               ),
@@ -339,7 +340,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     // );
 
     Map<String, dynamic> statusMap =
-        Utils.getHomeWorkStatus(_selectedHomeWorkModel!);
+        Utils.getHomeWorkStatus(_selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
 
     if (statusMap['title'] == 'Out of date' ||
         statusMap['title'] == 'Not Completed') {
