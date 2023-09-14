@@ -519,6 +519,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.getAudioPathToPlay(
         question, _simulatorTestProvider!.currentTestDetail.testId.toString());
+    print("Audio update : $path");
     _playAudio(path);
   }
 
@@ -559,12 +560,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return ReAnswerDialog(
-            context,
-            question,
-            _testRoomPresenter!,
-            _simulatorTestProvider!.currentTestDetail.testId.toString(),
-          );
+          return ReAnswerDialog(context, question, _testRoomPresenter!,
+              _simulatorTestProvider!.currentTestDetail.testId.toString(),
+              (question) {
+            // List<QuestionTopicModel> questions =
+            //     _simulatorTestProvider!.questionList;
+            // print("question length: ${questions.length.toString()}");
+            int index = _simulatorTestProvider!.questionList.indexWhere((q) =>
+                q.id == question.id && q.repeatIndex == question.repeatIndex);
+
+            _simulatorTestProvider!.questionList[index] = question;
+            //_simulatorTestProvider!.setQuestionList(questions);
+          });
         },
       );
     });

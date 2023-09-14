@@ -398,7 +398,7 @@ class MyTestPresenter {
     String format = '';
     String reanswerFormat = '';
     String endFormat = '';
-    for (QuestionTopicModel q in questions) {
+    for (QuestionTopicModel q in questions) { 
       String questionId = q.id.toString();
       if (kDebugMode) {
         print("DEBUG: num part : ${q.numPart.toString()}");

@@ -233,7 +233,7 @@ class SimulatorTestPresenter {
   }
 
   Future downloadFiles(
-      TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {    
+      TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
     if (null != dio) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
@@ -256,7 +256,7 @@ class SimulatorTestPresenter {
               dio!.head(url).timeout(const Duration(seconds: 10));
               // use client.get as you would http.get
 
-               String savePath =
+              String savePath =
                   '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileTopic';
 
               if (kDebugMode) {
@@ -264,7 +264,6 @@ class SimulatorTestPresenter {
                 print("DEBUG: Save as PATH = $savePath");
               }
 
-              
               Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
@@ -407,7 +406,7 @@ class SimulatorTestPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
-  }) async {    
+  }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
@@ -432,33 +431,43 @@ class SimulatorTestPresenter {
 
     for (QuestionTopicModel q in questions) {
       String part = '';
+      String reanswer = '';
       switch (q.numPart) {
         case 0:
           {
             part = "introduce";
+            reanswer = 'reanswer_introduce';
             break;
           }
         case 1:
           {
             part = "part1";
+            reanswer = 'reanswer_part1';
             break;
           }
         case 2:
           {
             part = "part2";
+            reanswer = 'reanswer_part2';
             break;
           }
         case 3:
           {
             part = "part3";
+            reanswer = 'reanswer_part3';
             if (q.isFollowUp == 1) {
               part = "followup";
+              reanswer = 'reanswer_followup';
             }
             break;
           }
       }
 
       String prefix = "$part[${q.id}]";
+      String reanswerFormat = "$reanswer[${q.id}]";
+
+      formData
+          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
 
       List<MapEntry<String, String>> temp = _generateFormat(q, prefix);
       if (temp.isNotEmpty) {
