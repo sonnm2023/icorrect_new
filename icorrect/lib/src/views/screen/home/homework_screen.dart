@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:core';
 import 'dart:collection';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
@@ -151,6 +152,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 MyHomeWorkTab(
                   homeWorkProvider: _homeWorkProvider,
                   homeWorkPresenter: _homeWorkPresenter!,
+                  pullToRefreshCallBack: _pullToRefresh,
                 ),
                 Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
@@ -170,6 +172,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _pullToRefresh() async {
+    if (kDebugMode) {
+      print("DEBUG: HomeWorkScreen - _pullToRefresh");
+    }
+    _getListHomeWork();
   }
 
   void _showQuitAppConfirmDialog() async {
