@@ -27,6 +27,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
@@ -55,6 +56,8 @@ class _MyTestTabState extends State<MyTestTab>
   final Record _record = Record();
   bool isOffline = false;
   StreamSubscription? connection;
+  String audioFile = "";
+  Timer? timer;
 
   @override
   void initState() {
@@ -86,17 +89,20 @@ class _MyTestTabState extends State<MyTestTab>
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
     _loading!.show(context);
-    _getMyTest();
 
-    Future.delayed(Duration.zero, () {
-      widget.provider.setDownloadingFile(true);
-    });
+    _prepareDataForMyTestDetail();
   }
 
-  void _getMyTest() async {
+  void _prepareDataForMyTestDetail() async {
+    final status = await Permission.microphone.status;
     await _presenter!.initializeData();
     _presenter!
         .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
+
+    Future.delayed(Duration.zero, () {
+      widget.provider.setPermissionRecord(status);
+      widget.provider.setDownloadingFile(true);
+    });
   }
 
   @override
@@ -114,101 +120,85 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _buildMyTest() {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         if (provider.isDownloading) {
           return const DownloadProgressingWidget();
         } else {
           return Stack(
+            alignment: Alignment.bottomCenter,
             children: [
-              Column(
-                children: [
-                  // Expanded(flex: 5, child: VideoMyTest()),
-                  Expanded(
-                    flex: 9,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: provider.myAnswerOfQuestions.length,
-                      itemBuilder: (context, index) {
-                        return _questionItem(
-                            provider.myAnswerOfQuestions[index]);
-                      },
-                    ),
-                  ),
-                  Stack(
-                    children: [
-                      (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
-                          ? Expanded(
-                              child: LayoutBuilder(
-                                builder: (_, constraint) {
-                                  return InkWell(
-                                    onTap: () {
-                                      _showAiResponse();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: CustomSize.size_10,
-                                      ),
-                                      color: Colors.green,
-                                      width: constraint.maxWidth,
-                                      child: const Center(
-                                        child: Text(
-                                          'View AI Response',
-                                          style:
-                                              CustomTextStyle.textWhiteBold_15,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : Container(),
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            TestRecordWidget(
-                              finishAnswer: (currentQuestion) {
-                                _onFinishReanswer(currentQuestion);
-                              },
-                              cancelAnswer: () {
-                                _onCancelReAnswer();
-                              },
-                            ),
-                            (provider.reAnswerOfQuestions.isNotEmpty &&
-                                    !provider.visibleRecord)
-                                ? LayoutBuilder(
-                                    builder: (_, constraint) {
-                                      return InkWell(
-                                        onTap: () {
-                                          _showDialogConfirmSaveChange(
-                                              provider: provider);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: CustomSize.size_10,
-                                          ),
-                                          color: AppColor.defaultPurpleColor,
-                                          width: constraint.maxWidth,
-                                          child: const Center(
-                                            child: Text(
-                                              'Update Your Answer',
-                                              style: CustomTextStyle
-                                                  .textWhiteBold_15,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+              Container(
+                padding: const EdgeInsets.only(top: 10, bottom: 70),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: provider.myAnswerOfQuestions.length,
+                  itemBuilder: (context, index) {
+                    return _questionItem(provider.myAnswerOfQuestions[index]);
+                  },
+                ),
               ),
+              (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
+                  ? LayoutBuilder(
+                      builder: (_, constraint) {
+                        return InkWell(
+                          onTap: () {
+                            _showAiResponse();
+                          },
+                          child: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: CustomSize.size_10,
+                            ),
+                            color: Colors.green,
+                            width: constraint.maxWidth,
+                            child: const Center(
+                              child: Text(
+                                'View AI Response',
+                                style: CustomTextStyle.textWhiteBold_16,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Container(),
+              TestRecordWidget(
+                finishAnswer: (currentQuestion) {
+                  _onFinishReanswer(currentQuestion);
+                },
+                cancelAnswer: () {
+                  _onCancelReanswer();
+                },
+              ),
+              (provider.reAnswerOfQuestions.isNotEmpty &&
+                      !provider.visibleRecord)
+                  ? LayoutBuilder(
+                      builder: (_, constraint) {
+                        return InkWell(
+                          onTap: () {
+                            _showDialogConfirmSaveChange(provider: provider);
+                          },
+                          child: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: CustomSize.size_10,
+                            ),
+                            color: AppColor.defaultPurpleColor,
+                            width: constraint.maxWidth,
+                            child: const Center(
+                              child: Text(
+                                'Update Your Answer',
+                                style: CustomTextStyle.textWhiteBold_16,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Container(),
               provider.needDownloadAgain
                   ? const DownloadAgainWidget(
                       simulatorTestPresenter: null,
@@ -280,7 +270,7 @@ class _MyTestTabState extends State<MyTestTab>
 
     if (_player!.state == PlayerState.playing) {
       QuestionTopicModel q = widget.provider.currentQuestion;
-      widget.provider.setPlayAnswer(false, q.id.toString());
+      widget.provider.setPlayAnswer(Status.playOff.get, q.id);
       _stopAudio();
     }
   }
@@ -321,17 +311,41 @@ class _MyTestTabState extends State<MyTestTab>
 
   void _onFinishReanswer(QuestionTopicModel question) {
     widget.provider.setReAnswerOfQuestions(question);
-    int index = widget.provider.myAnswerOfQuestions
-        .indexWhere((q) => q.id == question.id);
+    int index = widget.provider.myAnswerOfQuestions.indexWhere(
+        (q) => q.id == question.id && q.repeatIndex == question.repeatIndex);
     widget.provider.myAnswerOfQuestions[index] = question;
     widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
-    _onCancelReAnswer();
+    if (audioFile.isNotEmpty) {
+      if (question.answers.isNotEmpty) {
+        question.answers[question.repeatIndex].url = audioFile;
+      } else {
+        FileTopicModel fileTopicModel = FileTopicModel();
+        fileTopicModel.url = audioFile;
+        question.answers.add(fileTopicModel);
+      }
+      if (_isLastAnswer(question)) {
+        question.reAnswerCount++;
+      }
+      widget.provider.setCurrentQuestion(question);
+    }
+    _resetReanswerData();
   }
 
-  void _onCancelReAnswer() {
+  Future<void> _onCancelReanswer() async {
+    String path =
+        '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+        '\\$audioFile';
+    if (File(path).existsSync()) {
+      await File(path).delete();
+      print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+    }
+    _resetReanswerData();
+  }
+
+  void _resetReanswerData() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
-    widget.provider.countDownTimer!.cancel();
+    _stopCountTimer();
     widget.provider.setCountDownTimer(null);
     _record.stop();
   }
@@ -427,12 +441,11 @@ class _MyTestTabState extends State<MyTestTab>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    (provider.playAnswer &&
-                            question.id.toString() == provider.questionId)
+                    (_isAudioPlay(question.repeatIndex, question.id))
                         ? InkWell(
                             onTap: () async {
-                              widget.provider
-                                  .setPlayAnswer(false, question.id.toString());
+                              widget.provider.setPlayAnswer(
+                                  Status.playOff.get, question.id);
                               _stopAudio();
                             },
                             child: const Image(
@@ -443,14 +456,15 @@ class _MyTestTabState extends State<MyTestTab>
                           )
                         : InkWell(
                             onTap: () async {
-                              widget.provider
-                                  .setPlayAnswer(true, question.id.toString());
+                              widget.provider.setPlayAnswer(
+                                  question.repeatIndex, question.id);
 
                               if (question.answers.isNotEmpty) {
                                 _preparePlayAudio(
-                                    fileName: Utils.convertFileName(
-                                        question.answers.last.url.toString()),
-                                    questionId: question.id.toString());
+                                    fileName: Utils.convertFileName(question
+                                        .answers[question.repeatIndex].url
+                                        .toString()),
+                                    questionId: question.id);
                               }
                             },
                             child: const Image(
@@ -471,8 +485,18 @@ class _MyTestTabState extends State<MyTestTab>
                           children: [
                             Text(
                               question.content.toString(),
-                              style: CustomTextStyle.textBlack_14,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15),
                             ),
+                            const SizedBox(height: 3),
+                            (question.cueCard.isNotEmpty)
+                                ? Text(
+                                    question.cueCard.toString(),
+                                    style: CustomTextStyle.textBlack_15,
+                                  )
+                                : Container(),
                             const SizedBox(
                               height: CustomSize.size_10,
                             ),
@@ -522,11 +546,25 @@ class _MyTestTabState extends State<MyTestTab>
     );
   }
 
+  bool _isAudioPlay(int repeatIndex, int questionId) {
+    return widget.provider.indexAudio == repeatIndex &&
+        questionId == widget.provider.questionId;
+  }
+
   void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
-    if (!provider.visibleRecord) {
-      widget.provider.setCurrentQuestion(question);
-      widget.provider.setVisibleRecord(true);
-      _recordReAnswer(provider.visibleRecord, question);
+    if (provider.indexAudio != Status.playOff.get) {
+      Fluttertoast.showToast(
+          msg: "Please wait for the review to complete",
+          backgroundColor: AppColor.defaultGraySlightColor,
+          textColor: Colors.black,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 16,
+          toastLength: Toast.LENGTH_SHORT);
+    } else {
+      if (!provider.visibleRecord) {
+        widget.provider.setCurrentQuestion(question);
+        _recordReAnswer();
+      }
     }
   }
 
@@ -555,12 +593,14 @@ class _MyTestTabState extends State<MyTestTab>
         });
   }
 
-  Future _recordReAnswer(
-      bool visibleRecord, QuestionTopicModel question) async {
-    if (visibleRecord) {
-      String audioFile = '${await Utils.generateAudioFileName()}.wav';
-      if (await _record.hasPermission()) {
-        Timer timer = _presenter!.startCountDown(context, 30);
+  Future _recordReAnswer() async {
+    if (widget.provider.recordPermission.isGranted) {
+      _stopCountTimer();
+      widget.provider.setVisibleRecord(true);
+      if (widget.provider.visibleRecord) {
+        audioFile = '${await Utils.generateAudioFileName()}.wav';
+
+        timer = _presenter!.startCountDown(context, 30);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:
@@ -571,23 +611,30 @@ class _MyTestTabState extends State<MyTestTab>
           bitRate: 128000,
           samplingRate: 44100,
         );
-        if (question.answers.isNotEmpty) {
-          question.answers.last.url = audioFile;
-        } else {
-          FileTopicModel fileTopicModel = FileTopicModel();
-          fileTopicModel.url = audioFile;
-          question.answers.add(fileTopicModel);
-        }
-        question.reAnswerCount++;
-        widget.provider.setCurrentQuestion(question);
       }
     } else {
+      final status = await Permission.microphone.request();
+      widget.provider.setPermissionRecord(status);
       _record.stop();
     }
   }
 
+  void _stopCountTimer() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    if (widget.provider.countDownTimer != null) {
+      widget.provider.countDownTimer!.cancel();
+    }
+  }
+
+  bool _isLastAnswer(QuestionTopicModel question) {
+    return question.answers[question.repeatIndex].url ==
+        question.answers.last.url;
+  }
+
   Future _preparePlayAudio(
-      {required String fileName, required String questionId}) async {
+      {required String fileName, required int questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
       //TODO
       if (kDebugMode) {
@@ -597,12 +644,12 @@ class _MyTestTabState extends State<MyTestTab>
     });
   }
 
-  Future<void> _playAudio(String audioPath, String questionId) async {
+  Future<void> _playAudio(String audioPath, int questionId) async {
     try {
       await _player!.play(DeviceFileSource(audioPath));
       await _player!.setVolume(2.5);
       _player!.onPlayerComplete.listen((event) {
-        widget.provider.setPlayAnswer(false, questionId);
+        widget.provider.setPlayAnswer(Status.playOff.get, questionId);
       });
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -736,7 +783,7 @@ class _MyTestTabState extends State<MyTestTab>
     } else {
       if (null != _presenter!.testDetail && null != _presenter!.filesTopic) {
         updateStatusForReDownload();
-        if (null == _presenter!.client) {
+        if (null == _presenter!.dio) {
           _presenter!.initializeData();
         }
         _presenter!.reDownloadFiles();

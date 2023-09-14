@@ -44,7 +44,8 @@ enum Status {
   highLight(1),
   others(0),
   hadScore(1),
-  allHomework(2);
+  allHomework(2),
+  playOff(10);
 
   const Status(this.get);
 
@@ -352,6 +353,13 @@ class CustomTextStyle {
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_15,
   );
+
+   static const TextStyle textWhiteBold_16 = TextStyle(
+    color: AppColor.defaultWhiteColor,
+    fontWeight: FontWeight.w500,
+    fontSize: FontsSize.fontSize_16,
+  );
+
 
   static const TextStyle textBoldGreen_15 = TextStyle(
     color: Colors.green,

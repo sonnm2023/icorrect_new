@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/provider/homework_provider.dart';
 
 import '../../data_sources/constants.dart';
 
 class HomeWorkWidget extends StatelessWidget {
   const HomeWorkWidget(
-      {super.key, required this.homeWorkModel, required this.callBack});
+      {super.key, required this.homeWorkModel, required this.callBack, required this.homeWorkProvider});
 
   // final HomeWorkModel homeWorkModel;
   final ActivitiesModel homeWorkModel;
   final Function callBack;
+  final HomeWorkProvider homeWorkProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -96,31 +98,23 @@ class HomeWorkWidget extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                          child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: CustomSize.size_20,
-                              ),
-                              child: Text(
-                                (Utils.getHomeWorkStatus(homeWorkModel)
-                                        .isNotEmpty)
-                                    ? '${Utils.getHomeWorkStatus(homeWorkModel)['title']}'
-                                        '${Utils.haveAiResponse(homeWorkModel)}'
-                                    : '',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  fontSize: FontsSize.fontSize_14,
-                                  fontWeight: FontWeight.w400,
-                                  color: (Utils.getHomeWorkStatus(homeWorkModel)
-                                          .isNotEmpty)
-                                      ? Utils.getHomeWorkStatus(
-                                          homeWorkModel)['color']
-                                      : AppColor.defaultPurpleColor,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.clip,
-                              ),
-                            ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: CustomSize.size_20,
                         ),
+                        child: Text(
+                          _statusOfActivity(),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w400,
+                            color: _getColor(),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.clip,
+                        ),
+                      ),
+                    ),
                   ],
                 )
               ],
@@ -129,5 +123,24 @@ class HomeWorkWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _statusOfActivity() {
+    String status = Utils.getHomeWorkStatus(homeWorkModel, homeWorkProvider.serverCurrentTime)['title'];
+    String aiStatus = Utils.haveAiResponse(homeWorkModel);
+    if (aiStatus.isNotEmpty) {
+      return "${status == 'Corrected' ? '$status &' : ''}$aiStatus";
+    } else {
+      return status;
+    }
+  }
+
+  Color _getColor() {
+    String aiStatus = Utils.haveAiResponse(homeWorkModel);
+    if (aiStatus.isNotEmpty) {
+      return const Color.fromARGB(255, 12, 201, 110);
+    } else {
+      return Utils.getHomeWorkStatus(homeWorkModel, homeWorkProvider.serverCurrentTime)['color'];
+    }
   }
 }

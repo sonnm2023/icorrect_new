@@ -48,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //TODO: For test
-    // emailController.text = "hocvien02@nguyenhuytuong.com";
-    // passwordController.text = "123456";
+    emailController.text = "hocvien02@nguyenhuytuong.com";
+    passwordController.text = "123456";
 
     _getAppConfigInfo();
   }
@@ -68,14 +68,14 @@ class _LoginScreenState extends State<LoginScreen>
     String token = await Utils.getAccessToken();
 
     if (token.isNotEmpty) {
-      _authProvider.updateProcessingStatus();
+      _authProvider.updateProcessingStatus(isProcessing: true);
 
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
-        _authProvider.updateProcessingStatus();
+        _authProvider.updateProcessingStatus(isProcessing: false);
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => const HomeWorkScreen(),
+            builder: (_) => HomeWorkScreen(),
           ),
           ModalRoute.withName('/'),
         );
@@ -161,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen>
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
-          _authProvider.updateProcessingStatus();
+          _authProvider.updateProcessingStatus(isProcessing: true);
 
           _loginPresenter!.login(
             emailController.text.trim(),
@@ -221,22 +221,25 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  @override
-  void onLoginComplete() {
-    _authProvider.updateProcessingStatus();
-
-    //Reset textfield controllers
+  void _resetTextFieldControllers() {
     emailController.text = "";
     passwordController.text = "";
+  }
+
+  @override
+  void onLoginComplete() {
+    _authProvider.updateProcessingStatus(isProcessing: false);
+
+    _resetTextFieldControllers();
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const HomeWorkScreen()),
+      MaterialPageRoute(builder: (context) => HomeWorkScreen()),
     );
   }
 
   @override
   void onLoginError(String message) {
-    _authProvider.updateProcessingStatus();
+    _authProvider.updateProcessingStatus(isProcessing: false);
 
     showDialog(
         context: context,
@@ -258,9 +261,6 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void onGetAppConfigInfoSuccess() {
-    if (kDebugMode) {
-      print("DEBUG: onGetAppConfigInfoSuccess");
-    }
     _autoLogin();
   }
 }

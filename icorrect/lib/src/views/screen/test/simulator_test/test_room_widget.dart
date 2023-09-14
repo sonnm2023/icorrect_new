@@ -69,6 +69,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _playingIndex = 0;
   bool _hasHeaderPart3 = false;
   int _endOfTakeNoteIndex = 0;
+  bool _isBackgroundMode = false;
 
   @override
   void initState() {
@@ -119,14 +120,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future _onAppInBackground() async {
+    _isBackgroundMode = true;
+
     if (null != _videoPlayerController) {
       bool isPlaying = await _videoPlayerController!.isPlaying();
       if (isPlaying) {
-        _videoPlayerController!.pause();
+        _videoPlayerController!.stop();
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
         _recordController!.stop();
+
+        if (null != _countDown) {
+          _countDown!.cancel();
+        }
+
+        if (null != _countDownCueCard) {
+          _countDownCueCard!.cancel();
+        }
       }
 
       if (_audioPlayerController!.state == PlayerState.playing) {
@@ -137,6 +148,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future _onAppActive() async {
+    _isBackgroundMode = false;
     if (null != _videoPlayerController) {
       if (_simulatorTestProvider!.visibleCueCard) {
         // QuestionTopicModel currentQuestion =
@@ -146,7 +158,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         // _simulatorTestProvider!.setVisibleRecord(false);
         // _recordController!.stop();
         // _audioPlayerController!.stop();
-        
+
         //Playing end_of_take_note ==> replay end_of_take_note
         if (_endOfTakeNoteIndex != 0) {
           _rePlayEndOfTakeNote();
@@ -154,8 +166,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Recording the answer for Part 2 ==> Re record the answer
       } else {
-        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish && _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none) {
+        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
+            _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
+            _simulatorTestProvider!.visibleRecord == false) {
           _videoPlayerController!.play();
+        } else if (_simulatorTestProvider!.visibleRecord == true) {
+          //Re record
+          _reRecord();
         }
       }
     }
@@ -503,6 +520,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.getAudioPathToPlay(
         question, _simulatorTestProvider!.currentTestDetail.testId.toString());
+    if (kDebugMode) {
+      print("Audio update : $path");
+    }
     _playAudio(path);
   }
 
@@ -543,12 +563,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return ReAnswerDialog(
-            context,
-            question,
-            _testRoomPresenter!,
-            _simulatorTestProvider!.currentTestDetail.testId.toString(),
-          );
+          return ReAnswerDialog(context, question, _testRoomPresenter!,
+              _simulatorTestProvider!.currentTestDetail.testId.toString(),
+              (question) {
+            // List<QuestionTopicModel> questions =
+            //     _simulatorTestProvider!.questionList;
+            // print("question length: ${questions.length.toString()}");
+            int index = _simulatorTestProvider!.questionList.indexWhere((q) =>
+                q.id == question.id && q.repeatIndex == question.repeatIndex);
+
+            _simulatorTestProvider!.questionList[index] = question;
+            //_simulatorTestProvider!.setQuestionList(questions);
+          });
         },
       );
     });
@@ -586,6 +612,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
 
         _showReAnswerDialog(question);
+        bool isPart2 = question.numPart == PartOfTest.part2.get;
+        _startRecordAnswer(
+            fileName: question.files.first.url, isPart2: isPart2);
       }
     } else {
       showToastMsg(
@@ -984,58 +1013,64 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _checkStatusWhenFinishVideo() {
-    FileTopicModel current =
-        _simulatorTestProvider!.listVideoSource[_playingIndex];
-    //Check type of video
-    switch (current.fileTopicType) {
-      case FileTopicType.introduce:
-        {
-          // _playNextVideo();
-          TopicModel? topicModel = _getCurrentPart();
-          if (null != topicModel) {
-            if (topicModel.numPart == PartOfTest.part3.get) {
-              _startToPlayFollowup();
-            } else {
-              _startToPlayQuestion();
+  void _checkStatusWhenFinishVideo() async {
+    if (!_isBackgroundMode) {
+      FileTopicModel current =
+          _simulatorTestProvider!.listVideoSource[_playingIndex];
+      //Check type of video
+      switch (current.fileTopicType) {
+        case FileTopicType.introduce:
+          {
+            // _playNextVideo();
+            TopicModel? topicModel = _getCurrentPart();
+            if (null != topicModel) {
+              if (topicModel.numPart == PartOfTest.part3.get) {
+                _startToPlayFollowup();
+              } else {
+                _startToPlayQuestion();
+              }
             }
+            break;
           }
-          break;
-        }
-      case FileTopicType.question:
-        {
-          //prepare to record answer
-          bool isPart2 = current.numPart == PartOfTest.part2.get;
-          _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
-          if (_countRepeat == 0) {
-            _calculateIndexOfHeader();
+        case FileTopicType.question:
+          {
+            //prepare to record answer
+            bool isPart2 = current.numPart == PartOfTest.part2.get;
+            _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
+            if (_countRepeat == 0) {
+              _calculateIndexOfHeader();
+            }
+            break;
           }
-          break;
-        }
-      case FileTopicType.followup:
-        {
-          _startRecordAnswer(fileName: current.url, isPart2: false);
-          if (!_hasHeaderPart3) {
-            _calculateIndexOfHeader();
+        case FileTopicType.followup:
+          {
+            _startRecordAnswer(fileName: current.url, isPart2: false);
+            if (!_hasHeaderPart3) {
+              _calculateIndexOfHeader();
+            }
+            break;
           }
-          break;
-        }
-      case FileTopicType.end_of_take_note:
-        {
-          _endOfTakeNoteIndex = 0;
-          _startRecordAnswer(fileName: current.url, isPart2: true);
-          break;
-        }
-      case FileTopicType.end_of_test:
-        {
-          _prepareToEndTheTest();
-          break;
-        }
-      case FileTopicType.answer:
-      case FileTopicType.none:
-        {
-          break;
-        }
+        case FileTopicType.end_of_take_note:
+          {
+            _endOfTakeNoteIndex = 0;
+            _startRecordAnswer(fileName: current.url, isPart2: true);
+            break;
+          }
+        case FileTopicType.end_of_test:
+          {
+            _prepareToEndTheTest();
+            break;
+          }
+        case FileTopicType.answer:
+        case FileTopicType.none:
+          {
+            break;
+          }
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: _checkStatusWhenFinishVideo: App is in background mode!");
+      }
     }
   }
 
@@ -1346,6 +1381,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _initVideoController();
   }
 
+  void _reRecord() {
+    FileTopicModel current =
+        _simulatorTestProvider!.listVideoSource[_playingIndex];
+    //prepare to record answer
+    bool isPart2 = current.numPart == PartOfTest.part2.get;
+    _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
+  }
+
   @override
   void onCountDown(String countDownString) {
     if (mounted) {
@@ -1359,9 +1402,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
-
-    //Reset count repeat
-    _countRepeat = 0;
 
     //Enable repeat button
     _simulatorTestProvider!.setEnableRepeatButton(true);
@@ -1381,9 +1421,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           isRepeat: false,
         );
 
+        //Reset count repeat
+        _countRepeat = 0;
+
         // _playNextQuestion();
         _playNextPart();
       } else {
+        //Reset count repeat
+        _countRepeat = 0;
         //Start to play end_of_take_note video
         Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
         TopicModel topic = topicQueue.first;
@@ -1397,6 +1442,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         repeatIndex: _countRepeat,
         isRepeat: false,
       );
+
+      //Reset count repeat
+      _countRepeat = 0;
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
@@ -1416,9 +1464,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
-
-    //Reset count repeat
-    _countRepeat = 0;
   }
 
   @override

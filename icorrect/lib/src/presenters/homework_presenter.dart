@@ -12,7 +12,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
   void onGetListHomeworkComplete(
-      List<ActivitiesModel> homeworks, List<NewClassModel> classes);
+      List<ActivitiesModel> homeworks, List<NewClassModel> classes, String serverCurrentTime);
 
   void onGetListHomeworkError(String message);
 
@@ -52,6 +52,7 @@ class HomeWorkPresenter {
       if (dataMap['error_code'] == 200) {
         List<NewClassModel> classes =
             await _generateListNewClass(dataMap['data']);
+
         List<ActivitiesModel> homeworks = await _generateListHomeWork(classes);
 
         if (kDebugMode) {
@@ -60,7 +61,7 @@ class HomeWorkPresenter {
               "DEBUG: Homework: getListHomeWork homework: ${homeworks.length}");
         }
         
-        _view!.onGetListHomeworkComplete(homeworks, classes);
+        _view!.onGetListHomeworkComplete(homeworks, classes, dataMap['current_time']);
       } else {
         _view!.onGetListHomeworkError(
             "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}");

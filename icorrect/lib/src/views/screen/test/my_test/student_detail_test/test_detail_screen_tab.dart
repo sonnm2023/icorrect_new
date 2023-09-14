@@ -111,7 +111,6 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           print('DEBUG:App detached');
         }
         break;
-
     }
   }
 
@@ -362,7 +361,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     } else {
       if (null != _presenter!.testDetail && null != _presenter!.filesTopic) {
         updateStatusForReDownload();
-        if (null == _presenter!.client) {
+        if (null == _presenter!.dio) {
           _presenter!.initializeData();
         }
         _presenter!.reDownloadFiles();

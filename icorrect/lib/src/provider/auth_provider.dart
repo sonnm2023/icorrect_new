@@ -20,8 +20,8 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void updateProcessingStatus() {
-    _isProcessing = !_isProcessing;
+  void updateProcessingStatus({required bool isProcessing}) {
+    _isProcessing = isProcessing;
     notifyListeners();
   }
 

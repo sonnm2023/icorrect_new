@@ -6,7 +6,10 @@ import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import '../../presenters/my_test_presenter_dio.dart';
 
 class DownloadAgainWidget extends StatelessWidget {
-  const DownloadAgainWidget({super.key, required this.simulatorTestPresenter, required this.myTestPresenter});
+  const DownloadAgainWidget(
+      {super.key,
+      required this.simulatorTestPresenter,
+      required this.myTestPresenter});
 
   final SimulatorTestPresenter? simulatorTestPresenter;
   final MyTestPresenterDio? myTestPresenter;
@@ -17,7 +20,7 @@ class DownloadAgainWidget extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: AppColor.defaultLightGrayColor,
+        color: AppColor.defaultWhiteColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,

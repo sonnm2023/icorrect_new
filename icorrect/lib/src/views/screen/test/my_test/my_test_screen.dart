@@ -33,20 +33,33 @@ class _MyTestScreenState extends State<MyTestScreen> {
   MyTestProvider? _myTestProvider;
   AuthProvider? _authProvider;
 
-  TabBar get _tabBar => TabBar(
-        physics: const BouncingScrollPhysics(),
-        isScrollable: true,
-        indicator: const UnderlineTabIndicator(
-          borderSide: BorderSide(
-            width: 3.0,
-            color: AppColor.defaultPurpleColor,
-          ),
-          /*insets: EdgeInsets.symmetric(
+  TabBar get _tabBar {
+    bool hasTeacherResponse = widget.homeWorkModel.activityAnswer != null &&
+        widget.homeWorkModel.activityAnswer!.hasTeacherResponse();
+    return TabBar(
+      /*labelPadding: hasTeacherResponse
+          ? const EdgeInsets.symmetric(
+              horizontal: 20,
+            )
+          : const EdgeInsets.symmetric(
+              horizontal: 30,
+            ),*/
+      physics: const BouncingScrollPhysics(),
+      isScrollable: hasTeacherResponse
+          ? true
+          : false,
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(
+          width: 3.0,
+          color: AppColor.defaultPurpleColor,
+        ),
+        /*insets: EdgeInsets.symmetric(
             horizontal: CustomSize.size_5,
           ),*/
-        ),
-        tabs: _tabsLabel(),
-      );
+      ),
+      tabs: _tabsLabel(),
+    );
+  }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -102,7 +115,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
                     if (widget.isFromSimulatorTest) {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (_) => const HomeWorkScreen(),
+                          builder: (_) => HomeWorkScreen(),
                         ),
                         (route) => false,
                       );
@@ -122,7 +135,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             preferredSize: const Size.fromHeight(CustomSize.size_50),
             child: Container(
               alignment: Alignment.center,
-              width: double.infinity,
+              width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(

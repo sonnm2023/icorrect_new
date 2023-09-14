@@ -7,7 +7,7 @@ class ActivityResult {
   String? _startTime;
   String? _endTime;
   String? _endDate;
-  String? _syllabusId;
+  int? _syllabusId;
   int? _status;
   String? _createdAt;
   String? _updatedAt;
@@ -180,7 +180,7 @@ class ActivityResult {
     _startTime = itemData['start_time'] ?? '';
     _endTime = itemData['end_time'] ?? '';
     _endDate = itemData['end_date'] ?? '';
-    _syllabusId = itemData['giaotrinh_id'] ?? '';
+    _syllabusId = itemData['giaotrinh_id'] ?? 0;
     _status = itemData['status'] ?? 0;
     _createdAt = itemData['created_at'] ?? '';
     _updatedAt = itemData['updated_at'] ?? '';

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../data_sources/constants.dart';
 
 class MyTestProvider extends ChangeNotifier {
   bool isDisposed = false;
@@ -100,13 +103,13 @@ class MyTestProvider extends ChangeNotifier {
     }
   }
 
-  bool _playAnswer = false;
-  String _questionId = '';
-  String get questionId => _questionId;
+  int _indexAudio = Status.playOff.get;
+  int _questionId = 0;
+  int get questionId => _questionId;
 
-  bool get playAnswer => _playAnswer;
-  void setPlayAnswer(bool visible, String questionId) {
-    _playAnswer = visible;
+  int get indexAudio => _indexAudio;
+  void setPlayAnswer(int indexAudio, int questionId) {
+    _indexAudio = indexAudio;
     _questionId = questionId;
     if (!isDisposed) {
       notifyListeners();
@@ -117,6 +120,15 @@ class MyTestProvider extends ChangeNotifier {
   QuestionTopicModel get currentQuestion => _currentQuestion;
   void setCurrentQuestion(QuestionTopicModel question) {
     _currentQuestion = question;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  PermissionStatus _recordPermission = PermissionStatus.limited;
+  PermissionStatus get recordPermission => _recordPermission;
+  void setPermissionRecord(PermissionStatus permission) {
+    _recordPermission = permission;
     if (!isDisposed) {
       notifyListeners();
     }
