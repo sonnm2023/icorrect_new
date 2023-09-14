@@ -28,9 +28,18 @@ Future<String> aiResponseEP(String orderId) async =>
     '${icorrectDomain}ai-response/index.html?order_id=$orderId&token=${await Utils.getAccessToken()}';
 
 String specialHomeWorksEP(
-        String email, String activityId, int status, int example) =>
-    '${publicDomain}api/list-answers-activity?'
-    'activity_id=$activityId&email=$email&status="$status"&example="$example"&all=1';
+    String email, String activityId, int status, int example) {
+  return "$publicDomain"
+      "api/list-answers-activity?activity_id="
+      "$activityId"
+      "&email="
+      "$email"
+      "&status="
+      "$status"
+      "&example="
+      "$example"
+      "&all=1";
+}
 
 String myTestDetailEP(String testId) =>
     '${icorrectDomain}api/v1/ielts-test/show/$testId';
@@ -39,14 +48,14 @@ String submitHomeWorkEP() {
   return '${icorrectDomain}api/v1/ielts-test/syllabus/submit';
 }
 
-String submitHomeWorkV2EP(){
+String submitHomeWorkV2EP() {
   return '${icorrectDomain}api/v1/ielts-test/submit-v2';
 }
 
 String getTestDetailWithIdEP(String testId) =>
     '${toolDomain}api/get-test-with-id/$testId';
 
-String getActivitiesList(Map<String, String> queryParameters){
+String getActivitiesList(Map<String, String> queryParameters) {
   return '${apiDomain}api/v1/syllabus/activities-of-class/index?${Uri(queryParameters: queryParameters).query}';
 }
 

@@ -37,25 +37,13 @@ class _MyTestScreenState extends State<MyTestScreen> {
     bool hasTeacherResponse = widget.homeWorkModel.activityAnswer != null &&
         widget.homeWorkModel.activityAnswer!.hasTeacherResponse();
     return TabBar(
-      /*labelPadding: hasTeacherResponse
-          ? const EdgeInsets.symmetric(
-              horizontal: 20,
-            )
-          : const EdgeInsets.symmetric(
-              horizontal: 30,
-            ),*/
       physics: const BouncingScrollPhysics(),
-      isScrollable: hasTeacherResponse
-          ? true
-          : false,
+      isScrollable: hasTeacherResponse ? true : false,
       indicator: const UnderlineTabIndicator(
         borderSide: BorderSide(
           width: 3.0,
           color: AppColor.defaultPurpleColor,
         ),
-        /*insets: EdgeInsets.symmetric(
-            horizontal: CustomSize.size_5,
-          ),*/
       ),
       tabs: _tabsLabel(),
     );

@@ -63,7 +63,7 @@ class _OtherTabState extends State<OtherTab>
         color: AppColor.defaultPurpleColor,
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
-            _loading!.show(context);
+            //_loading!.show(context);
             _getOthersHomeWork();
           });
         },

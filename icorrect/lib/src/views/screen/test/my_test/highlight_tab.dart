@@ -47,7 +47,7 @@ class _HighLightTabState extends State<HighLightTab>
       print(
           "DEBUG: _getHighLightHomeWork ${widget.homeWorkModel.activityId.toString()}");
     }
-
+    
     Future.delayed(Duration.zero, () {
       List<StudentResultModel> homeWorks = widget.provider.highLightHomeworks;
       if (homeWorks.isEmpty) {
@@ -55,7 +55,7 @@ class _HighLightTabState extends State<HighLightTab>
         _presenter!.getSpecialHomeWorks(
             email: userDataModel.userInfoModel.email.toString(),
             activityId: widget.homeWorkModel.activityId.toString(),
-            status: Status.allHomework.get,
+            status: Status.highLight.get,
             example: Status.highLight.get);
       }
     });
@@ -69,7 +69,7 @@ class _HighLightTabState extends State<HighLightTab>
           return Future.delayed(
             const Duration(seconds: 1),
             () {
-              _loading!.show(context);
+              //_loading!.show(context);
               _getHighLightHomeWork();
             },
           );
