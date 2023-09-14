@@ -519,7 +519,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.getAudioPathToPlay(
         question, _simulatorTestProvider!.currentTestDetail.testId.toString());
-    print("Audio update : $path");
+    if (kDebugMode) {
+      print("Audio update : $path");
+    }
     _playAudio(path);
   }
 
