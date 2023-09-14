@@ -389,9 +389,9 @@ class Utils {
     String fileName = '';
     if (question.answers.length > 1) {
       if (question.repeatIndex == 0) {
-        fileName = question.answers.last.url;
+        fileName = question.answers.first.url;
       } else {
-        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
+        fileName = question.answers.elementAt(question.repeatIndex).url;
       }
     } else {
       fileName = question.answers.first.url;

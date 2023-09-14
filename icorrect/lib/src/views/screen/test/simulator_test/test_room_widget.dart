@@ -603,7 +603,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         _showReAnswerDialog(question);
         bool isPart2 = question.numPart == PartOfTest.part2.get;
-        _startRecordAnswer(fileName: question.files.first.url, isPart2: isPart2);
+        _startRecordAnswer(
+            fileName: question.files.first.url, isPart2: isPart2);
       }
     } else {
       showToastMsg(
@@ -1372,7 +1373,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _reRecord() {
     FileTopicModel current =
-          _simulatorTestProvider!.listVideoSource[_playingIndex];
+        _simulatorTestProvider!.listVideoSource[_playingIndex];
     //prepare to record answer
     bool isPart2 = current.numPart == PartOfTest.part2.get;
     _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
@@ -1392,9 +1393,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
-    //Reset count repeat
-    _countRepeat = 0;
-
     //Enable repeat button
     _simulatorTestProvider!.setEnableRepeatButton(true);
 
@@ -1413,9 +1411,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           isRepeat: false,
         );
 
+        //Reset count repeat
+        _countRepeat = 0;
+
         // _playNextQuestion();
         _playNextPart();
       } else {
+        //Reset count repeat
+        _countRepeat = 0;
         //Start to play end_of_take_note video
         Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
         TopicModel topic = topicQueue.first;
@@ -1429,6 +1432,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         repeatIndex: _countRepeat,
         isRepeat: false,
       );
+
+      //Reset count repeat
+      _countRepeat = 0;
 
       TopicModel? topicModel = _getCurrentPart();
       if (null != topicModel) {
@@ -1448,9 +1454,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
-
-    //Reset count repeat
-    _countRepeat = 0;
   }
 
   @override
