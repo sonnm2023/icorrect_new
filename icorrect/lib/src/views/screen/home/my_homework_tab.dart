@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -24,11 +25,13 @@ class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
       {Key? key,
       required this.homeWorkProvider,
-      required this.homeWorkPresenter})
+      required this.homeWorkPresenter, 
+      required this.pullToRefreshCallBack})
       : super(key: key);
 
   final HomeWorkProvider homeWorkProvider;
   final HomeWorkPresenter homeWorkPresenter;
+  final Future<void> Function() pullToRefreshCallBack;
 
   @override
   State<MyHomeWorkTab> createState() => _MyHomeWorkTabState();
@@ -40,16 +43,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   PermissionStatus _storagePermissionStatus = PermissionStatus.denied;
 
   ActivitiesModel? _selectedHomeWorkModel;
-
-  void clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
-    _selectedHomeWorkModel = homeWorkModel;
-
-    if (_storagePermission == null) {
-      await _initializePermission();
-    }
-
-    _requestPermission(_storagePermission!);
-  }
 
   @override
   void dispose() {
@@ -89,17 +82,17 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       ),
       child: Stack(
         children: [
-             Container(
-              alignment: Alignment.center,
-              child: Consumer<HomeWorkProvider>(
-                builder: (context, homeworkProvider, child) {
-                  return Text(
-                    homeworkProvider.filterString,
-                    style: CustomTextStyle.textBoldBlack_14,
-                  );
-                },
-              ),
+          Container(
+            alignment: Alignment.center,
+            child: Consumer<HomeWorkProvider>(
+              builder: (context, homeworkProvider, child) {
+                return Text(
+                  homeworkProvider.filterString,
+                  style: CustomTextStyle.textBoldBlack_14,
+                );
+              },
             ),
+          ),
           Container(
             alignment: Alignment.centerRight,
             child: ElevatedButton(
@@ -234,44 +227,63 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             return const NoDataWidget(
                 msg: 'No data, please choose other filter!');
           }
-          return CustomScrollView(
-            slivers: [
-              SliverGroupedListView<ActivitiesModel, String>(
-                elements: homeworkProvider.listFilteredHomeWorks,
-                groupBy: (element) => element.classId.toString(),
-                groupComparator: (value1, value2) => value2.compareTo(value1),
-                order: GroupedListOrder.ASC,
-                groupSeparatorBuilder: (String classId) {
-                  String className = Utils.getClassNameWithId(
-                      classId, homeworkProvider.listClassForFilter);
+          return RefreshIndicator(
+            onRefresh: widget.pullToRefreshCallBack,
+            child: CustomScrollView(
+              slivers: [
+                SliverGroupedListView<ActivitiesModel, String>(
+                  elements: homeworkProvider.listFilteredHomeWorks,
+                  groupBy: (element) => element.classId.toString(),
+                  groupComparator: (value1, value2) => value2.compareTo(value1),
+                  order: GroupedListOrder.ASC,
+                  groupSeparatorBuilder: (String classId) {
+                    String className = Utils.getClassNameWithId(
+                        classId, homeworkProvider.listClassForFilter);
 
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      left: CustomSize.size_15,
-                      top: CustomSize.size_5,
-                      right: CustomSize.size_10,
-                      bottom: CustomSize.size_5,
-                    ),
-                    child: Text(
-                      className,
-                      textAlign: TextAlign.left,
-                      style: CustomTextStyle.textBoldBlack_16,
-                    ),
-                  );
-                },
-                itemBuilder: (c, element) {
-                  return HomeWorkWidget(
-                    homeWorkModel: element,
-                    callBack: clickOnHomeWorkItem,
-                    homeWorkProvider: homeworkProvider,
-                  );
-                },
-              ),
-            ],
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        left: CustomSize.size_15,
+                        top: CustomSize.size_5,
+                        right: CustomSize.size_10,
+                        bottom: CustomSize.size_5,
+                      ),
+                      child: Text(
+                        className,
+                        textAlign: TextAlign.left,
+                        style: CustomTextStyle.textBoldBlack_16,
+                      ),
+                    );
+                  },
+                  itemBuilder: (c, element) {
+                    return HomeWorkWidget(
+                      homeWorkModel: element,
+                      callBack: _clickOnHomeWorkItem,
+                      homeWorkProvider: homeworkProvider,
+                    );
+                  },
+                ),
+              ],
+            ),
           );
         }),
       ),
     );
+  }
+
+  Future<void> _pullRefresh() async {
+    if (kDebugMode) {
+      print("DEBUG: _buildListHomeWork: _pullRefresh");
+    }
+  }
+
+  void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
+    _selectedHomeWorkModel = homeWorkModel;
+
+    if (_storagePermission == null) {
+      await _initializePermission();
+    }
+
+    _requestPermission(_storagePermission!);
   }
 
   Future<void> _initializePermission() async {
@@ -339,8 +351,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     //   ),
     // );
 
-    Map<String, dynamic> statusMap =
-        Utils.getHomeWorkStatus(_selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
+    Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
+        _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
 
     if (statusMap['title'] == 'Out of date' ||
         statusMap['title'] == 'Not Completed') {
