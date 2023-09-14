@@ -176,8 +176,7 @@ class Utils {
         'color': const Color.fromARGB(255, 237, 179, 3)
       };
     } else {
-      if (homeWorkModel.activityAnswer!.aiOrder != 0 ||
-          homeWorkModel.activityAnswer!.orderId != 0) {
+      if (homeWorkModel.activityAnswer!.orderId != 0) {
         return {
           'title': 'Corrected',
           'color': const Color.fromARGB(255, 12, 201, 110)
