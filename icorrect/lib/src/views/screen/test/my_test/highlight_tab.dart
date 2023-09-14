@@ -38,7 +38,6 @@ class _HighLightTabState extends State<HighLightTab>
     _presenter = SpecialHomeworksPresenter(this);
     _loading = CircleLoading();
     _getHighLightHomeWork();
-    _loading?.show(context);
   }
 
   void _getHighLightHomeWork() async {
@@ -48,11 +47,17 @@ class _HighLightTabState extends State<HighLightTab>
       print(
           "DEBUG: _getHighLightHomeWork ${widget.homeWorkModel.activityId.toString()}");
     }
-    _presenter!.getSpecialHomeWorks(
-        email: userDataModel.userInfoModel.email.toString(),
-        activityId: widget.homeWorkModel.activityId.toString(),
-        status: Status.allHomework.get,
-        example: Status.highLight.get);
+    Future.delayed(Duration.zero, () {
+      List<StudentResultModel> homeWorks = widget.provider.highLightHomeworks;
+      if (homeWorks.isEmpty) {
+        _loading?.show(context);
+        _presenter!.getSpecialHomeWorks(
+            email: userDataModel.userInfoModel.email.toString(),
+            activityId: widget.homeWorkModel.activityId.toString(),
+            status: Status.highLight.get,
+            example: Status.highLight.get);
+      }
+    });
   }
 
   @override
@@ -65,7 +70,7 @@ class _HighLightTabState extends State<HighLightTab>
               seconds: 1,
             ),
             () {
-              _loading!.show(context);
+              //_loading!.show(context);
               _getHighLightHomeWork();
             },
           );

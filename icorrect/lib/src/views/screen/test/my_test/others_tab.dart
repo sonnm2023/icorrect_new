@@ -37,17 +37,23 @@ class _OtherTabState extends State<OtherTab>
     _presenter = SpecialHomeworksPresenter(this);
     _loading = CircleLoading();
     _getOthersHomeWork();
-    _loading?.show(context);
   }
 
   void _getOthersHomeWork() async {
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();
-    _presenter!.getSpecialHomeWorks(
-        email: userDataModel.userInfoModel.email.toString(),
-        activityId: widget.homeWorkModel.activityId.toString(),
-        status: Status.allHomework.get,
-        example: Status.others.get);
+    Future.delayed(Duration.zero, () {
+      List<StudentResultModel> homeWorks = widget.provider.otherLightHomeWorks;
+
+      if (homeWorks.isEmpty) {
+        _loading?.show(context);
+        _presenter!.getSpecialHomeWorks(
+            email: userDataModel.userInfoModel.email.toString(),
+            activityId: widget.homeWorkModel.activityId.toString(),
+            status: Status.allHomework.get,
+            example: Status.others.get);
+      }
+    });
   }
 
   @override
@@ -57,7 +63,7 @@ class _OtherTabState extends State<OtherTab>
         color: AppColor.defaultPurpleColor,
         onRefresh: () {
           return Future.delayed(const Duration(seconds: 1), () {
-            _loading!.show(context);
+            //_loading!.show(context);
             _getOthersHomeWork();
           });
         },
@@ -139,9 +145,7 @@ class _OtherTabState extends State<OtherTab>
                       overflow: TextOverflow.ellipsis,
                       style: CustomTextStyle.textBoldBlack_14,
                     ),
-                    const SizedBox(
-                      height: CustomSize.size_5
-                    ),
+                    const SizedBox(height: CustomSize.size_5),
                     Text(
                       resultModel.createdAt.toString(),
                       maxLines: 1,

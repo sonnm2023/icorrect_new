@@ -75,7 +75,18 @@ class _StudentCorrectionState extends State<StudentCorrection>
             );
           });
         },
-        child: _buildResponseTab());
+        child: (widget.studentResultModel.haveResponse())
+            ? _buildResponseTab()
+            : Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: const Text(
+                    "Please wait until the response from examiners is finish!",
+                    textAlign: TextAlign.center,
+                    style: CustomTextStyle.textBlack_15,
+                  ),
+                ),
+              ));
   }
 
   Widget _buildResponseTab() {

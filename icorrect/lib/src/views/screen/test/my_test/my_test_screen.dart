@@ -33,20 +33,21 @@ class _MyTestScreenState extends State<MyTestScreen> {
   MyTestProvider? _myTestProvider;
   AuthProvider? _authProvider;
 
-  TabBar get _tabBar => TabBar(
-        physics: const BouncingScrollPhysics(),
-        isScrollable: true,
-        indicator: const UnderlineTabIndicator(
-          borderSide: BorderSide(
-            width: 3.0,
-            color: AppColor.defaultPurpleColor,
-          ),
-          /*insets: EdgeInsets.symmetric(
-            horizontal: CustomSize.size_5,
-          ),*/
+  TabBar get _tabBar {
+    bool hasTeacherResponse = widget.homeWorkModel.activityAnswer != null &&
+        widget.homeWorkModel.activityAnswer!.hasTeacherResponse();
+    return TabBar(
+      physics: const BouncingScrollPhysics(),
+      isScrollable: hasTeacherResponse ? true : false,
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(
+          width: 3.0,
+          color: AppColor.defaultPurpleColor,
         ),
-        tabs: _tabsLabel(),
-      );
+      ),
+      tabs: _tabsLabel(),
+    );
+  }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
