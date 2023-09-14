@@ -156,6 +156,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 borderRadius: 8,
                 hasCloseButton: false,
                 okButtonTapped: () {
+                  //Reset question image 
+                  _resetQuestionImage();
+                  
                   okButtonTapped = true;
                   _deleteAllAnswer();
                 },
@@ -192,6 +195,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 borderRadius: 8,
                 hasCloseButton: false,
                 okButtonTapped: () {
+                  //Reset question image 
+                  _resetQuestionImage();
+
                   //Submit
                   _simulatorTestProvider!
                       .updateSubmitStatus(SubmitStatus.submitting);
@@ -217,6 +223,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
           break;
         }
+    }
+  }
+
+  void _resetQuestionImage() {
+    if (_simulatorTestProvider!.questionHasImage) {
+      _simulatorTestProvider!.setQuestionHasImageStatus(false);
+      _simulatorTestProvider!.resetQuestionImageUrl();
     }
   }
 

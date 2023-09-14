@@ -3,10 +3,12 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -118,65 +120,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  Future _onAppInBackground() async {
-    _isBackgroundMode = true;
-
-    if (null != _videoPlayerController) {
-      bool isPlaying = await _videoPlayerController!.isPlaying();
-      if (isPlaying) {
-        _videoPlayerController!.stop();
-      }
-
-      if (_simulatorTestProvider!.visibleRecord) {
-        _recordController!.stop();
-
-        if (null != _countDown) {
-          _countDown!.cancel();
-        }
-
-        if (null != _countDownCueCard) {
-          _countDownCueCard!.cancel();
-        }
-      }
-
-      if (_audioPlayerController!.state == PlayerState.playing) {
-        _audioPlayerController!.stop();
-        _playAnswerProvider!.resetSelectedQuestionIndex();
-      }
-    }
-  }
-
-  Future _onAppActive() async {
-    _isBackgroundMode = false;
-    if (null != _videoPlayerController) {
-      if (_simulatorTestProvider!.visibleCueCard) {
-        // QuestionTopicModel currentQuestion =
-        //     _simulatorTestProvider!.currentQuestion;
-
-        // _simulatorTestProvider!.setVisibleCueCard(false);
-        // _simulatorTestProvider!.setVisibleRecord(false);
-        // _recordController!.stop();
-        // _audioPlayerController!.stop();
-
-        //Playing end_of_take_note ==> replay end_of_take_note
-        if (_endOfTakeNoteIndex != 0) {
-          _rePlayEndOfTakeNote();
-        }
-
-        //Recording the answer for Part 2 ==> Re record the answer
-      } else {
-        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
-            _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
-            _simulatorTestProvider!.visibleRecord == false) {
-          _videoPlayerController!.play();
-        } else if (_simulatorTestProvider!.visibleRecord == true) {
-          //Re record
-          _reRecord();
-        }
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
@@ -211,7 +154,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Expanded(child: SizedBox()),
+                  Consumer<SimulatorTestProvider>(
+                      builder: (context, simulatorTestProvider, _) {
+                    return Expanded(
+                      child: simulatorTestProvider.questionHasImage
+                          ? Container(
+                              decoration: const BoxDecoration(
+                                color: AppColor.defaultLightGrayColor,
+                              ),
+                              child: Center(
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      simulatorTestProvider.questionImageUrl,
+                                  fit: BoxFit.fill,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
+                    );
+                  }),
                   SizedBox(
                     height: 200,
                     child: Stack(
@@ -443,6 +408,57 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _initVideoController();
   }
 
+  Future _onAppInBackground() async {
+    _isBackgroundMode = true;
+
+    if (null != _videoPlayerController) {
+      bool isPlaying = await _videoPlayerController!.isPlaying();
+      if (isPlaying) {
+        _videoPlayerController!.stop();
+      }
+
+      if (_simulatorTestProvider!.visibleRecord) {
+        _recordController!.stop();
+
+        if (null != _countDown) {
+          _countDown!.cancel();
+        }
+
+        if (null != _countDownCueCard) {
+          _countDownCueCard!.cancel();
+        }
+      }
+
+      if (_audioPlayerController!.state == PlayerState.playing) {
+        _audioPlayerController!.stop();
+        _playAnswerProvider!.resetSelectedQuestionIndex();
+      }
+    }
+  }
+
+  Future _onAppActive() async {
+    _isBackgroundMode = false;
+    if (null != _videoPlayerController) {
+      if (_simulatorTestProvider!.visibleCueCard) {
+        //Playing end_of_take_note ==> replay end_of_take_note
+        if (_endOfTakeNoteIndex != 0) {
+          _rePlayEndOfTakeNote();
+        }
+
+        //Recording the answer for Part 2 ==> Re record the answer
+      } else {
+        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
+            _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
+            _simulatorTestProvider!.visibleRecord == false) {
+          _videoPlayerController!.play();
+        } else if (_simulatorTestProvider!.visibleRecord == true) {
+          //Re record
+          _reRecord();
+        }
+      }
+    }
+  }
+
   void _deallocateMemory() async {
     //Stop count down timer
     if (null != _countDownCueCard) {
@@ -668,12 +684,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
     bool isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
         PartOfTest.part2.get;
+
+    _resetQuestionImage();
     onFinishAnswer(isPart2);
+  }
+
+  void _resetQuestionImage() {
+    if (_simulatorTestProvider!.questionHasImage) {
+      _simulatorTestProvider!.setQuestionHasImageStatus(false);
+      _simulatorTestProvider!.resetQuestionImageUrl();
+    }
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
     //Stop record
     _setVisibleRecord(false, null, null);
+
+    //Reset question image
+    _resetQuestionImage();
 
     //Add question into List Question & show it
     _simulatorTestProvider!.addCurrentQuestionIntoList(
@@ -984,7 +1012,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _prepareToRecordAnswer({
     required String fileName,
     required bool isPart2,
-  }) {
+  }) async {
     if (isPart2) {
       //Has Cue Card case
       _simulatorTestProvider!.setVisibleRecord(false);
@@ -1008,6 +1036,21 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       question.numPart = topicModel.numPart;
       _currentQuestion = question;
 
+      //Validate question with image
+      if (question.files.length > 1) {
+        String fileName = question.files.last.url;
+        String imageUrl = downloadFileEP(fileName);
+        bool hasImage = await Utils.validateImage(imageUrl);
+        if (hasImage) {
+          //Update has image status in provider
+          _simulatorTestProvider!.setQuestionHasImageStatus(true);
+          _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
+        }
+        if (kDebugMode) {
+          print(
+              "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
+        }
+      }
       _startRecordAnswer(fileName: fileName, isPart2: isPart2);
     }
   }
@@ -1081,6 +1124,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     //Remove old listener
+    // ignore: invalid_use_of_protected_member
     if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
       _videoPlayerController!.onPlaybackEnded
           .removeListener(_checkStatusWhenFinishVideo);
@@ -1132,7 +1176,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     _simulatorTestProvider!.setVisibleRecord(visible);
-    // _simulatorTestProvider!.setCountDownTimer(count); //TODO
   }
 
   Future<void> _recordAnswer(String fileName) async {

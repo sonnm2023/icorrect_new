@@ -53,7 +53,6 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  //=========================== Downloading video info==========================
   int _total = 0;
   int get total => _total;
   void setTotal(int total) {
@@ -260,18 +259,6 @@ class SimulatorTestProvider with ChangeNotifier {
     _questionList.clear();
   }
 
-//TODO
-  // VideoPlayerController? _videoPlayerController;
-  // VideoPlayerController? get videoPlayController => _videoPlayerController;
-  // void setPlayController(VideoPlayerController? videoPlayerController) {
-  //   _videoPlayerController = null;
-  //   _videoPlayerController = videoPlayerController;
-
-  //   if (!isDisposed) {
-  //     notifyListeners();
-  //   }
-  // }
-
   QuestionTopicModel _currentQuestion = QuestionTopicModel();
   QuestionTopicModel get currentQuestion => _currentQuestion;
   void setCurrentQuestion(QuestionTopicModel question) {
@@ -361,8 +348,7 @@ class SimulatorTestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-  /*================================= Record =================================*/
+  
   bool _visibleRecord = false;
   bool get visibleRecord => _visibleRecord;
   void setVisibleRecord(bool isVisible) {
@@ -392,7 +378,6 @@ class SimulatorTestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  /*================================= Record =================================*/
 
   final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
   Queue<TopicModel> get topicsQueue => _topicsQueue;
@@ -428,22 +413,6 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  // final List<VideoSourceModel> _videoSources = [];
-  // List<VideoSourceModel> get videoSources => _videoSources;
-  // void setVideoSources(List<VideoSourceModel> list) {
-  //   _videoSources.clear();
-  //   _videoSources.addAll(list);
-  // }
-
-  // void addVideoSource(VideoSourceModel videoSourceModel) {
-  //   _videoSources.add(videoSourceModel);
-  // }
-
-  // void clearVideoSources() {
-  //   _videoSources.clear();
-  // }
-
-  //TODO
   final List<FileTopicModel> _listVideoSource = [];
   List<FileTopicModel> get listVideoSource => _listVideoSource;
   void setListVideoSource(List<FileTopicModel> list) {
@@ -457,6 +426,26 @@ class SimulatorTestProvider with ChangeNotifier {
 
   void clearListVideoSource() {
     _listVideoSource.clear();
+  }
+
+  bool _questionHasImage = false;
+  bool get questionHasImage => _questionHasImage;
+  void setQuestionHasImageStatus(bool hasImage) {
+    _questionHasImage = hasImage;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _questionImageUrl = '';
+  String get questionImageUrl => _questionImageUrl;
+  void setQuestionImageUrl(String url) {
+    _questionImageUrl = url;
+  }
+
+  void resetQuestionImageUrl() {
+    _questionImageUrl = '';
   }
 
   void resetAll() {
@@ -485,14 +474,12 @@ class SimulatorTestProvider with ChangeNotifier {
     _visibleRepeat = true;
     _isVisibleSave = false;
     _countRepeat = 0;
-    // _videoPlayerController = null; //TODO
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
     resetTopicsQueue();
     clearQuestionList();
     resetTopicsList();
-    // clearVideoSources(); //TODO
     clearListVideoSource();
   }
 }
