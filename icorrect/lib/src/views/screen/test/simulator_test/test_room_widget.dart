@@ -685,7 +685,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     bool isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
         PartOfTest.part2.get;
 
-    _resetQuestionImage();
     onFinishAnswer(isPart2);
   }
 
@@ -1440,6 +1439,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onFinishAnswer(bool isPart2) {
+    _resetQuestionImage();
+    
     //Reset countdown
     if (null != _countDown) {
       _countDown!.cancel();

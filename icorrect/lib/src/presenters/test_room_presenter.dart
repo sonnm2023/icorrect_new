@@ -17,7 +17,6 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 
 abstract class TestRoomViewContract {
   void onPlayIntroduce();
