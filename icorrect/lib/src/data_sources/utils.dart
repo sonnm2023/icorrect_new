@@ -16,6 +16,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/views/widget/drawer_items.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_asset.dart';
@@ -159,12 +160,17 @@ class Utils {
     return tempDate;
   }
 
-  static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel) {
+  static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel, String serverCurrentTime) {
     if (null == homeWorkModel.activityAnswer) {
-      //TODO: Check time end so voi time hien tai
-      //Can server tra ve time hien tai - de thong nhat, do phai check timezone
-      //End time > time hien tai ==> out of date
-      //End time < time hien tai ==> Not Complete
+      bool timeCheck =
+          isExpired(homeWorkModel.activityEndTime, serverCurrentTime);
+      if (timeCheck) {
+        return {
+          'title': 'Out of date',
+          'color': Colors.red,
+        };
+      }
+
       return {
         'title': 'Not Completed',
         'color': const Color.fromARGB(255, 237, 179, 3)
@@ -298,7 +304,7 @@ class Utils {
 
   static Future<File> prepareVideoFile(String fileName) async {
     String filePath =
-    await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+        await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
     return File(filePath);
 
     // File decodedVideoFile;
@@ -391,7 +397,7 @@ class Utils {
       fileName = question.answers.first.url;
     }
     String path =
-    await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
+        await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
     return path;
   }
 
@@ -581,5 +587,19 @@ class Utils {
         );
       },
     );
+  }
+
+  static bool isExpired(String activityEndTime, String serverCurrentTime) {
+    final t1 = DateTime.parse(activityEndTime);
+
+    var inputFormat = DateFormat('MM/dd/yyyy HH:mm:ss');
+    var inputDate = inputFormat.parse(serverCurrentTime);
+    var outputFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+    final t2 = DateTime.parse(outputFormat.format(inputDate));
+    if (t1.compareTo(t2) < 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
