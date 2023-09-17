@@ -18,11 +18,12 @@ class SpecialHomeworksPresenter {
     _myTestRepository = Injector().getMyTestRepository();
   }
 
-  void getSpecialHomeWorks(
-      {required String email,
-      required String activityId,
-      required int status,
-      required int example}) {
+  void getSpecialHomeWorks({
+    required String email,
+    required String activityId,
+    required int status,
+    required int example,
+  }) {
     assert(_view != null && _myTestRepository != null);
     _myTestRepository!
         .getSpecialHomeWorks(email, activityId, status, example)
