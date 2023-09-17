@@ -30,6 +30,10 @@ class SpecialHomeworksPresenter {
         .then((value) {
       Map<String, dynamic> dataMap = jsonDecode(value) ?? {};
 
+      if (kDebugMode) {
+        print("DEBUG: getSpecialHomeWorks: result: ${value.toString()}");
+      }
+
       if (dataMap.isNotEmpty) {
         if (dataMap['error_code'] == 200) {
           List<StudentResultModel> results =

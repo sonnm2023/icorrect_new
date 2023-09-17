@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../api_urls.dart';
 import 'app_repository.dart';
 // ignore: depend_on_referenced_packages
@@ -41,6 +43,11 @@ class MyTestImpl implements MyTestRepository {
   Future<String> getSpecialHomeWorks(
       String email, String activityId, int status, int example) {
     String url = specialHomeWorksEP(email, activityId, status, example);
+
+    if (kDebugMode) {
+      print("DEBUG: getSpecialHomeWorks: $url");
+    }
+
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true)
         .timeout(const Duration(seconds: 15))
