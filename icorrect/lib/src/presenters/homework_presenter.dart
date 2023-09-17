@@ -21,6 +21,8 @@ abstract class HomeWorkViewContract {
   void onLogoutError(String message);
 
   void onUpdateCurrentUserInfo(UserDataModel userDataModel);
+
+  void onRefreshListHomework();
 }
 
 class HomeWorkPresenter {
@@ -112,5 +114,9 @@ class HomeWorkPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) => _view!.onLogoutError(onError.toString()),
     );
+  }
+
+  void refreshListHomework() {
+    _view!.onRefreshListHomework();
   }
 }

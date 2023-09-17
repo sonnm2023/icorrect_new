@@ -20,6 +20,7 @@ import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
@@ -39,6 +40,7 @@ class SimulatorTestScreen extends StatefulWidget {
 }
 
 class _SimulatorTestScreenState extends State<SimulatorTestScreen>
+with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
     implements SimulatorTestViewContract, ActionAlertListener {
   SimulatorTestPresenter? _simulatorTestPresenter;
 
@@ -49,6 +51,54 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   StreamSubscription? connection;
   bool isOffline = false;
+
+  TabBar get _tabBar {
+    return TabBar(
+      physics: const BouncingScrollPhysics(),
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(
+          width: 3.0,
+          color: AppColor.defaultPurpleColor,
+        ),
+      ),
+      tabs: _tabsLabel(),
+    );
+  }
+
+  List<Widget> _tabsLabel() {
+    return const [
+      Tab(
+        child: Text(
+          'MY TEST',
+          style: TextStyle(
+            fontSize: FontsSize.fontSize_14,
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      Tab(
+        child: Text(
+          'HIGHLIGHT',
+          style: TextStyle(
+            fontSize: FontsSize.fontSize_14,
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      Tab(
+        child: Text(
+          'OTHERS',
+          style: TextStyle(
+            fontSize: FontsSize.fontSize_14,
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -79,7 +129,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestPresenter = SimulatorTestPresenter(this);
 
     Provider.of<HomeWorkProvider>(context, listen: false)
-          .setSimulatorTestPresenter(_simulatorTestPresenter);
+        .setSimulatorTestPresenter(_simulatorTestPresenter);
     _getTestDetail();
   }
 
@@ -94,135 +144,221 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Align(
-          alignment: Alignment.topLeft,
-          child: SafeArea(
-            left: true,
-            top: true,
-            right: true,
-            bottom: true,
-            child: Stack(
-              children: [
-                _buildBody(),
-                _buildDownloadAgain(),
-                BackButtonWidget(backButtonTapped: _backButtonTapped),
-              ],
-            ),
-          ),
-        ),
+      home: Consumer<SimulatorTestProvider>(
+        builder: (context, simulatorTest, child) {
+          if (simulatorTest.submitStatus == SubmitStatus.success) {
+            return DefaultTabController(
+              length: 3,
+              child: Scaffold(
+                appBar: AppBar(
+                  elevation: 0.0,
+                  iconTheme: const IconThemeData(
+                    color: AppColor.defaultPurpleColor,
+                  ),
+                  centerTitle: true,
+                  leading:
+                      BackButtonWidget(backButtonTapped: _backButtonTapped),
+                  title: Text(
+                    widget.homeWorkModel.activityName,
+                    style: CustomTextStyle.appbarTitle,
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(CustomSize.size_40),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColor.defaultPurpleColor,
+                          ),
+                        ),
+                      ),
+                      child: _tabBar,
+                    ),
+                  ),
+                  backgroundColor: AppColor.defaultWhiteColor,
+                ),
+                body: TabBarView(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: SafeArea(
+                        left: true,
+                        top: true,
+                        right: true,
+                        bottom: true,
+                        child: Stack(
+                          children: [
+                            _buildBody(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    _buildHighLightTab(),
+                    _buildOtherTab(),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Scaffold(
+              body: Align(
+                alignment: Alignment.topLeft,
+                child: SafeArea(
+                  left: true,
+                  top: true,
+                  right: true,
+                  bottom: true,
+                  child: Stack(
+                    children: [
+                      _buildBody(),
+                      _buildDownloadAgain(),
+                      BackButtonWidget(backButtonTapped: _backButtonTapped),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 
+  Widget _buildHighLightTab() {
+    return HighLightTab(
+      provider: _simulatorTestProvider!,
+      homeWorkModel: widget.homeWorkModel,
+    );
+  }
+
+  Widget _buildOtherTab() {
+    return const Center(child: Text("_buildOtherTab"));
+  }
+
   void _backButtonTapped() async {
-    //Disable back button when submitting test
-    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
-      if (kDebugMode) {
-        print("DEBUG: Status is submitting!");
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.success) {
+      if (_simulatorTestProvider!.isVisibleSaveTheTest) {
+        //Update answer after submitted
+        if (kDebugMode) {
+          print("DEBUG: Update answer after submitted");
+        }
+      } else {
+        //Go back List homework screen
+        Navigator.pop(context, 'refresh');
       }
-      return;
-    }
-
-    switch (_simulatorTestProvider!.doingStatus.get) {
-      case -1:
-        {
-          //None
-          if (kDebugMode) {
-            print("DEBUG: Status is not start to do the test!");
-          }
-          Navigator.of(context).pop();
-          break;
+    } else {
+      //Disable back button when submitting test
+      if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+        if (kDebugMode) {
+          print("DEBUG: Status is submitting!");
         }
-      case 0:
-        {
-          //Doing
-          if (kDebugMode) {
-            print("DEBUG: Status is doing the test!");
-          }
+        return;
+      }
 
-          bool okButtonTapped = false;
-
-          await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CustomAlertDialog(
-                title: "Notification",
-                description: "The test is not completed! Are you sure to quit?",
-                okButtonTitle: "OK",
-                cancelButtonTitle: "Cancel",
-                borderRadius: 8,
-                hasCloseButton: false,
-                okButtonTapped: () {
-                  //Reset question image 
-                  _resetQuestionImage();
-                  
-                  okButtonTapped = true;
-                  _deleteAllAnswer();
-                },
-                cancelButtonTapped: () {
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          );
-
-          if (okButtonTapped) {
+      switch (_simulatorTestProvider!.doingStatus.get) {
+        case -1:
+          {
+            //None
+            if (kDebugMode) {
+              print("DEBUG: Status is not start to do the test!");
+            }
             Navigator.of(context).pop();
+            break;
           }
+        case 0:
+          {
+            //Doing
+            if (kDebugMode) {
+              print("DEBUG: Status is doing the test!");
+            }
 
-          break;
-        }
-      case 1:
-        {
-          //Finish
-          if (kDebugMode) {
-            print("DEBUG: Status is finish doing the test!");
+            bool okButtonTapped = false;
+
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomAlertDialog(
+                  title: "Notification",
+                  description:
+                      "The test is not completed! Are you sure to quit?",
+                  okButtonTitle: "OK",
+                  cancelButtonTitle: "Cancel",
+                  borderRadius: 8,
+                  hasCloseButton: false,
+                  okButtonTapped: () {
+                    //Reset question image
+                    _resetQuestionImage();
+
+                    okButtonTapped = true;
+                    _deleteAllAnswer();
+                  },
+                  cancelButtonTapped: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            );
+
+            if (okButtonTapped) {
+              Navigator.of(context).pop();
+            }
+
+            break;
           }
+        case 1:
+          {
+            //Finish
+            if (kDebugMode) {
+              print("DEBUG: Status is finish doing the test!");
+            }
 
-          bool cancelButtonTapped = false;
+            bool cancelButtonTapped = false;
 
-          await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CustomAlertDialog(
-                title: "Notify",
-                description: "Do you want to save this test before quit?",
-                okButtonTitle: "Save",
-                cancelButtonTitle: "Don't Save",
-                borderRadius: 8,
-                hasCloseButton: false,
-                okButtonTapped: () {
-                  //Reset question image 
-                  _resetQuestionImage();
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomAlertDialog(
+                  title: "Notify",
+                  description: "Do you want to save this test before quit?",
+                  okButtonTitle: "Save",
+                  cancelButtonTitle: "Don't Save",
+                  borderRadius: 8,
+                  hasCloseButton: false,
+                  okButtonTapped: () {
+                    //Reset question image
+                    _resetQuestionImage();
 
-                  //Submit
-                  _simulatorTestProvider!
-                      .updateSubmitStatus(SubmitStatus.submitting);
-                  _simulatorTestPresenter!.submitTest(
-                    testId: _simulatorTestProvider!.currentTestDetail.testId
-                        .toString(),
-                    activityId: widget.homeWorkModel.activityId.toString(),
-                    questions: _simulatorTestProvider!.questionList,
-                  );
-                },
-                cancelButtonTapped: () {
-                  cancelButtonTapped = true;
-                  _deleteAllAnswer();
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          );
+                    //Submit
+                    _simulatorTestProvider!
+                        .updateSubmitStatus(SubmitStatus.submitting);
+                    _simulatorTestPresenter!.submitTest(
+                      testId: _simulatorTestProvider!.currentTestDetail.testId
+                          .toString(),
+                      activityId: widget.homeWorkModel.activityId.toString(),
+                      questions: _simulatorTestProvider!.questionList,
+                    );
+                  },
+                  cancelButtonTapped: () {
+                    cancelButtonTapped = true;
+                    _deleteAllAnswer();
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            );
 
-          if (cancelButtonTapped) {
-            Navigator.of(context).pop();
+            if (cancelButtonTapped) {
+              Navigator.of(context).pop();
+            }
+
+            break;
           }
-
-          break;
-        }
+      }
     }
   }
 
@@ -354,16 +490,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _showConfirmDialog() {
     if (false == _simulatorTestProvider!.dialogShowing) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertsDialog.init().showDialog(
-              context,
-              AlertClass.microPermissionAlert,
-              this,
-              keyInfo: StringClass.permissionDenied,
-            );
-          });
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertsDialog.init().showDialog(
+            context,
+            AlertClass.microPermissionAlert,
+            this,
+            keyInfo: StringClass.permissionDenied,
+          );
+        },
+      );
       _simulatorTestProvider!.setDialogShowing(true);
     }
   }
@@ -434,7 +571,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setTotal(total);
     _simulatorTestProvider!.updateDownloadingIndex(index);
     _simulatorTestProvider!.updateDownloadingPercent(percent);
-    // _simulatorTestProvider!.setActivityType(testDetail.activityType);
     _simulatorTestProvider!.setActivityType(widget.homeWorkModel.activityType);
 
     //Enable Start Testing Button
@@ -522,7 +658,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
 
     //Go to MyTest Screen
-    _simulatorTestPresenter!.gotoMyTestScreen(activityAnswer);
+    // _simulatorTestPresenter!.gotoMyTestScreen(activityAnswer); //TODO
   }
 
   @override
@@ -585,4 +721,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       _simulatorTestProvider!.addVideoSource(fileTopicModel);
     }
   }
+  
+  @override
+  bool get wantKeepAlive => true;
 }

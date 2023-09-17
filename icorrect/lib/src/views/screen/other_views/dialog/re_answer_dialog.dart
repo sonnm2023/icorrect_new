@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -130,7 +131,9 @@ class ReAnswerDialog extends Dialog {
             '\\$_filePath';
         if (File(path).existsSync()) {
           await File(path).delete();
-          print("DEGUG : file record exist : ${File(_filePath).existsSync()}");
+          if (kDebugMode) {
+            print("DEGUG : file record exist : ${File(_filePath).existsSync()}");
+          }
         }
 
         _record.stop();

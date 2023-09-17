@@ -340,7 +340,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     }
   }
 
-  void _gotoHomeworkDetail() {
+  void _gotoHomeworkDetail() async {
     //TODO: For test
     // Navigator.push(
     //   context,
@@ -356,7 +356,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
     if (statusMap['title'] == 'Out of date' ||
         statusMap['title'] == 'Not Completed') {
-      Navigator.push(
+      final result = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => SimulatorTestScreen(
@@ -364,6 +364,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           ),
         ),
       );
+
+      if (!mounted) return;
+
+      // After the SimulatorTest returns a result
+      // and refresh list of homework if needed
+      if (result == 'refresh') {
+        widget.homeWorkPresenter.refreshListHomework();
+      }
     } else {
       Navigator.of(context).push(
         MaterialPageRoute(

@@ -288,4 +288,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     await _homeWorkProvider.setListHomeWorks(activities);
     await _homeWorkProvider.initializeListFilter();
   }
+
+  @override
+  void onRefreshListHomework() {
+    if (kDebugMode) {
+      print("DEBUG: HomeWorkScreen - onRefreshListHomework");
+    }
+    _getListHomeWork();
+  }
 }

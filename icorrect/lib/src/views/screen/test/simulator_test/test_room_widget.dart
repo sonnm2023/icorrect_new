@@ -51,7 +51,7 @@ class TestRoomWidget extends StatefulWidget {
 }
 
 class _TestRoomWidgetState extends State<TestRoomWidget>
-    with WidgetsBindingObserver
+    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin<TestRoomWidget>
     implements TestRoomViewContract {
   TestRoomPresenter? _testRoomPresenter;
   SimulatorTestProvider? _simulatorTestProvider;
@@ -573,26 +573,33 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showReAnswerDialog(QuestionTopicModel question) {
-    Future.delayed(Duration.zero, () async {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return ReAnswerDialog(context, question, _testRoomPresenter!,
+    Future.delayed(
+      Duration.zero,
+      () async {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return ReAnswerDialog(
+              context,
+              question,
+              _testRoomPresenter!,
               _simulatorTestProvider!.currentTestDetail.testId.toString(),
               (question) {
-            // List<QuestionTopicModel> questions =
-            //     _simulatorTestProvider!.questionList;
-            // print("question length: ${questions.length.toString()}");
-            int index = _simulatorTestProvider!.questionList.indexWhere((q) =>
-                q.id == question.id && q.repeatIndex == question.repeatIndex);
+                int index = _simulatorTestProvider!.questionList.indexWhere(
+                    (q) =>
+                        q.id == question.id &&
+                        q.repeatIndex == question.repeatIndex);
 
-            _simulatorTestProvider!.questionList[index] = question;
-            //_simulatorTestProvider!.setQuestionList(questions);
-          });
-        },
-      );
-    });
+                _simulatorTestProvider!.questionList[index] = question;
+
+                _simulatorTestProvider!.setVisibleSaveTheTest(true);
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   void _playReAnswerCallBack(QuestionTopicModel question) {
@@ -627,9 +634,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
 
         _showReAnswerDialog(question);
-        bool isPart2 = question.numPart == PartOfTest.part2.get;
-        _startRecordAnswer(
-            fileName: question.files.first.url, isPart2: isPart2);
+
+        // bool isPart2 = question.numPart == PartOfTest.part2.get;
+        // _startRecordAnswer(
+        //     fileName: question.files.first.url, isPart2: isPart2);
       }
     } else {
       showToastMsg(
@@ -1035,6 +1043,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       question.numPart = topicModel.numPart;
       _currentQuestion = question;
 
+      _startRecordAnswer(fileName: fileName, isPart2: isPart2);
+
       //Validate question with image
       if (question.files.length > 1) {
         String fileName = question.files.last.url;
@@ -1050,7 +1060,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
         }
       }
-      _startRecordAnswer(fileName: fileName, isPart2: isPart2);
     }
   }
 
@@ -1440,7 +1449,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onFinishAnswer(bool isPart2) {
     _resetQuestionImage();
-    
+
     //Reset countdown
     if (null != _countDown) {
       _countDown!.cancel();
@@ -1568,13 +1577,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+    _simulatorTestProvider!.setVisibleSaveTheTest(false);
 
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
     );
 
-    _gotoMyTestScreen(activityAnswer);
+    // _gotoMyTestScreen(activityAnswer); //TODO
   }
 
   @override
@@ -1612,4 +1622,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onReDownload() {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

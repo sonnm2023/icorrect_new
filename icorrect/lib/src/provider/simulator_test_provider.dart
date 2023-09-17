@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
@@ -446,6 +447,24 @@ class SimulatorTestProvider with ChangeNotifier {
 
   void resetQuestionImageUrl() {
     _questionImageUrl = '';
+  }
+
+  List<StudentResultModel> _highLightHomeWorks = [];
+  List<StudentResultModel> get highLightHomeworks => _highLightHomeWorks;
+  void setHighLightHomeworks(List<StudentResultModel> homeworks) {
+    _highLightHomeWorks = homeworks;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  List<StudentResultModel> _otherLightHomeWorks = [];
+  List<StudentResultModel> get otherLightHomeWorks => _otherLightHomeWorks;
+  void setOtherLightHomeWorks(List<StudentResultModel> homeworks) {
+    _otherLightHomeWorks = homeworks;
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   void resetAll() {
