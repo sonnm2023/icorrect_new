@@ -106,7 +106,7 @@ class _HighLightTabState extends State<HighLightTab>
           );
         } else {
           return EmptyWidget.init().buildNothingWidget(
-            'Nothing HighLight Homeworks in here',
+            'No data, please come back later!',
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
           );

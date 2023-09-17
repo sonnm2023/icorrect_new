@@ -27,7 +27,6 @@ abstract class SimulatorTestViewContract {
       double percent, int index, int total);
   void onDownloadFailure(AlertInfo info);
   void onSaveTopicListIntoProvider(List<TopicModel> list);
-  void onGotoMyTestScreen(ActivityAnswer activityAnswer);
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
   void onSubmitTestFail(String msg);
   void onReDownload();
@@ -326,10 +325,6 @@ class SimulatorTestPresenter {
       closeClientRequest();
       _view!.onReDownload();
     }
-  }
-
-  void gotoMyTestScreen(ActivityAnswer activityAnswer) {
-    _view!.onGotoMyTestScreen(activityAnswer);
   }
 
   void reDownloadFiles() {

@@ -19,8 +19,8 @@ import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/other_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
@@ -237,7 +237,10 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
   }
 
   Widget _buildOtherTab() {
-    return const Center(child: Text("_buildOtherTab"));
+    return OtherTab(
+      provider: _simulatorTestProvider!,
+      homeWorkModel: widget.homeWorkModel,
+    );
   }
 
   void _backButtonTapped() async {
@@ -619,23 +622,6 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
   }
 
   @override
-  void onGotoMyTestScreen(ActivityAnswer activityAnswer) {
-    if (kDebugMode) {
-      print("DEBUG: onGotoMyTestScreen");
-    }
-
-    //Update activityAnswer into current homeWorkModel
-    widget.homeWorkModel.activityAnswer = activityAnswer;
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MyTestScreen(
-            homeWorkModel: widget.homeWorkModel, isFromSimulatorTest: true),
-      ),
-    );
-  }
-
-  @override
   void onSubmitTestFail(String msg) {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
 
@@ -656,9 +642,6 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
       msg: msg,
       toastState: ToastStatesType.success,
     );
-
-    //Go to MyTest Screen
-    // _simulatorTestPresenter!.gotoMyTestScreen(activityAnswer); //TODO
   }
 
   @override

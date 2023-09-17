@@ -1404,10 +1404,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setVisibleSaveTheTest(isVisible);
   }
 
-  void _gotoMyTestScreen(ActivityAnswer activityAnswer) {
-    widget.simulatorTestPresenter.gotoMyTestScreen(activityAnswer);
-  }
-
   //For test: Delete All Answer file
   List<String> _prepareAnswerListForDelete() {
     if (_reviewingList.isEmpty) return [];
@@ -1583,8 +1579,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       msg: msg,
       toastState: ToastStatesType.success,
     );
-
-    // _gotoMyTestScreen(activityAnswer); //TODO
   }
 
   @override
