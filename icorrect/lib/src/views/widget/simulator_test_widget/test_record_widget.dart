@@ -8,10 +8,11 @@ import 'package:provider/provider.dart';
 
 class TestRecordWidget extends StatelessWidget {
   const TestRecordWidget(
-      {super.key, required this.finishAnswer, required this.repeatQuestion});
+      {super.key, required this.finishAnswer, required this.repeatQuestion, required this.cancelReAnswer});
 
   final Function(QuestionTopicModel questionTopicModel) finishAnswer;
   final Function(QuestionTopicModel questionTopicModel) repeatQuestion;
+  final Function() cancelReAnswer;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,8 @@ class TestRecordWidget extends StatelessWidget {
 
     bool isRepeat = false;
 
-    return Consumer<SimulatorTestProvider>(builder: (context, simulatorTestProvider, _) {
+    return Consumer<SimulatorTestProvider>(
+        builder: (context, simulatorTestProvider, _) {
       if (simulatorTestProvider.visibleRecord) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -61,24 +63,39 @@ class TestRecordWidget extends StatelessWidget {
                     children: [
                       _buildFinishButton(currentQuestion),
                       Consumer<SimulatorTestProvider>(
-                          builder: (context, simulatorTestProvider, _) {
-                            if (simulatorTestProvider.topicsQueue.isNotEmpty) {
-                              isRepeat = (simulatorTestProvider.topicsQueue.first.numPart ==
-                                  PartOfTest.part1.get ||
-                                  simulatorTestProvider.topicsQueue.first.numPart ==
-                                      PartOfTest.part3.get) && simulatorTestProvider.enableRepeatButton;
-                            }
-
-                            return Visibility(
-                              visible: isRepeat,
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 20),
-                                  _buildRepeatButton(currentQuestion),
-                                ],
-                              ),
+                        builder: (context, simulatorTestProvider, _) {
+                          //Finish Doing the test, show cancel button when reanswer
+                          if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
+                            return Row(
+                              children: [
+                                const SizedBox(width: 20),
+                                _buildCancelButton(),
+                              ],
                             );
-                          }),
+                          }
+
+                          //Doing test
+                          if (simulatorTestProvider.topicsQueue.isNotEmpty) {
+                            isRepeat = (simulatorTestProvider
+                                            .topicsQueue.first.numPart ==
+                                        PartOfTest.part1.get ||
+                                    simulatorTestProvider
+                                            .topicsQueue.first.numPart ==
+                                        PartOfTest.part3.get) &&
+                                simulatorTestProvider.enableRepeatButton;
+                          }
+
+                          return Visibility(
+                            visible: isRepeat,
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 20),
+                                _buildRepeatButton(currentQuestion),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -139,6 +156,27 @@ class TestRecordWidget extends StatelessWidget {
             fontSize: 15,
             fontWeight: FontWeight.bold,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCancelButton() {
+    return InkWell(
+      onTap: () {
+        cancelReAnswer();
+      },
+      child: Container(
+        width: CustomSize.size_100,
+        height: CustomSize.size_40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(CustomSize.size_20),
+          color: AppColor.defaultLightGrayColor,
+        ),
+        alignment: Alignment.center,
+        child: const Text(
+          'Cancel',
+          style: CustomTextStyle.textWhiteBold_15,
         ),
       ),
     );

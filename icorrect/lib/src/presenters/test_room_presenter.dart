@@ -25,6 +25,7 @@ abstract class TestRoomViewContract {
   void onCountDown(String countDownString);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
+  void onFinishForReAnswer();
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
   void onSubmitTestFail(String msg);
   void onClickSaveTheTest();
@@ -66,10 +67,12 @@ class TestRoomPresenter {
     }
   }
 
-  Timer startCountDown(
-      {required BuildContext context,
-      required int count,
-      required bool isPart2}) {
+  Timer startCountDown({
+    required BuildContext context,
+    required int count,
+    required bool isPart2,
+    required bool isReAnswer,
+  }) {
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -89,7 +92,13 @@ class TestRoomPresenter {
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
-        _view!.onFinishAnswer(isPart2);
+        if (isReAnswer) {
+          //For Re answer
+          _view!.onFinishForReAnswer();
+        } else {
+          //For answer
+          _view!.onFinishAnswer(isPart2);
+        }
       }
     });
   }

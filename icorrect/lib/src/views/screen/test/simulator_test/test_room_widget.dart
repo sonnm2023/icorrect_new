@@ -146,7 +146,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 child: TestQuestionWidget(
                   testRoomPresenter: _testRoomPresenter!,
                   playAnswerCallBack: _playAnswerCallBack,
-                  playReAnswerCallBack: _playReAnswerCallBack,
+                  reAnswerCallBack: _reAnswerCallBack,
                   showTipCallBack: _showTipCallBack,
                 ),
               ),
@@ -602,7 +602,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  void _playReAnswerCallBack(QuestionTopicModel question) {
+  void _reAnswerCallBack(QuestionTopicModel question) {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -633,9 +633,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
 
-        _showReAnswerDialog(question);
+        // _showReAnswerDialog(question);
 
-        // bool isPart2 = question.numPart == PartOfTest.part2.get;
+        bool isPart2 = question.numPart == PartOfTest.part2.get;
+        _startRecordForReanswer(fileName: question.files.first.url, numPart: question.numPart, isPart2: isPart2);
         // _startRecordAnswer(
         //     fileName: question.files.first.url, isPart2: isPart2);
       }
@@ -690,8 +691,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
-    bool isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
+    bool isPart2 = false;
+
+    if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
+      isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
         PartOfTest.part2.get;
+    } else {
+      isPart2 = questionTopicModel.numPart ==
+        PartOfTest.part2.get;
+    }
 
     onFinishAnswer(isPart2);
   }
@@ -1369,6 +1377,35 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
+  void _startRecordForReanswer({
+    required String fileName,
+    required int numPart,
+    required bool isPart2,
+  }) async {
+
+    //Hide SAVE THE TEST when re answer
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _simulatorTestProvider!.setVisibleSaveTheTest(false);
+    }
+
+    int timeRecord = Utils.getRecordTime(numPart);
+    String timeString = Utils.getTimeRecordString(timeRecord);
+
+    //Record the answer
+    _timerProvider!.setCountDown(timeString);
+
+    if (null != _countDown) {
+      _countDown!.cancel();
+    }
+    _countDown = _testRoomPresenter!
+        .startCountDown(context: context, count: timeRecord, isPart2: isPart2);
+
+    _setVisibleRecord(true, _countDown, fileName);
+
+    _recordAnswer(fileName);
+
+  }
+
   void _startRecordAnswer({
     required String fileName,
     required bool isPart2,
@@ -1456,6 +1493,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Stop record
     _setVisibleRecord(false, null, null);
+
+    //Show SAVE THE TEST when re answer
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _simulatorTestProvider!.setVisibleSaveTheTest(true);
+    }
 
     if (_simulatorTestProvider!.visibleCueCard) {
       //Has cue card case

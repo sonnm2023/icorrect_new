@@ -337,7 +337,9 @@ class _MyTestTabState extends State<MyTestTab>
         '\\$audioFile';
     if (File(path).existsSync()) {
       await File(path).delete();
-      print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+      if (kDebugMode) {
+        print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+      }
     }
     _resetReanswerData();
   }
