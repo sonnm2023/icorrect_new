@@ -24,6 +24,28 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _visibleReanswer = false;
+  int _indexReanswerQuestion = -1;
+  QuestionTopicModel _question = QuestionTopicModel();
+  bool get visibleReanswer => _visibleReanswer;
+  int get indexReanswerQuestion => _indexReanswerQuestion;
+  QuestionTopicModel get questionReanswer => _question;
+  void setReanswerAction(bool visible, int index, QuestionTopicModel question) {
+    _visibleReanswer = visible;
+    _indexReanswerQuestion = index;
+    _question = question;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void setVisibleReanswerWidget(bool visible) {
+    _visibleReanswer = visible;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   bool _isGettingTestDetail = true;
   bool get isGettingTestDetail => _isGettingTestDetail;
   void setGettingTestDetailStatus(bool isProcessing) {
@@ -192,7 +214,7 @@ class SimulatorTestProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
-  } 
+  }
 
   int _countRepeat = 0;
   int get countRepeat => _countRepeat;
@@ -235,8 +257,7 @@ class SimulatorTestProvider with ChangeNotifier {
         answers: questionTopic.answers,
         numPart: questionTopic.numPart,
         repeatIndex: questionTopic.repeatIndex,
-        files: questionTopic.files
-    );
+        files: questionTopic.files);
     if (isRepeat) {
       temp.content = "Ask for repeating the question!";
     }
@@ -303,7 +324,7 @@ class SimulatorTestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   int _indexOfCurrentQuestion = 0;
   int get indexOfCurrentQuestion => _indexOfCurrentQuestion;
   void setIndexOfCurrentQuestion(int i) {
@@ -349,7 +370,7 @@ class SimulatorTestProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   bool _visibleRecord = false;
   bool get visibleRecord => _visibleRecord;
   void setVisibleRecord(bool isVisible) {
@@ -468,6 +489,8 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   void resetAll() {
+    _visibleReanswer = false;
+    _question = QuestionTopicModel();
     _needDownloadAgain = false;
     _isLoadingVideo = false;
     _answerList.clear();

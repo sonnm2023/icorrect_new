@@ -256,16 +256,17 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Future _onAppInBackground() async {
-    //TODO
-    // VideoPlayerController videoController =
-    //     _simulatorTestProvider!.videoPlayController!;
-    // if (videoController.value.isPlaying) {
-    //   videoController.pause();
-    //   _simulatorTestProvider!.setPlayController(videoController);
-    // }
-
     if (widget.provider.visibleRecord) {
       _record.stop();
+      _stopCountTimer();
+
+      String path =
+          '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+          '\\$audioFile';
+      if (File(path).existsSync()) {
+        await File(path).delete();
+        print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+      }
     }
 
     if (_player!.state == PlayerState.playing) {
@@ -276,27 +277,8 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Future _onAppActive() async {
-    //TODO
-    // VideoPlayerController videoController =
-    //     _simulatorTestProvider!.videoPlayController!;
-    // _simulatorTestProvider!.setPlayController(videoController);
-
     if (widget.provider.visibleRecord) {
-      QuestionTopicModel currentQuestion = widget.provider.currentQuestion;
-
-      //TODO
-      // _initVideoController(
-      //     fileName: currentQuestion.files.first.url,
-      //     handleWhenFinishType: HandleWhenFinish.questionVideoType);
-
-      widget.provider.setVisibleRecord(false);
-      _record.stop();
-      _player!.stop();
-    } else {
-      //TODO
-      // if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
-      //   videoController.play();
-      // }
+      _recordReAnswer();
     }
   }
 
@@ -620,6 +602,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _stopCountTimer() {
+    widget.provider.setTimerCount("00:30");
     if (timer != null) {
       timer!.cancel();
     }

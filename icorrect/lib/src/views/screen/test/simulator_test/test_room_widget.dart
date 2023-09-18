@@ -26,10 +26,10 @@ import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/reanswer_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
@@ -61,6 +61,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
   Record? _recordController;
+  ReanswerWidget? _reanswerWidget;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -126,6 +127,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: TestRoomWidget --- build");
     }
 
+    _reanswerWidget = ReanswerWidget(
+      context,
+      _simulatorTestProvider!.currentTestDetail.testId.toString(),
+      (index, question) {
+        _simulatorTestProvider!.questionList[index].answers.last =
+            question.answers.last;
+        _simulatorTestProvider!.setVisibleSaveTheTest(true);
+        _simulatorTestProvider!
+            .setReanswerAction(false, -1, QuestionTopicModel());
+      },
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -189,6 +202,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                             ? SaveTheTestWidget(
                                 testRoomPresenter: _testRoomPresenter!)
                             : const SizedBox(),
+                        _reanswerWidget!
                       ],
                     ),
                   ),
@@ -434,6 +448,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
+
+    _reanswerWhenAppInactive();
   }
 
   Future _onAppActive() async {
@@ -457,6 +473,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
+    _reanswerWhenAppActive();
   }
 
   void _deallocateMemory() async {
@@ -572,37 +589,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _showReAnswerDialog(QuestionTopicModel question) {
-    Future.delayed(
-      Duration.zero,
-      () async {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return ReAnswerDialog(
-              context,
-              question,
-              _testRoomPresenter!,
-              _simulatorTestProvider!.currentTestDetail.testId.toString(),
-              (question) {
-                int index = _simulatorTestProvider!.questionList.indexWhere(
-                    (q) =>
-                        q.id == question.id &&
-                        q.repeatIndex == question.repeatIndex);
+  // void _showReAnswerDialog(QuestionTopicModel question) {
+  //   Future.delayed(
+  //     Duration.zero,
+  //     () async {
+  //       showDialog(
+  //         context: context,
+  //         barrierDismissible: false,
+  //         builder: (context) {
+  //           return ReAnswerDialog(
+  //             context,
+  //             question,
+  //             _testRoomPresenter!,
+  //             _simulatorTestProvider!.currentTestDetail.testId.toString(),
+  //             (question) {
+  //               int index = _simulatorTestProvider!.questionList.indexWhere(
+  //                   (q) =>
+  //                       q.id == question.id &&
+  //                       q.repeatIndex == question.repeatIndex);
 
-                _simulatorTestProvider!.questionList[index] = question;
+  //               _simulatorTestProvider!.questionList[index] = question;
 
-                _simulatorTestProvider!.setVisibleSaveTheTest(true);
-              },
-            );
-          },
-        );
-      },
-    );
-  }
+  //               _simulatorTestProvider!.setVisibleSaveTheTest(true);
+  //             },
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
-  void _playReAnswerCallBack(QuestionTopicModel question) {
+  void _playReAnswerCallBack(int index, QuestionTopicModel question) {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -622,7 +639,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 //TODO: Pause reviewing process
 
                 //Show re-answer dialog
-                _showReAnswerDialog(question);
+                // _showReAnswerDialog(question);
+                _simulatorTestProvider!
+                    .setReanswerAction(true, index, question);
               },
             );
           },
@@ -633,7 +652,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
 
-        _showReAnswerDialog(question);
+        _simulatorTestProvider!.setReanswerAction(true, index, question);
 
         // bool isPart2 = question.numPart == PartOfTest.part2.get;
         // _startRecordAnswer(
@@ -644,6 +663,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         msg: "Please wait until the test is finished!",
         toastState: ToastStatesType.warning,
       );
+    }
+  }
+
+  Future _reanswerWhenAppInactive() async {
+    _reanswerWidget!.stopReanswer();
+  }
+
+  Future _reanswerWhenAppActive() async {
+    if (_simulatorTestProvider!.questionReanswer.id != 0 &&
+        _simulatorTestProvider!.indexReanswerQuestion != -1) {
+      _simulatorTestProvider!.setVisibleReanswerWidget(true);
     }
   }
 
