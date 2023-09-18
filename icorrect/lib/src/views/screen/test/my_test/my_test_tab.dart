@@ -552,19 +552,11 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
-    if (provider.indexAudio != Status.playOff.get) {
-      Fluttertoast.showToast(
-          msg: "Please wait for the review to complete",
-          backgroundColor: AppColor.defaultGraySlightColor,
-          textColor: Colors.black,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 16,
-          toastLength: Toast.LENGTH_SHORT);
-    } else {
-      if (!provider.visibleRecord) {
-        widget.provider.setCurrentQuestion(question);
-        _recordReAnswer();
-      }
+    widget.provider.setPlayAnswer(Status.playOff.get, question.id);
+    _stopAudio();
+    if (!provider.visibleRecord) {
+      widget.provider.setCurrentQuestion(question);
+      _recordReAnswer();
     }
   }
 
