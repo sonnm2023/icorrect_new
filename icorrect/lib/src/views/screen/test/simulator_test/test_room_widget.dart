@@ -72,6 +72,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _hasHeaderPart3 = false;
   int _endOfTakeNoteIndex = 0;
   bool _isBackgroundMode = false;
+  String reanswerFilePath = "";
 
   @override
   void initState() {
@@ -184,6 +185,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                         TestRecordWidget(
                           finishAnswer: _finishAnswerCallBack,
                           repeatQuestion: _repeatQuestionCallBack,
+                          cancelReAnswer: _cancelReanswerCallBack,
                         ),
                         _simulatorTestProvider!.activityType == "homework"
                             ? SaveTheTestWidget(
@@ -636,9 +638,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         // _showReAnswerDialog(question);
 
         bool isPart2 = question.numPart == PartOfTest.part2.get;
-        _startRecordForReanswer(fileName: question.files.first.url, numPart: question.numPart, isPart2: isPart2);
-        // _startRecordAnswer(
-        //     fileName: question.files.first.url, isPart2: isPart2);
+        _startRecordForReanswer(
+            fileName: question.files.first.url,
+            numPart: question.numPart,
+            isPart2: isPart2);
       }
     } else {
       showToastMsg(
@@ -691,17 +694,43 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
-    bool isPart2 = false;
-
-    if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
-      isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
-        PartOfTest.part2.get;
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      //Finish re answer
+      onFinishReAnswer();
     } else {
-      isPart2 = questionTopicModel.numPart ==
-        PartOfTest.part2.get;
-    }
+      //Finish answer
+      bool isPart2 = false;
 
-    onFinishAnswer(isPart2);
+      if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
+        isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
+            PartOfTest.part2.get;
+      } else {
+        isPart2 = questionTopicModel.numPart == PartOfTest.part2.get;
+      }
+
+      onFinishAnswer(isPart2);
+    }
+  }
+
+  void _cancelReanswerCallBack() async {
+    String path =
+        '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+        '\\$reanswerFilePath';
+    if (File(path).existsSync()) {
+      await File(path).delete();
+      if (kDebugMode) {
+        print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+      }
+    }
+    _resetReanswerData();
+  }
+
+  void _resetReanswerData() {
+    // widget.provider.setVisibleRecord(false);
+    // widget.provider.setTimerCount('00:00');
+    // _stopCountTimer();
+    // widget.provider.setCountDownTimer(null);
+    // _record.stop();
   }
 
   void _resetQuestionImage() {
@@ -1223,6 +1252,35 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
+  Future<void> _recordForReAnswer(String fileName) async {
+    reanswerFilePath = '${await Utils.generateAudioFileName()}.wav';
+    String path = await FileStorageHelper.getFilePath(
+        reanswerFilePath,
+        MediaType.audio,
+        _simulatorTestProvider!.currentTestDetail.testId.toString());
+
+    if (kDebugMode) {
+      print("DEBUG: RECORD AS FILE PATH: $path");
+    }
+
+    if (await _recordController!.hasPermission()) {
+      await _recordController!.start(
+        path: path,
+        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+
+      // List<FileTopicModel> temp = _currentQuestion!.answers;
+      // if (!_checkAnswerFileExist(newFileName, temp)) {
+      //   temp.add(
+      //       FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
+      //   _currentQuestion!.answers = temp;
+      //   _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+      // }
+    }
+  }
+
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
     if (list.isEmpty) return false;
 
@@ -1382,7 +1440,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required int numPart,
     required bool isPart2,
   }) async {
-
     //Hide SAVE THE TEST when re answer
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _simulatorTestProvider!.setVisibleSaveTheTest(false);
@@ -1398,12 +1455,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
     _countDown = _testRoomPresenter!
-        .startCountDown(context: context, count: timeRecord, isPart2: isPart2);
+        .startCountDown(context: context, count: timeRecord, isPart2: isPart2, isReAnswer: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
-    _recordAnswer(fileName);
-
+    _recordForReAnswer(fileName);
   }
 
   void _startRecordAnswer({
@@ -1430,7 +1486,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
     _countDown = _testRoomPresenter!
-        .startCountDown(context: context, count: timeRecord, isPart2: isPart2);
+        .startCountDown(context: context, count: timeRecord, isPart2: isPart2, isReAnswer: false);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1481,30 +1537,53 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onFinishAnswer(bool isPart2) {
-    _resetQuestionImage();
+    //Finish answer
+      _resetQuestionImage();
 
-    //Reset countdown
-    if (null != _countDown) {
-      _countDown!.cancel();
-    }
+      //Reset countdown
+      if (null != _countDown) {
+        _countDown!.cancel();
+      }
 
-    //Enable repeat button
-    _simulatorTestProvider!.setEnableRepeatButton(true);
+      //Enable repeat button
+      _simulatorTestProvider!.setEnableRepeatButton(true);
 
-    //Stop record
-    _setVisibleRecord(false, null, null);
+      //Stop record
+      _setVisibleRecord(false, null, null);
 
-    //Show SAVE THE TEST when re answer
-    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
-      _simulatorTestProvider!.setVisibleSaveTheTest(true);
-    }
+      //Show SAVE THE TEST when re answer
+      if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+        _simulatorTestProvider!.setVisibleSaveTheTest(true);
+      }
 
-    if (_simulatorTestProvider!.visibleCueCard) {
-      //Has cue card case
-      if (isPart2) {
-        _simulatorTestProvider!.setVisibleCueCard(false);
+      if (_simulatorTestProvider!.visibleCueCard) {
+        //Has cue card case
+        if (isPart2) {
+          _simulatorTestProvider!.setVisibleCueCard(false);
 
-        //Add question into List Question & show it
+          //Add question into List Question & show it
+          _simulatorTestProvider!.addCurrentQuestionIntoList(
+            questionTopic: _currentQuestion!,
+            repeatIndex: _countRepeat,
+            isRepeat: false,
+          );
+
+          //Reset count repeat
+          _countRepeat = 0;
+
+          // _playNextQuestion();
+          _playNextPart();
+        } else {
+          //Reset count repeat
+          _countRepeat = 0;
+          //Start to play end_of_take_note video
+          Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
+          TopicModel topic = topicQueue.first;
+
+          _testRoomPresenter!.playEndOfTakeNoteFile(topic);
+        }
+      } else {
+        //Add question or followup into List Question & show it
         _simulatorTestProvider!.addCurrentQuestionIntoList(
           questionTopic: _currentQuestion!,
           repeatIndex: _countRepeat,
@@ -1514,46 +1593,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         //Reset count repeat
         _countRepeat = 0;
 
-        // _playNextQuestion();
-        _playNextPart();
-      } else {
-        //Reset count repeat
-        _countRepeat = 0;
-        //Start to play end_of_take_note video
-        Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
-        TopicModel topic = topicQueue.first;
-
-        _testRoomPresenter!.playEndOfTakeNoteFile(topic);
-      }
-    } else {
-      //Add question or followup into List Question & show it
-      _simulatorTestProvider!.addCurrentQuestionIntoList(
-        questionTopic: _currentQuestion!,
-        repeatIndex: _countRepeat,
-        isRepeat: false,
-      );
-
-      //Reset count repeat
-      _countRepeat = 0;
-
-      TopicModel? topicModel = _getCurrentPart();
-      if (null != topicModel) {
-        if (topicModel.numPart == PartOfTest.part3.get) {
-          bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
-          if (finishFollowUp == true) {
-            _playNextQuestion();
+        TopicModel? topicModel = _getCurrentPart();
+        if (null != topicModel) {
+          if (topicModel.numPart == PartOfTest.part3.get) {
+            bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
+            if (finishFollowUp == true) {
+              _playNextQuestion();
+            } else {
+              _playNextFollowup();
+            }
           } else {
-            _playNextFollowup();
+            _playNextQuestion();
           }
         } else {
-          _playNextQuestion();
-        }
-      } else {
-        if (kDebugMode) {
-          print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
+          if (kDebugMode) {
+            print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
+          }
         }
       }
-    }
   }
 
   @override
@@ -1661,4 +1718,27 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   bool get wantKeepAlive => true;
+  
+  @override
+  void onFinishForReAnswer() {
+    widget.provider.setReAnswerOfQuestions(question);
+    int index = widget.provider.myAnswerOfQuestions.indexWhere(
+        (q) => q.id == question.id && q.repeatIndex == question.repeatIndex);
+    widget.provider.myAnswerOfQuestions[index] = question;
+    widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
+    if (audioFile.isNotEmpty) {
+      if (question.answers.isNotEmpty) {
+        question.answers[question.repeatIndex].url = audioFile;
+      } else {
+        FileTopicModel fileTopicModel = FileTopicModel();
+        fileTopicModel.url = audioFile;
+        question.answers.add(fileTopicModel);
+      }
+      if (_isLastAnswer(question)) {
+        question.reAnswerCount++;
+      }
+      widget.provider.setCurrentQuestion(question);
+    }
+    _resetReanswerData();
+  }
 }
