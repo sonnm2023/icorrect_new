@@ -20,6 +20,7 @@ class TestQuestionWidget extends StatelessWidget {
           QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
       playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
+  // final Function(int index,QuestionTopicModel questionTopicModel) playReAnswerCallBack; //TODO
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
 
 
@@ -267,6 +268,7 @@ class TestQuestionWidget extends StatelessWidget {
                         if (hasReAnswer) InkWell(
                           onTap: () {
                             reAnswerCallBack(question);
+                            // playReAnswerCallBack(index,question); //TODO
                           },
                           child: const Text(
                             "Re-answer",
