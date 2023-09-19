@@ -121,7 +121,10 @@ class StudentResultModel {
   set teacherName(value) => this._teacherName = value;
 
   bool haveResponse() {
-    return _orderId != null && _orderId != 0;
+    return _orderId != null &&
+        _orderId != 0 &&
+        _overallScore != null &&
+        _overallScore != "0.0";
   }
 
   StudentResultModel.fromJson(Map<String, dynamic> item) {
@@ -135,32 +138,16 @@ class StudentResultModel {
     _updateAt = item['updated_at'] ?? '';
     _orderId = item['order_id'] ?? 0;
     _publishResponse = item['publish_response'] ?? 0;
-    _overallScore = item['overall_score'] ?? '0.0';
-    if (isNumeric(_overallScore!) && double.parse(_overallScore!) < 0) {
-      _overallScore = "0.0";
-    }
+    _overallScore = item['overall_score'] ?? '';
     _publish = item['pushlis'] ?? 0;
     _realActivityId = item['real_activity_id'] ?? 0;
     _example = item['example'] ?? 0;
     _teacherId = item['teacher_id'] ?? 0;
     _aiOrder = item['ai_order'] ?? 0;
-    _aiScore = item['ai_score'] ?? '0.0';
-    if (isNumeric(_aiScore!) && double.parse(_aiScore!) < 0) {
-      _aiScore = "0.0";
-    }
+    _aiScore = item['ai_score'] ?? '';
     _students = studentModel;
     _activityResult = activityResult;
     _status = item['status'] ?? 0;
     _teacherName = item['teacher_name'] ?? '';
-  }
-
-  bool isNumeric(String str) {
-    try {
-      var value = double.parse(str);
-    } on FormatException {
-      return false;
-    } finally {
-      return true;
-    }
   }
 }

@@ -141,38 +141,32 @@ class _StudentCorrectionState extends State<StudentCorrection>
                       maxLines: 4,
                     ),
             ),
-            LayoutBuilder(
-              builder: (context, constraint) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: CustomSize.size_10,
-                  ),
-                  alignment: Alignment.centerRight,
-                  width: constraint.maxWidth,
-                  child: (appState.responseModel.isTooLong())
-                      ? InkWell(
-                          onTap: () {
-                            widget.provider.setVisibleOverviewComment(
-                                !appState.visibleOverviewComment);
-                          },
-                          child: Text(
-                            (appState.visibleOverviewComment)
-                                ? 'Show less'
-                                : 'Show more',
-                            style: CustomTextStyle.textBoldBlack_14,
-                            textAlign: TextAlign.justify,
-                            maxLines: 4,
-                          ),
-                        )
-                      : Text(
-                          appState.responseModel.overallComment ?? '',
-                          style: CustomTextStyle.textBlack_14,
-                          textAlign: TextAlign.justify,
-                          maxLines: 4,
-                        ),
-                );
-              },
-            ),
+            if (appState.responseModel.isTooLong())
+              LayoutBuilder(
+                builder: (context, constraint) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: CustomSize.size_10,
+                    ),
+                    alignment: Alignment.centerRight,
+                    width: constraint.maxWidth,
+                    child: InkWell(
+                      onTap: () {
+                        widget.provider.setVisibleOverviewComment(
+                            !appState.visibleOverviewComment);
+                      },
+                      child: Text(
+                        (appState.visibleOverviewComment)
+                            ? 'Show less'
+                            : 'Show more',
+                        style: CustomTextStyle.textBoldBlack_14,
+                        textAlign: TextAlign.justify,
+                        maxLines: 4,
+                      ),
+                    ),
+                  );
+                },
+              ),
           ],
         );
       },
