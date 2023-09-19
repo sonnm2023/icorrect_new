@@ -18,6 +18,7 @@ import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/other_tab.dart';
@@ -51,6 +52,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   StreamSubscription? connection;
   bool isOffline = false;
+  CircleLoading? _loading;
 
   TabBar get _tabBar {
     return TabBar(
@@ -130,6 +132,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     Provider.of<HomeWorkProvider>(context, listen: false)
         .setSimulatorTestPresenter(_simulatorTestPresenter);
+    
+    _loading = CircleLoading();
+
     _getTestDetail();
   }
 
@@ -264,10 +269,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               borderRadius: 8,
               hasCloseButton: true,
               okButtonTapped: () {
-                //Submit
+                //Update reanswer
+                _loading!.show(context);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
-                _simulatorTestProvider!
-                    .updateSubmitStatus(SubmitStatus.submitting);
                 _simulatorTestPresenter!.submitTest(
                   testId: _simulatorTestProvider!.currentTestDetail.testId
                       .toString(),
@@ -368,7 +372,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                   okButtonTitle: "Save",
                   cancelButtonTitle: "Don't Save",
                   borderRadius: 8,
-                  hasCloseButton: false,
+                  hasCloseButton: true,
                   okButtonTapped: () {
                     //Reset question image
                     _resetQuestionImage();
@@ -661,7 +665,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestFail(String msg) {
-    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _loading!.hide();
+    } else {
+      _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+    }
 
     showToastMsg(
       msg: msg,
@@ -673,7 +681,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
-    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _loading!.hide();
+    } else {
+      _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+    }
 
     showToastMsg(
       msg: msg,
