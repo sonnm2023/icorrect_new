@@ -7,7 +7,6 @@ import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart'
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;

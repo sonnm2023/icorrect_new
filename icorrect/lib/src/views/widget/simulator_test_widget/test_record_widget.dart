@@ -8,7 +8,10 @@ import 'package:provider/provider.dart';
 
 class TestRecordWidget extends StatelessWidget {
   const TestRecordWidget(
-      {super.key, required this.finishAnswer, required this.repeatQuestion, required this.cancelReAnswer});
+      {super.key,
+      required this.finishAnswer,
+      required this.repeatQuestion,
+      required this.cancelReAnswer});
 
   final Function(QuestionTopicModel questionTopicModel) finishAnswer;
   final Function(QuestionTopicModel questionTopicModel) repeatQuestion;
@@ -26,88 +29,91 @@ class TestRecordWidget extends StatelessWidget {
     bool isRepeat = false;
 
     return Consumer<SimulatorTestProvider>(
-        builder: (context, simulatorTestProvider, _) {
-      if (simulatorTestProvider.visibleRecord) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              width: w,
-              height: 200,
-              alignment: Alignment.center,
-              color: AppColor.defaultLightGrayColor,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  const Text('You answer is being recorded'),
-                  const SizedBox(height: 20),
-                  Image.asset(
-                    'assets/images/ic_record_2.png',
-                    width: 25,
-                    height: 25,
-                  ),
-                  const SizedBox(height: 5),
-                  Consumer<TimerProvider>(builder: (context, timerProvider, _) {
-                    return Text(
-                      timerProvider.strCount,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildFinishButton(currentQuestion),
-                      Consumer<SimulatorTestProvider>(
-                        builder: (context, simulatorTestProvider, _) {
-                          //Finish Doing the test, show cancel button when reanswer
-                          if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
-                            return Row(
-                              children: [
-                                const SizedBox(width: 20),
-                                _buildCancelButton(),
-                              ],
+      builder: (context, simulatorTestProvider, _) {
+        if (simulatorTestProvider.visibleRecord) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                width: w,
+                height: 200,
+                alignment: Alignment.center,
+                color: AppColor.defaultLightGrayColor,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    const Text('You answer is being recorded'),
+                    const SizedBox(height: 20),
+                    Image.asset(
+                      'assets/images/ic_record_2.png',
+                      width: 25,
+                      height: 25,
+                    ),
+                    const SizedBox(height: 5),
+                    Consumer<TimerProvider>(
+                        builder: (context, timerProvider, _) {
+                      return Text(
+                        timerProvider.strCount,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildFinishButton(currentQuestion),
+                        Consumer<SimulatorTestProvider>(
+                          builder: (context, simulatorTestProvider, _) {
+                            //Finish Doing the test, show cancel button when reanswer
+                            if (simulatorTestProvider.doingStatus ==
+                                DoingStatus.finish) {
+                              return Row(
+                                children: [
+                                  const SizedBox(width: 20),
+                                  _buildCancelButton(),
+                                ],
+                              );
+                            }
+
+                            //Doing test - build Repeat button if has
+                            if (simulatorTestProvider.topicsQueue.isNotEmpty) {
+                              isRepeat = (simulatorTestProvider
+                                              .topicsQueue.first.numPart ==
+                                          PartOfTest.part1.get ||
+                                      simulatorTestProvider
+                                              .topicsQueue.first.numPart ==
+                                          PartOfTest.part3.get) &&
+                                  simulatorTestProvider.enableRepeatButton;
+                            }
+
+                            return Visibility(
+                              visible: isRepeat,
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 20),
+                                  _buildRepeatButton(currentQuestion),
+                                ],
+                              ),
                             );
-                          }
-
-                          //Doing test
-                          if (simulatorTestProvider.topicsQueue.isNotEmpty) {
-                            isRepeat = (simulatorTestProvider
-                                            .topicsQueue.first.numPart ==
-                                        PartOfTest.part1.get ||
-                                    simulatorTestProvider
-                                            .topicsQueue.first.numPart ==
-                                        PartOfTest.part3.get) &&
-                                simulatorTestProvider.enableRepeatButton;
-                          }
-
-                          return Visibility(
-                            visible: isRepeat,
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 20),
-                                _buildRepeatButton(currentQuestion),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      } else {
-        return const SizedBox();
-      }
-    });
+            ],
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   Widget _buildFinishButton(QuestionTopicModel questionTopicModel) {
@@ -167,16 +173,21 @@ class TestRecordWidget extends StatelessWidget {
         cancelReAnswer();
       },
       child: Container(
-        width: CustomSize.size_100,
-        height: CustomSize.size_40,
+        width: 100,
+        height: 44,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(CustomSize.size_20),
-          color: AppColor.defaultLightGrayColor,
+          borderRadius: BorderRadius.circular(22),
+          color: Colors.white,
+          border: Border.all(width: 1, color: Colors.grey),
         ),
         alignment: Alignment.center,
         child: const Text(
           'Cancel',
-          style: CustomTextStyle.textWhiteBold_15,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
