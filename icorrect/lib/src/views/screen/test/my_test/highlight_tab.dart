@@ -172,13 +172,13 @@ class _HighLightTabState extends State<HighLightTab>
             ],
           ),
           Text(
-            (resultModel.overallScore.toString().isNotEmpty &&
-                    resultModel.overallScore != "0.0")
-                ? resultModel.overallScore
-                : resultModel.aiScore,
+            Utils.scoreReponse(resultModel)['score'],
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: CustomTextStyle.textBoldGreen_15,
+            style: TextStyle(
+                color: Utils.scoreReponse(resultModel)['color'],
+                fontSize: 15,
+                fontWeight: FontWeight.bold),
           ),
         ],
       ),

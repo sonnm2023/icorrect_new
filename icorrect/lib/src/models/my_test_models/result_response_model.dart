@@ -70,8 +70,7 @@ class ResultResponseModel {
 
   set pronunciation(value) => this._pronunciation = value;
 
-  get overallComment =>
-      this._overallComment ?? 'Nothing overall comment in here';
+  get overallComment => this._overallComment ?? '';
 
   set overallComment(value) => this._overallComment = value;
 

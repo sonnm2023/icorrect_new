@@ -21,6 +21,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/app_asset.dart';
 import '../../core/app_color.dart';
+import '../models/my_test_models/student_result_model.dart';
 import '../provider/homework_provider.dart';
 import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'api_urls.dart';
@@ -240,6 +241,35 @@ class Utils {
         return -2;
       default:
         return -10;
+    }
+  }
+
+  static Map<String, dynamic> scoreReponse(StudentResultModel resultModel) {
+    if (resultModel.overallScore.isNotEmpty &&
+        resultModel.overallScore != "0.0") {
+      return {'color': Colors.green, 'score': resultModel.overallScore};
+    } else {
+      String aiScore = resultModel.aiScore;
+      if (aiScore.isNotEmpty) {
+        if (isNumeric(aiScore) &&
+            (double.parse(aiScore) == -1.0 || double.parse(aiScore) == -2.0)) {
+          return {'color': Colors.red, 'score': 'Not Evaluated'};
+        } else {
+          return {'color': Colors.blue, 'score': aiScore};
+        }
+      } else {
+        return {'color': Colors.red, 'score': 'Not Evaluated'};
+      }
+    }
+  }
+
+  static bool isNumeric(String str) {
+    try {
+      var value = double.parse(str);
+    } on FormatException {
+      return false;
+    } finally {
+      return true;
     }
   }
 

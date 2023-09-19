@@ -165,12 +165,13 @@ class _OtherTabState extends State<OtherTab>
             ],
           ),
           Text(
-            resultModel.aiScore.toString().isNotEmpty
-                ? resultModel.aiScore.toString()
-                : resultModel.overallScore.toString(),
+            Utils.scoreReponse(resultModel)['score'],
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: CustomTextStyle.textBoldGreen_15,
+            style: TextStyle(
+                color: Utils.scoreReponse(resultModel)['color'],
+                fontSize: 15,
+                fontWeight: FontWeight.bold),
           ),
         ],
       ),

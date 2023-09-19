@@ -58,7 +58,7 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
     return ChangeNotifierProvider(
       create: (_) => StudentTestProvider(),
       child: DefaultTabController(
-        length: (widget.studentResultModel.haveResponse()) ? 2 : 1,
+        length: 2,
         child: Scaffold(
           key: GlobalScaffoldKey.studentOtherScaffoldKey,
           appBar: AppBar(
@@ -94,23 +94,16 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
           body: Consumer<StudentTestProvider>(
             builder: (context, provider, child) {
               return TabBarView(
-                children: (widget.studentResultModel.haveResponse())
-                    ? [
-                        TestDetailScreen(
-                          provider: provider,
-                          studentResultModel: widget.studentResultModel,
-                        ),
-                        StudentCorrection(
-                          provider: provider,
-                          studentResultModel: widget.studentResultModel,
-                        ),
-                      ]
-                    : [
-                        TestDetailScreen(
-                          provider: provider,
-                          studentResultModel: widget.studentResultModel,
-                        )
-                      ],
+                children: [
+                  TestDetailScreen(
+                    provider: provider,
+                    studentResultModel: widget.studentResultModel,
+                  ),
+                  StudentCorrection(
+                    provider: provider,
+                    studentResultModel: widget.studentResultModel,
+                  ),
+                ],
               );
             },
           ),
@@ -120,28 +113,19 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
   }
 
   List<Widget> _tabsLabel() {
-    return (widget.studentResultModel.haveResponse())
-        ? const [
-            Tab(
-              child: Text(
-                'Test Detail',
-                style: TextStyle(fontSize: FontsSize.fontSize_14),
-              ),
-            ),
-            Tab(
-              child: Text(
-                'Correction',
-                style: TextStyle(fontSize: FontsSize.fontSize_14),
-              ),
-            ),
-          ]
-        : const [
-            Tab(
-              child: Text(
-                'Test Detail',
-                style: TextStyle(fontSize: FontsSize.fontSize_14),
-              ),
-            ),
-          ];
+    return const [
+      Tab(
+        child: Text(
+          'Test Detail',
+          style: TextStyle(fontSize: FontsSize.fontSize_14),
+        ),
+      ),
+      Tab(
+        child: Text(
+          'Correction',
+          style: TextStyle(fontSize: FontsSize.fontSize_14),
+        ),
+      ),
+    ];
   }
 }
