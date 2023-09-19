@@ -141,7 +141,7 @@ class _MyTestTabState extends State<MyTestTab>
                   },
                 ),
               ),
-              (widget.homeWorkModel.activityAnswer!.aiOrder != 0)
+              (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
                   ? LayoutBuilder(
                       builder: (_, constraint) {
                         return InkWell(
