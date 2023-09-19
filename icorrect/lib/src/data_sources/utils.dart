@@ -160,7 +160,8 @@ class Utils {
     return tempDate;
   }
 
-  static Map<String, dynamic> getHomeWorkStatus(ActivitiesModel homeWorkModel, String serverCurrentTime) {
+  static Map<String, dynamic> getHomeWorkStatus(
+      ActivitiesModel homeWorkModel, String serverCurrentTime) {
     if (null == homeWorkModel.activityAnswer) {
       bool timeCheck =
           isExpired(homeWorkModel.activityEndTime, serverCurrentTime);
