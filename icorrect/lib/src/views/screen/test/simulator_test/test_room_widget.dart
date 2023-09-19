@@ -31,7 +31,6 @@ import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
-import 'package:icorrect/src/views/widget/simulator_test_widget/reanswer_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
@@ -63,7 +62,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
   Record? _recordController;
-  ReanswerWidget? _reanswerWidget;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -133,18 +131,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: TestRoomWidget --- build");
     }
 
-    _reanswerWidget = ReanswerWidget(
-      context,
-      _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      (index, question) {
-        _simulatorTestProvider!.questionList[index].answers.last =
-            question.answers.last;
-        _simulatorTestProvider!.setVisibleSaveTheTest(true);
-        _simulatorTestProvider!
-            .setReanswerAction(false, -1, QuestionTopicModel());
-      },
-    );
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -209,7 +195,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                             ? SaveTheTestWidget(
                                 testRoomPresenter: _testRoomPresenter!)
                             : const SizedBox(),
-                        _reanswerWidget!
                       ],
                     ),
                   ),
@@ -448,6 +433,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (null != _countDownCueCard) {
           _countDownCueCard!.cancel();
         }
+
+        _simulatorTestProvider!.setVisibleRecord(false);
       }
 
       if (_audioPlayerController!.state == PlayerState.playing) {
@@ -455,32 +442,42 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
-
-    _reanswerWhenAppInactive();
   }
 
   Future _onAppActive() async {
     _isBackgroundMode = false;
-    if (null != _videoPlayerController) {
-      if (_simulatorTestProvider!.visibleCueCard) {
-        //Playing end_of_take_note ==> replay end_of_take_note
-        if (_endOfTakeNoteIndex != 0) {
-          _rePlayEndOfTakeNote();
-        }
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      if (_audioPlayerController != null) {
+        //Re play answer audio
+      } else if (_simulatorTestProvider!.visibleRecord == true) {
+        //Re record reanswer
+        // _reRecordReanswer();
+      }
 
-        //Recording the answer for Part 2 ==> Re record the answer
-      } else {
-        if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
-            _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
-            _simulatorTestProvider!.visibleRecord == false) {
-          _videoPlayerController!.play();
-        } else if (_simulatorTestProvider!.visibleRecord == true) {
-          //Re record
-          _reRecord();
+      if (_simulatorTestProvider!.submitStatus != SubmitStatus.success || _simulatorTestProvider!.needUpdateReanswer) {
+        _simulatorTestProvider!.setVisibleSaveTheTest(true);
+      }
+    } else {
+      if (null != _videoPlayerController) {
+        if (_simulatorTestProvider!.visibleCueCard) {
+          //Playing end_of_take_note ==> replay end_of_take_note
+          if (_endOfTakeNoteIndex != 0) {
+            _rePlayEndOfTakeNote();
+          }
+
+          //Recording the answer for Part 2 ==> Re record the answer
+        } else {
+          if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
+              _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
+              _simulatorTestProvider!.visibleRecord == false) {
+            _videoPlayerController!.play();
+          } else if (_simulatorTestProvider!.visibleRecord == true) {
+            //Re record answer
+            _reRecordAnswer();
+          }
         }
       }
     }
-    _reanswerWhenAppActive();
   }
 
   void _deallocateMemory() async {
@@ -506,7 +503,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _playAnswerCallBack(
-      QuestionTopicModel question, int selectedQuestionIndex) async {
+    QuestionTopicModel question,
+    int selectedQuestionIndex,
+  ) async {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
@@ -627,7 +626,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   // }
 
   void _reAnswerCallBack(QuestionTopicModel question) {
-    // void _playReAnswerCallBack(int index, QuestionTopicModel question) { //TODO
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -663,7 +661,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
 
         bool isPart2 = question.numPart == PartOfTest.part2.get;
-        // _simulatorTestProvider!.setReanswerAction(true, index, question); //TODO
 
         //Save into current question
         _currentQuestion = question;
@@ -679,17 +676,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         msg: "Please wait until the test is finished!",
         toastState: ToastStatesType.warning,
       );
-    }
-  }
-
-  Future _reanswerWhenAppInactive() async {
-    _reanswerWidget!.stopReanswer();
-  }
-
-  Future _reanswerWhenAppActive() async {
-    if (_simulatorTestProvider!.questionReanswer.id != 0 &&
-        _simulatorTestProvider!.indexReanswerQuestion != -1) {
-      _simulatorTestProvider!.setVisibleReanswerWidget(true);
     }
   }
 
@@ -1102,7 +1088,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return false;
   }
 
-  void _prepareToRecordAnswer({
+  void _prepareStep1RecordAnswer({
     required String fileName,
     required bool isPart2,
   }) async {
@@ -1156,7 +1142,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           {
             //prepare to record answer
             bool isPart2 = current.numPart == PartOfTest.part2.get;
-            _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
+            _prepareStep1RecordAnswer(fileName: current.url, isPart2: isPart2);
             if (_countRepeat == 0) {
               _calculateIndexOfHeader();
             }
@@ -1586,12 +1572,21 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _initVideoController();
   }
 
-  void _reRecord() {
+  void _reRecordAnswer() {
+    if (kDebugMode) {
+      print("DEBUG: _reRecordAnswer");
+    }
     FileTopicModel current =
         _simulatorTestProvider!.listVideoSource[_playingIndex];
     //prepare to record answer
     bool isPart2 = current.numPart == PartOfTest.part2.get;
-    _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
+    _prepareStep1RecordAnswer(fileName: current.url, isPart2: isPart2);
+  }
+
+  void _reRecordReanswer() {
+    if (kDebugMode) {
+      print("DEBUG: _reRecordReanswer");
+    }
   }
 
   bool _isLastAnswer(QuestionTopicModel question) {
@@ -1760,6 +1755,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
+    _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
 
     showToastMsg(
       msg: msg,
@@ -1832,6 +1828,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onFinishForReAnswer() {
+    //Change need update reanswer status
+    _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
+
     if (kDebugMode) {
       print("DEBUG: onFinishForReAnswer");
     }
@@ -1886,6 +1885,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
+    _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
 
     Fluttertoast.showToast(
         msg: msg,

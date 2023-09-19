@@ -20,7 +20,6 @@ class TestQuestionWidget extends StatelessWidget {
           QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
       playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
-  // final Function(int index,QuestionTopicModel questionTopicModel) playReAnswerCallBack; //TODO
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
 
 

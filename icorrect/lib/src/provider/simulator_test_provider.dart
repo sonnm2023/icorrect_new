@@ -24,27 +24,27 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _visibleReanswer = false;
-  int _indexReanswerQuestion = -1;
-  QuestionTopicModel _question = QuestionTopicModel();
-  bool get visibleReanswer => _visibleReanswer;
-  int get indexReanswerQuestion => _indexReanswerQuestion;
-  QuestionTopicModel get questionReanswer => _question;
-  void setReanswerAction(bool visible, int index, QuestionTopicModel question) {
-    _visibleReanswer = visible;
-    _indexReanswerQuestion = index;
-    _question = question;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
+  // bool _visibleReanswer = false;
+  // int _indexReanswerQuestion = -1;
+  // QuestionTopicModel _question = QuestionTopicModel();
+  // bool get visibleReanswer => _visibleReanswer;
+  // int get indexReanswerQuestion => _indexReanswerQuestion;
+  // QuestionTopicModel get questionReanswer => _question;
+  // void setReanswerAction(bool visible, int index, QuestionTopicModel question) {
+  //   _visibleReanswer = visible;
+  //   _indexReanswerQuestion = index;
+  //   _question = question;
+  //   if (!isDisposed) {
+  //     notifyListeners();
+  //   }
+  // }
 
-  void setVisibleReanswerWidget(bool visible) {
-    _visibleReanswer = visible;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
+  // void setVisibleReanswerWidget(bool visible) {
+  //   _visibleReanswer = visible;
+  //   if (!isDisposed) {
+  //     notifyListeners();
+  //   }
+  // }
 
   bool _isGettingTestDetail = true;
   bool get isGettingTestDetail => _isGettingTestDetail;
@@ -484,9 +484,17 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _needUpdateReanswer= false;
+  bool get needUpdateReanswer => _needUpdateReanswer;
+  void setNeedUpdateReanswerStatus(bool isNeed) {
+    _needUpdateReanswer = isNeed;
+  }
+
+  void resetNeedUpdateReanswerStatus() {
+    _needUpdateReanswer = false;
+  }
+
   void resetAll() {
-    _visibleReanswer = false;
-    _question = QuestionTopicModel();
     _needDownloadAgain = false;
     _isLoadingVideo = false;
     _answerList.clear();
@@ -519,5 +527,6 @@ class SimulatorTestProvider with ChangeNotifier {
     clearQuestionList();
     resetTopicsList();
     clearListVideoSource();
+    resetNeedUpdateReanswerStatus();
   }
 }
