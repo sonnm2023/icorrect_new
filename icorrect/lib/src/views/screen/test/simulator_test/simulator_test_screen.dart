@@ -40,7 +40,7 @@ class SimulatorTestScreen extends StatefulWidget {
 }
 
 class _SimulatorTestScreenState extends State<SimulatorTestScreen>
-with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
+    with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
     implements SimulatorTestViewContract, ActionAlertListener {
   SimulatorTestPresenter? _simulatorTestPresenter;
 
@@ -250,6 +250,43 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
         if (kDebugMode) {
           print("DEBUG: Update answer after submitted");
         }
+        bool cancelButtonTapped = false;
+
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomAlertDialog(
+              title: "Notify",
+              description:
+                  "Your answers have changed. Do you want to save this change?",
+              okButtonTitle: "Save",
+              cancelButtonTitle: "Don't Save",
+              borderRadius: 8,
+              hasCloseButton: true,
+              okButtonTapped: () {
+                //Submit
+                _simulatorTestProvider!.setVisibleSaveTheTest(false);
+                _simulatorTestProvider!
+                    .updateSubmitStatus(SubmitStatus.submitting);
+                _simulatorTestPresenter!.submitTest(
+                  testId: _simulatorTestProvider!.currentTestDetail.testId
+                      .toString(),
+                  activityId: widget.homeWorkModel.activityId.toString(),
+                  questions: _simulatorTestProvider!.questionList,
+                  isUpdate: true,
+                );
+              },
+              cancelButtonTapped: () {
+                cancelButtonTapped = true;
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        );
+
+        if (cancelButtonTapped) {
+          Navigator.of(context).pop();
+        }
       } else {
         //Go back List homework screen
         Navigator.pop(context, 'refresh');
@@ -344,6 +381,7 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
                           .toString(),
                       activityId: widget.homeWorkModel.activityId.toString(),
                       questions: _simulatorTestProvider!.questionList,
+                      isUpdate: false,
                     );
                   },
                   cancelButtonTapped: () {
@@ -630,7 +668,6 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
       toastState: ToastStatesType.error,
     );
 
-    //Go to MyTest Screen
     Navigator.of(context).pop();
   }
 
@@ -642,6 +679,8 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
       msg: msg,
       toastState: ToastStatesType.success,
     );
+    
+    Navigator.pop(context, 'refresh');
   }
 
   @override
@@ -704,7 +743,7 @@ with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
       _simulatorTestProvider!.addVideoSource(fileTopicModel);
     }
   }
-  
+
   @override
   bool get wantKeepAlive => true;
 }

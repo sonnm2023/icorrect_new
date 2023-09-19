@@ -343,6 +343,7 @@ class SimulatorTestPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
+    required bool isUpdate,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -350,6 +351,7 @@ class SimulatorTestPresenter {
       testId: testId,
       activityId: activityId,
       questions: questions,
+      isUpdate: isUpdate,
     );
 
     if (kDebugMode) {
@@ -374,13 +376,13 @@ class SimulatorTestPresenter {
         }
       }).catchError((onError) =>
           // ignore: invalid_return_type_for_catch_error
-          _view!.onSubmitTestFail("Has an error when submit this test!"));
+          _view!.onSubmitTestFail("invalid_return_type_for_catch_error: Has an error when submit this test!"));
     } on TimeoutException {
-      _view!.onSubmitTestFail("Has an error when submit this test!");
+      _view!.onSubmitTestFail("TimeoutException: Has an error when submit this test!");
     } on SocketException {
-      _view!.onSubmitTestFail("Has an error when submit this test!");
+      _view!.onSubmitTestFail("SocketException: Has an error when submit this test!");
     } on http.ClientException {
-      _view!.onSubmitTestFail("Has an error when submit this test!");
+      _view!.onSubmitTestFail("ClientException: Has an error when submit this test!");
     }
   }
 
@@ -401,6 +403,7 @@ class SimulatorTestPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
+    required bool isUpdate,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -414,7 +417,7 @@ class SimulatorTestPresenter {
 
     formData.addEntries([MapEntry('test_id', testId)]);
     formData.addEntries([MapEntry('activity_id', activityId)]);
-    formData.addEntries([const MapEntry('is_update', '0')]);
+    formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry('os', "android")]);

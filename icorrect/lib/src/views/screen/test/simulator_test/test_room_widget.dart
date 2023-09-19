@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -24,6 +25,7 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/re_answer_dialog.dart';
@@ -73,6 +75,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _endOfTakeNoteIndex = 0;
   bool _isBackgroundMode = false;
   String _reanswerFilePath = "";
+  CircleLoading? _loading;
 
   @override
   void initState() {
@@ -88,6 +91,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         Provider.of<PlayAnswerProvider>(context, listen: false);
 
     _testRoomPresenter = TestRoomPresenter(this);
+    _loading = CircleLoading();
   }
 
   @override
@@ -1546,6 +1550,27 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _prepareToRecordAnswer(fileName: current.url, isPart2: isPart2);
   }
 
+  bool _isLastAnswer(QuestionTopicModel question) {
+    return question.answers[question.repeatIndex].url ==
+        question.answers.last.url;
+  }
+
+  void _updateReAnswers() {
+    if (kDebugMode) {
+      print("DEBUG: _updateReAnswers");
+    }
+
+    if (null != _loading) {
+      _loading!.show(context);
+    }
+  
+    _testRoomPresenter!.updateMyAnswer(
+      testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+      activityId: widget.homeWorkModel.activityId.toString(),
+      reQuestions: _simulatorTestProvider!.questionList,
+    );
+  }
+
   @override
   void onCountDown(String countDownString) {
     if (mounted) {
@@ -1721,6 +1746,30 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           );
         },
       );
+    } else if (SubmitStatus.success == _simulatorTestProvider!.submitStatus) {
+      if (kDebugMode) {
+        print("DEBUG: Submit success: update answer after reanswer");
+      }
+
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomAlertDialog(
+            title: "Confirm",
+            description: "Are you sure to save change your answers?",
+            okButtonTitle: "Save",
+            cancelButtonTitle: "Cancel",
+            borderRadius: 8,
+            hasCloseButton: true,
+            okButtonTapped: () {
+              _updateReAnswers();
+            },
+            cancelButtonTapped: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
     }
   }
 
@@ -1765,9 +1814,36 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.questionList[index] = _currentQuestion!;
     _resetDataAfterReanswer();
   }
+  
+  @override
+  void onUpdateReAnswersFail(String msg) {
+    if (null != _loading) {
+      _loading!.hide();
+    }
 
-  bool _isLastAnswer(QuestionTopicModel question) {
-    return question.answers[question.repeatIndex].url ==
-        question.answers.last.url;
+    Fluttertoast.showToast(
+        msg: msg,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: 18,
+        toastLength: Toast.LENGTH_LONG);
+  }
+  
+  @override
+  void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer) {
+    if (null != _loading) {
+      _loading!.hide();
+    }
+    
+    _simulatorTestProvider!.setVisibleSaveTheTest(false);
+
+    Fluttertoast.showToast(
+        msg: msg,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: 18,
+        toastLength: Toast.LENGTH_LONG);
   }
 }

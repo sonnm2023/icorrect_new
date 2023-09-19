@@ -28,6 +28,8 @@ abstract class TestRoomViewContract {
   void onFinishForReAnswer();
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
   void onSubmitTestFail(String msg);
+  void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer);
+  void onUpdateReAnswersFail(String msg);
   void onClickSaveTheTest();
   void onFinishTheTest();
   void onReDownload();
@@ -190,9 +192,11 @@ class TestRoomPresenter {
       testId: testId,
       activityId: activityId,
       questions: questions,
+      isUpdate: false,
     );
 
     if (kDebugMode) {
+      print("DEBUG: submitTest");
       print("DEBUG: testId = $testId");
       print("DEBUG: activityId = $activityId");
     }
@@ -241,6 +245,7 @@ class TestRoomPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
+    required bool isUpdate,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -254,7 +259,7 @@ class TestRoomPresenter {
 
     formData.addEntries([MapEntry('test_id', testId)]);
     formData.addEntries([MapEntry('activity_id', activityId)]);
-    formData.addEntries([const MapEntry('is_update', '0')]);
+    formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry('os', "android")]);
@@ -314,5 +319,48 @@ class TestRoomPresenter {
     request.fields.addAll(formData);
 
     return request;
+  }
+
+  Future updateMyAnswer(
+      {required String testId,
+      required String activityId,
+      required List<QuestionTopicModel> reQuestions}) async {
+    http.MultipartRequest multiRequest = await _formDataRequest(
+      testId: testId,
+      activityId: activityId,
+      questions: reQuestions,
+      isUpdate: true,
+    );
+    if (kDebugMode) {
+      print("DEBUG: submitTest");
+      print("DEBUG: testId = $testId");
+      print("DEBUG: activityId = $activityId");
+    }
+
+    try {
+      _testRepository!.submitTest(multiRequest).then((value) {
+        if (kDebugMode) {
+          print("DEBUG: submit response: $value");
+        }
+
+        Map<String, dynamic> json = jsonDecode(value) ?? {};
+        if (json['error_code'] == 200) {
+          ActivityAnswer activityAnswer =
+              ActivityAnswer.fromJson(json['data']['activities_answer']);
+          _view!.onUpdateReAnswersSuccess(
+              'Save your answers successfully!', activityAnswer);
+        } else {
+          _view!.onUpdateReAnswersFail("Has an error when submit this test!");
+        }
+      }).catchError((onError) =>
+          // ignore: invalid_return_type_for_catch_error
+          _view!.onUpdateReAnswersFail("invalid_return_type_for_catch_error: Has an error when submit this test!"));
+    } on TimeoutException {
+      _view!.onUpdateReAnswersFail("TimeoutException: Has an error when submit this test!");
+    } on SocketException {
+      _view!.onUpdateReAnswersFail("SocketException: Has an error when submit this test!");
+    } on http.ClientException {
+      _view!.onUpdateReAnswersFail("ClientException: Has an error when submit this test!");
+    }
   }
 }
