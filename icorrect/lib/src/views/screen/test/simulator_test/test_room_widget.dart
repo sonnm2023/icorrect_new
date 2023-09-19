@@ -179,7 +179,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                       child: simulatorTestProvider.questionHasImage
                           ? Container(
                               decoration: const BoxDecoration(
-                                color: AppColor.defaultLightGrayColor,
+                                color: AppColor.defaultAppColor,
                               ),
                               child: Center(
                                 child: CachedNetworkImage(
@@ -625,9 +625,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //     },
   //   );
   // }
-  
+
   void _reAnswerCallBack(QuestionTopicModel question) {
-  // void _playReAnswerCallBack(int index, QuestionTopicModel question) { //TODO
+    // void _playReAnswerCallBack(int index, QuestionTopicModel question) { //TODO
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -661,7 +661,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _audioPlayerController!.stop();
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
-        
+
         bool isPart2 = question.numPart == PartOfTest.part2.get;
         // _simulatorTestProvider!.setReanswerAction(true, index, question); //TODO
 
@@ -1130,22 +1130,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _currentQuestion = question;
 
       _prepareRecordForAnswer(fileName: fileName, isPart2: isPart2);
-
-      //Validate question with image
-      if (question.files.length > 1) {
-        String fileName = question.files.last.url;
-        String imageUrl = downloadFileEP(fileName);
-        bool hasImage = await Utils.validateImage(imageUrl);
-        if (hasImage) {
-          //Update has image status in provider
-          _simulatorTestProvider!.setQuestionHasImageStatus(true);
-          _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
-        }
-        if (kDebugMode) {
-          print(
-              "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
-        }
-      }
     }
   }
 
@@ -1210,12 +1194,38 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
+  void _showQuetionImage() async {
+    TopicModel? topicModel = _getCurrentPart();
+    List<QuestionTopicModel> questionList = topicModel!.questionList;
+    int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+    QuestionTopicModel question = questionList.elementAt(index);
+    question.numPart = topicModel.numPart;
+
+    //Validate question with image
+    if (question.files.length > 1) {
+      String fileName = question.files.last.url;
+      String imageUrl = downloadFileEP(fileName);
+      bool hasImage = await Utils.validateImage(imageUrl);
+      if (hasImage) {
+        //Update has image status in provider
+        _simulatorTestProvider!.setQuestionHasImageStatus(true);
+        _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
+      }
+      if (kDebugMode) {
+        print(
+            "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
+      }
+    }
+  }
+
   Future<void> _initVideoController() async {
     FileTopicModel currentPlayingFile =
         _simulatorTestProvider!.listVideoSource[_playingIndex];
     if (kDebugMode) {
       print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
     }
+
+    _showQuetionImage();
 
     //Remove old listener
     // ignore: invalid_use_of_protected_member
@@ -1597,7 +1607,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _loading) {
       _loading!.show(context);
     }
-  
+
     _testRoomPresenter!.updateMyAnswer(
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
@@ -1833,22 +1843,27 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       return;
     }
 
-    int index = _simulatorTestProvider!.questionList.indexWhere((q) => q.id == _currentQuestion!.id && q.repeatIndex == _currentQuestion!.repeatIndex);
-    if (index < 0 || index > _simulatorTestProvider!.questionList.length || _simulatorTestProvider!.questionList.isEmpty) {
+    int index = _simulatorTestProvider!.questionList.indexWhere((q) =>
+        q.id == _currentQuestion!.id &&
+        q.repeatIndex == _currentQuestion!.repeatIndex);
+    if (index < 0 ||
+        index > _simulatorTestProvider!.questionList.length ||
+        _simulatorTestProvider!.questionList.isEmpty) {
       if (kDebugMode) {
         print("DEBUG: onFinishForReAnswer: Out of range");
       }
       return;
     }
 
-    _currentQuestion!.answers[_currentQuestion!.repeatIndex].url = _reanswerFilePath;
+    _currentQuestion!.answers[_currentQuestion!.repeatIndex].url =
+        _reanswerFilePath;
     if (_isLastAnswer(_currentQuestion!)) {
-      _currentQuestion!.reAnswerCount ++;
+      _currentQuestion!.reAnswerCount++;
     }
     _simulatorTestProvider!.questionList[index] = _currentQuestion!;
     _resetDataAfterReanswer();
   }
-  
+
   @override
   void onUpdateReAnswersFail(String msg) {
     if (null != _loading) {
@@ -1863,13 +1878,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         fontSize: 18,
         toastLength: Toast.LENGTH_LONG);
   }
-  
+
   @override
   void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer) {
     if (null != _loading) {
       _loading!.hide();
     }
-    
+
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
 
     Fluttertoast.showToast(
