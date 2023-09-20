@@ -27,6 +27,7 @@ import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/download_progressing_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -132,7 +133,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     Provider.of<HomeWorkProvider>(context, listen: false)
         .setSimulatorTestPresenter(_simulatorTestPresenter);
-    
+
     _loading = CircleLoading();
 
     _getTestDetail();
@@ -155,82 +156,110 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       home: Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTest, child) {
           if (simulatorTest.submitStatus == SubmitStatus.success) {
-            return DefaultTabController(
-              length: 3,
-              child: Scaffold(
-                appBar: AppBar(
-                  elevation: 0.0,
-                  iconTheme: const IconThemeData(
-                    color: AppColor.defaultPurpleColor,
-                  ),
-                  centerTitle: true,
-                  leading:
-                      BackButtonWidget(backButtonTapped: _backButtonTapped),
-                  title: Text(
-                    widget.homeWorkModel.activityName,
-                    style: CustomTextStyle.appbarTitle,
-                  ),
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(CustomSize.size_40),
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: AppColor.defaultPurpleColor,
+            return Stack(
+              children: [
+                DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      elevation: 0.0,
+                      iconTheme: const IconThemeData(
+                        color: AppColor.defaultPurpleColor,
+                      ),
+                      centerTitle: true,
+                      leading:
+                          BackButtonWidget(backButtonTapped: _backButtonTapped),
+                      title: Text(
+                        widget.homeWorkModel.activityName,
+                        style: CustomTextStyle.appbarTitle,
+                      ),
+                      bottom: PreferredSize(
+                        preferredSize:
+                            const Size.fromHeight(CustomSize.size_40),
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: AppColor.defaultPurpleColor,
+                              ),
+                            ),
+                          ),
+                          child: _tabBar,
+                        ),
+                      ),
+                      backgroundColor: AppColor.defaultWhiteColor,
+                    ),
+                    body: TabBarView(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: SafeArea(
+                            left: true,
+                            top: true,
+                            right: true,
+                            bottom: true,
+                            child: Stack(
+                              children: [
+                                _buildBody(),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      child: _tabBar,
+                        _buildHighLightTab(),
+                        _buildOtherTab(),
+                      ],
                     ),
                   ),
-                  backgroundColor: AppColor.defaultWhiteColor,
                 ),
-                body: TabBarView(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: SafeArea(
-                        left: true,
-                        top: true,
-                        right: true,
-                        bottom: true,
-                        child: Stack(
-                          children: [
-                            _buildBody(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    _buildHighLightTab(),
-                    _buildOtherTab(),
-                  ],
-                ),
-              ),
+                _buildFullImage(),
+              ],
             );
           } else {
-            return Scaffold(
-              body: Align(
-                alignment: Alignment.topLeft,
-                child: SafeArea(
-                  left: true,
-                  top: true,
-                  right: true,
-                  bottom: true,
-                  child: Stack(
-                    children: [
-                      _buildBody(),
-                      _buildDownloadAgain(),
-                      BackButtonWidget(backButtonTapped: _backButtonTapped),
-                    ],
+            return Stack(
+              children: [
+                Scaffold(
+                  body: Align(
+                    alignment: Alignment.topLeft,
+                    child: SafeArea(
+                      left: true,
+                      top: true,
+                      right: true,
+                      bottom: true,
+                      child: Stack(
+                        children: [
+                          _buildBody(),
+                          _buildDownloadAgain(),
+                          BackButtonWidget(
+                            backButtonTapped: _backButtonTapped,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                _buildFullImage(),
+              ],
             );
           }
         },
       ),
+    );
+  }
+
+  Widget _buildFullImage() {
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, simulatorTestProvider, child) {
+        if (simulatorTestProvider.showFullImage) {
+          return FullImageWidget(
+            imageUrl: simulatorTestProvider.selectedQuestionImageUrl,
+            provider: simulatorTestProvider,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 
@@ -691,7 +720,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       msg: msg,
       toastState: ToastStatesType.success,
     );
-    
+
     Navigator.pop(context, 'refresh');
   }
 

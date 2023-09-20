@@ -1,6 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
@@ -13,10 +18,13 @@ class TestQuestionWidget extends StatelessWidget {
     required this.testRoomPresenter,
     required this.playAnswerCallBack,
     required this.reAnswerCallBack,
-    required this.showTipCallBack,
+    required this.showTipCallBack, 
+    required this.simulatorTestProvider,
   });
 
   final TestRoomPresenter testRoomPresenter;
+  final SimulatorTestProvider simulatorTestProvider;
+  
   final Function(
           QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
       playAnswerCallBack;
@@ -191,6 +199,10 @@ class TestQuestionWidget extends StatelessWidget {
       hasReAnswer = true;
     }
 
+    bool hasImage = Utils.checkHasImage(question: question);
+    String fileName = question.files.last.url;
+    String imageUrl = downloadFileEP(fileName);
+
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,86 +259,106 @@ class TestQuestionWidget extends StatelessWidget {
                 );
               },
             ),
-            title: Row(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                Text(
+                  questionStr,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      questionStr,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
+                    const SizedBox(width: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(width: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            if (hasReAnswer)
-                              InkWell(
-                                onTap: () {
-                                  reAnswerCallBack(question);
-                                  // playReAnswerCallBack(index,question); //TODO
-                                },
-                                child: const Text(
-                                  "Re-answer",
-                                  style: TextStyle(
-                                    color: AppColor.defaultPurpleColor,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              )
-                            else
-                              const SizedBox(),
-                            Visibility(
-                              visible: question.tips.isNotEmpty,
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 20),
-                                  InkWell(
-                                    onTap: () {
-                                      showTipCallBack(question);
-                                    },
-                                    child: const Text(
-                                      "View tips",
-                                      style: TextStyle(
-                                        color: AppColor.defaultPurpleColor,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                        if (hasReAnswer)
+                          InkWell(
+                            onTap: () {
+                              reAnswerCallBack(question);
+                              // playReAnswerCallBack(index,question); //TODO
+                            },
+                            child: const Text(
+                              "Re-answer",
+                              style: TextStyle(
+                                color: AppColor.defaultPurpleColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
                               ),
                             ),
-                          ],
+                          )
+                        else
+                          const SizedBox(),
+                        Visibility(
+                          visible: question.tips.isNotEmpty,
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 20),
+                              InkWell(
+                                onTap: () {
+                                  showTipCallBack(question);
+                                },
+                                child: const Text(
+                                  "View tips",
+                                  style: TextStyle(
+                                    color: AppColor.defaultPurpleColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                ),
-                InkWell(
-                  onTap: () {
-                    if (kDebugMode) {
-                      print("DEBUG: Show full image");
-                    }
-                  },
-                  child: const Image(
-                    image: AssetImage("assets/default_photo.png"),
-                    width: 50,
-                    height: 50,
-                  ),
-                ),
+                )
               ],
             ),
+            trailing: hasImage
+                ? InkWell(
+                    onTap: () {
+                      _showFullImage(imageUrl: imageUrl);
+                    },
+                    child: CachedNetworkImage(
+                      width: 50,
+                      height: 50,
+                      imageUrl: imageUrl,
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => const Image(
+                        image: AssetImage("assets/default_photo.png"),
+                        width: 50,
+                        height: 50,
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
+                  )
+                : const SizedBox(),
           ),
         ],
       ),
     );
+  }
+
+  void _showFullImage({required String imageUrl}) {
+    if (kDebugMode) {
+      print("DEBUG: _showFullImage");
+    }
+
+    if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
+      simulatorTestProvider.setSelectedQuestionImageUrl(imageUrl);
+      simulatorTestProvider.setShowFullImage(true);
+    } else {
+      showToastMsg(
+        msg: "Please wait until the test is finished!",
+        toastState: ToastStatesType.warning,
+      );
+    }
   }
 }

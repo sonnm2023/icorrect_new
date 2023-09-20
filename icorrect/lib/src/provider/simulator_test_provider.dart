@@ -484,7 +484,7 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _needUpdateReanswer= false;
+  bool _needUpdateReanswer = false;
   bool get needUpdateReanswer => _needUpdateReanswer;
   void setNeedUpdateReanswerStatus(bool isNeed) {
     _needUpdateReanswer = isNeed;
@@ -492,6 +492,26 @@ class SimulatorTestProvider with ChangeNotifier {
 
   void resetNeedUpdateReanswerStatus() {
     _needUpdateReanswer = false;
+  }
+
+  bool _showFullImage = false;
+  bool get showFullImage => _showFullImage;
+  void setShowFullImage(bool show) {
+    _showFullImage = show;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _selectedQuestionImageUrl = '';
+  String get selectedQuestionImageUrl => _selectedQuestionImageUrl;
+  void setSelectedQuestionImageUrl(String url) {
+    _selectedQuestionImageUrl = url;
+  }
+
+  void resetSelectedQuestionImageUrl() {
+    _selectedQuestionImageUrl = '';
   }
 
   void resetAll() {
@@ -528,5 +548,7 @@ class SimulatorTestProvider with ChangeNotifier {
     resetTopicsList();
     clearListVideoSource();
     resetNeedUpdateReanswerStatus();
+    resetSelectedQuestionImageUrl();
+    resetQuestionImageUrl();
   }
 }

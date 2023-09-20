@@ -653,4 +653,19 @@ class Utils {
     }
     return false;
   }
+
+  static bool checkHasImage({required QuestionTopicModel question}) {
+    if (question.files.length > 1) {
+      String fileName = question.files.last.url;
+      String type = fileName.split('.').last;
+
+      if (type == 'jpeg' || type == 'jpg' || type == 'png') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    return false;
+  }
 }

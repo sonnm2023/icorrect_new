@@ -153,6 +153,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   playAnswerCallBack: _playAnswerCallBack,
                   reAnswerCallBack: _reAnswerCallBack,
                   showTipCallBack: _showTipCallBack,
+                  simulatorTestProvider: _simulatorTestProvider!,
                 ),
               ),
               const CueCardWidget(),
@@ -454,7 +455,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         // _reRecordReanswer();
       }
 
-      if (_simulatorTestProvider!.submitStatus != SubmitStatus.success || _simulatorTestProvider!.needUpdateReanswer) {
+      if (_simulatorTestProvider!.submitStatus != SubmitStatus.success ||
+          _simulatorTestProvider!.needUpdateReanswer) {
         _simulatorTestProvider!.setVisibleSaveTheTest(true);
       }
     } else {
@@ -1180,7 +1182,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _showQuestionImage() async {
+  void _showQuestionImage() {
     TopicModel? topicModel = _getCurrentPart();
     List<QuestionTopicModel> questionList = topicModel!.questionList;
     int index = _simulatorTestProvider!.indexOfCurrentQuestion;
@@ -1188,19 +1190,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     question.numPart = topicModel.numPart;
 
     //Validate question with image
-    if (question.files.length > 1) {
+    bool hasImage = Utils.checkHasImage(question: question);
+    if (hasImage) {
       String fileName = question.files.last.url;
       String imageUrl = downloadFileEP(fileName);
-      bool hasImage = await Utils.validateImage(imageUrl);
-      if (hasImage) {
-        //Update has image status in provider
-        _simulatorTestProvider!.setQuestionHasImageStatus(true);
-        _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
-      }
       if (kDebugMode) {
         print(
             "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
       }
+      //Update has image status in provider
+      _simulatorTestProvider!.setQuestionHasImageStatus(true);
+      _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
     }
   }
 
