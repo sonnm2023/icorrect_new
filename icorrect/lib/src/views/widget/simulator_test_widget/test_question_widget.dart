@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -21,7 +22,6 @@ class TestQuestionWidget extends StatelessWidget {
       playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
-
 
   @override
   Widget build(BuildContext context) {
@@ -184,12 +184,12 @@ class TestQuestionWidget extends StatelessWidget {
       questionStr = 'Answer of Part 2';
     }
 
-    SimulatorTestProvider prepareSimulatorTestProvider = Provider.of<SimulatorTestProvider>(context, listen: false);
+    SimulatorTestProvider prepareSimulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
     bool hasReAnswer = false;
     if (prepareSimulatorTestProvider.activityType == "homework") {
       hasReAnswer = true;
     }
-
 
     return Card(
       child: Column(
@@ -226,82 +226,102 @@ class TestQuestionWidget extends StatelessWidget {
           ListTile(
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-            leading:
-                Consumer<PlayAnswerProvider>(builder: (context, playAnswerProvider, _) {
-                  String iconPath;
-              if (index == playAnswerProvider.selectedQuestionIndex) {
-                iconPath = "assets/images/ic_pause.png";
-              } else {
-                iconPath = "assets/images/ic_play.png";
-              }
+            leading: Consumer<PlayAnswerProvider>(
+              builder: (context, playAnswerProvider, _) {
+                String iconPath;
+                if (index == playAnswerProvider.selectedQuestionIndex) {
+                  iconPath = "assets/images/ic_pause.png";
+                } else {
+                  iconPath = "assets/images/ic_play.png";
+                }
 
-              return InkWell(
-                onTap: () {
-                  playAnswerCallBack(question, index);
-                },
-                child: Image(
-                  image: AssetImage(iconPath),
-                  width: 50,
-                  height: 50,
-                ),
-              );
-            }),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  questionStr,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
+                return InkWell(
+                  onTap: () {
+                    playAnswerCallBack(question, index);
+                  },
+                  child: Image(
+                    image: AssetImage(iconPath),
+                    width: 50,
+                    height: 50,
                   ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                );
+              },
+            ),
+            title: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(width: 20),
+                    Text(
+                      questionStr,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (hasReAnswer) InkWell(
-                          onTap: () {
-                            reAnswerCallBack(question);
-                            // playReAnswerCallBack(index,question); //TODO
-                          },
-                          child: const Text(
-                            "Re-answer",
-                            style: TextStyle(
-                              color: AppColor.defaultPurpleColor,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ) else const SizedBox(),
-                        Visibility(
-                          visible: question.tips.isNotEmpty,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 20),
+                        const SizedBox(width: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            if (hasReAnswer)
                               InkWell(
                                 onTap: () {
-                                  showTipCallBack(question);
+                                  reAnswerCallBack(question);
+                                  // playReAnswerCallBack(index,question); //TODO
                                 },
                                 child: const Text(
-                                  "View tips",
+                                  "Re-answer",
                                   style: TextStyle(
                                     color: AppColor.defaultPurpleColor,
-                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
                                   ),
                                 ),
+                              )
+                            else
+                              const SizedBox(),
+                            Visibility(
+                              visible: question.tips.isNotEmpty,
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 20),
+                                  InkWell(
+                                    onTap: () {
+                                      showTipCallBack(question);
+                                    },
+                                    child: const Text(
+                                      "View tips",
+                                      style: TextStyle(
+                                        color: AppColor.defaultPurpleColor,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
-                    ),
+                    )
                   ],
-                )
+                ),
+                InkWell(
+                  onTap: () {
+                    if (kDebugMode) {
+                      print("DEBUG: Show full image");
+                    }
+                  },
+                  child: const Image(
+                    image: AssetImage("assets/default_photo.png"),
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
               ],
             ),
           ),
