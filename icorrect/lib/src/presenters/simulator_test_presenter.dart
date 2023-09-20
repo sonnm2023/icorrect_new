@@ -282,6 +282,42 @@ class SimulatorTestPresenter {
                 reDownloadAutomatic(testDetail, filesTopic);
                 break loop;
               }
+            } on DioException catch (e) {
+              if (kDebugMode) {
+                print("DEBUG: Download error: ${e.type} - Status Code: ${e.response!.statusCode}");
+              }
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              reDownloadAutomatic(testDetail, filesTopic);
+              break loop;
+
+              /*
+              switch (e.type) {
+                case DioExceptionType.badResponse: {
+                  break loop;
+                }
+                case DioExceptionType.connectionTimeout: {
+                  break loop;
+                }
+                case DioExceptionType.sendTimeout: {
+                  break loop;
+                }
+                case DioExceptionType.receiveTimeout: {
+                  break loop;
+                }
+                case DioExceptionType.badCertificate: {
+                  break loop;
+                }
+                case DioExceptionType.cancel: {
+                  break loop;
+                }
+                case DioExceptionType.connectionError: {
+                  break loop;
+                }
+                case DioExceptionType.unknown: {
+                  break loop;
+                }
+              }
+              */              
             } on TimeoutException {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(testDetail, filesTopic);
