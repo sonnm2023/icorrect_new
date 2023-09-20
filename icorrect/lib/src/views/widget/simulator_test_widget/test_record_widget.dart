@@ -65,42 +65,11 @@ class TestRecordWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildFinishButton(currentQuestion),
-                        Consumer<SimulatorTestProvider>(
-                          builder: (context, simulatorTestProvider, _) {
-                            //Finish Doing the test, show cancel button when reanswer
-                            if (simulatorTestProvider.doingStatus ==
-                                DoingStatus.finish) {
-                              return Row(
-                                children: [
-                                  const SizedBox(width: 20),
-                                  _buildCancelButton(),
-                                ],
-                              );
-                            }
-
-                            //Doing test - build Repeat button if has
-                            if (simulatorTestProvider.topicsQueue.isNotEmpty) {
-                              isRepeat = (simulatorTestProvider
-                                              .topicsQueue.first.numPart ==
-                                          PartOfTest.part1.get ||
-                                      simulatorTestProvider
-                                              .topicsQueue.first.numPart ==
-                                          PartOfTest.part3.get) &&
-                                  simulatorTestProvider.enableRepeatButton;
-                            }
-
-                            return Visibility(
-                              visible: isRepeat,
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 20),
-                                  _buildRepeatButton(currentQuestion),
-                                ],
-                              ),
-                            );
-                          },
+                        _buildOtherButton(
+                          isRepeat: isRepeat,
+                          question: currentQuestion,
                         ),
+                        _buildFinishButton(question: currentQuestion),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -116,10 +85,48 @@ class TestRecordWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFinishButton(QuestionTopicModel questionTopicModel) {
+  Widget _buildOtherButton({
+    required bool isRepeat,
+    required QuestionTopicModel question,
+  }) {
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, simulatorTestProvider, _) {
+        //Finish Doing the test, show cancel button when reanswer
+        if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
+          return Row(
+            children: [
+              _buildCancelButton(),
+              const SizedBox(width: 20),
+            ],
+          );
+        }
+
+        //Doing test - build Repeat button if has
+        if (simulatorTestProvider.topicsQueue.isNotEmpty) {
+          isRepeat = (simulatorTestProvider.topicsQueue.first.numPart ==
+                      PartOfTest.part1.get ||
+                  simulatorTestProvider.topicsQueue.first.numPart ==
+                      PartOfTest.part3.get) &&
+              simulatorTestProvider.enableRepeatButton;
+        }
+
+        return Visibility(
+          visible: isRepeat,
+          child: Row(
+            children: [
+              _buildRepeatButton(question),
+              const SizedBox(width: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFinishButton({required QuestionTopicModel question}) {
     return InkWell(
       onTap: () {
-        finishAnswer(questionTopicModel);
+        finishAnswer(question);
       },
       child: Container(
         width: 100,
