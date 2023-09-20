@@ -411,7 +411,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startToDoTest() {
-    _initVideoController();
+    _initVideoController(isIntroduceVideo: false);
   }
 
   Future _onAppInBackground() async {
@@ -987,7 +987,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (_countRepeat == 0) {
           _playingIndex++;
         }
-        _initVideoController();
+        _initVideoController(isIntroduceVideo: false);
       }
     }
   }
@@ -1058,7 +1058,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           if (_countRepeat == 0) {
             _playingIndex++;
           }
-          _initVideoController();
+          _initVideoController(isIntroduceVideo: false);
         }
       }
     }
@@ -1180,7 +1180,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _showQuetionImage() async {
+  void _showQuestionImage() async {
     TopicModel? topicModel = _getCurrentPart();
     List<QuestionTopicModel> questionList = topicModel!.questionList;
     int index = _simulatorTestProvider!.indexOfCurrentQuestion;
@@ -1204,14 +1204,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  Future<void> _initVideoController() async {
+  Future<void> _initVideoController({required isIntroduceVideo}) async {
     FileTopicModel currentPlayingFile =
         _simulatorTestProvider!.listVideoSource[_playingIndex];
     if (kDebugMode) {
       print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
     }
 
-    _showQuetionImage();
+    if (!isIntroduceVideo) {
+      _showQuestionImage();
+    }
 
     //Remove old listener
     // ignore: invalid_use_of_protected_member
@@ -1569,7 +1571,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _rePlayEndOfTakeNote() {
     _playingIndex = _endOfTakeNoteIndex;
-    _initVideoController();
+    _initVideoController(isIntroduceVideo: false);
   }
 
   void _reRecordAnswer() {
@@ -1700,7 +1702,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (false == _simulatorTestProvider!.isLoadingVideo) {
       _playingIndex++;
       _endOfTakeNoteIndex = _playingIndex;
-      _initVideoController();
+      _initVideoController(isIntroduceVideo: false);
     }
   }
 
@@ -1708,14 +1710,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onPlayEndOfTest(String fileName) {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
       _playingIndex++;
-      _initVideoController();
+      _initVideoController(isIntroduceVideo: false);
     }
   }
 
   @override
   void onPlayIntroduce() {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _initVideoController();
+      _initVideoController(isIntroduceVideo: true);
     }
   }
 

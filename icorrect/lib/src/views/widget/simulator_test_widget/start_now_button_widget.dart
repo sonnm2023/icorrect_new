@@ -12,9 +12,12 @@ class StartNowButtonWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          "Start the test now or wait until the process is finished!",
-          style: TextStyle(fontSize: 15),
+        const Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Text(
+            "Start the test now or wait until the process is finished!",
+            style: TextStyle(fontSize: 15),
+          ),
         ),
         const SizedBox(height: 10),
         Container(
