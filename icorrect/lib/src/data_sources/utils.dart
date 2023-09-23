@@ -292,7 +292,7 @@ class Utils {
 
   static String convertFileName(String nameFile) {
     String letter = '/';
-    String newLetter = '*';
+    String newLetter = '_sl_';
     if (nameFile.contains(letter)) {
       nameFile = nameFile.replaceAll(letter, newLetter);
     }
@@ -301,7 +301,7 @@ class Utils {
   }
 
   static String reConvertFileName(String nameFile) {
-    String letter = '*';
+    String letter = '_sl_';
     String newLetter = '/';
     if (nameFile.contains(letter)) {
       nameFile = nameFile.replaceAll(letter, newLetter);

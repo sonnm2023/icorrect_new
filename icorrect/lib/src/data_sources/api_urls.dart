@@ -25,7 +25,7 @@ String responseEP(String orderId) =>
     '${toolDomain}api/response?order_id=$orderId';
 
 Future<String> aiResponseEP(String orderId) async =>
-    '${icorrectDomain}ai-response/index.html?order_id=$orderId&token=${await Utils.getAccessToken()}';
+    '${icorrectDomain}ai-response/index1.html?order_id=$orderId&token=${await Utils.getAccessToken()}';
 
 String specialHomeWorksEP(
     String email, String activityId, int status, int example) {
