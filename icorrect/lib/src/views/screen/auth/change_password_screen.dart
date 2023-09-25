@@ -129,6 +129,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             _authProvider.updateProcessingStatus(isProcessing: true);
 
             _changePasswordPresenter!.changePassword(
+              context,
               currentPasswordController.text.trim(),
               newPasswordController.text.trim(),
               confirmNewPasswordController.text.trim(),
