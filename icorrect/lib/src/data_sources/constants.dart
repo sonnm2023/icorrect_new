@@ -420,6 +420,10 @@ class LogEvent {
   static const String callApiLogout = 'call_api_logout';
   static const String callApiGetListHomework = 'call_api_get_list_homework';
   static const String callApiChangePassword = 'call_api_change_password';
+  static const String callApiGetTestDetail = 'call_api_get_test_detail';//api/v1/ielts-test/syllabus/create
+  static const String callApiDownloadFile = 'call_api_download_file';//${apiDomain}file?filename=$name
+  static const String callApiSubmitTest = 'call_api_submit_test'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiUpdateAnswer = 'call_api_update_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
 
   //Action log event
   static const String actionLogin = 'action_login';

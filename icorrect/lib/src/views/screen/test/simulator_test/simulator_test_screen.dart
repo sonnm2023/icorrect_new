@@ -302,6 +302,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 _loading!.show(context);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
                 _simulatorTestPresenter!.submitTest(
+                  context: context,
                   testId: _simulatorTestProvider!.currentTestDetail.testId
                       .toString(),
                   activityId: widget.homeWorkModel.activityId.toString(),
@@ -410,6 +411,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     _simulatorTestProvider!
                         .updateSubmitStatus(SubmitStatus.submitting);
                     _simulatorTestPresenter!.submitTest(
+                      context: context,
                       testId: _simulatorTestProvider!.currentTestDetail.testId
                           .toString(),
                       activityId: widget.homeWorkModel.activityId.toString(),
@@ -582,7 +584,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
     _simulatorTestPresenter!
-        .getTestDetail(widget.homeWorkModel.activityId.toString());
+        .getTestDetail(context: context, homeworkId: widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -749,7 +751,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
         }
-        _simulatorTestPresenter!.reDownloadFiles();
+        _simulatorTestPresenter!.reDownloadFiles(context);
       }
     }
   }
