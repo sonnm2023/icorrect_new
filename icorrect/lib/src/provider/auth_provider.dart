@@ -68,4 +68,15 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  String _previousAction = "";
+  String get previousAction => _previousAction;
+  void setPreviousAction(String action) {
+    _previousAction = action;
+  }
+
+  void resetPreviousAction() {
+    _previousAction = "";
+  }
+
 }

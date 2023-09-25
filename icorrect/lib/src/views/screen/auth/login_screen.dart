@@ -58,7 +58,8 @@ class _LoginScreenState extends State<LoginScreen>
     String appConfigInfo =
         await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
     if (appConfigInfo.isEmpty) {
-      _loginPresenter!.getAppConfigInfo();
+      // ignore: use_build_context_synchronously
+      _loginPresenter!.getAppConfigInfo(context);
     } else {
       _autoLogin();
     }
@@ -166,6 +167,7 @@ class _LoginScreenState extends State<LoginScreen>
           _loginPresenter!.login(
             emailController.text.trim(),
             passwordController.text.trim(),
+            context,
           );
         }
       },

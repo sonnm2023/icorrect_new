@@ -97,4 +97,9 @@ class LogModel {
     }
     return dataMap;
   }
+
+  void addData({required String key, required String value}) {
+    Map<String, String> map = {key: value};
+    _data!.add(map);
+  }
 }

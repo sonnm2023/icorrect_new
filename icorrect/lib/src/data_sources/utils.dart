@@ -16,6 +16,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -699,12 +700,14 @@ class Utils {
 
   static Future<LogModel> createLog({
     required String action,
+    required String previousAction,
     required String status,
     required String message,
     required List<Map<String, String>> data,
   }) async {
     LogModel log = LogModel();
     log.action = action;
+    log.previousAction = previousAction;
     log.status = status;
     log.createdTime = getDateTimeNow();
     log.message = message;
@@ -775,5 +778,17 @@ class Utils {
 
   static String getDateTimeNow() {
     return DateTime.now().millisecondsSinceEpoch.toString();
+  }
+
+  static String getPreviousAction(BuildContext context) {
+    String previousAction = "";
+    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    previousAction = authProvider.previousAction;
+    return previousAction;
+  }
+
+  static void setPreviousAction(String action, BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.setPreviousAction(action);
   }
 }
