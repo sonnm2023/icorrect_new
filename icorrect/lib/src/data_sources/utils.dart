@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
@@ -667,5 +668,112 @@ class Utils {
     }
 
     return false;
+  }
+
+  static Future<String> getOSVersion() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String version = "";
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      version =
+          '${androidInfo.version.release} (SDK ${androidInfo.version.sdkInt})';
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      version = iosInfo.systemVersion;
+    }
+    return version;
+  }
+
+  static Future<String> getDeviceName() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String deviceName = "";
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      deviceName = androidInfo.model;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      deviceName = iosInfo.utsname.machine;
+    }
+    return deviceName;
+  }
+
+  static Future<LogModel> createLog({
+    required String action,
+    required String status,
+    required String message,
+    required List<Map<String, String>> data,
+  }) async {
+    LogModel log = LogModel();
+    log.action = action;
+    log.status = status;
+    log.createdTime = getDateTimeNow();
+    log.message = message;
+    log.os = await getOS();
+    UserDataModel? currentUser = await Utils.getCurrentUser();
+    if (null == currentUser) {
+      log.userId = "";
+    } else {
+      log.userId = currentUser.userInfoModel.id.toString();
+    }
+    log.deviceId = await getDeviceIdentifier();
+    log.deviceName = await getDeviceName();
+    log.osVersion = await getOSVersion();
+    log.versionApp = await getAppVersion();
+    log.data = data;
+    return log;
+  }
+
+  static void addLog(LogModel log, String status) {
+    log.responseTime = getDateTimeNow();
+    log.status = status;
+
+    //Convert log into string before write into file
+    String logString = convertLogModelToJson(log);
+    writeLogIntoFile(logString);
+  }
+
+  static String convertLogModelToJson(LogModel log) {
+    final String jsonString = jsonEncode(log);
+    return jsonString;
+  }
+
+  static void writeLogIntoFile(String logString) async {
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String path = "$folderPath/logs.txt";
+    if (kDebugMode) {
+      print("DEBUG: log file path = $path");
+    }
+    File file;
+
+    bool isExistFile = await File(path).exists();
+
+    if (isExistFile) {
+      file = File(path);
+      await file.writeAsString("\n", mode: FileMode.append);
+    } else {
+      file = await File(path).create();
+    }
+
+    try {
+      await file.writeAsString(logString, mode: FileMode.append);
+      if (kDebugMode) {
+        print("DEBUG: write log into file success");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: write log into file failed");
+      }
+    }
+  }
+
+  //Check file is exist using file_storage
+  static Future<bool> isExist(String fileName, MediaType mediaType) async {
+    bool isExist =
+        await FileStorageHelper.checkExistFile(fileName, mediaType, null);
+    return isExist;
+  }
+
+  static String getDateTimeNow() {
+    return DateTime.now().millisecondsSinceEpoch.toString();
   }
 }

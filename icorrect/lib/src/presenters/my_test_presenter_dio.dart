@@ -13,10 +13,10 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import '../data_sources/api_urls.dart';
 import '../data_sources/constants.dart';
 import '../data_sources/local/file_storage_helper.dart';
-import '../data_sources/repositories/app_repository.dart';
 import '../data_sources/utils.dart';
 import '../models/simulator_test_models/topic_model.dart';
 import '../models/ui_models/alert_info.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
@@ -177,20 +177,6 @@ class MyTestPresenterDio {
     return filesTopic;
   }
 
-  Future<http.Response> _sendRequest(String name) async {
-    String url = downloadFileEP(name);
-    return await AppRepository.init()
-        .sendRequest(RequestMethod.get, url, false)
-        .timeout(const Duration(seconds: 10));
-  }
-
-  //Check file is exist using file_storage
-  Future<bool> _isExist(String fileName, MediaType mediaType) async {
-    bool isExist =
-        await FileStorageHelper.checkExistFile(fileName, mediaType, null);
-    return isExist;
-  }
-
   MediaType _mediaType(String type) {
     return (type == StringClass.audio) ? MediaType.audio : MediaType.video;
   }
@@ -248,7 +234,7 @@ class MyTestPresenterDio {
           }
 
           if (fileType.isNotEmpty &&
-              !await _isExist(fileTopic, _mediaType(fileType))) {
+              !await Utils.isExist(fileTopic, _mediaType(fileType))) {
             try {
               String url = downloadFileEP(fileNameForDownload);
               print('DEBUG : fileDownload : $url');

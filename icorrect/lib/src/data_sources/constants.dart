@@ -160,7 +160,7 @@ class StringClass {
   static const String permissionDenied = 'PERMISSION_DENIED';
 }
 
-enum MediaType { video, audio }
+enum MediaType { video, audio, none}
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
@@ -225,8 +225,6 @@ class GlobalScaffoldKey {
   static final practiceScreenScaffoldKey =
   GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
 }
-
-
 
 class FontsSize {
   static const double fontSize_8 = 8.0;
@@ -408,4 +406,18 @@ class CustomTextStyle {
     fontWeight: FontWeight.w400,
     fontSize: FontsSize.fontSize_14,
   );
+}
+
+class LogEvent {
+  //Status
+  static const String success = "success";
+  static const String failed = "failed";
+
+  //Api log event
+  static const String callApiLogin = 'call_api_login';
+  static const String callApiAppConfig = 'call_api_app_config';
+  static const String callApiGetUserInfo = 'call_api_get_user_info';
+
+  //Action log event
+  static const String actionLogin = 'action_login';
 }
