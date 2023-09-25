@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,6 +18,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:intl/intl.dart';
@@ -475,10 +478,13 @@ class Utils {
 
   //huy copied functions
 
-  static Widget navbar(BuildContext context) {
+  static Widget navbar({
+    required BuildContext context,
+    required HomeWorkPresenter? homeWorkPresenter,
+  }) {
     return Drawer(
       backgroundColor: AppColor.defaultWhiteColor,
-      child: navbarItems(context),
+      child: navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
     );
   }
 
@@ -600,7 +606,10 @@ class Utils {
     }
   }
 
-  static void showLogoutConfirmDialog(BuildContext context) async {
+  static void showLogoutConfirmDialog({
+    required BuildContext context,
+    required HomeWorkPresenter? homeWorkPresenter,
+  }) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -612,7 +621,11 @@ class Utils {
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
-            Navigator.of(context).pop();
+            if (null != homeWorkPresenter) {
+              homeWorkPresenter.logout(context);
+            } else {
+              Navigator.of(context).pop();
+            }
           },
           cancelButtonTapped: () {
             Navigator.of(context).pop();
@@ -782,13 +795,29 @@ class Utils {
 
   static String getPreviousAction(BuildContext context) {
     String previousAction = "";
-    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     previousAction = authProvider.previousAction;
     return previousAction;
   }
 
-  static void setPreviousAction(String action, BuildContext context) {
-    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+  static void setPreviousAction(BuildContext context, String action) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     authProvider.setPreviousAction(action);
+  }
+
+  static Future<LogModel> prepareToCreateLog(BuildContext context,
+      {required String action}) async {
+    String previousAction = getPreviousAction(context);
+    LogModel log = await createLog(
+        action: action,
+        previousAction: previousAction,
+        status: "",
+        message: "",
+        data: []);
+    setPreviousAction(context, action);
+
+    return log;
   }
 }

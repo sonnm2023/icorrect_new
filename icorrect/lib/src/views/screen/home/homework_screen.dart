@@ -68,7 +68,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.resetListClassForFilter();
     _homeWorkProvider.resetListFilteredHomeWorks();
 
-    _homeWorkPresenter!.getListHomeWork();
+    _homeWorkPresenter!.getListHomeWork(context);
 
     Future.delayed(Duration.zero, () {
       _homeWorkProvider.updateProcessingStatus();
@@ -166,7 +166,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ),
               ],
             ),
-            drawer: Utils.navbar(context),
+            drawer: Utils.navbar(context: context, homeWorkPresenter: _homeWorkPresenter),
             drawerEnableOpenDragGesture: false,
           ),
         ),
@@ -257,11 +257,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onLogoutComplete() {
     _homeWorkProvider.updateProcessingStatus();
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => const LoginScreen(),
+    //   ),
+    // );
+    Navigator.of(context).pop();
   }
 
   @override

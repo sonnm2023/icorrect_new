@@ -417,6 +417,8 @@ class LogEvent {
   static const String callApiLogin = 'call_api_login';
   static const String callApiAppConfig = 'call_api_app_config';
   static const String callApiGetUserInfo = 'call_api_get_user_info';
+  static const String callApiLogout = 'call_api_logout';
+  static const String callApiGetListHomework = 'call_api_get_list_homework';
 
   //Action log event
   static const String actionLogin = 'action_login';

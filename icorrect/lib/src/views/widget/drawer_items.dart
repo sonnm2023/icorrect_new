@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:provider/provider.dart';
 import '../../data_sources/constants.dart';
 import '../../data_sources/utils.dart';
 import '../../provider/homework_provider.dart';
 import '../screen/auth/change_password_screen.dart';
 
-Widget navbarItems(BuildContext context) {
+Widget navbarItems({
+  required BuildContext context,
+  required HomeWorkPresenter? homeWorkPresenter,
+}) {
   return ListView(
     // padding: EdgeInsets.zero,
     children: [
@@ -83,7 +87,7 @@ Widget navbarItems(BuildContext context) {
           color: AppColor.defaultGrayColor,
         ),
         onTap: () {
-          Utils.showLogoutConfirmDialog(context);
+          Utils.showLogoutConfirmDialog(context: context, homeWorkPresenter: homeWorkPresenter);
         },
       ),
     ],

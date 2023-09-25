@@ -34,7 +34,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   Widget build(BuildContext context) {
     //navbar items
-    final drawerItems = navbarItems(context);
+    final drawerItems = navbarItems(context: context, homeWorkPresenter: null);
 
     return WillPopScope(
       onWillPop: () async {
@@ -48,7 +48,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               _authProvider.scaffoldKeys;
           GlobalKey<ScaffoldState> key = scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
-            Utils.showLogoutConfirmDialog(context);
+            Utils.showLogoutConfirmDialog(context: context, homeWorkPresenter: null);
           } else {
             Navigator.of(key.currentState!.context).pop();
             scaffoldKeys.removeFirst();
@@ -119,7 +119,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               )
             ],
           ),
-          drawer: Utils.navbar(context),
+          drawer: Utils.navbar(context: context, homeWorkPresenter: null),
           drawerEnableOpenDragGesture: false,
         ),
       ),

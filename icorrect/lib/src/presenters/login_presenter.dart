@@ -36,7 +36,7 @@ class LoginPresenter {
   void login(String email, String password, BuildContext context) async {
     assert(_view != null && _repository != null);
 
-    LogModel log = await _createLog(context, action: LogEvent.callApiLogin);
+    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiLogin);
 
     _repository!.login(email, password).then((value) async {
       AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
@@ -75,7 +75,7 @@ class LoginPresenter {
   void getAppConfigInfo(BuildContext context) async {
     assert(_view != null && _repository != null);
     
-    LogModel log = await _createLog(context, action: LogEvent.callApiAppConfig);
+    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiAppConfig);
 
     _repository!.getAppConfigInfo().then((value) async {
       if (kDebugMode) {
@@ -137,7 +137,7 @@ class LoginPresenter {
     String appVersion = await Utils.getAppVersion();
     String os = await Utils.getOS();
     
-    LogModel log = await _createLog(context, action: LogEvent.callApiGetUserInfo);
+    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetUserInfo);
 
     _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
@@ -168,14 +168,6 @@ class LoginPresenter {
         _view!.onLoginError(onError.toString());
       },
     );
-  }
-
-  Future<LogModel> _createLog(BuildContext context, {required String action}) async {
-    String previousAction = Utils.getPreviousAction(context);
-    LogModel log = await Utils.createLog(action: action, previousAction: previousAction, status: "", message: "", data: []);
-    Utils.setPreviousAction(action, context);
-
-    return log;
   }
 
 }

@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
@@ -8,6 +11,7 @@ import 'package:icorrect/src/data_sources/repositories/homework_repository.dart'
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
@@ -35,7 +39,7 @@ class HomeWorkPresenter {
     _homeWorkRepository = Injector().getHomeWorkRepository();
   }
 
-  void getListHomeWork() async {
+  void getListHomeWork(BuildContext context) async {
     assert(_view != null && _homeWorkRepository != null);
 
     UserDataModel? currentUser = await Utils.getCurrentUser();
@@ -48,6 +52,8 @@ class HomeWorkPresenter {
 
     String email = currentUser.userInfoModel.email;
     String status = Status.allHomework.get.toString();
+
+    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetListHomework);
 
     _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
@@ -62,15 +68,29 @@ class HomeWorkPresenter {
           print(
               "DEBUG: Homework: getListHomeWork homework: ${homeworks.length}");
         }
+
+        //Add log
+        log.addData(key: "response", value: value);
+        Utils.addLog(log, LogEvent.success);
         
         _view!.onGetListHomeworkComplete(homeworks, classes, dataMap['current_time']);
       } else {
+        //Add log
+        log.message = "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}";
+        Utils.addLog(log, LogEvent.failed);
+
         _view!.onGetListHomeworkError(
             "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
-      (onError) => _view!.onGetListHomeworkError(onError.toString()),
+      (onError) {
+        //Add log
+        log.message = onError.toString();
+        Utils.addLog(log, LogEvent.failed);
+
+        _view!.onGetListHomeworkError(onError.toString());
+      } ,
     );
   }
 
@@ -93,8 +113,10 @@ class HomeWorkPresenter {
     return temp;
   }
 
-  void logout() {
+  void logout(BuildContext context) async {
     assert(_view != null && _authRepository != null);
+
+    LogModel log = await Utils.prepareToCreateLog(GlobalScaffoldKey.homeScreenScaffoldKey.currentContext!, action: LogEvent.callApiLogout);
 
     _authRepository!.logout().then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
@@ -105,14 +127,28 @@ class HomeWorkPresenter {
         //Delete current user
         Utils.clearCurrentUser();
 
+        //Add log
+        log.addData(key: "response", value: value);
+        Utils.addLog(log, LogEvent.success);
+
         _view!.onLogoutComplete();
       } else {
+        //Add log
+        log.message = "Logout error: ${dataMap['error_code']}${dataMap['status']}";
+        Utils.addLog(log, LogEvent.failed);
+
         _view!.onLogoutError(
             "Logout error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
-      (onError) => _view!.onLogoutError(onError.toString()),
+      (onError) {
+        //Add log
+        log.message = onError.toString();
+        Utils.addLog(log, LogEvent.failed);
+
+        _view!.onLogoutError(onError.toString());
+      },
     );
   }
 
