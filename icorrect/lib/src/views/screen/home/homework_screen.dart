@@ -11,7 +11,6 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
-import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
@@ -20,6 +19,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:workmanager/workmanager.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
@@ -55,7 +55,17 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    //Send log if has
+    _sendLog();
+
     _getListHomeWork();
+  }
+
+  void _sendLog() {
+    Workmanager().registerOneOffTask(
+      sendLogsTask,
+      sendLogsTask,
+    );
   }
 
   void _getListHomeWork() {
@@ -257,11 +267,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onLogoutComplete() {
     _homeWorkProvider.updateProcessingStatus();
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => const LoginScreen(),
-    //   ),
-    // );
     Navigator.of(context).pop();
   }
 

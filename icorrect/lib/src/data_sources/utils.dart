@@ -63,20 +63,20 @@ class Utils {
   }
 
   static Future<String> getOS() async {
-    String os = "unknown";
+    String os = "unknown-flutter";
 
     if (Platform.isAndroid) {
-      os = "android";
+      os = "android-flutter";
     } else if (Platform.isIOS) {
-      os = "ios";
+      os = "ios-flutter";
     } else if (kIsWeb) {
-      os = "web";
+      os = "web-flutter";
     } else if (Platform.isLinux) {
-      os = "linux";
+      os = "linux-flutter";
     } else if (Platform.isMacOS) {
-      os = "macos";
+      os = "macos-flutter";
     } else if (Platform.isWindows) {
-      os = "window";
+      os = "window-flutter";
     }
     return os;
   }
@@ -755,7 +755,7 @@ class Utils {
 
   static void writeLogIntoFile(String logString) async {
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
-    String path = "$folderPath/logs.txt";
+    String path = "$folderPath/flutter_logs.txt";
     if (kDebugMode) {
       print("DEBUG: log file path = $path");
     }
@@ -789,8 +789,8 @@ class Utils {
     return isExist;
   }
 
-  static String getDateTimeNow() {
-    return DateTime.now().millisecondsSinceEpoch.toString();
+  static int getDateTimeNow() {
+    return DateTime.now().millisecondsSinceEpoch;
   }
 
   static String getPreviousAction(BuildContext context) {

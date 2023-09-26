@@ -428,3 +428,5 @@ class LogEvent {
   //Action log event
   static const String actionLogin = 'action_login';
 }
+
+const sendLogsTask = "com.csupporter.sendlogtask";

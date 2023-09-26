@@ -1,7 +1,7 @@
 class LogModel {
   String? _action;
   String? _status;
-  String? _createdTime;
+  int? _createdTime;
   String? _message;
   String? _os;
   String? _userId;
@@ -10,13 +10,13 @@ class LogModel {
   String? _osVersion;
   String? _versionApp;
   String? _previousAction;
-  String? _responseTime;
+  int? _responseTime;
   List<Map<String, String>>? _data = [];
 
   LogModel({
     String? action,
     String? status,
-    String? createdTime,
+    int? createdTime,
     String? message,
     String? os,
     String? userId,
@@ -25,7 +25,7 @@ class LogModel {
     String? osVersion,
     String? versionApp,
     String? previousAction,
-    String? responseTime,
+    int? responseTime,
     List<Map<String, String>>? data,
   }) {
     _action = action;
@@ -52,8 +52,8 @@ class LogModel {
   set action(String action) => _action = action;
   String get status => _status ?? '';
   set status(String status) => _status = status;
-  String get createdTime => _createdTime ?? '';
-  set createdTime(String createdTime) => _createdTime = createdTime;
+  int get createdTime => _createdTime ?? 0;
+  set createdTime(int createdTime) => _createdTime = createdTime;
   String get message => _message ?? '';
   set message(String message) => _message = message;
   String get os => _os ?? '';
@@ -70,8 +70,8 @@ class LogModel {
   set versionApp(String versionApp) => _versionApp = versionApp;
   String get previousAction => _previousAction ?? '';
   set previousAction(String previousAction) => _previousAction = previousAction;
-  String get responseTime => _responseTime ?? '';
-  set responseTime(String responseTime) => _responseTime = responseTime;
+  int get responseTime => _responseTime ?? 0;
+  set responseTime(int responseTime) => _responseTime = responseTime;
   List<Map<String, String>>? get data => _data ?? [];
   set data(List<Map<String, String>>? data) => _data = data;
 

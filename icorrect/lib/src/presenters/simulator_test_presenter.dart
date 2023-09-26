@@ -332,7 +332,7 @@ class SimulatorTestPresenter {
             } on DioException catch (e) {
               if (kDebugMode) {
                 print(
-                    "DEBUG: Download error: ${e.type} - Status Code: ${e.response!.statusCode}");
+                    "DEBUG: Download error: ${e.type} - message: ${e.message}");
               }
 
               //Add log
