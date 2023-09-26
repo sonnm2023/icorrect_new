@@ -4,7 +4,7 @@ class LogModel {
   int? _createdTime;
   String? _message;
   String? _os;
-  String? _userId;
+  int? _userId;
   String? _deviceId;
   String? _deviceName;
   String? _osVersion;
@@ -19,7 +19,7 @@ class LogModel {
     int? createdTime,
     String? message,
     String? os,
-    String? userId,
+    int? userId,
     String? deviceId,
     String? deviceName,
     String? osVersion,
@@ -58,8 +58,8 @@ class LogModel {
   set message(String message) => _message = message;
   String get os => _os ?? '';
   set os(String os) => _os = os;
-  String get userId => _userId ?? '';
-  set userId(String userId) => _userId = userId;
+  int get userId => _userId ?? 0;
+  set userId(int userId) => _userId = userId;
   String get deviceId => _deviceId ?? '';
   set deviceId(String deviceId) => _deviceId = deviceId;
   String get deviceName => _deviceName ?? '';

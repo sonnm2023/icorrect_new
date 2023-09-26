@@ -727,9 +727,9 @@ class Utils {
     log.os = await getOS();
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (null == currentUser) {
-      log.userId = "";
+      log.userId = 0;
     } else {
-      log.userId = currentUser.userInfoModel.id.toString();
+      log.userId = currentUser.userInfoModel.id;
     }
     log.deviceId = await getDeviceIdentifier();
     log.deviceName = await getDeviceName();
