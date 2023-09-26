@@ -15,7 +15,6 @@ import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
@@ -44,21 +43,18 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
 
-  CircleLoading? _loading;
-
   @override
   void initState() {
     super.initState();
-    _loading = CircleLoading();
     _homeWorkPresenter = HomeWorkPresenter(this);
 
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    _getListHomeWork();
+
     //Send log if has
     _sendLog();
-
-    _getListHomeWork();
   }
 
   void _sendLog() {
@@ -81,7 +77,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkPresenter!.getListHomeWork(context);
 
     Future.delayed(Duration.zero, () {
-      _homeWorkProvider.setProcessingStatus(isProcessing: true);
       _authProvider
           .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
     });
@@ -166,12 +161,35 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ),
                 Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
-                    if (homeWorkProvider.isProcessing) {
-                      _loading!.show(context);
-                    } else {
-                      _loading!.hide();
+                    if (kDebugMode) {
+                      print("DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
                     }
-                    return Container();
+                    if (homeWorkProvider.isProcessing) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.black.withOpacity(0.2),
+                        child: Center(
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(100)),
+                                color: Colors.white),
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 4,
+                              backgroundColor: AppColor.defaultLightGrayColor,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColor.defaultPurpleColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
                   },
                 ),
               ],
@@ -284,12 +302,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
     _homeWorkProvider.setCurrentUser(userDataModel);
+    _homeWorkProvider.setProcessingStatus(isProcessing: true);
   }
 
   @override
   void onGetListHomeworkComplete(
       List<ActivitiesModel> activities, List<NewClassModel> classes, String serverCurrentTime) async {
-    _homeWorkProvider.setProcessingStatus(isProcessing: false);
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
