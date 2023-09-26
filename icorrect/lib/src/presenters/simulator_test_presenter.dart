@@ -91,8 +91,11 @@ class SimulatorTestPresenter {
 
     String distributeCode = currentUser.userInfoModel.distributorCode;
 
-    LogModel log = await Utils.prepareToCreateLog(context,
-        action: LogEvent.callApiGetTestDetail);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetTestDetail);
+    }
 
     _testRepository!
         .getTestDetail(homeworkId, distributeCode)
@@ -107,8 +110,10 @@ class SimulatorTestPresenter {
         _prepareTopicList(tempTestDetailModel);
 
         //Add log
-        log.addData(key: "response", value: value);
-        Utils.addLog(log, LogEvent.success);
+        if (null != log) {
+          log.addData(key: "response", value: value);
+          Utils.addLog(log, LogEvent.success);
+        }
 
         //Save file info for re download
         filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
@@ -127,9 +132,11 @@ class SimulatorTestPresenter {
             tempTestDetailModel, tempFilesTopic.length);
       } else {
         //Add log
-        log.message =
-            "Loading homework detail error: ${map['error_code']}${map['status']}";
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message =
+          "Loading homework detail error: ${map['error_code']}${map['status']}";
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         _view!.onGetTestDetailError(
             "Loading homework detail error: ${map['error_code']}${map['status']}");
@@ -138,8 +145,10 @@ class SimulatorTestPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        log.message = onError.toString();
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = onError.toString();
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         _view!.onGetTestDetailError(onError.toString());
       },
@@ -276,9 +285,12 @@ class SimulatorTestPresenter {
               fileTopic, MediaType.video, null);
 
           if (fileType.isNotEmpty && !isExist) {
-            LogModel log = await Utils.prepareToCreateLog(context,
-                action: LogEvent.callApiDownloadFile);
-            log.addData(key: "file_name", value: fileTopic);
+            LogModel? log;
+            if (null != context) {
+              log = await Utils.prepareToCreateLog(context,
+                  action: LogEvent.callApiDownloadFile);
+              log.addData(key: "file_name", value: fileTopic);
+            }
 
             try {
               String url = downloadFileEP(fileNameForDownload);
@@ -311,16 +323,20 @@ class SimulatorTestPresenter {
                 }
 
                 //Add log
-                log.message = response.statusMessage ?? "";
-                Utils.addLog(log, LogEvent.success);
+                if (null != log) {
+                  log.message = response.statusMessage ?? "";
+                  Utils.addLog(log, LogEvent.success);
+                }
 
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
               } else {
                 //Add log
-                log.message = "Download failed!";
-                Utils.addLog(log, LogEvent.failed);
+                if (null != log) {
+                  log.message = "Download failed!";
+                  Utils.addLog(log, LogEvent.failed);
+                }
 
                 _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(
@@ -336,8 +352,10 @@ class SimulatorTestPresenter {
               }
 
               //Add log
-              log.message = "Error type: ${e.type} - message: ${e.message}";
-              Utils.addLog(log, LogEvent.failed);
+              if (null != log) {
+                log.message = "Error type: ${e.type} - message: ${e.message}";
+                Utils.addLog(log, LogEvent.failed);
+              }
 
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
@@ -376,8 +394,10 @@ class SimulatorTestPresenter {
               */
             } on TimeoutException {
               //Add log
-              log.message = "TimeoutException";
-              Utils.addLog(log, LogEvent.failed);
+              if (null != log) {
+                log.message = "TimeoutException";
+                Utils.addLog(log, LogEvent.failed);
+              }
 
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
@@ -387,8 +407,10 @@ class SimulatorTestPresenter {
               break loop;
             } on SocketException {
               //Add log
-              log.message = "SocketException";
-              Utils.addLog(log, LogEvent.failed);
+              if (null != log) {
+                log.message = "SocketException";
+                Utils.addLog(log, LogEvent.failed);
+              }
 
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               //Download again
@@ -399,8 +421,10 @@ class SimulatorTestPresenter {
               break loop;
             } on http.ClientException {
               //Add log
-              log.message = "ClientException";
-              Utils.addLog(log, LogEvent.failed);
+              if (null != log) {
+                log.message = "ClientException";
+                Utils.addLog(log, LogEvent.failed);
+              }
 
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               //Download again

@@ -28,9 +28,11 @@ class ChangePasswordPresenter {
     String confirmNewPassword,
   ) async {
     assert(_view != null && _authRepository != null);
-
-    LogModel log = await Utils.prepareToCreateLog(context,
-        action: LogEvent.callApiChangePassword);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiChangePassword);
+    }
 
     _authRepository!
         .changePassword(oldPassword, newPassword, confirmNewPassword)
@@ -42,16 +44,20 @@ class ChangePasswordPresenter {
         Utils.setAccessToken(token);
 
         //Add log
-        log.addData(key: "response", value: value);
-        if (null != dataMap['message']) {
-          log.message = dataMap['message'];
+        if (null != log) {
+          log.addData(key: "response", value: value);
+          if (null != dataMap['message']) {
+            log.message = dataMap['message'];
+          }
+          Utils.addLog(log, LogEvent.success);
         }
-        Utils.addLog(log, LogEvent.success);
 
         _view!.onChangePasswordComplete();
       } else {
-        log.message = "Change password error: ${dataMap['error_code']}${dataMap['status']}";
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = "Change password error: ${dataMap['error_code']}${dataMap['status']}";
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         _view!.onChangePasswordError(
             "Change password error: ${dataMap['error_code']}${dataMap['status']}");
@@ -60,8 +66,10 @@ class ChangePasswordPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        log.message = onError.toString();
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = onError.toString();
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         _view!.onChangePasswordError(onError.toString());
       },

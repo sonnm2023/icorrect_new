@@ -191,8 +191,11 @@ class TestRoomPresenter {
     assert(_view != null && _testRepository != null);
 
     //Add log
-    LogModel log = await Utils.prepareToCreateLog(context,
-        action: LogEvent.callApiSubmitTest);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiSubmitTest);
+    }
 
     http.MultipartRequest multiRequest = await _formDataRequest(
       testId: testId,
@@ -220,23 +223,29 @@ class TestRoomPresenter {
               ActivityAnswer.fromJson(json['data']['activities_answer']);
 
           //Add log
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.success);
+          if (null != log) {
+            log.addData(key: "response", value: value);
+            Utils.addLog(log, LogEvent.success);
+          }
 
           _view!.onSubmitTestSuccess(
               'Save your answers successfully!', activityAnswer);
         } else {
           //Add log
-          log.message = "Has an error when submit this test!";
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.failed);
+          if (null != log) {
+            log.message = "Has an error when submit this test!";
+            log.addData(key: "response", value: value);
+            Utils.addLog(log, LogEvent.failed);
+          }
 
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
       }).catchError((onError) {
         //Add log
-        log.message = onError.toString();
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = onError.toString();
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onSubmitTestFail(
@@ -244,22 +253,28 @@ class TestRoomPresenter {
       });
     } on TimeoutException {
       //Add log
-      log.message = "TimeoutException: Has an error when submit this test!";
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = "TimeoutException: Has an error when submit this test!";
+        Utils.addLog(log, LogEvent.failed);
+      }
 
       _view!.onSubmitTestFail(
           "TimeoutException: Has an error when submit this test!");
     } on SocketException {
       //Add log
-      log.message = "SocketException: Has an error when submit this test!";
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = "SocketException: Has an error when submit this test!";
+        Utils.addLog(log, LogEvent.failed);
+      }
 
       _view!.onSubmitTestFail(
           "SocketException: Has an error when submit this test!");
     } on http.ClientException {
       //Add log
-      log.message = "ClientException: Has an error when submit this test!";
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = "ClientException: Has an error when submit this test!";
+        Utils.addLog(log, LogEvent.failed);
+      }
 
       _view!.onSubmitTestFail(
           "ClientException: Has an error when submit this test!");
@@ -284,7 +299,7 @@ class TestRoomPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
-    required LogModel log,
+    required LogModel? log,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -357,7 +372,9 @@ class TestRoomPresenter {
 
     request.fields.addAll(formData);
 
-    log.addData(key: "request_data", value: formData.toString());
+    if (null != log) {
+      log.addData(key: "request_data", value: formData.toString());
+    }
 
     return request;
   }
@@ -369,8 +386,11 @@ class TestRoomPresenter {
     required List<QuestionTopicModel> reQuestions,
   }) async {
     //Add log
-    LogModel log = await Utils.prepareToCreateLog(context,
-        action: LogEvent.callApiUpdateAnswer);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiUpdateAnswer);
+    }
 
     http.MultipartRequest multiRequest = await _formDataRequest(
       testId: testId,
@@ -397,23 +417,29 @@ class TestRoomPresenter {
               ActivityAnswer.fromJson(json['data']['activities_answer']);
 
           //Add log
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.success);
+          if (null != log) {
+            log.addData(key: "response", value: value);
+            Utils.addLog(log, LogEvent.success);
+          }
 
           _view!.onUpdateReAnswersSuccess(
               'Save your answers successfully!', activityAnswer);
         } else {
           //Add log
-          log.message = "Has an error when submit this test!";
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.failed);
+          if (null != log) {
+            log.message = "Has an error when submit this test!";
+            log.addData(key: "response", value: value);
+            Utils.addLog(log, LogEvent.failed);
+          }
 
           _view!.onUpdateReAnswersFail("Has an error when submit this test!");
         }
       }).catchError((onError) {
         //Add log
-        log.message = onError.toString();
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = onError.toString();
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onUpdateReAnswersFail(
@@ -421,22 +447,28 @@ class TestRoomPresenter {
       });
     } on TimeoutException {
       //Add log
-      log.message = "TimeoutException: Has an error when submit this test!";
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = "TimeoutException: Has an error when submit this test!";
+        Utils.addLog(log, LogEvent.failed);
+      }
 
       _view!.onUpdateReAnswersFail(
           "TimeoutException: Has an error when submit this test!");
     } on SocketException {
       //Add log
-      log.message = "SocketException: Has an error when submit this test!";
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = "SocketException: Has an error when submit this test!";
+        Utils.addLog(log, LogEvent.failed);
+      }
 
       _view!.onUpdateReAnswersFail(
           "SocketException: Has an error when submit this test!");
     } on http.ClientException {
       //Add log
-      log.message = "ClientException: Has an error when submit this test!";
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = "ClientException: Has an error when submit this test!";
+        Utils.addLog(log, LogEvent.failed);
+      }
       
       _view!.onUpdateReAnswersFail(
           "ClientException: Has an error when submit this test!");

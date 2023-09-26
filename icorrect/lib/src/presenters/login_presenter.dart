@@ -36,46 +36,62 @@ class LoginPresenter {
   void login(String email, String password, BuildContext context) async {
     assert(_view != null && _repository != null);
 
-    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiLogin);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiLogin);
+    }
 
     _repository!.login(email, password).then((value) async {
       AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
       if (authModel.errorCode == 200) {
         //Add log
-        log.addData(key: "response", value: value);
-        log.message = authModel.message;
-        Utils.addLog(log, LogEvent.success);
+        if (null != log) {
+          log.addData(key: "response", value: value);
+          log.message = authModel.message;
+          Utils.addLog(log, LogEvent.success);
+        }
 
         await _saveAccessToken(authModel.data.accessToken);
         _getUserInfo(context);
       } else {
+        String message = '';
         if (authModel.message.isNotEmpty) {
           _view!.onLoginError('Please check your Internet and try again !');
-          log.message = "Please check your Internet and try again !";
+          message = "Please check your Internet and try again !";
         } else {
           _view!.onLoginError('${authModel.errorCode}: ${authModel.status}');
-          log.message = '${authModel.errorCode}: ${authModel.status}';
+          message = '${authModel.errorCode}: ${authModel.status}';
         }
         //Add log
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = message;
+          Utils.addLog(log, LogEvent.failed);
+        }
       }
     }).catchError((onError) {
+      String message = '';
       if (onError is http.ClientException || onError is SocketException) {
         _view!.onLoginError('Please check your Internet and try again!');
-        log.message = "Please check your Internet and try again !";
+        message = "Please check your Internet and try again !";
       } else {
         _view!.onLoginError("An error occur. Please try again!");
-        log.message = "An error occur. Please try again!";
+        message = "An error occur. Please try again!";
       }
       //Add log
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = message;
+        Utils.addLog(log, LogEvent.failed);
+      }
     });
   }
 
   void getAppConfigInfo(BuildContext context) async {
     assert(_view != null && _repository != null);
     
-    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiAppConfig);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiAppConfig);
+    }
 
     _repository!.getAppConfigInfo().then((value) async {
       if (kDebugMode) {
@@ -95,33 +111,41 @@ class LoginPresenter {
         }
 
         //Add log
-        log.addData(key: "response", value: value);
-        if (null != dataMap['message']) {
-          log.message = dataMap['message'];
+        if (null != log) {
+          log.addData(key: "response", value: value);
+          if (null != dataMap['message']) {
+            log.message = dataMap['message'];
+          }
+          Utils.addLog(log, LogEvent.success);
         }
-        Utils.addLog(log, LogEvent.success);
         
         _view!.onGetAppConfigInfoSuccess();
       } else {
         //Add log
-        log.message = "Login error: ${dataMap['error_code']}${dataMap['status']}";
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = "Login error: ${dataMap['error_code']}${dataMap['status']}";
+          Utils.addLog(log, LogEvent.failed);
+        }
 
        _view!.onLoginError(
             "Login error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError((onError) {
+      String message = '';
       if (onError is http.ClientException || onError is SocketException) {
-        log.message = 'Please check your Internet and try again!';
+        message = 'Please check your Internet and try again!';
 
         _view!.onGetAppConfigInfoFail('Please check your Internet and try again!');
       } else {
-        log.message = "An error occur. Please try again!";
+        message = "An error occur. Please try again!";
 
         _view!.onGetAppConfigInfoFail("An error occur. Please try again!");
       }
       //Add log
-      Utils.addLog(log, LogEvent.failed);
+      if (null != log) {
+        log.message = message;
+        Utils.addLog(log, LogEvent.failed);
+      }
     });
   }
 
@@ -137,7 +161,10 @@ class LoginPresenter {
     String appVersion = await Utils.getAppVersion();
     String os = await Utils.getOS();
     
-    LogModel log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetUserInfo);
+    LogModel? log;
+    if (null != context) {
+      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetUserInfo);
+    }
 
     _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
@@ -146,14 +173,18 @@ class LoginPresenter {
         Utils.setCurrentUser(userDataModel);
 
         //Add log
-        log.addData(key: "response", value: value);
-        Utils.addLog(log, LogEvent.success);
+        if (null != log) {
+          log.addData(key: "response", value: value);
+          Utils.addLog(log, LogEvent.success);
+        }
 
         _view!.onLoginComplete();
       } else {
         //Add log
-        log.message = "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}";
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}";
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         _view!.onLoginError(
             "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}");
@@ -162,8 +193,10 @@ class LoginPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        log.message = onError.toString();
-        Utils.addLog(log, LogEvent.failed);
+        if (null != log) {
+          log.message = onError.toString();
+          Utils.addLog(log, LogEvent.failed);
+        }
 
         _view!.onLoginError(onError.toString());
       },
