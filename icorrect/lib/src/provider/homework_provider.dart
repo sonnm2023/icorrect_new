@@ -20,8 +20,8 @@ class HomeWorkProvider with ChangeNotifier {
 
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
-  void updateProcessingStatus() {
-    _isProcessing = !_isProcessing;
+  void setProcessingStatus({required bool isProcessing}) {
+    _isProcessing = isProcessing;
     
     notifyListeners();
   }
@@ -303,7 +303,7 @@ class HomeWorkProvider with ChangeNotifier {
     String str =
         'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1}) status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
     updateFilterString(str);
-    updateProcessingStatus();
+    setProcessingStatus(isProcessing: false);
   }
 
   bool checkFilterSelected() {

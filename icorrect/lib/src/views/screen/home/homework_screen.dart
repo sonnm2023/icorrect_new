@@ -81,7 +81,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkPresenter!.getListHomeWork(context);
 
     Future.delayed(Duration.zero, () {
-      _homeWorkProvider.updateProcessingStatus();
+      _homeWorkProvider.setProcessingStatus(isProcessing: true);
       _authProvider
           .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
     });
@@ -255,7 +255,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onGetListHomeworkError(String message) {
-    _homeWorkProvider.updateProcessingStatus();
+    _homeWorkProvider.setProcessingStatus(isProcessing: false);
 
     //Show error message
     showToastMsg(
@@ -266,13 +266,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onLogoutComplete() {
-    _homeWorkProvider.updateProcessingStatus();
+    _homeWorkProvider.setProcessingStatus(isProcessing: false);
     Navigator.of(context).pop();
   }
 
   @override
   void onLogoutError(String message) {
-    _homeWorkProvider.updateProcessingStatus();
+    _homeWorkProvider.setProcessingStatus(isProcessing: false);
 
     //Show error message
     showToastMsg(
@@ -289,6 +289,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onGetListHomeworkComplete(
       List<ActivitiesModel> activities, List<NewClassModel> classes, String serverCurrentTime) async {
+    _homeWorkProvider.setProcessingStatus(isProcessing: false);
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
