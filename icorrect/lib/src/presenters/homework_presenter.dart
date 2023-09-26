@@ -54,7 +54,7 @@ class HomeWorkPresenter {
     String status = Status.allHomework.get.toString();
 
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetListHomework);
     }
 
@@ -126,7 +126,7 @@ class HomeWorkPresenter {
     assert(_view != null && _authRepository != null);
 
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(GlobalScaffoldKey.homeScreenScaffoldKey.currentContext!, action: LogEvent.callApiLogout);
     }
 

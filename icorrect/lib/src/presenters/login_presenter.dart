@@ -37,7 +37,7 @@ class LoginPresenter {
     assert(_view != null && _repository != null);
 
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiLogin);
     }
 
@@ -89,7 +89,7 @@ class LoginPresenter {
     assert(_view != null && _repository != null);
     
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiAppConfig);
     }
 
@@ -162,7 +162,7 @@ class LoginPresenter {
     String os = await Utils.getOS();
     
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetUserInfo);
     }
 

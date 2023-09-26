@@ -11,7 +11,7 @@ class LogModel {
   String? _versionApp;
   String? _previousAction;
   int? _responseTime;
-  List<Map<String, String>>? _data = [];
+  Map<String, dynamic>? _data = {};
 
   LogModel({
     String? action,
@@ -26,7 +26,7 @@ class LogModel {
     String? versionApp,
     String? previousAction,
     int? responseTime,
-    List<Map<String, String>>? data,
+    Map<String, dynamic>? data,
   }) {
     _action = action;
     _status = status;
@@ -44,7 +44,7 @@ class LogModel {
     if (data != null) {
       _data!.addAll(data);
     } else {
-      _data = [];
+      _data = {};
     }
   }
 
@@ -72,8 +72,8 @@ class LogModel {
   set previousAction(String previousAction) => _previousAction = previousAction;
   int get responseTime => _responseTime ?? 0;
   set responseTime(int responseTime) => _responseTime = responseTime;
-  List<Map<String, String>>? get data => _data ?? [];
-  set data(List<Map<String, String>>? data) => _data = data;
+  Map<String, dynamic>? get data => _data ?? {};
+  set data(Map<String, dynamic>? data) => _data = data;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> dataMap = <String, dynamic>{};
@@ -93,13 +93,15 @@ class LogModel {
     if (_data != null) {
       dataMap['data'] = _data;
     } else {
-      dataMap['data'] = <Map<String, String>>[];
+      dataMap['data'] = Map<String, String>;
     }
     return dataMap;
   }
 
   void addData({required String key, required String value}) {
-    Map<String, String> map = {key: value};
-    _data!.add(map);
+    if (_data != null) {
+      data = {};
+    }
+    _data![key] = value;
   }
 }

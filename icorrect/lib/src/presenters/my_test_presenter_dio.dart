@@ -237,14 +237,23 @@ class MyTestPresenterDio {
               !await Utils.isExist(fileTopic, _mediaType(fileType))) {
             try {
               String url = downloadFileEP(fileNameForDownload);
-              print('DEBUG : fileDownload : $url');
+              if (kDebugMode) {
+                print('DEBUG : fileDownload : $url');
+              }
+
+              if (null == dio) {
+                return;
+              }
+
               dio!.head(url).timeout(const Duration(seconds: 10));
               String savePath =
                   '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}/$fileTopic';
               Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
-                print("DEBUG savePath : ${savePath}");
+                if (kDebugMode) {
+                  print("DEBUG savePath : $savePath");
+                }
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);

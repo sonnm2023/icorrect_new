@@ -29,7 +29,7 @@ class ChangePasswordPresenter {
   ) async {
     assert(_view != null && _authRepository != null);
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiChangePassword);
     }

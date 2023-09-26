@@ -92,7 +92,7 @@ class SimulatorTestPresenter {
     String distributeCode = currentUser.userInfoModel.distributorCode;
 
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiGetTestDetail);
     }
@@ -286,7 +286,7 @@ class SimulatorTestPresenter {
 
           if (fileType.isNotEmpty && !isExist) {
             LogModel? log;
-            if (null != context) {
+            if (context.mounted) {
               log = await Utils.prepareToCreateLog(context,
                   action: LogEvent.callApiDownloadFile);
               log.addData(key: "file_name", value: fileTopic);
@@ -297,6 +297,10 @@ class SimulatorTestPresenter {
 
               if (kDebugMode) {
                 print("DEBUG: download video: $url");
+              }
+
+              if (null == dio) {
+                return;
               }
 
               dio!.head(url).timeout(const Duration(seconds: 30));

@@ -192,7 +192,7 @@ class TestRoomPresenter {
 
     //Add log
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiSubmitTest);
     }
@@ -387,7 +387,7 @@ class TestRoomPresenter {
   }) async {
     //Add log
     LogModel? log;
-    if (null != context) {
+    if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiUpdateAnswer);
     }

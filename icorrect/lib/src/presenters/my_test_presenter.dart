@@ -239,6 +239,10 @@ class MyTestPresenter {
             try {
               String url = downloadFileEP(fileNameForDownload);
 
+              if (null == dio) {
+                return;
+              }
+
               dio!.head(url).timeout(const Duration(seconds: 10));
 
               print("Debug : url: $url , fileTopic : $fileTopic");

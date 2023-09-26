@@ -716,7 +716,7 @@ class Utils {
     required String previousAction,
     required String status,
     required String message,
-    required List<Map<String, String>> data,
+    required Map<String, String> data,
   }) async {
     LogModel log = LogModel();
     log.action = action;
@@ -815,7 +815,7 @@ class Utils {
         previousAction: previousAction,
         status: "",
         message: "",
-        data: []);
+        data: {});
     setPreviousAction(context, action);
 
     return log;

@@ -198,6 +198,10 @@ class OtherStudentTestPresenter {
             try {
               String url = downloadFileEP(fileNameForDownload);
 
+              if (null == dio) {
+                return;
+              }
+
               dio!.head(url).timeout(const Duration(seconds: 10));
               // use client.get as you would http.get
 
