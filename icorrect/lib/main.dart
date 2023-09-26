@@ -8,6 +8,7 @@ import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
@@ -134,6 +135,8 @@ void callbackDispatcher() {
       if (kDebugMode) {
         print("DEBUG: send log success");
       }
+      //TODO: Delete log file
+      Utils.deleteLogFile();
     } else {
       if (kDebugMode) {
         print("DEBUG: send log failed");

@@ -820,4 +820,24 @@ class Utils {
 
     return log;
   }
+
+  static Future<void> deleteLogFile() async {
+    //Check logs file is exist
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String path = "$folderPath/flutter_logs.txt";
+    File file = File(path);
+
+    try {
+      if (await file.exists()) {
+        await file.delete();
+        if (kDebugMode) {
+          print("DEBUG: Delete log file success");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: Delete log file error: ${e.toString()}");
+      }
+    }
+  }
 }
