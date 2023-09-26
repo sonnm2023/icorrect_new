@@ -421,6 +421,24 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _startDoingTest = false;
+  bool get startDoingTest => _startDoingTest;
+  void setStartDoingTest(bool isStart) {
+    _startDoingTest = isStart;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  TopicModel _topicRandom = TopicModel();
+  TopicModel get topicRandom => _topicRandom;
+  void setTopicRandom(TopicModel random) {
+    _topicRandom = random;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   bool _isReviewingPlayAnswer = false;
   bool get isReviewingPlayAnswer => _isReviewingPlayAnswer;
   void setIsReviewingPlayAnswer(bool isReviewingPlayAnswer) {
@@ -543,6 +561,8 @@ class SimulatorTestProvider with ChangeNotifier {
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
+    _topicRandom = TopicModel();
+    _startDoingTest = false;
     resetTopicsQueue();
     clearQuestionList();
     resetTopicsList();

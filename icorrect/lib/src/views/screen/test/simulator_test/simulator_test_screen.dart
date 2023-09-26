@@ -48,8 +48,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   SimulatorTestProvider? _simulatorTestProvider;
 
-  Permission? _microPermission;
-  PermissionStatus _microPermissionStatus = PermissionStatus.denied;
+  // Permission? _microPermission;
+  // PermissionStatus _microPermissionStatus = PermissionStatus.denied;
+
+  Map<Permission, PermissionStatus>? _statuses;
 
   StreamSubscription? connection;
   bool isOffline = false;
@@ -524,36 +526,61 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _checkPermission() async {
-    if (_microPermission == null) {
+    // if (_microPermission == null) {
+    //   await _initializePermission();
+    // }
+
+    // if (mounted) {
+    //   _requestPermission(_microPermission!, context);
+    // }
+
+    if (_statuses == null) {
       await _initializePermission();
     }
-
-    if (mounted) {
-      _requestPermission(_microPermission!, context);
-    }
   }
 
-  Future<void> _requestPermission(
-      Permission permission, BuildContext context) async {
-    _simulatorTestProvider!.setPermissionDeniedTime();
-    // ignore: unused_local_variable
-    final status = await permission.request();
-    _listenForPermissionStatus(context);
-  }
+  // Future<void> _requestPermission(
+  //     Permission permission, BuildContext context) async {
+  //   _simulatorTestProvider!.setPermissionDeniedTime();
+  //   // ignore: unused_local_variable
+  //   final status = await permission.request();
+  //   _listenForPermissionStatus(context);
+  // }
 
   Future<void> _initializePermission() async {
-    _microPermission = Permission.microphone;
+    // _microPermission = Permission.microphone;
+    if (mounted) {
+      _simulatorTestProvider!.setPermissionDeniedTime();
+      _statuses = await [Permission.microphone, Permission.camera].request();
+
+      _listenForPermissionStatus(context);
+    }
   }
 
   void _listenForPermissionStatus(BuildContext context) async {
-    if (_microPermission != null) {
-      _microPermissionStatus = await _microPermission!.status;
+    // Permission? _microPermission;
+    // PermissionStatus _microPermissionStatus = PermissionStatus.denied;
+    // if (_microPermission != null) {
+    //   _microPermissionStatus = await _microPermission!.status;
 
-      if (_microPermissionStatus == PermissionStatus.denied) {
+    //   if (_microPermissionStatus == PermissionStatus.denied) {
+    //     if (_simulatorTestProvider!.permissionDeniedTime > 2) {
+    //       _showConfirmDialog();
+    //     }
+    //   } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
+    //     openAppSettings();
+    //   } else {
+    //     _startToDoTest();
+    //   }
+    // }
+    if (_statuses != null) {
+      if (_statuses![Permission.microphone]!.isDenied ||
+          _statuses![Permission.camera]!.isDenied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
-      } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
+      } else if (_statuses![Permission.microphone]!.isPermanentlyDenied ||
+          _statuses![Permission.camera]!.isPermanentlyDenied) {
         openAppSettings();
       } else {
         _startToDoTest();

@@ -252,7 +252,9 @@ class SimulatorTestPresenter {
                 print("DEBUG: download video: $url");
               }
 
-              dio!.head(url).timeout(const Duration(seconds: 10));
+              if (dio != null) {
+                dio!.head(url).timeout(const Duration(seconds: 10));
+              }
               // use client.get as you would http.get
 
               String savePath =
@@ -284,7 +286,8 @@ class SimulatorTestPresenter {
               }
             } on DioException catch (e) {
               if (kDebugMode) {
-                print("DEBUG: Download error: ${e.type} - Status Code: ${e.response!.statusCode}");
+                print(
+                    "DEBUG: Download error: ${e.type} - Status Code: ${e.response!.statusCode}");
               }
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(testDetail, filesTopic);
@@ -317,7 +320,7 @@ class SimulatorTestPresenter {
                   break loop;
                 }
               }
-              */              
+              */
             } on TimeoutException {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(testDetail, filesTopic);
@@ -412,13 +415,17 @@ class SimulatorTestPresenter {
         }
       }).catchError((onError) =>
           // ignore: invalid_return_type_for_catch_error
-          _view!.onSubmitTestFail("invalid_return_type_for_catch_error: Has an error when submit this test!"));
+          _view!.onSubmitTestFail(
+              "invalid_return_type_for_catch_error: Has an error when submit this test!"));
     } on TimeoutException {
-      _view!.onSubmitTestFail("TimeoutException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(
+          "TimeoutException: Has an error when submit this test!");
     } on SocketException {
-      _view!.onSubmitTestFail("SocketException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(
+          "SocketException: Has an error when submit this test!");
     } on http.ClientException {
-      _view!.onSubmitTestFail("ClientException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(
+          "ClientException: Has an error when submit this test!");
     }
   }
 
