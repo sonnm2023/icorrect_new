@@ -1186,6 +1186,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     TopicModel? topicModel = _getCurrentPart();
     List<QuestionTopicModel> questionList = topicModel!.questionList;
     int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+
+    if (index >= questionList.length) {
+      return;
+    }
+
     QuestionTopicModel question = questionList.elementAt(index);
     question.numPart = topicModel.numPart;
 
