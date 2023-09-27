@@ -277,6 +277,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
+    widget.homeWorkPresenter.clickOnHomeworkItem(context: context, homework: homeWorkModel);
+
     _selectedHomeWorkModel = homeWorkModel;
 
     if (_storagePermission == null) {

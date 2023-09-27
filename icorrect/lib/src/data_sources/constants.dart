@@ -434,6 +434,7 @@ class LogEvent {
   static const String actionLogin = 'action_login';
   static const String actionLogout = 'action_logout';
   static const String actionChangePassword = 'action_change_password';
+  static const String actionClickOnHomeworkItem = 'action_click_on_homework_item';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";
