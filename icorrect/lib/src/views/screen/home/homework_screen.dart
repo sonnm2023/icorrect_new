@@ -54,7 +54,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _getListHomeWork();
 
     //Send log if has
-    // _sendLog();
+    _sendLog();
   }
 
   void _sendLog() {
