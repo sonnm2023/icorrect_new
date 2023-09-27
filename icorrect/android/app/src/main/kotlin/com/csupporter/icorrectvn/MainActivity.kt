@@ -1,4 +1,4 @@
-package com.example.icorrect
+package com.csupporter.icorrectvn
 
 import io.flutter.embedding.android.FlutterActivity
 
