@@ -50,7 +50,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
     _loading?.show(context);
     String orderId = widget.studentResultModel.orderId.toString();
     if (orderId.isNotEmpty) {
-      _presenter!.getResponse(orderId);
+      _presenter!.getResponse(context: context, orderId: orderId);
     }
   }
 
@@ -71,7 +71,8 @@ class _StudentCorrectionState extends State<StudentCorrection>
               ), () {
             _loading?.show(context);
             _presenter!.getResponse(
-              widget.studentResultModel.orderId.toString(),
+              context: context,
+              orderId: widget.studentResultModel.orderId.toString(),
             );
           });
         },

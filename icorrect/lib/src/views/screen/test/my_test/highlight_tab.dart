@@ -47,12 +47,13 @@ class _HighLightTabState extends State<HighLightTab>
       print(
           "DEBUG: _getHighLightHomeWork ${widget.homeWorkModel.activityId.toString()}");
     }
-    
+
     Future.delayed(Duration.zero, () {
       List<StudentResultModel> homeWorks = widget.provider.highLightHomeworks;
       if (homeWorks.isEmpty) {
         _loading?.show(context);
         _presenter!.getSpecialHomeWorks(
+            context: context,
             email: userDataModel.userInfoModel.email.toString(),
             activityId: widget.homeWorkModel.activityId.toString(),
             status: Status.highLight.get,

@@ -426,6 +426,8 @@ class LogEvent {
   static const String callApiUpdateAnswer = 'call_api_update_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
   static const String callApiGetMyTestDetail = 'call_api_get_my_test_detail'; //${icorrectDomain}api/v1/ielts-test/show/$testId
   static const String callApiUpdateMyAnswer = 'call_api_update_my_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiGetResponse = 'call_api_get_response'; //'${toolDomain}api/response?order_id=$orderId';
+  static const String callApiGetSpecialHomework = 'call_api_get_special_homework'; //specialHomeWorksEP
 
   //Action log event
   static const String actionLogin = 'action_login';
