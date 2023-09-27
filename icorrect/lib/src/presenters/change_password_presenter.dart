@@ -53,8 +53,7 @@ class ChangePasswordPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: dataMap['message'],
           status: LogEvent.success,
         );
@@ -64,8 +63,7 @@ class ChangePasswordPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: "Change password error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
         );
@@ -79,8 +77,7 @@ class ChangePasswordPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: onError.toString(),
           status: LogEvent.failed,
         );

@@ -741,15 +741,14 @@ class Utils {
 
   static void prepareLogData({
     required LogModel? log,
-    required String? key,
-    required String? value,
+    required Map<String, dynamic>? data,
     required String? message,
     required String status,
   }) {
     if (null == log) return;
 
-    if (null != key && null != value) {
-      log.addData(key: key, value: value);
+    if (null != data) {
+      log.addData(key: "data", value: jsonEncode(data));
     }
 
     if (null != message) {

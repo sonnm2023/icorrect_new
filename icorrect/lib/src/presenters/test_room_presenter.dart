@@ -192,6 +192,8 @@ class TestRoomPresenter {
 
     //Add log
     LogModel? log;
+    Map<String, dynamic> dataLog = {};
+
     if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiSubmitTest);
@@ -202,7 +204,7 @@ class TestRoomPresenter {
       activityId: activityId,
       questions: questions,
       isUpdate: false,
-      log: log,
+      dataLog: dataLog,
     );
 
     if (kDebugMode) {
@@ -218,6 +220,8 @@ class TestRoomPresenter {
         }
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
+        dataLog['response'] = json;
+
         if (json['error_code'] == 200) {
           ActivityAnswer activityAnswer =
               ActivityAnswer.fromJson(json['data']['activities_answer']);
@@ -225,8 +229,7 @@ class TestRoomPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: null,
             status: LogEvent.success,
           );
@@ -237,20 +240,19 @@ class TestRoomPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: "Has an error when submit this test!",
             status: LogEvent.failed,
           );
 
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
+
       }).catchError((onError) {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: dataLog,
           message: onError.toString(),
           status: LogEvent.failed,
         );
@@ -263,8 +265,7 @@ class TestRoomPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "TimeoutException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -275,8 +276,7 @@ class TestRoomPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "SocketException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -287,8 +287,7 @@ class TestRoomPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "ClientException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -316,7 +315,7 @@ class TestRoomPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
-    required LogModel? log,
+    required Map<String, dynamic>? dataLog,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -389,8 +388,8 @@ class TestRoomPresenter {
 
     request.fields.addAll(formData);
 
-    if (null != log) {
-      log.addData(key: "request_data", value: formData.toString());
+    if (null != dataLog) {
+      dataLog['request_data'] = formData.toString();
     }
 
     return request;
@@ -404,6 +403,8 @@ class TestRoomPresenter {
   }) async {
     //Add log
     LogModel? log;
+    Map<String, dynamic>? dataLog = {};
+
     if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiUpdateAnswer);
@@ -414,7 +415,7 @@ class TestRoomPresenter {
       activityId: activityId,
       questions: reQuestions,
       isUpdate: true,
-      log: log,
+      dataLog: dataLog,
     );
     if (kDebugMode) {
       print("DEBUG: submitTest");
@@ -429,6 +430,8 @@ class TestRoomPresenter {
         }
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
+        dataLog['response'] = json;
+
         if (json['error_code'] == 200) {
           ActivityAnswer activityAnswer =
               ActivityAnswer.fromJson(json['data']['activities_answer']);
@@ -436,8 +439,7 @@ class TestRoomPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: null,
             status: LogEvent.success,
           );
@@ -448,8 +450,7 @@ class TestRoomPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: "Has an error when submit this test!",
             status: LogEvent.failed,
           );
@@ -460,8 +461,7 @@ class TestRoomPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: dataLog,
           message: onError.toString(),
           status: LogEvent.failed,
         );
@@ -474,8 +474,7 @@ class TestRoomPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "TimeoutException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -486,8 +485,7 @@ class TestRoomPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "SocketException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -498,8 +496,7 @@ class TestRoomPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "ClientException: Has an error when submit this test!",
         status: LogEvent.failed,
       );

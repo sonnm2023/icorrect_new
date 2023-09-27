@@ -48,8 +48,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: authModel.message,
           status: LogEvent.success,
         );
@@ -68,8 +67,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: message,
           status: LogEvent.failed,
         );
@@ -86,8 +84,7 @@ class LoginPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: null,
         message: message,
         status: LogEvent.failed,
       );
@@ -126,8 +123,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: dataMap['message'],
           status: LogEvent.success,
         );
@@ -137,8 +133,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: "Login error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
         );
@@ -161,8 +156,7 @@ class LoginPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: null,
         message: message,
         status: LogEvent.failed,
       );
@@ -196,8 +190,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: null,
           status: LogEvent.success,
         );
@@ -207,8 +200,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message:
               "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
@@ -223,8 +215,7 @@ class LoginPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: onError.toString(),
           status: LogEvent.failed,
         );

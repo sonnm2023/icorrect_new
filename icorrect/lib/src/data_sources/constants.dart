@@ -435,6 +435,14 @@ class LogEvent {
   static const String actionLogout = 'action_logout';
   static const String actionChangePassword = 'action_change_password';
   static const String actionClickOnHomeworkItem = 'action_click_on_homework_item';
+  static const String actionStartToDoTest = 'action_start_to_do_test';
+  static const String actionPlayVideoQuestion = 'action_play_video_question';
+  static const String actionRecordAnswer = 'action_record_answer';
+  static const String actionFinishAnswer = 'action_finish_answer';
+  static const String actionFinishReAnswer = 'action_finish_re_answer';
+  static const String actionRepeatQuestion = 'action_repeat_question';
+  static const String actionSubmitTest = 'action_submit_test';
+  static const String actionUpdateAnswer = 'action_update_answer';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";
