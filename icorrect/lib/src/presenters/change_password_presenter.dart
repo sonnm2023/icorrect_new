@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -30,6 +32,11 @@ class ChangePasswordPresenter {
     assert(_view != null && _authRepository != null);
     LogModel? log;
     if (context.mounted) {
+      //Add action log
+      LogModel actionLog = await Utils.prepareToCreateLog(context,
+          action: LogEvent.actionChangePassword);
+      Utils.addLog(actionLog, LogEvent.none);
+
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiChangePassword);
     }
@@ -46,8 +53,7 @@ class ChangePasswordPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: dataMap['message'],
           status: LogEvent.success,
         );
@@ -57,8 +63,7 @@ class ChangePasswordPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: "Change password error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
         );
@@ -72,8 +77,7 @@ class ChangePasswordPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: onError.toString(),
           status: LogEvent.failed,
         );

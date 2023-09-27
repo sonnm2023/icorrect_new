@@ -54,8 +54,7 @@ class SpecialHomeworksPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: jsonDecode(value),
             message: null,
             status: LogEvent.success,
           );
@@ -65,8 +64,7 @@ class SpecialHomeworksPresenter {
           //Add log
           Utils.prepareLogData(
               log: log,
-              key: null,
-              value: null,
+              data: null,
               message:
               'GetSpecialHomeWorks: result fail!',
               status: LogEvent.failed,
@@ -78,8 +76,7 @@ class SpecialHomeworksPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message:
           'GetSpecialHomeWorks fail.Please check your internet and try again!',
           status: LogEvent.failed,
@@ -92,8 +89,7 @@ class SpecialHomeworksPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: null,
         message: onError.toString(),
         status: LogEvent.failed,
       );

@@ -49,8 +49,7 @@ class ResponsePresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: null,
           status: LogEvent.success,
         );
@@ -60,8 +59,7 @@ class ResponsePresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: "Loading result response fail!",
           status: LogEvent.failed,
         );
@@ -72,8 +70,7 @@ class ResponsePresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: null,
         message: onError.toString(),
         status: LogEvent.failed,
       );

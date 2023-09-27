@@ -741,15 +741,14 @@ class Utils {
 
   static void prepareLogData({
     required LogModel? log,
-    required String? key,
-    required String? value,
+    required Map<String, dynamic>? data,
     required String? message,
     required String status,
   }) {
     if (null == log) return;
 
-    if (null != key && null != value) {
-      log.addData(key: key, value: value);
+    if (null != data) {
+      log.addData(key: "data", value: jsonEncode(data));
     }
 
     if (null != message) {
@@ -760,15 +759,17 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
-    DateTime responseTime =  DateTime.now();
+    if (status != "none") { //NOT Action log
+      DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+      DateTime responseTime =  DateTime.now();
 
-    Duration diff = responseTime.difference(createdTime);
+      Duration diff = responseTime.difference(createdTime);
 
-    if (diff.inSeconds < 1) {
-      log.responseTime = 1;
-    } else {
-      log.responseTime = diff.inSeconds;
+      if (diff.inSeconds < 1) {
+        log.responseTime = 1;
+      } else {
+        log.responseTime = diff.inSeconds;
+      }
     }
     log.status = status;
 

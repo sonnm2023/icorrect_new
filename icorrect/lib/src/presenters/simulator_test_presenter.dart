@@ -112,8 +112,7 @@ class SimulatorTestPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: "response",
-          value: value,
+          data: jsonDecode(value),
           message: null,
           status: LogEvent.success,
         );
@@ -139,8 +138,7 @@ class SimulatorTestPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message:
               "Loading homework detail error: ${map['error_code']}${map['status']}",
           status: LogEvent.failed,
@@ -155,8 +153,7 @@ class SimulatorTestPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: onError.toString(),
           status: LogEvent.failed,
         );
@@ -346,8 +343,7 @@ class SimulatorTestPresenter {
                 //Add log
                 Utils.prepareLogData(
                   log: log,
-                  key: null,
-                  value: null,
+                  data: null,
                   message: response.statusMessage,
                   status: LogEvent.success,
                 );
@@ -359,8 +355,7 @@ class SimulatorTestPresenter {
                 //Add log
                 Utils.prepareLogData(
                   log: log,
-                  key: null,
-                  value: null,
+                  data: null,
                   message: "Download failed!",
                   status: LogEvent.failed,
                 );
@@ -382,8 +377,7 @@ class SimulatorTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Error type: ${e.type} - message: ${e.message}",
                 status: LogEvent.failed,
               );
@@ -428,8 +422,7 @@ class SimulatorTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Download File TimeoutException",
                 status: LogEvent.failed,
               );
@@ -445,8 +438,7 @@ class SimulatorTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Download File SocketException",
                 status: LogEvent.failed,
               );
@@ -463,8 +455,7 @@ class SimulatorTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Download File ClientException",
                 status: LogEvent.failed,
               );
@@ -545,6 +536,8 @@ class SimulatorTestPresenter {
 
     //Add log
     LogModel? log;
+    Map<String, dynamic>? dataLog = {};
+
     if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiSubmitTest);
@@ -555,7 +548,7 @@ class SimulatorTestPresenter {
       activityId: activityId,
       questions: questions,
       isUpdate: isUpdate,
-      log: log,
+      dataLog: dataLog,
     );
 
     if (kDebugMode) {
@@ -570,6 +563,8 @@ class SimulatorTestPresenter {
         }
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
+        dataLog['response'] = json;
+
         if (json['error_code'] == 200) {
           ActivityAnswer activityAnswer =
               ActivityAnswer.fromJson(json['data']['activities_answer']);
@@ -577,8 +572,7 @@ class SimulatorTestPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: null,
             status: LogEvent.success,
           );
@@ -589,8 +583,7 @@ class SimulatorTestPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: "Has an error when submit this test!",
             status: LogEvent.failed,
           );
@@ -601,8 +594,7 @@ class SimulatorTestPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: dataLog,
           message: onError.toString(),
           status: LogEvent.failed,
         );
@@ -615,8 +607,7 @@ class SimulatorTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "TimeoutException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -627,8 +618,7 @@ class SimulatorTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "SocketException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -639,8 +629,7 @@ class SimulatorTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "ClientException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
@@ -667,7 +656,7 @@ class SimulatorTestPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
-    required LogModel? log,
+    required Map<String, dynamic>? dataLog,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -750,8 +739,8 @@ class SimulatorTestPresenter {
 
     request.fields.addAll(formData);
 
-    if (null != log) {
-      log.addData(key: "request_data", value: formData.toString());
+    if (null != dataLog) {
+      dataLog['request_data'] = formData.toString();
     }
 
     return request;

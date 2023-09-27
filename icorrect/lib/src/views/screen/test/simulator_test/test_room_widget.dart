@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -17,6 +18,7 @@ import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -494,7 +496,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
+  void _createLog({required String action, required Map<String, dynamic>? data}) async {
+    if (context.mounted) {
+      //Add action log
+      LogModel actionLog = await Utils.prepareToCreateLog(context,
+          action: action);
+      if (null != data) {
+        actionLog.addData(key: "data", value: jsonEncode(data));
+      }
+      Utils.addLog(actionLog, LogEvent.none);
+    }
+  }
+
   void _startToDoTest() {
+    Map<String, dynamic> info = {
+      "activity_id": widget.homeWorkModel.activityId.toString(),
+      "test_id": _simulatorTestProvider!.currentTestDetail.testId.toString(),
+    };
+    _createLog(action: LogEvent.actionStartToDoTest, data: info);
+
     _initVideoController(isIntroduceVideo: false);
   }
 
@@ -829,7 +849,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
+    Map<String, dynamic> info = {
+      "question_id": questionTopicModel.id.toString(),
+      "question_content": questionTopicModel.content,
+    };
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _createLog(action: LogEvent.actionFinishReAnswer, data: info);
+
       //Finish re answer
       onFinishForReAnswer();
     } else {
@@ -842,6 +869,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       } else {
         isPart2 = questionTopicModel.numPart == PartOfTest.part2.get;
       }
+
+      _createLog(action: LogEvent.actionFinishAnswer, data: info);
 
       onFinishAnswer(isPart2);
     }
@@ -883,6 +912,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    Map<String, dynamic> info = {
+      "question_id": questionTopicModel.id.toString(),
+      "question_content": questionTopicModel.content,
+    };
+    _createLog(action: LogEvent.actionRepeatQuestion, data: info);
+
     //Stop record
     _setVisibleRecord(false, null, null);
 
@@ -1321,6 +1356,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
     }
 
+    Map<String, dynamic> info = {
+      "file_id": currentPlayingFile.id.toString(),
+      "file_url": currentPlayingFile.url,
+    };
+    _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
+
     if (!isIntroduceVideo) {
       _showQuestionImage();
     }
@@ -1390,6 +1431,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (kDebugMode) {
       print("DEBUG: RECORD AS FILE PATH: $path");
     }
+
+    Map<String, dynamic> info = {
+      "file_path": path,
+    };
+    _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
     if (await _recordController!.hasPermission()) {
       await _recordController!.start(
@@ -1502,6 +1548,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest() {
+    _createLog(action: LogEvent.actionSubmitTest, data: null);
+
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
@@ -1712,6 +1760,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _updateReAnswers() {
+    _createLog(action: LogEvent.actionUpdateAnswer, data: null);
+
     if (kDebugMode) {
       print("DEBUG: _updateReAnswers");
     }
@@ -1745,11 +1795,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
-    //Enable repeat button
-    _simulatorTestProvider!.setEnableRepeatButton(true);
-
     //Stop record
     _setVisibleRecord(false, null, null);
+
+    //Enable repeat button
+    _simulatorTestProvider!.setEnableRepeatButton(true);
 
     //Show SAVE THE TEST when re answer
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {

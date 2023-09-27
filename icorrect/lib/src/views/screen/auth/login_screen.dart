@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen>
       _writeFilePermissionStatus = await _writeFilePermission!.status;
 
       if (_writeFilePermissionStatus == PermissionStatus.denied) {
-        if (_authProvider!.permissionDeniedTime > 2) {
+        if (_authProvider.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
       } else if (_writeFilePermissionStatus == PermissionStatus.permanentlyDenied) {

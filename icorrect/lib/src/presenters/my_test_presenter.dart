@@ -99,8 +99,7 @@ class MyTestPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: jsonDecode(value),
             message: null,
             status: LogEvent.success,
           );
@@ -127,8 +126,7 @@ class MyTestPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: null,
-            value: null,
+            data: null,
             message:
                 "Loading my test detail error: ${json['error_code']}${json['status']}",
             status: LogEvent.failed,
@@ -140,8 +138,7 @@ class MyTestPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: null,
           message: "Loading my test detail error",
           status: LogEvent.failed,
         );
@@ -157,8 +154,7 @@ class MyTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: null,
         message: onError.toString(),
         status: LogEvent.failed,
       );
@@ -332,8 +328,7 @@ class MyTestPresenter {
                 //Add log
                 Utils.prepareLogData(
                   log: log,
-                  key: null,
-                  value: null,
+                  data: null,
                   message: response.statusMessage,
                   status: LogEvent.success,
                 );
@@ -344,8 +339,7 @@ class MyTestPresenter {
                 //Add log
                 Utils.prepareLogData(
                   log: log,
-                  key: null,
-                  value: null,
+                  data: null,
                   message: "Download failed!",
                   status: LogEvent.failed,
                 );
@@ -368,8 +362,7 @@ class MyTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Error type: ${e.type} - message: ${e.message}",
                 status: LogEvent.failed,
               );
@@ -386,8 +379,7 @@ class MyTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Download File TimeoutException",
                 status: LogEvent.failed,
               );
@@ -404,8 +396,7 @@ class MyTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Download File SocketException",
                 status: LogEvent.failed,
               );
@@ -422,8 +413,7 @@ class MyTestPresenter {
               //Add log
               Utils.prepareLogData(
                 log: log,
-                key: null,
-                value: null,
+                data: null,
                 message: "Download File ClientException",
                 status: LogEvent.failed,
               );
@@ -511,6 +501,8 @@ class MyTestPresenter {
 
     //Add log
     LogModel? log;
+    Map<String, dynamic> dataLog = {};
+
     if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiUpdateMyAnswer);
@@ -520,12 +512,14 @@ class MyTestPresenter {
       testId: testId,
       activityId: activityId,
       questions: reQuestions,
-      log: log,
+      dataLog: dataLog,
     );
 
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
+        dataLog['response'] = json;
+
         if (kDebugMode) {
           print("DEBUG: error form: ${json.toString()}");
         }
@@ -533,8 +527,7 @@ class MyTestPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: null,
             status: LogEvent.success,
           );
@@ -544,8 +537,7 @@ class MyTestPresenter {
           //Add log
           Utils.prepareLogData(
             log: log,
-            key: "response",
-            value: value,
+            data: dataLog,
             message: "Has an error when update my answer!",
             status: LogEvent.failed,
           );
@@ -556,8 +548,7 @@ class MyTestPresenter {
         //Add log
         Utils.prepareLogData(
           log: log,
-          key: null,
-          value: null,
+          data: dataLog,
           message: onError.toString(),
           status: LogEvent.failed,
         );
@@ -568,8 +559,7 @@ class MyTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "TimeoutException: Has an error when update my answer!",
         status: LogEvent.failed,
       );
@@ -579,8 +569,7 @@ class MyTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "SocketException: Has an error when update my answer!",
         status: LogEvent.failed,
       );
@@ -590,8 +579,7 @@ class MyTestPresenter {
       //Add log
       Utils.prepareLogData(
         log: log,
-        key: null,
-        value: null,
+        data: dataLog,
         message: "ClientException: Has an error when update my answer!",
         status: LogEvent.failed,
       );
@@ -604,7 +592,7 @@ class MyTestPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
-    required LogModel? log,
+    required Map<String, dynamic>? dataLog,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -682,8 +670,8 @@ class MyTestPresenter {
 
     request.fields.addAll(formData);
 
-    if (null != log) {
-      log.addData(key: "request_data", value: formData.toString());
+    if (null != dataLog) {
+      dataLog['request_data'] = formData.toString();
     }
 
     return request;
