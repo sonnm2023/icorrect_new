@@ -80,11 +80,6 @@ class MyApp extends StatelessWidget {
 
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
-    // your code that you want to run in background
-    if (kDebugMode) {
-      print('DEBUG: Task executed: $taskName');
-    }
-
     //Check logs file is exist
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
     String path = "$folderPath/flutter_logs.txt";

@@ -54,7 +54,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _getListHomeWork();
 
     //Send log if has
-    _sendLog();
+    // _sendLog();
   }
 
   void _sendLog() {
@@ -285,6 +285,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onLogoutComplete() {
     _homeWorkProvider.setProcessingStatus(isProcessing: false);
+
+    _sendLog();
+
     Navigator.of(context).pop();
   }
 

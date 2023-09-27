@@ -45,11 +45,13 @@ class LoginPresenter {
       AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
       if (authModel.errorCode == 200) {
         //Add log
-        if (null != log) {
-          log.addData(key: "response", value: value);
-          log.message = authModel.message;
-          Utils.addLog(log, LogEvent.success);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: authModel.message,
+          status: LogEvent.success,
+        );
 
         await _saveAccessToken(authModel.data.accessToken);
         _getUserInfo(context);
@@ -63,10 +65,13 @@ class LoginPresenter {
           message = '${authModel.errorCode}: ${authModel.status}';
         }
         //Add log
-        if (null != log) {
-          log.message = message;
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: message,
+          status: LogEvent.failed,
+        );
       }
     }).catchError((onError) {
       String message = '';
@@ -78,10 +83,13 @@ class LoginPresenter {
         message = "An error occur. Please try again!";
       }
       //Add log
-      if (null != log) {
-        log.message = message;
-        Utils.addLog(log, LogEvent.failed);
-      }
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: message,
+        status: LogEvent.failed,
+      );
     });
   }
 
@@ -111,21 +119,24 @@ class LoginPresenter {
         }
 
         //Add log
-        if (null != log) {
-          log.addData(key: "response", value: value);
-          if (null != dataMap['message']) {
-            log.message = dataMap['message'];
-          }
-          Utils.addLog(log, LogEvent.success);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: dataMap['message'],
+          status: LogEvent.success,
+        );
         
         _view!.onGetAppConfigInfoSuccess();
       } else {
         //Add log
-        if (null != log) {
-          log.message = "Login error: ${dataMap['error_code']}${dataMap['status']}";
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: "Login error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
 
        _view!.onLoginError(
             "Login error: ${dataMap['error_code']}${dataMap['status']}");
@@ -142,10 +153,13 @@ class LoginPresenter {
         _view!.onGetAppConfigInfoFail("An error occur. Please try again!");
       }
       //Add log
-      if (null != log) {
-        log.message = message;
-        Utils.addLog(log, LogEvent.failed);
-      }
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: message,
+        status: LogEvent.failed,
+      );
     });
   }
 
@@ -173,18 +187,24 @@ class LoginPresenter {
         Utils.setCurrentUser(userDataModel);
 
         //Add log
-        if (null != log) {
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.success);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: null,
+          status: LogEvent.success,
+        );
 
         _view!.onLoginComplete();
       } else {
         //Add log
-        if (null != log) {
-          log.message = "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}";
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
 
         _view!.onLoginError(
             "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}");
@@ -193,10 +213,13 @@ class LoginPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        if (null != log) {
-          log.message = onError.toString();
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
 
         _view!.onLoginError(onError.toString());
       },

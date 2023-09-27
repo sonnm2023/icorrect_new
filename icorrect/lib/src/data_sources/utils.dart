@@ -739,8 +739,37 @@ class Utils {
     return log;
   }
 
+  static void prepareLogData({
+    required LogModel? log,
+    required String? key,
+    required String? value,
+    required String? message,
+    required String status,
+  }) {
+    if (null == log) return;
+
+    if (null != key && null != value) {
+      log.addData(key: key, value: value);
+    }
+
+    if (null != message) {
+      log.message = message;
+    }
+
+    addLog(log, status);
+  }
+
   static void addLog(LogModel log, String status) {
-    log.responseTime = getDateTimeNow();
+    DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+    DateTime responseTime =  DateTime.now();
+
+    Duration diff = responseTime.difference(createdTime);
+
+    if (diff.inSeconds < 1) {
+      log.responseTime = 1;
+    } else {
+      log.responseTime = diff.inSeconds;
+    }
     log.status = status;
 
     //Convert log into string before write into file

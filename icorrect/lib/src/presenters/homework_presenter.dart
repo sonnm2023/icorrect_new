@@ -15,8 +15,8 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
-  void onGetListHomeworkComplete(
-      List<ActivitiesModel> homeworks, List<NewClassModel> classes, String serverCurrentTime);
+  void onGetListHomeworkComplete(List<ActivitiesModel> homeworks,
+      List<NewClassModel> classes, String serverCurrentTime);
 
   void onGetListHomeworkError(String message);
 
@@ -55,7 +55,8 @@ class HomeWorkPresenter {
 
     LogModel? log;
     if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetListHomework);
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetListHomework);
     }
 
     _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
@@ -73,18 +74,26 @@ class HomeWorkPresenter {
         }
 
         //Add log
-        if (null != log) {
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.success);
-        }
-        
-        _view!.onGetListHomeworkComplete(homeworks, classes, dataMap['current_time']);
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: null,
+          status: LogEvent.success,
+        );
+
+        _view!.onGetListHomeworkComplete(
+            homeworks, classes, dataMap['current_time']);
       } else {
         //Add log
-        if (null != log) {
-          log.message = "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}";
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message:
+              "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
 
         _view!.onGetListHomeworkError(
             "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}");
@@ -93,13 +102,16 @@ class HomeWorkPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        if (null != log) {
-          log.message = onError.toString();
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
 
         _view!.onGetListHomeworkError(onError.toString());
-      } ,
+      },
     );
   }
 
@@ -127,7 +139,9 @@ class HomeWorkPresenter {
 
     LogModel? log;
     if (context.mounted) {
-      log = await Utils.prepareToCreateLog(GlobalScaffoldKey.homeScreenScaffoldKey.currentContext!, action: LogEvent.callApiLogout);
+      log = await Utils.prepareToCreateLog(
+          GlobalScaffoldKey.homeScreenScaffoldKey.currentContext!,
+          action: LogEvent.callApiLogout);
     }
 
     _authRepository!.logout().then((value) async {
@@ -140,18 +154,24 @@ class HomeWorkPresenter {
         Utils.clearCurrentUser();
 
         //Add log
-        if (null != log) {
-          log.addData(key: "response", value: value);
-          Utils.addLog(log, LogEvent.success);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: null,
+          status: LogEvent.success,
+        );
 
         _view!.onLogoutComplete();
       } else {
         //Add log
-        if (null != log) {
-          log.message = "Logout error: ${dataMap['error_code']}${dataMap['status']}";
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: "Logout error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
 
         _view!.onLogoutError(
             "Logout error: ${dataMap['error_code']}${dataMap['status']}");
@@ -160,10 +180,13 @@ class HomeWorkPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        if (null != log) {
-          log.message = onError.toString();
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
 
         _view!.onLogoutError(onError.toString());
       },

@@ -44,20 +44,24 @@ class ChangePasswordPresenter {
         Utils.setAccessToken(token);
 
         //Add log
-        if (null != log) {
-          log.addData(key: "response", value: value);
-          if (null != dataMap['message']) {
-            log.message = dataMap['message'];
-          }
-          Utils.addLog(log, LogEvent.success);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: dataMap['message'],
+          status: LogEvent.success,
+        );
 
         _view!.onChangePasswordComplete();
       } else {
-        if (null != log) {
-          log.message = "Change password error: ${dataMap['error_code']}${dataMap['status']}";
-          Utils.addLog(log, LogEvent.failed);
-        }
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: "Change password error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
 
         _view!.onChangePasswordError(
             "Change password error: ${dataMap['error_code']}${dataMap['status']}");
@@ -66,10 +70,13 @@ class ChangePasswordPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) {
         //Add log
-        if (null != log) {
-          log.message = onError.toString();
-          Utils.addLog(log, LogEvent.failed);
-        }
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
 
         _view!.onChangePasswordError(onError.toString());
       },
