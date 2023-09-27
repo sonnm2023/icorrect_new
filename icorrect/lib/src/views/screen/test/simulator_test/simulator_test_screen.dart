@@ -754,7 +754,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
         }
-        _simulatorTestPresenter!.reDownloadFiles(context);
+        _simulatorTestPresenter!.reDownloadFiles(context, widget.homeWorkModel.activityId.toString());
       }
     }
   }

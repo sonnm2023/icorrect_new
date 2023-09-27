@@ -458,7 +458,6 @@ class TestRoomPresenter {
         }
       }).catchError((onError) {
         //Add log
-        //Add log
         Utils.prepareLogData(
           log: log,
           key: null,

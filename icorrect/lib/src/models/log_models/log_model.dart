@@ -93,12 +93,12 @@ class LogModel {
     if (_data != null) {
       dataMap['data'] = _data;
     } else {
-      dataMap['data'] = Map<String, String>;
+      dataMap['data'] = Map<String, dynamic>;
     }
     return dataMap;
   }
 
-  void addData({required String key, required String value}) {
+  void addData({required String key, required dynamic value}) {
     if (_data != null) {
       data = {};
     }

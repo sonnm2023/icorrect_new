@@ -424,6 +424,8 @@ class LogEvent {
   static const String callApiDownloadFile = 'call_api_download_file';//${apiDomain}file?filename=$name
   static const String callApiSubmitTest = 'call_api_submit_test'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
   static const String callApiUpdateAnswer = 'call_api_update_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiGetMyTestDetail = 'call_api_get_my_test_detail'; //${icorrectDomain}api/v1/ielts-test/show/$testId
+  static const String callApiUpdateMyAnswer = 'call_api_update_my_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
 
   //Action log event
   static const String actionLogin = 'action_login';

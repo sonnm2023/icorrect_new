@@ -127,9 +127,11 @@ class SimulatorTestPresenter {
             _prepareFileTopicListForDownload(tempTestDetailModel);
 
         downloadFiles(
-            context: context,
-            testDetail: tempTestDetailModel,
-            filesTopic: tempFilesTopic);
+          context: context,
+          testDetail: tempTestDetailModel,
+          activityId: homeworkId,
+          filesTopic: tempFilesTopic,
+        );
 
         _view!.onGetTestDetailComplete(
             tempTestDetailModel, tempFilesTopic.length);
@@ -139,7 +141,8 @@ class SimulatorTestPresenter {
           log: log,
           key: null,
           value: null,
-          message: "Loading homework detail error: ${map['error_code']}${map['status']}",
+          message:
+              "Loading homework detail error: ${map['error_code']}${map['status']}",
           status: LogEvent.failed,
         );
 
@@ -277,6 +280,7 @@ class SimulatorTestPresenter {
 
   Future downloadFiles({
     required BuildContext context,
+    required String activityId,
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) async {
@@ -297,10 +301,13 @@ class SimulatorTestPresenter {
             if (context.mounted) {
               log = await Utils.prepareToCreateLog(context,
                   action: LogEvent.callApiDownloadFile);
-              log.addData(key: "activity_id", value: testDetail.id.toString());
-              log.addData(key: "test_id", value: testDetail.testId.toString());
-              log.addData(key: "file_name", value: fileTopic);
-              log.addData(key: "file_path", value: downloadFileEP(fileNameForDownload));
+              Map<String, dynamic> fileDownloadInfo = {
+                "activity_id": activityId,
+                "test_id": testDetail.testId.toString(),
+                "file_name": fileTopic,
+                "file_path": downloadFileEP(fileNameForDownload),
+              };
+              log.addData(key: "file_download_info", value: json.encode(fileDownloadInfo));
             }
 
             try {
@@ -362,6 +369,7 @@ class SimulatorTestPresenter {
                 _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(
                     context: context,
+                    activityId: activityId,
                     testDetail: testDetail,
                     filesTopic: filesTopic);
                 break loop;
@@ -384,6 +392,7 @@ class SimulatorTestPresenter {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                   context: context,
+                  activityId: activityId,
                   testDetail: testDetail,
                   filesTopic: filesTopic);
               break loop;
@@ -429,6 +438,7 @@ class SimulatorTestPresenter {
               _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                   context: context,
+                  activityId: activityId,
                   testDetail: testDetail,
                   filesTopic: filesTopic);
               break loop;
@@ -446,6 +456,7 @@ class SimulatorTestPresenter {
               //Download again
               reDownloadAutomatic(
                   context: context,
+                  activityId: activityId,
                   testDetail: testDetail,
                   filesTopic: filesTopic);
               break loop;
@@ -463,6 +474,7 @@ class SimulatorTestPresenter {
               //Download again
               reDownloadAutomatic(
                   context: context,
+                  activityId: activityId,
                   testDetail: testDetail,
                   filesTopic: filesTopic);
               break loop;
@@ -483,6 +495,7 @@ class SimulatorTestPresenter {
 
   void reDownloadAutomatic({
     required BuildContext context,
+    required String activityId,
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) {
@@ -492,7 +505,11 @@ class SimulatorTestPresenter {
         print("DEBUG: request to download in times: $autoRequestDownloadTimes");
       }
       downloadFiles(
-          context: context, testDetail: testDetail, filesTopic: filesTopic);
+        context: context,
+        activityId: activityId,
+        testDetail: testDetail,
+        filesTopic: filesTopic,
+      );
       increaseAutoRequestDownloadTimes();
     } else {
       //Close old download request
@@ -501,9 +518,13 @@ class SimulatorTestPresenter {
     }
   }
 
-  void reDownloadFiles(BuildContext context) {
+  void reDownloadFiles(BuildContext context, String activityId) {
     downloadFiles(
-        context: context, testDetail: testDetail!, filesTopic: filesTopic!);
+      context: context,
+      activityId: activityId,
+      testDetail: testDetail!,
+      filesTopic: filesTopic!,
+    );
   }
 
   void tryAgainToDownload() async {
