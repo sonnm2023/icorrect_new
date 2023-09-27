@@ -1,47 +1,79 @@
-import 'package:icorrect/src/models/log_models/common_info_model.dart';
-
 class LogModel {
   String? _action;
   String? _status;
-  String? _createdTime;
+  int? _createdTime;
   String? _message;
-  List<String>? _data = [];
-  CommonInfoModel? _commonInfoModel;
+  String? _os;
+  int? _userId;
+  String? _deviceId;
+  String? _deviceName;
+  String? _osVersion;
+  String? _versionApp;
+  String? _previousAction;
+  int? _responseTime;
+  Map<String, dynamic>? _data = {};
 
   LogModel({
     String? action,
     String? status,
-    String? createdTime,
+    int? createdTime,
     String? message,
-    List<String>? data,
-    CommonInfoModel? commonInfoModel,
+    String? os,
+    int? userId,
+    String? deviceId,
+    String? deviceName,
+    String? osVersion,
+    String? versionApp,
+    String? previousAction,
+    int? responseTime,
+    Map<String, dynamic>? data,
   }) {
     _action = action;
     _status = status;
     _createdTime = createdTime;
     _message = message;
+    _os = os;
+    _userId = userId;
+    _deviceId = deviceId;
+    _deviceName = deviceName;
+    _osVersion = osVersion;
+    _versionApp = versionApp;
+    _previousAction = previousAction;
+    _responseTime = responseTime;
 
     if (data != null) {
       _data!.addAll(data);
     } else {
-      _data = [];
+      _data = {};
     }
-
-    _commonInfoModel = commonInfoModel;
   }
 
   String get action => _action ?? '';
   set action(String action) => _action = action;
   String get status => _status ?? '';
   set status(String status) => _status = status;
-  String get createdTime => _createdTime ?? '';
-  set createdTime(String createdTime) => _createdTime = createdTime;
+  int get createdTime => _createdTime ?? 0;
+  set createdTime(int createdTime) => _createdTime = createdTime;
   String get message => _message ?? '';
   set message(String message) => _message = message;
-  List<String>? get data => _data ?? [];
-  set data(List<String>? data) => _data = data;
-  CommonInfoModel? get commonInfoModel => _commonInfoModel;
-  set commonInfoModel(CommonInfoModel? commonInfoModel) => _commonInfoModel = commonInfoModel;
+  String get os => _os ?? '';
+  set os(String os) => _os = os;
+  int get userId => _userId ?? 0;
+  set userId(int userId) => _userId = userId;
+  String get deviceId => _deviceId ?? '';
+  set deviceId(String deviceId) => _deviceId = deviceId;
+  String get deviceName => _deviceName ?? '';
+  set deviceName(String deviceName) => _deviceName = deviceName;
+  String get osVersion => _osVersion ?? '';
+  set osVersion(String osVersion) => _osVersion = osVersion;
+  String get versionApp => _versionApp ?? '';
+  set versionApp(String versionApp) => _versionApp = versionApp;
+  String get previousAction => _previousAction ?? '';
+  set previousAction(String previousAction) => _previousAction = previousAction;
+  int get responseTime => _responseTime ?? 0;
+  set responseTime(int responseTime) => _responseTime = responseTime;
+  Map<String, dynamic>? get data => _data ?? {};
+  set data(Map<String, dynamic>? data) => _data = data;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> dataMap = <String, dynamic>{};
@@ -49,16 +81,27 @@ class LogModel {
     dataMap['status'] = _status;
     dataMap['created_time'] = _createdTime;
     dataMap['message'] = _message;
+    dataMap['os'] = _os;
+    dataMap['user_id'] = _userId;
+    dataMap['device_id'] = _deviceId;
+    dataMap['device_name'] = _deviceName;
+    dataMap['os_version'] = _osVersion;
+    dataMap['version_app'] = _versionApp;
+    dataMap['previous_action'] = _previousAction;
+    dataMap['response_time'] = _responseTime;
 
     if (_data != null) {
       dataMap['data'] = _data;
     } else {
-      dataMap['data'] = <String>[];
-    }
-
-    if (_commonInfoModel != null) {
-      dataMap['common_info'] = _commonInfoModel!.toJson();
+      dataMap['data'] = Map<String, dynamic>;
     }
     return dataMap;
+  }
+
+  void addData({required String key, required dynamic value}) {
+    if (_data != null) {
+      data = {};
+    }
+    _data![key] = value;
   }
 }

@@ -32,6 +32,8 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({super.key, required this.homeWorkModel});
 
@@ -163,6 +165,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 DefaultTabController(
                   length: 3,
                   child: Scaffold(
+                    key: _scaffoldKey,
                     appBar: AppBar(
                       elevation: 0.0,
                       iconTheme: const IconThemeData(
@@ -304,6 +307,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 _loading!.show(context);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
                 _simulatorTestPresenter!.submitTest(
+                  context: context,
                   testId: _simulatorTestProvider!.currentTestDetail.testId
                       .toString(),
                   activityId: widget.homeWorkModel.activityId.toString(),
@@ -412,6 +416,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     _simulatorTestProvider!
                         .updateSubmitStatus(SubmitStatus.submitting);
                     _simulatorTestPresenter!.submitTest(
+                      context: context,
                       testId: _simulatorTestProvider!.currentTestDetail.testId
                           .toString(),
                       activityId: widget.homeWorkModel.activityId.toString(),
@@ -609,7 +614,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
     _simulatorTestPresenter!
-        .getTestDetail(widget.homeWorkModel.activityId.toString());
+        .getTestDetail(context: context, homeworkId: widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -776,7 +781,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
         }
-        _simulatorTestPresenter!.reDownloadFiles();
+        _simulatorTestPresenter!.reDownloadFiles(context, widget.homeWorkModel.activityId.toString());
       }
     }
   }

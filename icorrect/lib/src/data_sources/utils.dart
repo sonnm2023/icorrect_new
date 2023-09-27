@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -11,10 +13,13 @@ import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -58,20 +63,20 @@ class Utils {
   }
 
   static Future<String> getOS() async {
-    String os = "unknown";
+    String os = "unknown-flutter";
 
     if (Platform.isAndroid) {
-      os = "android";
+      os = "android-flutter";
     } else if (Platform.isIOS) {
-      os = "ios";
+      os = "ios-flutter";
     } else if (kIsWeb) {
-      os = "web";
+      os = "web-flutter";
     } else if (Platform.isLinux) {
-      os = "linux";
+      os = "linux-flutter";
     } else if (Platform.isMacOS) {
-      os = "macos";
+      os = "macos-flutter";
     } else if (Platform.isWindows) {
-      os = "window";
+      os = "window-flutter";
     }
     return os;
   }
@@ -473,10 +478,13 @@ class Utils {
 
   //huy copied functions
 
-  static Widget navbar(BuildContext context) {
+  static Widget navbar({
+    required BuildContext context,
+    required HomeWorkPresenter? homeWorkPresenter,
+  }) {
     return Drawer(
       backgroundColor: AppColor.defaultWhiteColor,
-      child: navbarItems(context),
+      child: navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
     );
   }
 
@@ -598,7 +606,10 @@ class Utils {
     }
   }
 
-  static void showLogoutConfirmDialog(BuildContext context) async {
+  static void showLogoutConfirmDialog({
+    required BuildContext context,
+    required HomeWorkPresenter? homeWorkPresenter,
+  }) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -610,7 +621,11 @@ class Utils {
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
-            Navigator.of(context).pop();
+            if (null != homeWorkPresenter) {
+              homeWorkPresenter.logout(context);
+            } else {
+              Navigator.of(context).pop();
+            }
           },
           cancelButtonTapped: () {
             Navigator.of(context).pop();
@@ -667,5 +682,191 @@ class Utils {
     }
 
     return false;
+  }
+
+  static Future<String> getOSVersion() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String version = "";
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      version =
+          '${androidInfo.version.release} (SDK ${androidInfo.version.sdkInt})';
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      version = iosInfo.systemVersion;
+    }
+    return version;
+  }
+
+  static Future<String> getDeviceName() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String deviceName = "";
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      deviceName = androidInfo.model;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      deviceName = iosInfo.utsname.machine;
+    }
+    return deviceName;
+  }
+
+  static Future<LogModel> createLog({
+    required String action,
+    required String previousAction,
+    required String status,
+    required String message,
+    required Map<String, String> data,
+  }) async {
+    LogModel log = LogModel();
+    log.action = action;
+    log.previousAction = previousAction;
+    log.status = status;
+    log.createdTime = getDateTimeNow();
+    log.message = message;
+    log.os = await getOS();
+    UserDataModel? currentUser = await Utils.getCurrentUser();
+    if (null == currentUser) {
+      log.userId = 0;
+    } else {
+      log.userId = currentUser.userInfoModel.id;
+    }
+    log.deviceId = await getDeviceIdentifier();
+    log.deviceName = await getDeviceName();
+    log.osVersion = await getOSVersion();
+    log.versionApp = await getAppVersion();
+    log.data = data;
+    return log;
+  }
+
+  static void prepareLogData({
+    required LogModel? log,
+    required String? key,
+    required String? value,
+    required String? message,
+    required String status,
+  }) {
+    if (null == log) return;
+
+    if (null != key && null != value) {
+      log.addData(key: key, value: value);
+    }
+
+    if (null != message) {
+      log.message = message;
+    }
+
+    addLog(log, status);
+  }
+
+  static void addLog(LogModel log, String status) {
+    DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+    DateTime responseTime =  DateTime.now();
+
+    Duration diff = responseTime.difference(createdTime);
+
+    if (diff.inSeconds < 1) {
+      log.responseTime = 1;
+    } else {
+      log.responseTime = diff.inSeconds;
+    }
+    log.status = status;
+
+    //Convert log into string before write into file
+    String logString = convertLogModelToJson(log);
+    writeLogIntoFile(logString);
+  }
+
+  static String convertLogModelToJson(LogModel log) {
+    final String jsonString = jsonEncode(log);
+    return jsonString;
+  }
+
+  static void writeLogIntoFile(String logString) async {
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String path = "$folderPath/flutter_logs.txt";
+    if (kDebugMode) {
+      print("DEBUG: log file path = $path");
+    }
+    File file;
+
+    bool isExistFile = await File(path).exists();
+
+    if (isExistFile) {
+      file = File(path);
+      await file.writeAsString("\n", mode: FileMode.append);
+    } else {
+      file = await File(path).create();
+    }
+
+    try {
+      await file.writeAsString(logString, mode: FileMode.append);
+      if (kDebugMode) {
+        print("DEBUG: write log into file success");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: write log into file failed");
+      }
+    }
+  }
+
+  //Check file is exist using file_storage
+  static Future<bool> isExist(String fileName, MediaType mediaType) async {
+    bool isExist =
+        await FileStorageHelper.checkExistFile(fileName, mediaType, null);
+    return isExist;
+  }
+
+  static int getDateTimeNow() {
+    return DateTime.now().millisecondsSinceEpoch;
+  }
+
+  static String getPreviousAction(BuildContext context) {
+    String previousAction = "";
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    previousAction = authProvider.previousAction;
+    return previousAction;
+  }
+
+  static void setPreviousAction(BuildContext context, String action) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    authProvider.setPreviousAction(action);
+  }
+
+  static Future<LogModel> prepareToCreateLog(BuildContext context,
+      {required String action}) async {
+    String previousAction = getPreviousAction(context);
+    LogModel log = await createLog(
+        action: action,
+        previousAction: previousAction,
+        status: "",
+        message: "",
+        data: {});
+    setPreviousAction(context, action);
+
+    return log;
+  }
+
+  static Future<void> deleteLogFile() async {
+    //Check logs file is exist
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String path = "$folderPath/flutter_logs.txt";
+    File file = File(path);
+
+    try {
+      if (await file.exists()) {
+        await file.delete();
+        if (kDebugMode) {
+          print("DEBUG: Delete log file success");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: Delete log file error: ${e.toString()}");
+      }
+    }
   }
 }

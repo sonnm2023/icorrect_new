@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
@@ -21,6 +22,7 @@ import 'package:icorrect/src/views/widget/email_input_widget.dart';
 import 'package:icorrect/src/views/widget/logo_text_widget.dart';
 import 'package:icorrect/src/views/widget/logo_widget.dart';
 import 'package:icorrect/src/views/widget/password_input_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -31,7 +33,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen>
-    implements LoginViewContract {
+    implements LoginViewContract, ActionAlertListener {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -39,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen>
   LoginPresenter? _loginPresenter;
   late AuthProvider _authProvider;
   CircleLoading? _loading;
+  Permission? _writeFilePermission;
+  PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
 
   @override
   void initState() {
@@ -51,14 +55,73 @@ class _LoginScreenState extends State<LoginScreen>
     // emailController.text = "hocvien02@nguyenhuytuong.com";
     // passwordController.text = "123456";
 
-    _getAppConfigInfo();
+    // _getAppConfigInfo();
+    _checkPermission();
+  }
+
+  void _checkPermission() async {
+    if (_writeFilePermission == null) {
+      await _initializePermission();
+    }
+
+    if (mounted) {
+      _requestPermission(_writeFilePermission!, context);
+    }
+  }
+
+  Future<void> _requestPermission(
+      Permission permission, BuildContext context) async {
+    _authProvider.setPermissionDeniedTime();
+    // ignore: unused_local_variable
+    final status = await permission.request();
+    // ignore: use_build_context_synchronously
+    _listenForPermissionStatus(context);
+  }
+
+  Future<void> _initializePermission() async {
+    _writeFilePermission = Permission.storage;
+  }
+
+  void _listenForPermissionStatus(BuildContext context) async {
+    if (_writeFilePermission != null) {
+      _writeFilePermissionStatus = await _writeFilePermission!.status;
+
+      if (_writeFilePermissionStatus == PermissionStatus.denied) {
+        if (_authProvider!.permissionDeniedTime > 2) {
+          _showConfirmDialog();
+        }
+      } else if (_writeFilePermissionStatus == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      } else {
+        _getAppConfigInfo();
+      }
+    }
+  }
+
+  void _showConfirmDialog() {
+    if (false == _authProvider.dialogShowing) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertsDialog.init().showDialog(
+            context,
+            AlertClass.storagePermissionAlert,
+            this,
+            keyInfo: StringClass.permissionDenied,
+          );
+        },
+      );
+      _authProvider.setDialogShowing(true);
+    }
   }
 
   void _getAppConfigInfo() async {
     String appConfigInfo =
         await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
     if (appConfigInfo.isEmpty) {
-      _loginPresenter!.getAppConfigInfo();
+      // ignore: use_build_context_synchronously
+      _loginPresenter!.getAppConfigInfo(context);
     } else {
       _autoLogin();
     }
@@ -166,6 +229,7 @@ class _LoginScreenState extends State<LoginScreen>
           _loginPresenter!.login(
             emailController.text.trim(),
             passwordController.text.trim(),
+            context,
           );
         }
       },
@@ -262,5 +326,15 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void onGetAppConfigInfoSuccess() {
     _autoLogin();
+  }
+  
+  @override
+  void onAlertExit(String keyInfo) {
+    // TODO: implement onAlertExit
+  }
+  
+  @override
+  void onAlertNextStep(String keyInfo) {
+    // TODO: implement onAlertNextStep
   }
 }

@@ -1502,6 +1502,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
     _testRoomPresenter!.submitTest(
+      context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       questions: questions,
@@ -1715,6 +1716,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     _testRoomPresenter!.updateMyAnswer(
+      context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       reQuestions: _simulatorTestProvider!.questionList,

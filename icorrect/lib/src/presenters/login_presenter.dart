@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -9,6 +13,7 @@ import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/app_config_info_models/app_config_info_model.dart';
 import 'package:icorrect/src/models/auth_models/auth_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 // ignore: depend_on_referenced_packages
@@ -28,60 +33,73 @@ class LoginPresenter {
     _repository = Injector().getAuthRepository();
   }
 
-  void login(String email, String password) {
+  void login(String email, String password, BuildContext context) async {
     assert(_view != null && _repository != null);
+
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiLogin);
+    }
 
     _repository!.login(email, password).then((value) async {
       AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
       if (authModel.errorCode == 200) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: authModel.message,
+          status: LogEvent.success,
+        );
+
         await _saveAccessToken(authModel.data.accessToken);
-        _getUserInfo();
+        _getUserInfo(context);
       } else {
+        String message = '';
         if (authModel.message.isNotEmpty) {
           _view!.onLoginError('Please check your Internet and try again !');
+          message = "Please check your Internet and try again !";
         } else {
           _view!.onLoginError('${authModel.errorCode}: ${authModel.status}');
+          message = '${authModel.errorCode}: ${authModel.status}';
         }
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: message,
+          status: LogEvent.failed,
+        );
       }
     }).catchError((onError) {
+      String message = '';
       if (onError is http.ClientException || onError is SocketException) {
         _view!.onLoginError('Please check your Internet and try again!');
+        message = "Please check your Internet and try again !";
       } else {
         _view!.onLoginError("An error occur. Please try again!");
+        message = "An error occur. Please try again!";
       }
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: message,
+        status: LogEvent.failed,
+      );
     });
   }
 
-  Future<void> _saveAccessToken(String token) async {
-    AppSharedPref.instance()
-        .putString(key: AppSharedKeys.apiToken, value: token);
-  }
-
-  void _getUserInfo() async {
+  void getAppConfigInfo(BuildContext context) async {
     assert(_view != null && _repository != null);
-
-    String deviceId = await Utils.getDeviceIdentifier();
-    String appVersion = await Utils.getAppVersion();
-    String os = await Utils.getOS();
-
-    _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
-      Map<String, dynamic> dataMap = jsonDecode(value);
-      if (dataMap['error_code'] == 200) {
-        UserDataModel userDataModel = UserDataModel.fromJson(dataMap['data']);
-        Utils.setCurrentUser(userDataModel);
-        _view!.onLoginComplete();
-      } else {
-        _view!.onLoginError(
-            "Login error: ${dataMap['error_code']}${dataMap['status']}");
-      }
-    }).catchError(
-      // ignore: invalid_return_type_for_catch_error
-      (onError) => _view!.onLoginError(onError.toString()),
-    );
-  }
-
-  void getAppConfigInfo() {
-    assert(_view != null && _repository != null);
+    
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiAppConfig);
+    }
 
     _repository!.getAppConfigInfo().then((value) async {
       if (kDebugMode) {
@@ -99,18 +117,113 @@ class LoginPresenter {
         if (logApiUrl.isNotEmpty) {
           AppSharedPref.instance().putString(key: AppSharedKeys.secretkey, value: secretkey);
         }
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: dataMap['message'],
+          status: LogEvent.success,
+        );
         
         _view!.onGetAppConfigInfoSuccess();
       } else {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: "Login error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
+
        _view!.onLoginError(
             "Login error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError((onError) {
+      String message = '';
       if (onError is http.ClientException || onError is SocketException) {
+        message = 'Please check your Internet and try again!';
+
         _view!.onGetAppConfigInfoFail('Please check your Internet and try again!');
       } else {
+        message = "An error occur. Please try again!";
+
         _view!.onGetAppConfigInfoFail("An error occur. Please try again!");
       }
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: message,
+        status: LogEvent.failed,
+      );
     });
   }
+
+  Future<void> _saveAccessToken(String token) async {
+    AppSharedPref.instance()
+        .putString(key: AppSharedKeys.apiToken, value: token);
+  }
+
+  void _getUserInfo(BuildContext context) async {
+    assert(_view != null && _repository != null);
+
+    String deviceId = await Utils.getDeviceIdentifier();
+    String appVersion = await Utils.getAppVersion();
+    String os = await Utils.getOS();
+    
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetUserInfo);
+    }
+
+    _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
+      Map<String, dynamic> dataMap = jsonDecode(value);
+      if (dataMap['error_code'] == 200) {
+        UserDataModel userDataModel = UserDataModel.fromJson(dataMap['data']);
+        Utils.setCurrentUser(userDataModel);
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: "response",
+          value: value,
+          message: null,
+          status: LogEvent.success,
+        );
+
+        _view!.onLoginComplete();
+      } else {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
+
+        _view!.onLoginError(
+            "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}");
+      }
+    }).catchError(
+      // ignore: invalid_return_type_for_catch_error
+      (onError) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
+
+        _view!.onLoginError(onError.toString());
+      },
+    );
+  }
+
 }

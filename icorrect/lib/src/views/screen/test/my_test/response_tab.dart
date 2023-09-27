@@ -45,8 +45,10 @@ class _ResponseTabState extends State<ResponseTab>
     _loading = CircleLoading();
     _loading?.show(context);  
     if (widget.homeWorkModel.activityAnswer!.orderId.toString().isNotEmpty) {
-      _presenter!
-          .getResponse(widget.homeWorkModel.activityAnswer!.orderId.toString());
+      _presenter!.getResponse(
+        context: context,
+        orderId: widget.homeWorkModel.activityAnswer!.orderId.toString(),
+      );
     }
   }
 
@@ -67,7 +69,9 @@ class _ResponseTabState extends State<ResponseTab>
               ), () {
             _loading?.show(context);
             _presenter!.getResponse(
-                widget.homeWorkModel.activityAnswer!.orderId.toString());
+              context: context,
+              orderId: widget.homeWorkModel.activityAnswer!.orderId.toString(),
+            );
           });
         },
         child: _buildResponseTab());

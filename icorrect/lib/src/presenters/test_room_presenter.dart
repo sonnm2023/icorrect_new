@@ -13,6 +13,7 @@ import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -225,20 +226,27 @@ class TestRoomPresenter {
         currentQuestion.id == questionLimited.id;
   }
 
-////////////////////////////////////////////////////////////////////////////////
-
   Future<void> submitTest({
+    required BuildContext context,
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
   }) async {
     assert(_view != null && _testRepository != null);
 
+    //Add log
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiSubmitTest);
+    }
+
     http.MultipartRequest multiRequest = await _formDataRequest(
       testId: testId,
       activityId: activityId,
       questions: questions,
       isUpdate: false,
+      log: log,
     );
 
     if (kDebugMode) {
@@ -257,20 +265,80 @@ class TestRoomPresenter {
         if (json['error_code'] == 200) {
           ActivityAnswer activityAnswer =
               ActivityAnswer.fromJson(json['data']['activities_answer']);
+
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            key: "response",
+            value: value,
+            message: null,
+            status: LogEvent.success,
+          );
+
           _view!.onSubmitTestSuccess(
               'Save your answers successfully!', activityAnswer);
         } else {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            key: "response",
+            value: value,
+            message: "Has an error when submit this test!",
+            status: LogEvent.failed,
+          );
+
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
-      }).catchError((onError) =>
-          // ignore: invalid_return_type_for_catch_error
-          _view!.onSubmitTestFail("Has an error when submit this test!"));
+      }).catchError((onError) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
+
+        // ignore: invalid_return_type_for_catch_error
+        _view!.onSubmitTestFail(
+            "invalid_return_type_for_catch_error: Has an error when submit this test!");
+      });
     } on TimeoutException {
-      _view!.onSubmitTestFail("Has an error when submit this test!");
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: "TimeoutException: Has an error when submit this test!",
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestFail(
+          "TimeoutException: Has an error when submit this test!");
     } on SocketException {
-      _view!.onSubmitTestFail("Has an error when submit this test!");
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: "SocketException: Has an error when submit this test!",
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestFail(
+          "SocketException: Has an error when submit this test!");
     } on http.ClientException {
-      _view!.onSubmitTestFail("Has an error when submit this test!");
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: "ClientException: Has an error when submit this test!",
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestFail(
+          "ClientException: Has an error when submit this test!");
     }
   }
 
@@ -292,6 +360,7 @@ class TestRoomPresenter {
     required String activityId,
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
+    required LogModel? log,
   }) async {
     String url = submitHomeWorkV2EP();
     http.MultipartRequest request =
@@ -364,18 +433,32 @@ class TestRoomPresenter {
 
     request.fields.addAll(formData);
 
+    if (null != log) {
+      log.addData(key: "request_data", value: formData.toString());
+    }
+
     return request;
   }
 
-  Future updateMyAnswer(
-      {required String testId,
-      required String activityId,
-      required List<QuestionTopicModel> reQuestions}) async {
+  Future updateMyAnswer({
+    required BuildContext context,
+    required String testId,
+    required String activityId,
+    required List<QuestionTopicModel> reQuestions,
+  }) async {
+    //Add log
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiUpdateAnswer);
+    }
+
     http.MultipartRequest multiRequest = await _formDataRequest(
       testId: testId,
       activityId: activityId,
       questions: reQuestions,
       isUpdate: true,
+      log: log,
     );
     if (kDebugMode) {
       print("DEBUG: submitTest");
@@ -393,22 +476,77 @@ class TestRoomPresenter {
         if (json['error_code'] == 200) {
           ActivityAnswer activityAnswer =
               ActivityAnswer.fromJson(json['data']['activities_answer']);
+
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            key: "response",
+            value: value,
+            message: null,
+            status: LogEvent.success,
+          );
+
           _view!.onUpdateReAnswersSuccess(
               'Save your answers successfully!', activityAnswer);
         } else {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            key: "response",
+            value: value,
+            message: "Has an error when submit this test!",
+            status: LogEvent.failed,
+          );
+
           _view!.onUpdateReAnswersFail("Has an error when submit this test!");
         }
-      }).catchError((onError) =>
-          // ignore: invalid_return_type_for_catch_error
-          _view!.onUpdateReAnswersFail(
-              "invalid_return_type_for_catch_error: Has an error when submit this test!"));
+      }).catchError((onError) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          key: null,
+          value: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
+
+        // ignore: invalid_return_type_for_catch_error
+        _view!.onUpdateReAnswersFail(
+          "invalid_return_type_for_catch_error: Has an error when submit this test!");
+      });
     } on TimeoutException {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: "TimeoutException: Has an error when submit this test!",
+        status: LogEvent.failed,
+      );
+
       _view!.onUpdateReAnswersFail(
           "TimeoutException: Has an error when submit this test!");
     } on SocketException {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: "SocketException: Has an error when submit this test!",
+        status: LogEvent.failed,
+      );
+
       _view!.onUpdateReAnswersFail(
           "SocketException: Has an error when submit this test!");
     } on http.ClientException {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        key: null,
+        value: null,
+        message: "ClientException: Has an error when submit this test!",
+        status: LogEvent.failed,
+      );
       _view!.onUpdateReAnswersFail(
           "ClientException: Has an error when submit this test!");
     }

@@ -96,8 +96,11 @@ class _MyTestTabState extends State<MyTestTab>
   void _prepareDataForMyTestDetail() async {
     final status = await Permission.microphone.status;
     await _presenter!.initializeData();
-    _presenter!
-        .getMyTest(widget.homeWorkModel.activityAnswer!.testId.toString());
+    _presenter!.getMyTest(
+      context: context,
+      activityId: widget.homeWorkModel.activityId.toString(),
+      testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
+    );
 
     Future.delayed(Duration.zero, () {
       widget.provider.setPermissionRecord(status);
@@ -286,9 +289,11 @@ class _MyTestTabState extends State<MyTestTab>
     _loading!.show(context);
     ActivitiesModel homework = widget.homeWorkModel;
     _presenter!.updateMyAnswer(
-        testId: homework.activityAnswer!.testId.toString(),
-        activityId: homework.activityId.toString(),
-        reQuestions: requestions);
+      context: context,
+      testId: homework.activityAnswer!.testId.toString(),
+      activityId: homework.activityId.toString(),
+      reQuestions: requestions,
+    );
   }
 
   void _onFinishReanswer(QuestionTopicModel question) {
@@ -763,7 +768,8 @@ class _MyTestTabState extends State<MyTestTab>
         if (null == _presenter!.dio) {
           _presenter!.initializeData();
         }
-        _presenter!.reDownloadFiles();
+        _presenter!.reDownloadFiles(
+            context, widget.homeWorkModel.activityId.toString());
       }
     }
   }

@@ -193,12 +193,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           child: InkWell(
             onTap: () {
               bool isValid = widget.homeWorkProvider.checkFilterSelected();
-              widget.homeWorkProvider.updateProcessingStatus();
+              widget.homeWorkProvider.setProcessingStatus(isProcessing: true);
               if (isValid) {
                 widget.homeWorkProvider.filterHomeWork();
                 Navigator.pop(context);
               } else {
-                widget.homeWorkProvider.updateProcessingStatus();
+                widget.homeWorkProvider.setProcessingStatus(isProcessing: false);
                 showToastMsg(
                     msg: "You must choose at least one class and one status!",
                     toastState: ToastStatesType.warning);

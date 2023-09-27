@@ -160,7 +160,7 @@ class StringClass {
   static const String permissionDenied = 'PERMISSION_DENIED';
 }
 
-enum MediaType { video, audio }
+enum MediaType { video, audio, none}
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
@@ -225,8 +225,6 @@ class GlobalScaffoldKey {
   static final practiceScreenScaffoldKey =
   GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
 }
-
-
 
 class FontsSize {
   static const double fontSize_8 = 8.0;
@@ -409,3 +407,30 @@ class CustomTextStyle {
     fontSize: FontsSize.fontSize_14,
   );
 }
+
+class LogEvent {
+  //Status
+  static const String success = "success";
+  static const String failed = "failed";
+
+  //Api log event
+  static const String callApiLogin = 'call_api_login';
+  static const String callApiAppConfig = 'call_api_app_config';
+  static const String callApiGetUserInfo = 'call_api_get_user_info';
+  static const String callApiLogout = 'call_api_logout';
+  static const String callApiGetListHomework = 'call_api_get_list_homework';
+  static const String callApiChangePassword = 'call_api_change_password';
+  static const String callApiGetTestDetail = 'call_api_get_test_detail';//api/v1/ielts-test/syllabus/create
+  static const String callApiDownloadFile = 'call_api_download_file';//${apiDomain}file?filename=$name
+  static const String callApiSubmitTest = 'call_api_submit_test'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiUpdateAnswer = 'call_api_update_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiGetMyTestDetail = 'call_api_get_my_test_detail'; //${icorrectDomain}api/v1/ielts-test/show/$testId
+  static const String callApiUpdateMyAnswer = 'call_api_update_my_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiGetResponse = 'call_api_get_response'; //'${toolDomain}api/response?order_id=$orderId';
+  static const String callApiGetSpecialHomework = 'call_api_get_special_homework'; //specialHomeWorksEP
+
+  //Action log event
+  static const String actionLogin = 'action_login';
+}
+
+const sendLogsTask = "com.csupporter.sendlogtask";
