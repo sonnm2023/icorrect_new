@@ -412,6 +412,7 @@ class LogEvent {
   //Status
   static const String success = "success";
   static const String failed = "failed";
+  static const String none = "none"; //For action log
 
   //Api log event
   static const String callApiLogin = 'call_api_login';
@@ -431,6 +432,8 @@ class LogEvent {
 
   //Action log event
   static const String actionLogin = 'action_login';
+  static const String actionLogout = 'action_logout';
+  static const String actionChangePassword = 'action_change_password';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";

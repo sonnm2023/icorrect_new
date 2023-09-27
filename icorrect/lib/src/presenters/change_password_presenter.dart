@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -30,6 +32,11 @@ class ChangePasswordPresenter {
     assert(_view != null && _authRepository != null);
     LogModel? log;
     if (context.mounted) {
+      //Add action log
+      LogModel actionLog = await Utils.prepareToCreateLog(context,
+          action: LogEvent.actionChangePassword);
+      Utils.addLog(actionLog, LogEvent.none);
+
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiChangePassword);
     }

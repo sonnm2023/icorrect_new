@@ -760,15 +760,17 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
-    DateTime responseTime =  DateTime.now();
+    if (status != "none") { //NOT Action log
+      DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+      DateTime responseTime =  DateTime.now();
 
-    Duration diff = responseTime.difference(createdTime);
+      Duration diff = responseTime.difference(createdTime);
 
-    if (diff.inSeconds < 1) {
-      log.responseTime = 1;
-    } else {
-      log.responseTime = diff.inSeconds;
+      if (diff.inSeconds < 1) {
+        log.responseTime = 1;
+      } else {
+        log.responseTime = diff.inSeconds;
+      }
     }
     log.status = status;
 

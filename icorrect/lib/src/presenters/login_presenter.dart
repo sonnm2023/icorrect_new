@@ -38,7 +38,8 @@ class LoginPresenter {
 
     LogModel? log;
     if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiLogin);
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiLogin);
     }
 
     _repository!.login(email, password).then((value) async {
@@ -95,10 +96,11 @@ class LoginPresenter {
 
   void getAppConfigInfo(BuildContext context) async {
     assert(_view != null && _repository != null);
-    
+
     LogModel? log;
     if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiAppConfig);
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiAppConfig);
     }
 
     _repository!.getAppConfigInfo().then((value) async {
@@ -107,15 +109,18 @@ class LoginPresenter {
       }
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap['error_code'] == 200) {
-        AppConfigInfoModel appConfigInfoModel = AppConfigInfoModel.fromJson(dataMap);
+        AppConfigInfoModel appConfigInfoModel =
+            AppConfigInfoModel.fromJson(dataMap);
         String logApiUrl = appConfigInfoModel.data.logUrl.toString();
         if (logApiUrl.isNotEmpty) {
-          AppSharedPref.instance().putString(key: AppSharedKeys.logApiUrl, value: logApiUrl);
+          AppSharedPref.instance()
+              .putString(key: AppSharedKeys.logApiUrl, value: logApiUrl);
         }
 
         String secretkey = appConfigInfoModel.data.secretkey.toString();
         if (logApiUrl.isNotEmpty) {
-          AppSharedPref.instance().putString(key: AppSharedKeys.secretkey, value: secretkey);
+          AppSharedPref.instance()
+              .putString(key: AppSharedKeys.secretkey, value: secretkey);
         }
 
         //Add log
@@ -126,7 +131,7 @@ class LoginPresenter {
           message: dataMap['message'],
           status: LogEvent.success,
         );
-        
+
         _view!.onGetAppConfigInfoSuccess();
       } else {
         //Add log
@@ -138,7 +143,7 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-       _view!.onLoginError(
+        _view!.onLoginError(
             "Login error: ${dataMap['error_code']}${dataMap['status']}");
       }
     }).catchError((onError) {
@@ -146,7 +151,8 @@ class LoginPresenter {
       if (onError is http.ClientException || onError is SocketException) {
         message = 'Please check your Internet and try again!';
 
-        _view!.onGetAppConfigInfoFail('Please check your Internet and try again!');
+        _view!.onGetAppConfigInfoFail(
+            'Please check your Internet and try again!');
       } else {
         message = "An error occur. Please try again!";
 
@@ -174,10 +180,11 @@ class LoginPresenter {
     String deviceId = await Utils.getDeviceIdentifier();
     String appVersion = await Utils.getAppVersion();
     String os = await Utils.getOS();
-    
+
     LogModel? log;
     if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context, action: LogEvent.callApiGetUserInfo);
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetUserInfo);
     }
 
     _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
@@ -202,7 +209,8 @@ class LoginPresenter {
           log: log,
           key: null,
           value: null,
-          message: "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}",
+          message:
+              "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
         );
 
@@ -225,5 +233,4 @@ class LoginPresenter {
       },
     );
   }
-
 }

@@ -139,6 +139,11 @@ class HomeWorkPresenter {
 
     LogModel? log;
     if (context.mounted) {
+      //Add action log
+      LogModel actionLog = await Utils.prepareToCreateLog(context,
+          action: LogEvent.actionLogout);
+      Utils.addLog(actionLog, LogEvent.none);
+
       log = await Utils.prepareToCreateLog(
           GlobalScaffoldKey.homeScreenScaffoldKey.currentContext!,
           action: LogEvent.callApiLogout);
