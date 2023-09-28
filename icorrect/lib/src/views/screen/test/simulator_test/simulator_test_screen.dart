@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -451,6 +452,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Future<void> _deleteAllAnswer() async {
+    File videoRecordFile = _simulatorTestProvider!.savedVideoFile;
+    if (videoRecordFile.existsSync()) {
+      if (kDebugMode) {
+        print("RECORDING_VIDEO : Delete Saved File Recording");
+      }
+      await videoRecordFile.delete();
+    }
+
     List<String> answers = _simulatorTestProvider!.answerList;
 
     if (answers.isEmpty) return;

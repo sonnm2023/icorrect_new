@@ -304,9 +304,10 @@ class MyTestPresenter {
 
           if (fileType.isNotEmpty &&
               !await Utils.isExist(fileTopic, _mediaType(fileType))) {
-            try {
-              String url = downloadFileEP(fileNameForDownload);
+                
+            String url = downloadFileEP(fileNameForDownload);
 
+            try {
               if (null == dio) {
                 return;
               }

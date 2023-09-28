@@ -103,8 +103,7 @@ class MyTestPresenterDio {
       } else {
         _view!.getMyTestFail(AlertClass.getTestDetailAlert);
       }
-    }).catchError(
-        (onError) {
+    }).catchError((onError) {
       if (kDebugMode) {
         print("DEBUG: fail meomoe");
       }
@@ -235,8 +234,8 @@ class MyTestPresenterDio {
 
           if (fileType.isNotEmpty &&
               !await Utils.isExist(fileTopic, _mediaType(fileType))) {
+            String url = downloadFileEP(fileNameForDownload);
             try {
-              String url = downloadFileEP(fileNameForDownload);
               if (kDebugMode) {
                 print('DEBUG : fileDownload : $url');
               }

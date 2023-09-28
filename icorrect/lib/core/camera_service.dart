@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 
@@ -18,7 +20,9 @@ class CameraService {
     await _cameraController!.initialize().then((value) {
       refreshState();
     }).catchError((e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     });
   }
 
@@ -28,11 +32,12 @@ class CameraService {
     }
   }
 
-  void saveVideoDoingTest() {
+  void saveVideoDoingTest(Function(File savedFile) saveVideoCallBack) {
     _cameraController!.stopVideoRecording().then((value) async {
       if (value != null) {
         if (kDebugMode) {
           int length = (await value.readAsBytes()).lengthInBytes;
+          saveVideoCallBack(File(value.path));
           print(
               "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
         }
