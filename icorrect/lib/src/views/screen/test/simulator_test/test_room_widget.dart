@@ -41,7 +41,7 @@ import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
-import '../../../../../core/camera_service.dart';
+// import '../../../../../core/camera_service.dart'; //TODO
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
@@ -67,7 +67,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
   Record? _recordController;
-  CameraService? _cameraService;
+  // CameraService? _cameraService; //TODO
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -82,8 +82,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   String _reanswerFilePath = "";
   CircleLoading? _loading;
 
-  bool _cameraIsRecording = false;
-  bool _stopRecording = false;
+  //TODO
+  // bool _cameraIsRecording = false;
+  // bool _stopRecording = false;
 
   @override
   void initState() {
@@ -91,7 +92,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     super.initState();
     _audioPlayerController = AudioPlayer();
     _recordController = Record();
-    _cameraService = CameraService();
+    // _cameraService = CameraService(); //TODO
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -112,9 +113,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setTopicRandom(randomTopic);
     });
 
-    _cameraService!.initialize(() {
-      setState(() {});
-    });
+    //TODO
+    // _cameraService!.initialize(() {
+    //   setState(() {});
+    // });
   }
 
   @override
@@ -155,9 +157,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: TestRoomWidget --- build");
     }
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (provider.startDoingTest) {
-        _recordingUserDoesTestListener();
-      }
+      //TODO
+      // if (provider.startDoingTest) {
+      //   _recordingUserDoesTestListener();
+      // }
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -174,14 +177,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 ),
                 child: _buildVideoPlayerView(),
               ),
-              (_cameraService!.cameraController != null &&
-                      !provider.isVisibleSaveTheTest)
-                  ? Container(
-                      alignment: Alignment.bottomRight,
-                      margin: const EdgeInsets.all(10),
-                      child: _buildCameraLive(),
-                    )
-                  : Container()
+              //TODO
+              // (_cameraService!.cameraController != null &&
+              //         !provider.isVisibleSaveTheTest)
+              //     ? Container(
+              //         alignment: Alignment.bottomRight,
+              //         margin: const EdgeInsets.all(10),
+              //         child: _buildCameraLive(),
+              //       )
+              //     : Container()
             ],
           ),
           Expanded(
@@ -430,6 +434,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     });
   }
 
+  //TODO
+  /*
   Future _recordingUserDoesTestListener() async {
     if (_simulatorTestProvider!.topicsQueue.isNotEmpty &&
         _simulatorTestProvider!.topicRandom != TopicModel()) {
@@ -460,17 +466,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     double h = 200;
     final radius = BorderRadius.circular(10);
     return Container(
-        width: w / 4,
-        height: h / 1.7,
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColor.defaultPurpleColor, width: 2),
-          borderRadius: radius,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: CameraPreview(_cameraService!.cameraController!),
-        ));
+      width: w / 4,
+      height: h / 1.7,
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColor.defaultPurpleColor, width: 2),
+        borderRadius: radius,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CameraPreview(_cameraService!.cameraController!),
+      ),
+    );
   }
+  */
 
   Future<void> _initController(NativeVideoPlayerController controller) async {
     _videoPlayerController = controller;
@@ -496,11 +504,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  void _createLog({required String action, required Map<String, dynamic>? data}) async {
+  void _createLog(
+      {required String action, required Map<String, dynamic>? data}) async {
     if (context.mounted) {
       //Add action log
-      LogModel actionLog = await Utils.prepareToCreateLog(context,
-          action: action);
+      LogModel actionLog =
+          await Utils.prepareToCreateLog(context, action: action);
       if (null != data) {
         actionLog.addData(key: "data", value: jsonEncode(data));
       }
@@ -547,14 +556,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    CameraController cameraController = _cameraService!.cameraController!;
+    //TODO:
+    // CameraController cameraController = _cameraService!.cameraController!;
 
-    if (cameraController != null && cameraController.value.isInitialized) {
-      cameraController.pausePreview();
-      if (cameraController.value.isRecordingVideo) {
-        cameraController.pauseVideoRecording();
-      }
-    }
+    // if (cameraController.value.isInitialized) {
+    //   cameraController.pausePreview();
+    //   if (cameraController.value.isRecordingVideo) {
+    //     cameraController.pauseVideoRecording();
+    //   }
+    // }
   }
 
   Future _onAppActive() async {
@@ -593,17 +603,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    CameraController cameraController = _cameraService!.cameraController!;
+    //TODO
+    // CameraController cameraController = _cameraService!.cameraController!;
 
-    if (cameraController != null && cameraController.value.isInitialized) {
-      if (cameraController.value.isPreviewPaused) {
-        cameraController.resumePreview();
-      }
+    // if (cameraController.value.isInitialized) {
+    //   if (cameraController.value.isPreviewPaused) {
+    //     cameraController.resumePreview();
+    //   }
 
-      if (cameraController.value.isRecordingPaused) {
-        cameraController.resumeVideoRecording();
-      }
-    }
+    //   if (cameraController.value.isRecordingPaused) {
+    //     cameraController.resumeVideoRecording();
+    //   }
+    // }
   }
 
   void _deallocateMemory() async {
@@ -618,7 +629,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     await _stopRecord();
     await _recordController!.dispose();
-    _cameraService!.dispose();
+    //TODO
+    // _cameraService!.dispose();
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -1524,7 +1536,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Stop camera record
     _simulatorTestProvider!.setStartDoingTest(false);
-    _cameraService!.dispose();
+    //TODO
+    // _cameraService!.dispose();
 
     //Reset playingIndex
     _playingIndex = 0;
