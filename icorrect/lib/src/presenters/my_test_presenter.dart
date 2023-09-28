@@ -251,25 +251,26 @@ class MyTestPresenter {
           if (fileType.isNotEmpty &&
               !await _isExist(fileTopic, _mediaType(fileType))) {
             try {
-              String url = downloadFileEP(fileNameForDownload);
+              if (dio != null) {
+                String url = downloadFileEP(fileNameForDownload);
+                dio!.head(url).timeout(const Duration(seconds: 10));
 
-              dio!.head(url).timeout(const Duration(seconds: 10));
+                print("Debug : url: $url , fileTopic : $fileTopic");
 
-              print("Debug : url: $url , fileTopic : $fileTopic");
+                String savePath =
+                    '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}\\$fileTopic';
+                print("Save Path: ${savePath}");
 
-              String savePath =
-                  '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}\\$fileTopic';
-              print("Save Path: ${savePath}");
-
-              Response response = await dio!.download(url, savePath);
-              if (response.statusCode == 200) {
-                double percent = _getPercent(index + 1, filesTopic.length);
-                _view!.onDownloadSuccess(testDetail, fileTopic, percent,
-                    index + 1, filesTopic.length);
-              } else {
-                _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-                reDownloadAutomatic(testDetail, filesTopic);
-                break loop;
+                Response response = await dio!.download(url, savePath);
+                if (response.statusCode == 200) {
+                  double percent = _getPercent(index + 1, filesTopic.length);
+                  _view!.onDownloadSuccess(testDetail, fileTopic, percent,
+                      index + 1, filesTopic.length);
+                } else {
+                  _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+                  reDownloadAutomatic(testDetail, filesTopic);
+                  break loop;
+                }
               }
             } on TimeoutException {
               _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
@@ -398,7 +399,7 @@ class MyTestPresenter {
     String format = '';
     String reanswerFormat = '';
     String endFormat = '';
-    for (QuestionTopicModel q in questions) { 
+    for (QuestionTopicModel q in questions) {
       String questionId = q.id.toString();
       if (kDebugMode) {
         print("DEBUG: num part : ${q.numPart.toString()}");

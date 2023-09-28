@@ -103,8 +103,7 @@ class MyTestPresenterDio {
       } else {
         _view!.getMyTestFail(AlertClass.getTestDetailAlert);
       }
-    }).catchError(
-        (onError) {
+    }).catchError((onError) {
       if (kDebugMode) {
         print("DEBUG: fail meomoe");
       }
@@ -250,22 +249,24 @@ class MyTestPresenterDio {
           if (fileType.isNotEmpty &&
               !await _isExist(fileTopic, _mediaType(fileType))) {
             try {
-              String url = downloadFileEP(fileNameForDownload);
-              print('DEBUG : fileDownload : $url');
-              dio!.head(url).timeout(const Duration(seconds: 10));
-              String savePath =
-                  '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}/$fileTopic';
-              Response response = await dio!.download(url, savePath);
+              if (dio != null) {
+                String url = downloadFileEP(fileNameForDownload);
+                print('DEBUG : fileDownload : $url');
+                dio!.head(url).timeout(const Duration(seconds: 10));
+                String savePath =
+                    '${await FileStorageHelper.getFolderPath(_mediaType(fileType), null)}/$fileTopic';
+                Response response = await dio!.download(url, savePath);
 
-              if (response.statusCode == 200) {
-                print("DEBUG savePath : ${savePath}");
-                double percent = _getPercent(index + 1, filesTopic.length);
-                _view!.onDownloadSuccess(testDetail, fileTopic, percent,
-                    index + 1, filesTopic.length);
-              } else {
-                _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
-                reDownloadAutomatic(testDetail, filesTopic);
-                break loop;
+                if (response.statusCode == 200) {
+                  print("DEBUG savePath : ${savePath}");
+                  double percent = _getPercent(index + 1, filesTopic.length);
+                  _view!.onDownloadSuccess(testDetail, fileTopic, percent,
+                      index + 1, filesTopic.length);
+                } else {
+                  _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+                  reDownloadAutomatic(testDetail, filesTopic);
+                  break loop;
+                }
               }
             } on TimeoutException {
               _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);

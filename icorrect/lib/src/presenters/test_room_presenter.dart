@@ -27,6 +27,8 @@ abstract class TestRoomViewContract {
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
+  void onCountRecordingVideo(int currentCount);
+  void onLimitedRecordingVideo();
   void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
   void onSubmitTestFail(String msg);
   void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer);
@@ -130,6 +132,25 @@ class TestRoomPresenter {
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
         _view!.onFinishAnswer(isPart2);
+      }
+    });
+  }
+
+  Timer startCountRecording({required int countFrom}) {
+    bool finishCountDown = false;
+    const oneSec = Duration(seconds: 1);
+    return Timer.periodic(oneSec, (Timer timer) {
+      if (countFrom < 1) {
+        timer.cancel();
+      } else {
+        countFrom = countFrom - 1;
+      }
+
+      _view!.onCountRecordingVideo(countFrom);
+
+      if (countFrom == 0 && !finishCountDown) {
+        finishCountDown = true;
+        _view!.onLimitedRecordingVideo();
       }
     });
   }
