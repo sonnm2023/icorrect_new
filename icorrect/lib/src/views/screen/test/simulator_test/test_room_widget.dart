@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,6 +41,8 @@ import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
+import '../../../../../core/camera_service.dart';
+
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
       {super.key,
@@ -64,6 +67,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
   Record? _recordController;
+  CameraService? _cameraService;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
@@ -78,12 +82,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   String _reanswerFilePath = "";
   CircleLoading? _loading;
 
+  bool _cameraIsRecording = false;
+  bool _stopRecording = false;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _audioPlayerController = AudioPlayer();
     _recordController = Record();
+    _cameraService = CameraService();
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -93,6 +101,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _testRoomPresenter = TestRoomPresenter(this);
     _loading = CircleLoading();
+
+    Future.delayed(Duration.zero, () {
+      TopicModel randomTopic = _testRoomPresenter!
+          .getTopicModelRandom(topicsList: _simulatorTestProvider!.topicsList);
+      if (kDebugMode) {
+        print(
+            "DEBUG :Question list of random topic:  ${randomTopic.questionList.length.toString()}");
+      }
+      _simulatorTestProvider!.setTopicRandom(randomTopic);
+    });
+
+    _cameraService!.initialize(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -132,82 +154,100 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (kDebugMode) {
       print("DEBUG: TestRoomWidget --- build");
     }
+    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
+      if (provider.startDoingTest) {
+        _recordingUserDoesTestListener();
+      }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/bg_test_room.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: _buildVideoPlayerView(),
-        ),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.topCenter,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
+            alignment: Alignment.bottomRight,
             children: [
-              SingleChildScrollView(
-                child: TestQuestionWidget(
-                  testRoomPresenter: _testRoomPresenter!,
-                  playAnswerCallBack: _playAnswerCallBack,
-                  reAnswerCallBack: _reAnswerCallBack,
-                  showTipCallBack: _showTipCallBack,
-                  simulatorTestProvider: _simulatorTestProvider!,
-                ),
-              ),
-              const CueCardWidget(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Consumer<SimulatorTestProvider>(
-                      builder: (context, simulatorTestProvider, _) {
-                    return Expanded(
-                      child: simulatorTestProvider.questionHasImage
-                          ? Container(
-                              decoration: const BoxDecoration(
-                                color: AppColor.defaultAppColor,
-                              ),
-                              child: Center(
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      simulatorTestProvider.questionImageUrl,
-                                  fit: BoxFit.fill,
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ),
-                              ),
-                            )
-                          : const SizedBox(),
-                    );
-                  }),
-                  SizedBox(
-                    height: 200,
-                    child: Stack(
-                      children: [
-                        TestRecordWidget(
-                          finishAnswer: _finishAnswerCallBack,
-                          repeatQuestion: _repeatQuestionCallBack,
-                          cancelReAnswer: _cancelReanswerCallBack,
-                        ),
-                        _simulatorTestProvider!.activityType == "homework"
-                            ? SaveTheTestWidget(
-                                testRoomPresenter: _testRoomPresenter!)
-                            : const SizedBox(),
-                      ],
-                    ),
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/bg_test_room.png"),
+                    fit: BoxFit.cover,
                   ),
-                ],
+                ),
+                child: _buildVideoPlayerView(),
               ),
+              (_cameraService!.cameraController != null &&
+                      !provider.isVisibleSaveTheTest)
+                  ? Container(
+                      alignment: Alignment.bottomRight,
+                      margin: const EdgeInsets.all(10),
+                      child: _buildCameraLive(),
+                    )
+                  : Container()
             ],
           ),
-        )
-      ],
-    );
+          Expanded(
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                SingleChildScrollView(
+                  child: TestQuestionWidget(
+                    testRoomPresenter: _testRoomPresenter!,
+                    playAnswerCallBack: _playAnswerCallBack,
+                    reAnswerCallBack: _reAnswerCallBack,
+                    showTipCallBack: _showTipCallBack,
+                    simulatorTestProvider: _simulatorTestProvider!,
+                  ),
+                ),
+                const CueCardWidget(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Consumer<SimulatorTestProvider>(
+                        builder: (context, simulatorTestProvider, _) {
+                      return Expanded(
+                        child: simulatorTestProvider.questionHasImage
+                            ? Container(
+                                decoration: const BoxDecoration(
+                                  color: AppColor.defaultAppColor,
+                                ),
+                                child: Center(
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        simulatorTestProvider.questionImageUrl,
+                                    fit: BoxFit.fill,
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                      );
+                    }),
+                    SizedBox(
+                      height: 200,
+                      child: Stack(
+                        children: [
+                          TestRecordWidget(
+                            finishAnswer: _finishAnswerCallBack,
+                            repeatQuestion: _repeatQuestionCallBack,
+                            cancelReAnswer: _cancelReanswerCallBack,
+                          ),
+                          _simulatorTestProvider!.activityType == "homework"
+                              ? SaveTheTestWidget(
+                                  testRoomPresenter: _testRoomPresenter!)
+                              : const SizedBox(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      );
+    });
   }
 
   Widget _buildVideoPlayerView() {
@@ -245,6 +285,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                     height: 50,
                     child: InkWell(
                       onTap: () {
+                        simulatorTestProvider.setStartDoingTest(true);
                         simulatorTestProvider
                             .updateReviewingStatus(ReviewingStatus.playing);
                         _startToPlayVideo();
@@ -389,6 +430,48 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     });
   }
 
+  Future _recordingUserDoesTestListener() async {
+    if (_simulatorTestProvider!.topicsQueue.isNotEmpty &&
+        _simulatorTestProvider!.topicRandom != TopicModel()) {
+      _testRoomPresenter!.recodingUserDoesTestListener(
+          randomTopic: _simulatorTestProvider!.topicRandom,
+          currentTopic: _simulatorTestProvider!.topicsQueue.first,
+          currentQuestion: _simulatorTestProvider!.currentQuestion,
+          startRecordingVideo: () {
+            if (!_cameraIsRecording) {
+              print(
+                  "DEBUG : _startCameraRecording(direction: directionCamera);");
+              _cameraService!.startCameraRecording();
+              _cameraIsRecording = true;
+            }
+          },
+          stopRecordingVideo: () {
+            if (!_stopRecording) {
+              print("DEBUG : _saveVideoDoingTest();");
+              _cameraService!.saveVideoDoingTest();
+              _stopRecording = true;
+            }
+          });
+    }
+  }
+
+  Widget _buildCameraLive() {
+    double w = MediaQuery.of(context).size.width;
+    double h = 200;
+    final radius = BorderRadius.circular(10);
+    return Container(
+        width: w / 4,
+        height: h / 1.7,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColor.defaultPurpleColor, width: 2),
+          borderRadius: radius,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CameraPreview(_cameraService!.cameraController!),
+        ));
+  }
+
   Future<void> _initController(NativeVideoPlayerController controller) async {
     _videoPlayerController = controller;
     _videoPlayerController!.setVolume(1.0);
@@ -463,6 +546,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
+
+    CameraController cameraController = _cameraService!.cameraController!;
+
+    if (cameraController != null && cameraController.value.isInitialized) {
+      cameraController.pausePreview();
+      if (cameraController.value.isRecordingVideo) {
+        cameraController.pauseVideoRecording();
+      }
+    }
   }
 
   Future _onAppActive() async {
@@ -500,6 +592,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
+
+    CameraController cameraController = _cameraService!.cameraController!;
+
+    if (cameraController != null && cameraController.value.isInitialized) {
+      if (cameraController.value.isPreviewPaused) {
+        cameraController.resumePreview();
+      }
+
+      if (cameraController.value.isRecordingPaused) {
+        cameraController.resumeVideoRecording();
+      }
+    }
   }
 
   void _deallocateMemory() async {
@@ -514,6 +618,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     await _stopRecord();
     await _recordController!.dispose();
+    _cameraService!.dispose();
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -1416,6 +1521,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _prepareToEndTheTest() async {
     //Stop old record
     await _stopRecord();
+
+    //Stop camera record
+    _simulatorTestProvider!.setStartDoingTest(false);
+    _cameraService!.dispose();
 
     //Reset playingIndex
     _playingIndex = 0;

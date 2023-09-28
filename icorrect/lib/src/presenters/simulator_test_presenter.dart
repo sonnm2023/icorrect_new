@@ -313,7 +313,7 @@ class SimulatorTestPresenter {
               if (kDebugMode) {
                 print("DEBUG: download video: $url");
               }
-
+              
               if (null == dio) {
                 return;
               }
@@ -371,8 +371,7 @@ class SimulatorTestPresenter {
               }
             } on DioException catch (e) {
               if (kDebugMode) {
-                print(
-                    "DEBUG: Download error: ${e.type} - message: ${e.message}");
+                print("DEBUG: Download error: ${e.type} - message: ${e.message}");
               }
 
               //Add log
@@ -634,7 +633,6 @@ class SimulatorTestPresenter {
         message: "ClientException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
-
       _view!.onSubmitTestFail(
           "ClientException: Has an error when submit this test!");
     }
