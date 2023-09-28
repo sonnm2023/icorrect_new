@@ -8,7 +8,10 @@ import '../../data_sources/constants.dart';
 
 class HomeWorkWidget extends StatelessWidget {
   const HomeWorkWidget(
-      {super.key, required this.homeWorkModel, required this.callBack, required this.homeWorkProvider});
+      {super.key,
+      required this.homeWorkModel,
+      required this.callBack,
+      required this.homeWorkProvider});
 
   // final HomeWorkModel homeWorkModel;
   final ActivitiesModel homeWorkModel;
@@ -77,12 +80,8 @@ class HomeWorkWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  child: Text(
-                    // homeWorkModel.name,
-                    homeWorkModel.activityName,
-                    maxLines: 2,
-                    style: CustomTextStyle.textBlack_15,
-                  ),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: _activityNameWidget(context),
                 ),
                 const SizedBox(height: CustomSize.size_5),
                 Row(
@@ -125,8 +124,37 @@ class HomeWorkWidget extends StatelessWidget {
     );
   }
 
+  Widget _activityNameWidget(context) {
+    return homeWorkModel.activityType == 'test'
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Text(
+                "TEST: ",
+                maxLines: 2,
+                style: CustomTextStyle.textBoldBlack_15,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 1.7,
+                child: Text(
+                  homeWorkModel.activityName,
+                  maxLines: 2,
+                  overflow: TextOverflow.clip,
+                  style: CustomTextStyle.textBlack_15,
+                ),
+              )
+            ],
+          )
+        : Text(
+            homeWorkModel.activityName,
+            maxLines: 2,
+            style: CustomTextStyle.textBlack_15,
+          );
+  }
+
   String _statusOfActivity() {
-    String status = Utils.getHomeWorkStatus(homeWorkModel, homeWorkProvider.serverCurrentTime)['title'];
+    String status = Utils.getHomeWorkStatus(
+        homeWorkModel, homeWorkProvider.serverCurrentTime)['title'];
     String aiStatus = Utils.haveAiResponse(homeWorkModel);
     if (aiStatus.isNotEmpty) {
       return "${status == 'Corrected' ? '$status &' : ''}$aiStatus";
@@ -140,7 +168,8 @@ class HomeWorkWidget extends StatelessWidget {
     if (aiStatus.isNotEmpty) {
       return const Color.fromARGB(255, 12, 201, 110);
     } else {
-      return Utils.getHomeWorkStatus(homeWorkModel, homeWorkProvider.serverCurrentTime)['color'];
+      return Utils.getHomeWorkStatus(
+          homeWorkModel, homeWorkProvider.serverCurrentTime)['color'];
     }
   }
 }
