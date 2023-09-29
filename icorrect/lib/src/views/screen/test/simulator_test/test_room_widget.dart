@@ -40,7 +40,6 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widg
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-
 import '../../../../../core/camera_service.dart';
 
 class TestRoomWidget extends StatefulWidget {
@@ -514,16 +513,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     double h = 200;
     final radius = BorderRadius.circular(10);
     return Container(
-        width: w / 4,
-        height: h / 1.7,
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColor.defaultPurpleColor, width: 2),
-          borderRadius: radius,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: CameraPreview(_cameraService!.cameraController!),
-        ));
+      width: w / 4,
+      height: h / 1.7,
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColor.defaultPurpleColor, width: 2),
+        borderRadius: radius,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CameraPreview(_cameraService!.cameraController!),
+      ),
+    );
   }
 
   Future<void> _initController(NativeVideoPlayerController controller) async {
@@ -550,11 +550,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  void _createLog({required String action, required Map<String, dynamic>? data}) async {
+  void _createLog(
+      {required String action, required Map<String, dynamic>? data}) async {
     if (context.mounted) {
       //Add action log
-      LogModel actionLog = await Utils.prepareToCreateLog(context,
-          action: action);
+      LogModel actionLog =
+          await Utils.prepareToCreateLog(context, action: action);
       if (null != data) {
         actionLog.addData(key: "data", value: jsonEncode(data));
       }
@@ -654,7 +655,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     CameraController cameraController = _cameraService!.cameraController!;
 
-    if (cameraController != null && cameraController.value.isInitialized) {
+    if (cameraController.value.isInitialized) {
       if (cameraController.value.isPreviewPaused) {
         cameraController.resumePreview();
       }
