@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:ui' as ui;
 import 'constants.dart';
 
@@ -66,14 +65,4 @@ Future<Uint8List> getBytesFromAsset(String path, double width) async {
   return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
       .buffer
       .asUint8List();
-}
-
-Future<XFile?> pickImage(ImageSource source) async {
-  XFile? image = await ImagePicker().pickImage(
-      source: source, maxHeight: 1024, maxWidth: 1024, imageQuality: 50);
-  if (image != null) {
-    return image;
-  } else {
-    return null;
-  }
 }
