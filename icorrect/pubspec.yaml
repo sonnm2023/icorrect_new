@@ -64,7 +64,7 @@ dependencies:
   flutter_localization: ^0.1.14
   workmanager: ^0.5.1
   change_app_package_name: ^1.1.0
-  camera: ^0.10.5+4
+#  camera: ^0.10.5+4
 
 dev_dependencies:
   flutter_test:
