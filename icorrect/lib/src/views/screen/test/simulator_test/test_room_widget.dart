@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/camera_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -40,7 +41,6 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widg
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-import '../../../../../core/camera_service.dart';
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
@@ -493,7 +493,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _hideCameraLive() {
-    CameraController cameraController = _cameraService!.cameraController!;
+    if (null != _countRecording) {
+      _countRecording!.cancel();
+    }
+    _simulatorTestProvider!.setVisibleCameraLive(false);
+
+    CameraController? cameraController = _cameraService!.cameraController!;
     if (cameraController != null) {
       _saveVideoRecording();
 
@@ -501,11 +506,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         cameraController.dispose();
       }
     }
-
-    if (null != _countRecording) {
-      _countRecording!.cancel();
-    }
-    _simulatorTestProvider!.setVisibleCameraLive(false);
   }
 
   Widget _buildCameraLive() {
@@ -602,11 +602,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    CameraController cameraController = _cameraService!.cameraController!;
-
     if (null != _countRecording) {
       _countRecording!.cancel();
     }
+
+    if (null == _cameraService) return;
+
+    if (null == _cameraService!.cameraController) return;
+
+    CameraController cameraController = _cameraService!.cameraController!;
 
     if (cameraController != null && cameraController.value.isInitialized) {
       cameraController.pausePreview();
@@ -652,6 +656,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
+
+    if (null == _cameraService) return;
+
+    if (null == _cameraService!.cameraController) return;
 
     CameraController cameraController = _cameraService!.cameraController!;
 
