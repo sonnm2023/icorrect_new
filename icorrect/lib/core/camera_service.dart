@@ -13,7 +13,7 @@ class CameraService {
 
     _cameraController = CameraController(
       _cameras![1],
-      ResolutionPreset.low,
+      ResolutionPreset.high,
       enableAudio: true,
     );
 
@@ -33,20 +33,28 @@ class CameraService {
   }
 
   void saveVideoDoingTest(Function(File savedFile) saveVideoCallBack) {
-    _cameraController!.stopVideoRecording().then((value) async {
-      if (value != null) {
-        if (kDebugMode) {
-          int length = (await value.readAsBytes()).lengthInBytes;
-          saveVideoCallBack(File(value.path));
-          print(
-              "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
+    try {
+      _cameraController!.stopVideoRecording().then((value) async {
+        if (value != null) {
+          if (kDebugMode) {
+            int length = (await value.readAsBytes()).lengthInBytes;
+            saveVideoCallBack(File(value.path));
+            print(
+                "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
+          }
         }
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("DEBUG : ERROR WHEN SAVE RECORDING VIDEO : ${e.toString()}");
       }
-    });
+    }
   }
 
   dispose() async {
-    await _cameraController?.dispose();
-    _cameraController = null;
+    if (_cameraController != null) {
+      await _cameraController?.dispose();
+      _cameraController = null;
+    }
   }
 }
