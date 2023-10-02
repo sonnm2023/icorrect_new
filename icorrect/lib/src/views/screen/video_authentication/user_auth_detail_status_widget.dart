@@ -55,6 +55,17 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    if (_provider!.chewiePlayController != null &&
+        _provider!.chewiePlayController!.isPlaying) {
+      _provider!.chewiePlayController!.pause();
+    }
+    _playerController!.dispose();
+    _chewieController!.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
@@ -202,19 +213,19 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
           child: _userAuthenticated()
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: _readyVideoPlay()
-                        ? Chewie(controller: provider.chewiePlayController!)
-                        : const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColor.defaultPurpleColor,
+                  child: SizedBox(
+                      width: w / 1.5,
+                      height: h / 2,
+                      child: _readyVideoPlay()
+                          ? Chewie(controller: provider.chewiePlayController!)
+                          : const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 4,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColor.defaultPurpleColor,
+                                ),
                               ),
-                            ),
-                          ),
-                  ),
+                            )),
                 )
               : GestureDetector(
                   onTap: () {

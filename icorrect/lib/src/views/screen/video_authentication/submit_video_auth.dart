@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:provider/provider.dart';
@@ -35,13 +36,41 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
     _playerController = VideoPlayerController.file(widget.videoFile)
       ..initialize();
     _chewieController = ChewieController(
-        videoPlayerController: _playerController!, aspectRatio: 16 / 9);
+      // allowedScreenSleep: false,
+      // allowFullScreen: true,
+      // deviceOrientationsAfterFullScreen: [
+      //   DeviceOrientation.landscapeRight,
+      //   DeviceOrientation.landscapeLeft,
+      //   DeviceOrientation.portraitUp,
+      //   DeviceOrientation.portraitDown,
+      // ],
+      videoPlayerController: _playerController!,
+      // aspectRatio: 16 / 9,
+      // autoInitialize: true,
+      // materialProgressColors: ChewieProgressColors(
+      //   playedColor: AppColor.defaultPurpleColor,
+      //   handleColor: AppColor.defaultPurpleColor,
+      //   backgroundColor: Colors.grey,
+      //   bufferedColor: Colors.grey.withOpacity(0.5),
+      // ),
+      // showControls: true,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_playerController!.value.isPlaying) {
+      _playerController!.pause();
+    }
+    _playerController!.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
+
     return Consumer<VideoAuthProvider>(builder: (context, provider, child) {
       return Container(
         width: w,
@@ -68,8 +97,9 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
               padding: const EdgeInsets.all(5),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: AspectRatio(
-                    aspectRatio: 16 / 9,
+                child: SizedBox(
+                    width: w / 1.5,
+                    height: h / 2,
                     child: Chewie(controller: _chewieController!)),
               ),
             ),
