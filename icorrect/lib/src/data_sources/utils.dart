@@ -27,6 +27,7 @@ import 'package:provider/provider.dart';
 import '../../core/app_asset.dart';
 import '../../core/app_color.dart';
 import '../models/my_test_models/student_result_model.dart';
+import '../models/ui_models/user_authen_status.dart';
 import '../provider/homework_provider.dart';
 import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'api_urls.dart';
@@ -279,6 +280,47 @@ class Utils {
     }
   }
 
+  static UserAuthenStatusUI getUserAuthenStatus(int status) {
+    switch (status) {
+      case 0:
+        return UserAuthenStatusUI(
+            title: 'Authentication video was rejected',
+            description:
+                'You need to record a new video for authentication .Click the button below!',
+            icon: Icons.video_camera_front_outlined,
+            backgroundColor: const Color.fromARGB(255, 248, 233, 179),
+            titleColor: Colors.amber,
+            iconColor: Colors.amber);
+      case 1:
+        return UserAuthenStatusUI(
+            title: 'You have been authenticated',
+            description: 'Get ready for the upcoming exams',
+            icon: Icons.check_circle_outline_rounded,
+            backgroundColor: const Color.fromARGB(255, 179, 248, 195),
+            titleColor: Colors.green,
+            iconColor: Colors.green);
+      case 3:
+        return UserAuthenStatusUI(
+            title: 'Authentication in progress',
+            description:
+                'The verification process takes some time, please wait until the results are available',
+            icon: Icons.change_circle_sharp,
+            backgroundColor: const Color.fromARGB(255, 179, 222, 248),
+            titleColor: Colors.blue,
+            iconColor: Colors.blue);
+      case 2:
+      case 99:
+      default:
+        return UserAuthenStatusUI(
+            title: 'Not Authenticated',
+            description: 'You need to record and send video for authentication',
+            icon: Icons.cancel_outlined,
+            backgroundColor: const Color.fromARGB(255, 248, 179, 179),
+            titleColor: Colors.red,
+            iconColor: Colors.red);
+    }
+  }
+
   static String base64String(Uint8List data) {
     return base64Encode(data);
   }
@@ -490,7 +532,8 @@ class Utils {
   }) {
     return Drawer(
       backgroundColor: AppColor.defaultWhiteColor,
-      child: navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
+      child:
+          navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
     );
   }
 
@@ -765,9 +808,11 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != "none") { //NOT Action log
-      DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
-      DateTime responseTime =  DateTime.now();
+    if (status != "none") {
+      //NOT Action log
+      DateTime createdTime =
+          DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+      DateTime responseTime = DateTime.now();
 
       Duration diff = responseTime.difference(createdTime);
 

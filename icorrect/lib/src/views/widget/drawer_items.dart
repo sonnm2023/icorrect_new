@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
+import 'package:icorrect/src/provider/video_authentication_provider.dart';
+import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
+import 'package:icorrect/src/views/screen/video_authentication/video_authentication_record.dart';
 import 'package:provider/provider.dart';
 import '../../data_sources/constants.dart';
 import '../../data_sources/utils.dart';
@@ -79,6 +83,27 @@ Widget navbarItems({
       ),
       ListTile(
         title: const Text(
+          "Videos Authentication",
+          style: CustomTextStyle.textGrey_15,
+        ),
+        leading: const Icon(
+          Icons.video_camera_front_outlined,
+          color: AppColor.defaultGrayColor,
+        ),
+        onTap: () {
+          Utils.toggleDrawer();
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider(
+                  create: (_) => UserAuthDetailProvider(),
+                  child: const UserAuthDetailStatus()),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        title: const Text(
           "Logout",
           style: CustomTextStyle.textGrey_15,
         ),
@@ -87,7 +112,8 @@ Widget navbarItems({
           color: AppColor.defaultGrayColor,
         ),
         onTap: () {
-          Utils.showLogoutConfirmDialog(context: context, homeWorkPresenter: homeWorkPresenter);
+          Utils.showLogoutConfirmDialog(
+              context: context, homeWorkPresenter: homeWorkPresenter);
         },
       ),
     ],

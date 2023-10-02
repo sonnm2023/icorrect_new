@@ -5,7 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="52000e1c-4e34-45d8-be37-3c37cd6d570e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/presenters/my_test_presenter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/presenters/my_test_presenter.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/core/app_asset.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/core/app_asset.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/core/app_color.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/core/app_color.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/core/camera_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/core/camera_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/data_sources/utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/data_sources/utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/views/screen/home/homework_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/views/screen/home/homework_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/views/screen/test/simulator_test/test_room_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/views/screen/test/simulator_test/test_room_widget.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/views/widget/drawer_items.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/views/widget/drawer_items.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +45,7 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "D:/My WorkSpace - Projects/icorrect_new",
+    "last_opened_file_path": "C:/Users/Van Luan Nguyen/Downloads",
     "settings.editor.selected.configurable": "dart.settings",
     "show.migrate.to.gradle.popup": "false"
   }

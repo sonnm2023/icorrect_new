@@ -33,6 +33,27 @@ enum HandleWhenFinish {
   reviewingPlayTheQuestionType,
 }
 
+enum UserAuthStatus {
+  draft(0),
+  active(1),
+  lock(2),
+  waitingModelFile(3),
+  errorAuth(99);
+
+  const UserAuthStatus(this.get);
+
+  final int get;
+}
+
+enum FileAuthStatus {
+  newAdd(0),
+  waitingModelFile(1);
+
+  const FileAuthStatus(this.get);
+
+  final int get;
+}
+
 enum Status {
   corrected(2),
   late(-1),
@@ -160,7 +181,7 @@ class StringClass {
   static const String permissionDenied = 'PERMISSION_DENIED';
 }
 
-enum MediaType { video, audio, none}
+enum MediaType { video, audio, none }
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
@@ -223,7 +244,7 @@ class GlobalScaffoldKey {
   static final simulatorTestScaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'SimulatorTestScaffoldKey');
   static final practiceScreenScaffoldKey =
-  GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
+      GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
 }
 
 class FontsSize {
@@ -352,12 +373,11 @@ class CustomTextStyle {
     fontSize: FontsSize.fontSize_15,
   );
 
-   static const TextStyle textWhiteBold_16 = TextStyle(
+  static const TextStyle textWhiteBold_16 = TextStyle(
     color: AppColor.defaultWhiteColor,
     fontWeight: FontWeight.w500,
     fontSize: FontsSize.fontSize_16,
   );
-
 
   static const TextStyle textBoldGreen_15 = TextStyle(
     color: Colors.green,
@@ -421,20 +441,29 @@ class LogEvent {
   static const String callApiLogout = 'call_api_logout';
   static const String callApiGetListHomework = 'call_api_get_list_homework';
   static const String callApiChangePassword = 'call_api_change_password';
-  static const String callApiGetTestDetail = 'call_api_get_test_detail';//api/v1/ielts-test/syllabus/create
-  static const String callApiDownloadFile = 'call_api_download_file';//${apiDomain}file?filename=$name
-  static const String callApiSubmitTest = 'call_api_submit_test'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
-  static const String callApiUpdateAnswer = 'call_api_update_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
-  static const String callApiGetMyTestDetail = 'call_api_get_my_test_detail'; //${icorrectDomain}api/v1/ielts-test/show/$testId
-  static const String callApiUpdateMyAnswer = 'call_api_update_my_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
-  static const String callApiGetResponse = 'call_api_get_response'; //'${toolDomain}api/response?order_id=$orderId';
-  static const String callApiGetSpecialHomework = 'call_api_get_special_homework'; //specialHomeWorksEP
+  static const String callApiGetTestDetail =
+      'call_api_get_test_detail'; //api/v1/ielts-test/syllabus/create
+  static const String callApiDownloadFile =
+      'call_api_download_file'; //${apiDomain}file?filename=$name
+  static const String callApiSubmitTest =
+      'call_api_submit_test'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiUpdateAnswer =
+      'call_api_update_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiGetMyTestDetail =
+      'call_api_get_my_test_detail'; //${icorrectDomain}api/v1/ielts-test/show/$testId
+  static const String callApiUpdateMyAnswer =
+      'call_api_update_my_answer'; //'${icorrectDomain}api/v1/ielts-test/submit-v2'
+  static const String callApiGetResponse =
+      'call_api_get_response'; //'${toolDomain}api/response?order_id=$orderId';
+  static const String callApiGetSpecialHomework =
+      'call_api_get_special_homework'; //specialHomeWorksEP
 
   //Action log event
   static const String actionLogin = 'action_login';
   static const String actionLogout = 'action_logout';
   static const String actionChangePassword = 'action_change_password';
-  static const String actionClickOnHomeworkItem = 'action_click_on_homework_item';
+  static const String actionClickOnHomeworkItem =
+      'action_click_on_homework_item';
   static const String actionStartToDoTest = 'action_start_to_do_test';
   static const String actionPlayVideoQuestion = 'action_play_video_question';
   static const String actionRecordAnswer = 'action_record_answer';
