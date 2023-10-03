@@ -81,9 +81,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _isBackgroundMode = false;
   String _reanswerFilePath = "";
   CircleLoading? _loading;
-
   bool _cameraIsRecording = false;
-  bool _stopRecording = false;
+  bool _isExam = false;
 
   @override
   void initState() {
@@ -91,7 +90,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     super.initState();
     _audioPlayerController = AudioPlayer();
     _recordController = Record();
-    _cameraService = CameraService();
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -112,9 +110,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setTopicRandom(randomTopic);
     });
 
-    _cameraService!.initialize(() {
-      setState(() {});
-    });
+    _isExam = widget.homeWorkModel.activityType == "exam";
+
+    if (_isExam) {
+      _cameraService = CameraService();
+      _cameraService!.initialize(() {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -174,7 +177,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 ),
                 child: _buildVideoPlayerView(),
               ),
-              (_cameraService!.cameraController != null &&
+              ( _isExam &&
+                _cameraService!.cameraController != null &&
                       provider.visibleCameraLive)
                   ? Container(
                       alignment: Alignment.bottomRight,
@@ -498,7 +502,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
     _simulatorTestProvider!.setVisibleCameraLive(false);
 
-    CameraController? cameraController = _cameraService!.cameraController!;
+    CameraController? cameraController = _cameraService!.cameraController;
     if (cameraController != null) {
       _saveVideoRecording();
 
@@ -610,7 +614,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (null == _cameraService!.cameraController) return;
 
-    CameraController cameraController = _cameraService!.cameraController!;
+    CameraController? cameraController = _cameraService!.cameraController;
 
     if (cameraController != null && cameraController.value.isInitialized) {
       cameraController.pausePreview();
@@ -696,7 +700,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     await _stopRecord();
     await _recordController!.dispose();
-    _cameraService!.dispose();
+
+    if (null != _cameraService) {
+      _cameraService!.dispose();
+    }
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -1603,7 +1610,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Stop camera record
     _simulatorTestProvider!.setStartDoingTest(false);
-    _cameraService!.dispose();
+
+    if (null != _cameraService) {
+      _cameraService!.dispose();
+    }
 
     //Reset playingIndex
     _playingIndex = 0;
