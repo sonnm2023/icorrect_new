@@ -19,4 +19,5 @@ class AppColor {
   static const defaultLightGrayColor = Color(0xFFBCBCBC);
   static const defaultGraySlightColor = Color.fromARGB(255, 231, 229, 229);
   static const defaultBlueColor = Color(0xFF2EAAFA);
+  static const defaultGreenLightColor = Color.fromARGB(255, 48, 209, 142);
 }

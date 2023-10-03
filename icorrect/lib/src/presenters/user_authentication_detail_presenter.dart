@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 abstract class UserAuthDetailContract {
   void getUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel);
   void getUserAuthDetailFail(String message);
+  void userNotFoundWhenLoadAuth(String message);
 }
 
 class UserAuthDetailPresenter {
@@ -31,10 +32,15 @@ class UserAuthDetailPresenter {
       Map<String, dynamic> map = jsonDecode(value);
       print('dada: ${map.toString()}');
       if (map['error_code'] == 200 && map['status'] == 'success') {
-        Map<String, dynamic> data = map['data'];
-        UserAuthenDetailModel userAuthenDetailModel =
-            UserAuthenDetailModel.fromJson(data);
-        _view!.getUserAuthDetailSuccess(userAuthenDetailModel);
+        Map<String, dynamic> data = map['data'] ?? {};
+        if (data.isNotEmpty) {
+          UserAuthenDetailModel userAuthenDetailModel =
+              UserAuthenDetailModel.fromJson(data);
+          _view!.getUserAuthDetailSuccess(userAuthenDetailModel);
+        } else {
+          _view!.userNotFoundWhenLoadAuth(
+              "You have not been added to the testing system, please contact admin for better understanding !");
+        }
       } else {
         _view!.getUserAuthDetailFail(
             "Something went wrong when load your authentication !");

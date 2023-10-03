@@ -13,6 +13,7 @@ import 'package:icorrect/src/models/user_authentication/user_authentication_deta
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/user_authentication_detail_presenter.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/video_authentication_record.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -200,7 +201,8 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
         builder: (context, provider, child) {
       return Container(
           height: h / 3.5,
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          width: w,
+          margin: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: AppColor.defaultPurpleColor, width: 1.5),
@@ -214,22 +216,23 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
             ],
             borderRadius: BorderRadius.circular(12.0),
           ),
-          child: _userAuthenticated()
+          child: _userHadVideoAuth()
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: SizedBox(
-                      width: w / 1.5,
-                      height: h / 2,
-                      child: _readyVideoPlay()
-                          ? Chewie(controller: provider.chewiePlayController!)
-                          : const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 4,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColor.defaultPurpleColor,
-                                ),
-                              ),
-                            )),
+                  child: provider.chewiePlayController != null
+                      ? AspectRatio(
+                          aspectRatio:
+                              provider.chewiePlayController!.aspectRatio!,
+                          child: Chewie(
+                              controller: provider.chewiePlayController!))
+                      : const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 4,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColor.defaultPurpleColor,
+                            ),
+                          ),
+                        ),
                 )
               : GestureDetector(
                   onTap: () {
@@ -259,14 +262,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     });
   }
 
-  bool _readyVideoPlay() {
-    return _provider!.chewiePlayController != null;
-  }
-
-  bool _userAuthenticated() {
+  bool _userHadVideoAuth() {
     UserAuthenDetailModel userDataModel = _provider!.userAuthenDetailModel;
     return userDataModel.id != 0 &&
-        userDataModel.status == UserAuthStatus.active.get;
+            userDataModel.status == UserAuthStatus.active.get ||
+        userDataModel.videosAuthDetail.isNotEmpty;
   }
 
   Widget _statusVideo() {
@@ -381,9 +381,34 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     if (userAuthenDetailModel.videosAuthDetail.isNotEmpty) {
       String urlVideo =
           fileEP(userAuthenDetailModel.videosAuthDetail.first.url);
+      if (kDebugMode) {
+        print('DEBUG : Authentication urlVideo: $urlVideo');
+      }
       _playerController = VideoPlayerController.networkUrl(Uri.parse(urlVideo))
         ..initialize();
       _provider!.setChewiePlay(_playerController!);
     }
+  }
+
+  @override
+  void userNotFoundWhenLoadAuth(String message) {
+    _circleLoading!.hide();
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (builder) {
+          return ConfirmDialogWidget(
+              title: "Warning",
+              message: message,
+              cancelButtonTitle: "Exit to Home",
+              okButtonTitle: "I Know",
+              cancelButtonTapped: () {
+                Navigator.of(context).pop();
+              },
+              okButtonTapped: () {
+                Navigator.of(context).pop();
+              });
+        });
   }
 }
