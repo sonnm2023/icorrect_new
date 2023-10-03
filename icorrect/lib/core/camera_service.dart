@@ -10,10 +10,9 @@ class CameraService {
 
   Future<void> initialize(Function refreshState) async {
     _cameras = await availableCameras();
-
     _cameraController = CameraController(
       _cameras![1],
-      ResolutionPreset.low,
+      ResolutionPreset.high,
       enableAudio: true,
     );
 
@@ -36,9 +35,9 @@ class CameraService {
     try {
       _cameraController!.stopVideoRecording().then((value) async {
         if (value != null) {
+          saveVideoCallBack(File(value.path));
           if (kDebugMode) {
             int length = (await value.readAsBytes()).lengthInBytes;
-            saveVideoCallBack(File(value.path));
             print(
                 "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
           }

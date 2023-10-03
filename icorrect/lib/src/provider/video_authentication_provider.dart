@@ -57,4 +57,13 @@ class VideoAuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  File _savedFile = File("");
+  File get savedFile => _savedFile;
+  void setSavedFile(File file) {
+    _savedFile = file;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 }

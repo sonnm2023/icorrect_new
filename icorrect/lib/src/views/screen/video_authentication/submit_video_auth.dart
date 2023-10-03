@@ -36,24 +36,9 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
     _playerController = VideoPlayerController.file(widget.videoFile)
       ..initialize();
     _chewieController = ChewieController(
-      // allowedScreenSleep: false,
-      // allowFullScreen: true,
-      // deviceOrientationsAfterFullScreen: [
-      //   DeviceOrientation.landscapeRight,
-      //   DeviceOrientation.landscapeLeft,
-      //   DeviceOrientation.portraitUp,
-      //   DeviceOrientation.portraitDown,
-      // ],
+      allowedScreenSleep: false,
+      allowFullScreen: false,
       videoPlayerController: _playerController!,
-      // aspectRatio: 16 / 9,
-      // autoInitialize: true,
-      // materialProgressColors: ChewieProgressColors(
-      //   playedColor: AppColor.defaultPurpleColor,
-      //   handleColor: AppColor.defaultPurpleColor,
-      //   backgroundColor: Colors.grey,
-      //   bufferedColor: Colors.grey.withOpacity(0.5),
-      // ),
-      // showControls: true,
     );
   }
 
@@ -72,14 +57,18 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
     double h = MediaQuery.of(context).size.height;
 
     return Consumer<VideoAuthProvider>(builder: (context, provider, child) {
+      print(
+          'video width: ${_playerController!.value.size.width}, video height : ${_playerController!.value.size.height}');
       return Container(
         width: w,
+        alignment: Alignment.center,
         padding: const EdgeInsets.all(10),
-        child: Column(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 10),
-            Container(
-              height: h / 2.5,
+            Expanded(
+                child: Container(
+              height: h,
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -97,47 +86,54 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
               padding: const EdgeInsets.all(5),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                    width: w / 1.5,
-                    height: h / 2,
-                    child: Chewie(controller: _chewieController!)),
+                child: AspectRatio(
+                  aspectRatio: _playerController!.value.aspectRatio,
+                  child: Chewie(controller: _chewieController!),
+                ),
               ),
-            ),
-            const Text("Confirm to submit your video !",
-                style: TextStyle(
-                    color: AppColor.defaultPurpleColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            const Text(
-                "This video will be used to confirm when you do your exam. So you want submit this video ?",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: AppColor.defaultPurpleColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400)),
-            const SizedBox(height: 20),
-            Stack(
-              children: [
-                Visibility(
-                    visible: !provider.isSubmitLoading,
-                    child: Column(
-                      children: [
-                        _submitVideoButton(),
-                        _deniedSubmitVideoButton()
-                      ],
-                    )),
-                Visibility(
-                    visible: provider.isSubmitLoading,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 4,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColor.defaultPurpleColor,
-                        ),
-                      ),
-                    ))
-              ],
+            )),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Confirm to submit your video !",
+                      style: TextStyle(
+                          color: AppColor.defaultPurpleColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  const Text(
+                      "This video will be used to confirm when you do your exam. So you want submit this video ?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: AppColor.defaultPurpleColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400)),
+                  const SizedBox(height: 20),
+                  Stack(
+                    children: [
+                      Visibility(
+                          visible: !provider.isSubmitLoading,
+                          child: Column(
+                            children: [
+                              _submitVideoButton(),
+                              _deniedSubmitVideoButton()
+                            ],
+                          )),
+                      Visibility(
+                          visible: provider.isSubmitLoading,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 4,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColor.defaultPurpleColor,
+                              ),
+                            ),
+                          ))
+                    ],
+                  )
+                ],
+              ),
             )
           ],
         ),

@@ -15,7 +15,7 @@ import 'package:http/http.dart' as http;
 abstract class VideoAuthenticationContract {
   void onCountRecording(Duration currentCount, String strCount);
   void onFinishRecording();
-  void submitAuthSuccess(String message);
+  void submitAuthSuccess(File savedFile,String message);
   void submitAuthFail(String message);
 }
 
@@ -51,6 +51,7 @@ class VideoAuthenticationPresenter {
       {required String userCode,
       required File authFile,
       required isUploadVideo}) async {
+         
     Map<String, String> queryMap = {
       'user_code': userCode,
     };
@@ -73,7 +74,7 @@ class VideoAuthenticationPresenter {
         }
 
         if (json['error_code'] == 200 && json['status'] == 'success') {
-          _view!.submitAuthSuccess(
+         _view!.submitAuthSuccess(authFile,
               "Submit file to authentication successfully. Waiting for confirmation!");
         } else {
           List<String> categoriesList = List<String>.from(isUploadVideo
