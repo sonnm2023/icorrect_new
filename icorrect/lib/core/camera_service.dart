@@ -13,7 +13,7 @@ class CameraService {
 
     _cameraController = CameraController(
       _cameras![1],
-      ResolutionPreset.high,
+      ResolutionPreset.low,
       enableAudio: true,
     );
 

@@ -15,7 +15,6 @@ import 'package:http/http.dart' as http;
 abstract class UserAuthDetailContract {
   void getUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel);
   void getUserAuthDetailFail(String message);
-
 }
 
 class UserAuthDetailPresenter {
@@ -30,8 +29,9 @@ class UserAuthDetailPresenter {
     assert(_view != null);
     _repository!.getUserAuthDetail().then((value) {
       Map<String, dynamic> map = jsonDecode(value);
+      print('dada: ${map.toString()}');
       if (map['error_code'] == 200 && map['status'] == 'success') {
-        Map<String, dynamic> data = map['identification'];
+        Map<String, dynamic> data = map['data'];
         UserAuthenDetailModel userAuthenDetailModel =
             UserAuthenDetailModel.fromJson(data);
         _view!.getUserAuthDetailSuccess(userAuthenDetailModel);
@@ -43,6 +43,4 @@ class UserAuthDetailPresenter {
       _view!.getUserAuthDetailFail("An Error : ${e.toString()}!");
     });
   }
-
- 
 }

@@ -53,7 +53,6 @@ class VideoAuthenticationPresenter {
       required isUploadVideo}) async {
     Map<String, String> queryMap = {
       'user_code': userCode,
-      'video': basename(authFile.path)
     };
     String url = submitAuthEP(queryMap);
     http.MultipartRequest multiRequest =
