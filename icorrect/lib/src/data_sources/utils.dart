@@ -550,6 +550,8 @@ class Utils {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                //TODO: Cần check kỹ và giải thích cho việc dùng các gói VIP ...
+                /*
                 const SizedBox(height: CustomSize.size_5),
                 Row(
                   children: [
@@ -588,6 +590,7 @@ class Utils {
                     ),
                   ],
                 ),
+                */
               ],
             ),
           )
