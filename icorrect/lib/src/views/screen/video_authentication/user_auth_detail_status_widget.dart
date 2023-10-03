@@ -61,8 +61,12 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
         _provider!.chewiePlayController!.isPlaying) {
       _provider!.chewiePlayController!.pause();
     }
-    _playerController!.dispose();
-    _chewieController!.dispose();
+    if (_playerController != null) {
+      _playerController!.dispose();
+    }
+    if (_chewieController != null) {
+      _chewieController!.dispose();
+    }
   }
 
   @override
