@@ -158,7 +158,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: TestRoomWidget --- build");
     }
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (provider.startDoingTest) {
+      if (provider.startDoingTest && _isExam) {
         _recordingUserDoesTestListener();
       }
 
@@ -199,6 +199,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                     reAnswerCallBack: _reAnswerCallBack,
                     showTipCallBack: _showTipCallBack,
                     simulatorTestProvider: _simulatorTestProvider!,
+                    isExam: _isExam,
                   ),
                 ),
                 const CueCardWidget(),
@@ -1611,9 +1612,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Stop camera record
     _simulatorTestProvider!.setStartDoingTest(false);
 
-    if (null != _cameraService) {
-      _cameraService!.dispose();
-    }
+    // if (null != _cameraService) {
+    //   _cameraService!.dispose();
+    // }
 
     //Reset playingIndex
     _playingIndex = 0;

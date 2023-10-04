@@ -20,6 +20,7 @@ class TestQuestionWidget extends StatelessWidget {
     required this.reAnswerCallBack,
     required this.showTipCallBack, 
     required this.simulatorTestProvider,
+    required this.isExam,
   });
 
   final TestRoomPresenter testRoomPresenter;
@@ -30,6 +31,7 @@ class TestQuestionWidget extends StatelessWidget {
       playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
+  final bool isExam;
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +279,7 @@ class TestQuestionWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (hasReAnswer)
+                        if (hasReAnswer && !isExam)
                           InkWell(
                             onTap: () {
                               reAnswerCallBack(question);
