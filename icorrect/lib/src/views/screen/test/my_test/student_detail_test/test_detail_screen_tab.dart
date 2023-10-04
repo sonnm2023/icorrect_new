@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
@@ -111,7 +112,6 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           print('DEBUG:App detached');
         }
         break;
-  
     }
   }
 
@@ -272,13 +272,9 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   Future _preparePlayAudio(
       {required String fileName, required String questionId}) async {
-    Utils.prepareAudioFile(fileName, null).then((value) {
-      //TODO
-      if (kDebugMode) {
-        print('DEBUG: _playAudio:${value.path.toString()}');
-      }
-      _playAudio(value.path.toString(), questionId);
-    });
+    String path = await FileStorageHelper.getFilePath(
+        fileName, MediaType.audio, widget.studentResultModel.testId.toString());
+    _playAudio(path, questionId);
   }
 
   Future<void> _playAudio(String audioPath, String questionId) async {
