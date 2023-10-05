@@ -318,48 +318,52 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     double w = MediaQuery.of(context).size.width;
     return Consumer<UserAuthDetailProvider>(
         builder: (context, provider, child) {
-      return Visibility(
-          visible: provider.userAuthenDetailModel.id != 0 &&
-              provider.userAuthenDetailModel.status == UserAuthStatus.draft.get,
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => VideoAuthenticationRecord(
-                      userCode: provider.userAuthenDetailModel.userCode),
-                ),
-              );
-            },
-            child: Container(
-              width: w,
-              alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-                  color: AppColor.defaultPurpleColor,
-                  borderRadius: BorderRadius.circular(100)),
-              child: const Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(
-                      Icons.refresh,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text("Record Video Again",
-                        style: TextStyle(
-                            color: AppColor.defaultWhiteColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400)),
-                  )
-                ],
-              ),
+      return GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => VideoAuthenticationRecord(
+                  userCode: provider.userAuthenDetailModel.userCode),
             ),
-          ));
+          );
+        },
+        child: Container(
+          width: w,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          decoration: BoxDecoration(
+              color: provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
+                  ? AppColor.defaultYellowColor
+                  : AppColor.defaultPurpleColor,
+              borderRadius: BorderRadius.circular(100)),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Icon(
+                  provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
+                      ? Icons.refresh
+                      : Icons.video_camera_front_outlined,
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                    provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
+                        ? "Record Video Again"
+                        : "Record Video Authentication",
+                    style: const TextStyle(
+                        color: AppColor.defaultWhiteColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400)),
+              )
+            ],
+          ),
+        ),
+      );
     });
   }
 
