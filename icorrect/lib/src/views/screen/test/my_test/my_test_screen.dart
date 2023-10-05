@@ -148,7 +148,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         ? const [
             Tab(
               child: Text(
-                'MY TEST',
+                'MY EXAM',
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -182,7 +182,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         : const [
             Tab(
               child: Text(
-                'MY TEST',
+                'MY EXAM',
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),

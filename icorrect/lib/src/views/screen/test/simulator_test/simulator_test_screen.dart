@@ -76,7 +76,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return const [
       Tab(
         child: Text(
-          'MY TEST',
+          'MY EXAM',
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,

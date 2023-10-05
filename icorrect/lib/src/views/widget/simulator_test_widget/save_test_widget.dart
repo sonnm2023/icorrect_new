@@ -29,7 +29,7 @@ class SaveTheTestWidget extends StatelessWidget {
                   },
                   child: const Center(
                     child: Text(
-                      "SAVE THE TEST",
+                      "SAVE THE EXAM",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
