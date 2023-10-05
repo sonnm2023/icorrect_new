@@ -108,7 +108,7 @@ enum Alert {
 
   warning({
     Alert.cancelTitle: 'Cancel',
-    Alert.actionTitle: 'Out the test',
+    Alert.actionTitle: 'Out the exam',
     Alert.icon: 'assets/images/img_warning.png'
   }),
 

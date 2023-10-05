@@ -683,7 +683,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: "Please wait until the exam finished!",
         toastState: ToastStatesType.warning,
       );
     }
@@ -812,7 +812,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: "Please wait until the exam finished!",
         toastState: ToastStatesType.warning,
       );
     }
@@ -829,7 +829,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _showTip(question);
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: "Please wait until the exam finished!",
         toastState: ToastStatesType.warning,
       );
     }

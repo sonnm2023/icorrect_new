@@ -15,7 +15,7 @@ class StartNowButtonWidget extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
           child: Text(
-            "Start the test now or wait until the process is finished!",
+            "Start the exam now or wait until the processing finished!",
             style: TextStyle(fontSize: 15),
           ),
         ),
