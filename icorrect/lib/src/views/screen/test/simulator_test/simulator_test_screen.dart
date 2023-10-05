@@ -344,7 +344,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           {
             //None
             if (kDebugMode) {
-              print("DEBUG: Status is not start to do the test!");
+              print("DEBUG: Status is not start to do the exam!");
             }
             Navigator.of(context).pop();
             break;
@@ -353,7 +353,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           {
             //Doing
             if (kDebugMode) {
-              print("DEBUG: Status is doing the test!");
+              print("DEBUG: Status is doing the exam!");
             }
 
             bool okButtonTapped = false;
@@ -393,7 +393,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           {
             //Finish
             if (kDebugMode) {
-              print("DEBUG: Status is finish doing the test!");
+              print("DEBUG: Status is finish doing the exam!");
             }
 
             bool cancelButtonTapped = false;
@@ -573,47 +573,61 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
       if (_microPermissionStatus == PermissionStatus.denied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
-          _showConfirmDialog();
+          // _simulatorTestProvider!.setDialogShowing(true);
+          _showConfirmDialogWithMessage("This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
+          // _showConfirmDialog();
         }
       } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
-        openAppSettings();
+        // _simulatorTestProvider!.setDialogShowing(true);
+        _showConfirmDialogWithMessage("This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
       } else {
         _startToDoTest();
       }
     }
-
-    //TODO
-    // if (_statuses != null) {
-    //   if (_statuses![Permission.microphone]!.isDenied ||
-    //       _statuses![Permission.camera]!.isDenied) {
-    //     if (_simulatorTestProvider!.permissionDeniedTime > 2) {
-    //       _showConfirmDialog();
-    //     }
-    //   } else if (_statuses![Permission.microphone]!.isPermanentlyDenied ||
-    //       _statuses![Permission.camera]!.isPermanentlyDenied) {
-    //     openAppSettings();
-    //   } else {
-    //     _startToDoTest();
-    //   }
-    // }
   }
 
-  void _showConfirmDialog() {
-    if (false == _simulatorTestProvider!.dialogShowing) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertsDialog.init().showDialog(
-            context,
-            AlertClass.microPermissionAlert,
-            this,
-            keyInfo: StringClass.permissionDenied,
-          );
-        },
-      );
-      _simulatorTestProvider!.setDialogShowing(true);
-    }
+  // void _showConfirmDialog() {
+  //   if (false == _simulatorTestProvider!.dialogShowing) {
+  //     showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (context) {
+  //         return AlertsDialog.init().showDialog(
+  //           context,
+  //           AlertClass.microPermissionAlert,
+  //           this,
+  //           keyInfo: StringClass.permissionDenied,
+  //         );
+  //       },
+  //     );
+  //     _simulatorTestProvider!.setDialogShowing(true);
+  //   }
+  // }
+
+  void _showConfirmDialogWithMessage(String message) async {
+    // if (true == _simulatorTestProvider!.dialogShowing) {
+      await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notification",
+          description: message,
+          okButtonTitle: "OK",
+          cancelButtonTitle: "Cancel",
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            // _simulatorTestProvider!.setDialogShowing(false);
+            openAppSettings();
+          },
+          cancelButtonTapped: () {
+            // _simulatorTestProvider!.setDialogShowing(false);
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+    // }
   }
 
   void _getTestDetail() async {

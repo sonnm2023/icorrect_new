@@ -17,6 +17,7 @@ class StartNowButtonWidget extends StatelessWidget {
           child: Text(
             "Start the exam now or wait until the processing finished!",
             style: TextStyle(fontSize: 15),
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 10),

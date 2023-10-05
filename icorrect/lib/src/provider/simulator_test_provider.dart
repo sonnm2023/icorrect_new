@@ -127,15 +127,15 @@ class SimulatorTestProvider with ChangeNotifier {
     _topicsList.clear();
   }
 
-  bool _dialogShowing = false;
-  bool get dialogShowing => _dialogShowing;
-  void setDialogShowing(bool isShowing) {
-    _dialogShowing = isShowing;
+  // bool _dialogShowing = false;
+  // bool get dialogShowing => _dialogShowing;
+  // void setDialogShowing(bool isShowing) {
+  //   _dialogShowing = isShowing;
 
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
+  //   if (!isDisposed) {
+  //     notifyListeners();
+  //   }
+  // }
 
   //Status of doing the test
   DoingStatus _doingStatus = DoingStatus.none;
@@ -540,7 +540,7 @@ class SimulatorTestProvider with ChangeNotifier {
     _doingStatus = DoingStatus.none;
     _submitStatus = SubmitStatus.none;
     _activityType = '';
-    _dialogShowing = false;
+    // _dialogShowing = false;
     _permissionDeniedTime = 0;
     _isGettingTestDetail = true;
     _isDownloadProgressing = false;
