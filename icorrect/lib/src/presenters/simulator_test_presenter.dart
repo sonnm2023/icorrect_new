@@ -215,10 +215,10 @@ class SimulatorTestPresenter {
     }
 
     //Part 2
-    // filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
+    filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
 
-    // //Part 3
-    // filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
+    //Part 3
+    filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
     return filesTopic;
   }
 
