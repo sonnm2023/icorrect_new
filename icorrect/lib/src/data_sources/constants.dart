@@ -475,3 +475,5 @@ class LogEvent {
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";
+
+const int timeout = 30;

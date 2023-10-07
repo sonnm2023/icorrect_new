@@ -252,6 +252,9 @@ class TestRoomPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
+    required bool isExam,
+    required File? videoConfirmFile,
+    required List<Map<String, dynamic>>? logAction,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -270,6 +273,9 @@ class TestRoomPresenter {
       questions: questions,
       isUpdate: false,
       dataLog: dataLog,
+      isExam: isExam,
+      videoConfirmFile: videoConfirmFile,
+      logAction: logAction,
     );
 
     if (kDebugMode) {
@@ -381,8 +387,16 @@ class TestRoomPresenter {
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
     required Map<String, dynamic>? dataLog,
+    required bool isExam,
+    required File? videoConfirmFile,
+    required List<Map<String, dynamic>>? logAction,
   }) async {
     String url = submitHomeWorkV2EP();
+
+    if (isExam) {
+      url = submitExam();
+    }
+
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -403,6 +417,12 @@ class TestRoomPresenter {
     }
     String appVersion = await Utils.getAppVersion();
     formData.addEntries([MapEntry('app_version', appVersion)]);
+
+    if (null != logAction) {
+      if (logAction.isNotEmpty) {
+        formData.addEntries([MapEntry('log_action', logAction.toString())]);
+      }
+    }
 
     for (QuestionTopicModel q in questions) {
       String part = '';
@@ -451,6 +471,11 @@ class TestRoomPresenter {
       }
     }
 
+    if (null != videoConfirmFile) {
+      request.files
+          .add(await http.MultipartFile.fromPath('video_confirm', videoConfirmFile.path));
+    }
+
     request.fields.addAll(formData);
 
     if (null != dataLog) {
@@ -465,6 +490,7 @@ class TestRoomPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> reQuestions,
+    required bool isExam,
   }) async {
     //Add log
     LogModel? log;
@@ -481,6 +507,9 @@ class TestRoomPresenter {
       questions: reQuestions,
       isUpdate: true,
       dataLog: dataLog,
+      isExam: isExam,
+      videoConfirmFile: null,
+      logAction: null,
     );
     if (kDebugMode) {
       print("DEBUG: submitTest");

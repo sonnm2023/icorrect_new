@@ -1,4 +1,5 @@
 import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 import 'app_repository.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +19,7 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
           url,
           true,
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -29,11 +30,11 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
   Future<String> submitAuth(http.MultipartRequest multiRequest) async{
     return await multiRequest
         .send()
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: timeout))
         .then((http.StreamedResponse streamResponse) async {
       if (streamResponse.statusCode == 200) {
         return await http.Response.fromStream(streamResponse)
-            .timeout(const Duration(seconds: 15))
+            .timeout(const Duration(seconds: timeout))
             .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;

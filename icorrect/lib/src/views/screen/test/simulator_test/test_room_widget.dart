@@ -83,6 +83,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   CircleLoading? _loading;
   bool _cameraIsRecording = false;
   bool _isExam = false;
+  List<Map<String, int>> _logActions = [];
+  DateTime? _startTime;
+  DateTime? _endTime;
 
   @override
   void initState() {
@@ -503,6 +506,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
     _simulatorTestProvider!.setVisibleCameraLive(false);
 
+    if (null == _cameraService) {
+      return;
+    }
+
     CameraController? cameraController = _cameraService!.cameraController;
     if (cameraController != null) {
       _saveVideoRecording();
@@ -623,10 +630,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         cameraController.pauseVideoRecording();
       }
     }
+
+    _startTime = DateTime.now();
+  }
+
+  void _resetActionLogTimes() {
+    _startTime = null;
+    _endTime = null;
   }
 
   Future _onAppActive() async {
     _isBackgroundMode = false;
+
+    //Caculation time of being out and save into a action log
+    if (null != _startTime && null != _currentQuestion) {
+      _endTime = DateTime.now();
+
+      int second = Utils.getBeingOutTimeInSeconds(_startTime!, _endTime!);
+
+      Map<String, int> map = {_currentQuestion!.id.toString(): second};
+      //Print action log
+      if (kDebugMode) {
+        print("DEBUG: action log: question ${_currentQuestion!.content}");
+        print("DEBUG: action log: $map");
+      }
+
+      _resetActionLogTimes();
+
+      //Add action log
+      _logActions.add(map);
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       if (_audioPlayerController != null) {
         //Re play answer audio
@@ -1560,14 +1594,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         bitRate: 128000,
         samplingRate: 44100,
       );
-
-      // List<FileTopicModel> temp = _currentQuestion!.answers;
-      // if (!_checkAnswerFileExist(newFileName, temp)) {
-      //   temp.add(
-      //       FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-      //   _currentQuestion!.answers = temp;
-      //   _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
-      // }
     }
   }
 
@@ -1630,8 +1656,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Hide cameraLive
     _hideCameraLive();
-    //Auto submit test for activity type = test
-    if (_simulatorTestProvider!.activityType == "test") {
+
+    //Auto submit test for activity type = test or type = exam
+    if (_simulatorTestProvider!.activityType == "test" || _isExam) {
       _startSubmitTest();
     } else {
       //Activity Type = "homework"
@@ -1646,11 +1673,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
+    File? videoConfirmFile = _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+
     _testRoomPresenter!.submitTest(
       context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       questions: questions,
+      isExam: _isExam,
+      videoConfirmFile: videoConfirmFile,
+      logAction: _logActions,
     );
   }
 
@@ -1867,6 +1899,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       reQuestions: _simulatorTestProvider!.questionList,
+      isExam: _isExam,
     );
   }
 

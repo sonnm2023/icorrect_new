@@ -52,6 +52,10 @@ String submitHomeWorkV2EP() {
   return '${icorrectDomain}api/v1/ielts-test/submit-v2';
 }
 
+String submitExam() {
+  return '${icorrectDomain}api/v1/exam/submit';
+}
+
 String getTestDetailWithIdEP(String testId) =>
     '${toolDomain}api/get-test-with-id/$testId';
 
