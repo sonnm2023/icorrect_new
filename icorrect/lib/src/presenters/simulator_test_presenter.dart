@@ -345,7 +345,7 @@ class SimulatorTestPresenter {
                 //     await Utils.convertVideoToBase64(response);
                 // await FileStorageHelper.writeVideo(
                 //     contentString, fileTopic, MediaType.video);
-                if (kDebugMode) {
+                if (kDebugMode) {   
                   print('DEBUG : save Path : $savePath');
                 }
 

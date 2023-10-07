@@ -69,7 +69,9 @@ class TestRecordWidget extends StatelessWidget {
                           isRepeat: isRepeat,
                           question: currentQuestion,
                         ),
-                        _buildFinishButton(question: currentQuestion),
+                        _buildFinishButton(
+                            question: currentQuestion,
+                            isLess2Second: simulatorTestProvider.isLess2Second),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -123,7 +125,8 @@ class TestRecordWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFinishButton({required QuestionTopicModel question}) {
+  Widget _buildFinishButton(
+      {required QuestionTopicModel question, required bool isLess2Second}) {
     return InkWell(
       onTap: () {
         finishAnswer(question);
@@ -133,7 +136,7 @@ class TestRecordWidget extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          color: Colors.green,
+          color:isLess2Second?const Color.fromARGB(255, 153, 201, 154): Colors.green,
         ),
         alignment: Alignment.center,
         child: const Text(

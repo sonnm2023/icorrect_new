@@ -381,6 +381,15 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _isLess2Second = true;
+  bool get isLess2Second  => _isLess2Second;
+  void setIsLess2Second(bool isLess) {
+    _isLess2Second = isLess;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   int _timeRecord = 0;
   int get timeRecord => _timeRecord;
   void setTimeRecord(int seconds) {
@@ -533,6 +542,7 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   void resetAll() {
+    _isLess2Second = true;
     _needDownloadAgain = false;
     _isLoadingVideo = false;
     _answerList.clear();

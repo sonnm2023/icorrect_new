@@ -924,6 +924,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
     Map<String, dynamic> info = {
       "question_id": questionTopicModel.id.toString(),
       "question_content": questionTopicModel.content,
@@ -1678,11 +1683,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
     _countDown = _testRoomPresenter!.startCountDown(
-      context: context,
-      count: timeRecord,
-      isPart2: isPart2,
-      isReAnswer: true,
-    );
+        context: context,
+        count: timeRecord,
+        isPart2: isPart2,
+        isReAnswer: true,
+        isLess2Seconds: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1712,11 +1717,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
+    _simulatorTestProvider!.setIsLess2Second(true);
     _countDown = _testRoomPresenter!.startCountDown(
         context: context,
         count: timeRecord,
         isPart2: isPart2,
-        isReAnswer: false);
+        isReAnswer: false,
+        isLess2Seconds: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1791,15 +1798,35 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
+  bool _checkAnswerDuration() {
+    if (_simulatorTestProvider!.isLess2Second) {
+      Fluttertoast.showToast(
+          msg: "Your answer must be greater than 2 seconds",
+          backgroundColor: Colors.blueGrey,
+          textColor: Colors.white,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          toastLength: Toast.LENGTH_LONG);
+      return true;
+    }
+    return false;
+  }
+
   @override
-  void onCountDown(String countDownString) {
+  void onCountDown(String countDownString, bool isGreater2Second) {
     if (mounted) {
       _timerProvider!.setCountDown(countDownString);
+      _simulatorTestProvider!.setIsLess2Second(isGreater2Second);
     }
   }
 
   @override
   void onFinishAnswer(bool isPart2) {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
     //Finish answer
     _resetQuestionImage();
 
@@ -2009,6 +2036,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onFinishForReAnswer() {
+    _timerProvider!.strCount;
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
 
