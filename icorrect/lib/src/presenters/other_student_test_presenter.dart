@@ -206,10 +206,11 @@ class OtherStudentTestPresenter {
               // use client.get as you would http.get
 
               String savePath =
-                  '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileTopic';
+                  '${await FileStorageHelper.getFolderPath(MediaType.audio, testDetail.testId.toString())}\\$fileTopic';
               Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
+                print('save Path: $savePath');
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
