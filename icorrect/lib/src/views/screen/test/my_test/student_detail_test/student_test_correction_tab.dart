@@ -1,22 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
+import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/presenters/response_presenter.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/sample_video_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/stream_audio_dialog.dart';
+import 'package:icorrect/src/views/widget/default_text.dart';
+import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/app_color.dart';
-import '../../../../../data_sources/api_urls.dart';
-import '../../../../../data_sources/constants.dart';
-import '../../../../../data_sources/utils.dart';
-import '../../../../../models/my_test_models/result_response_model.dart';
-import '../../../../../models/my_test_models/skill_problem_model.dart';
-import '../../../../../presenters/response_presenter.dart';
-import '../../../../widget/default_text.dart';
-import '../../../../widget/empty_widget.dart';
-import '../../../other_views/dialog/circle_loading.dart';
-import '../../../other_views/dialog/sample_video_dialog.dart';
-import '../../../other_views/dialog/stream_audio_dialog.dart';
 
 class StudentCorrection extends StatefulWidget {
   final StudentTestProvider provider;

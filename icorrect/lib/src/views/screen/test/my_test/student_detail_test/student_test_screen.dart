@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/student_test_correction_tab.dart';
 import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/test_detail_screen_tab.dart';
-import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/app_color.dart';
-import '../../../../../models/my_test_models/student_result_model.dart';
 
 class StudentTestDetail extends StatefulWidget {
   final StudentResultModel studentResultModel;

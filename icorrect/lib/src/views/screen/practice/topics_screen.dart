@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-
-import '../../../../core/app_color.dart';
-import '../../widget/divider.dart';
+import 'package:icorrect/src/views/widget/divider.dart';
 
 class TopicsScreen extends StatefulWidget {
   const TopicsScreen({super.key});

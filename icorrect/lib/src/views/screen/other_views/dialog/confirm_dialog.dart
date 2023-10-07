@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-
-import '../../../../data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 class ConfirmDialogWidget extends StatelessWidget {
   const ConfirmDialogWidget({

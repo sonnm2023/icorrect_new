@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -6,26 +8,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/core/app_asset.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/other_student_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../../core/app_asset.dart';
-import '../../../../../../core/app_color.dart';
-import '../../../../../data_sources/utils.dart';
-import '../../../../../models/simulator_test_models/question_topic_model.dart';
-import '../../../../../presenters/my_test_presenter.dart';
-import '../../../../../provider/my_test_provider.dart';
-import '../../../../widget/default_text.dart';
-import '../../../other_views/dialog/circle_loading.dart';
-import '../../../other_views/dialog/custom_alert_dialog.dart';
-import '../../../other_views/dialog/tip_question_dialog.dart';
 import 'download_again_widget.dart';
 import 'download_progressing_widget.dart';
 

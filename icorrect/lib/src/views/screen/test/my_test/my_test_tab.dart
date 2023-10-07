@@ -18,9 +18,12 @@ import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart'
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
+import 'package:icorrect/src/presenters/my_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
@@ -30,10 +33,6 @@ import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-
-import '../../../../presenters/my_test_presenter.dart';
-import '../../other_views/dialog/alert_dialog.dart';
-import '../../other_views/dialog/circle_loading.dart';
 
 class MyTestTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
@@ -123,8 +122,6 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _buildMyTest() {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         if (provider.isDownloading) {
@@ -206,7 +203,7 @@ class _MyTestTabState extends State<MyTestTab>
               provider.needDownloadAgain
                   ? const DownloadAgainWidget(
                       simulatorTestPresenter: null,
-                      myTestPresenter: null, //_presenter!, //TODO
+                      myTestPresenter: null,
                     )
                   : const SizedBox(),
             ],
@@ -449,7 +446,7 @@ class _MyTestTabState extends State<MyTestTab>
                                   question.repeatIndex, question.id);
 
                               if (question.answers.isNotEmpty) {
-                                _preparePlayAudio(
+                                _prepareToPlayAudio(
                                     fileName: Utils.convertFileName(question
                                         .answers[question.repeatIndex].url
                                         .toString()),
@@ -615,10 +612,9 @@ class _MyTestTabState extends State<MyTestTab>
         question.answers.last.url;
   }
 
-  Future _preparePlayAudio(
+  Future _prepareToPlayAudio(
       {required String fileName, required int questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
-      //TODO
       if (kDebugMode) {
         print('DEBUG: _playAudio:${value.path.toString()}');
       }
@@ -642,6 +638,26 @@ class _MyTestTabState extends State<MyTestTab>
 
   Future<void> _stopAudio() async {
     await _player!.stop();
+  }
+
+  void _showCheckNetworkDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: "Notify",
+          description: "An error occur. Please check your connection!",
+          okButtonTitle: "OK",
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
   }
 
   @override
@@ -772,26 +788,6 @@ class _MyTestTabState extends State<MyTestTab>
             context, widget.homeWorkModel.activityId.toString());
       }
     }
-  }
-
-  void _showCheckNetworkDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur. Please check your connection!",
-          okButtonTitle: "OK",
-          cancelButtonTitle: null,
-          borderRadius: 8,
-          hasCloseButton: false,
-          okButtonTapped: () {
-            Navigator.of(context).pop();
-          },
-          cancelButtonTapped: null,
-        );
-      },
-    );
   }
 
   void updateStatusForReDownload() {

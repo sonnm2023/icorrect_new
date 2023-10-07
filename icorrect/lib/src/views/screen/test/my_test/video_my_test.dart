@@ -1,15 +1,13 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-
-import '../../../../../core/app_color.dart';
-import '../../../../provider/my_test_provider.dart';
-import '../../../widget/default_text.dart';
 
 class VideoMyTest extends StatefulWidget {
   String fileName;

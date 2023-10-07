@@ -1,11 +1,12 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../data_sources/utils.dart';
 
 class SliderAudio extends StatefulWidget {
   String url;
@@ -17,7 +18,7 @@ class SliderAudio extends StatefulWidget {
 
 class _SliderAudioState extends State<SliderAudio> {
   MyTestProvider? _provider;
-  AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
