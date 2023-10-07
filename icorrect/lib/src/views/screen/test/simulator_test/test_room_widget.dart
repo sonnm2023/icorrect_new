@@ -1717,7 +1717,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
-    _simulatorTestProvider!.setIsGreater2Second(true);
+    _simulatorTestProvider!.setIsLess2Second(true);
     _countDown = _testRoomPresenter!.startCountDown(
         context: context,
         count: timeRecord,
@@ -1816,7 +1816,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onCountDown(String countDownString, bool isGreater2Second) {
     if (mounted) {
       _timerProvider!.setCountDown(countDownString);
-      _simulatorTestProvider!.setIsGreater2Second(isGreater2Second);
+      _simulatorTestProvider!.setIsLess2Second(isGreater2Second);
     }
   }
 

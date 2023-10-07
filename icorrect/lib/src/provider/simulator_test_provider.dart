@@ -383,7 +383,7 @@ class SimulatorTestProvider with ChangeNotifier {
 
   bool _isLess2Second = true;
   bool get isLess2Second  => _isLess2Second;
-  void setIsGreater2Second(bool isLess) {
+  void setIsLess2Second(bool isLess) {
     _isLess2Second = isLess;
     if (!isDisposed) {
       notifyListeners();
