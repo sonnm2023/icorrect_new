@@ -101,6 +101,10 @@ class SimulatorTestPresenter {
         .getTestDetail(homeworkId, distributeCode)
         .then((value) async {
       Map<String, dynamic> map = jsonDecode(value);
+      if (kDebugMode) {
+        print(
+            'DEBUG activity id : ${homeworkId.toString()}, create test : ${map.toString()}');
+      }
       if (map['error_code'] == 200) {
         Map<String, dynamic> dataMap = map['data'];
         TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
@@ -211,10 +215,10 @@ class SimulatorTestPresenter {
     }
 
     //Part 2
-    filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
+    // filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
 
-    //Part 3
-    filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
+    // //Part 3
+    // filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
     return filesTopic;
   }
 
@@ -245,9 +249,11 @@ class SimulatorTestPresenter {
 
     //Add question files
     for (QuestionTopicModel q in topic.questionList) {
-      q.files.first.fileTopicType = FileTopicType.question;
-      q.files.first.numPart = topic.numPart;
-      allFiles.add(q.files.first);
+      if (q.files.isNotEmpty) {
+        q.files.first.fileTopicType = FileTopicType.question;
+        q.files.first.numPart = topic.numPart;
+        allFiles.add(q.files.first);
+      }
 
       for (FileTopicModel a in q.answers) {
         a.numPart = topic.numPart;
@@ -304,7 +310,9 @@ class SimulatorTestPresenter {
                 "file_name": fileTopic,
                 "file_path": downloadFileEP(fileNameForDownload),
               };
-              log.addData(key: "file_download_info", value: json.encode(fileDownloadInfo));
+              log.addData(
+                  key: "file_download_info",
+                  value: json.encode(fileDownloadInfo));
             }
 
             try {
@@ -313,7 +321,7 @@ class SimulatorTestPresenter {
               if (kDebugMode) {
                 print("DEBUG: download video: $url");
               }
-              
+
               if (null == dio) {
                 return;
               }
@@ -371,7 +379,8 @@ class SimulatorTestPresenter {
               }
             } on DioException catch (e) {
               if (kDebugMode) {
-                print("DEBUG: Download error: ${e.type} - message: ${e.message}");
+                print(
+                    "DEBUG: Download error: ${e.type} - message: ${e.message}");
               }
 
               //Add log

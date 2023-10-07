@@ -112,20 +112,21 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
     );
   }
 
-  List<Widget> _tabsLabel() {
+  List<Widget> _tabsLabel() { 
     return const [
       Tab(
         child: Text(
           'Test Detail',
-          style: TextStyle(fontSize: FontsSize.fontSize_14),
+          style: TextStyle(fontSize: FontsSize.fontSize_14,color: AppColor.defaultPurpleColor),
         ),
       ),
       Tab(
         child: Text(
           'Correction',
-          style: TextStyle(fontSize: FontsSize.fontSize_14),
+          style: TextStyle(fontSize: FontsSize.fontSize_14,color: AppColor.defaultPurpleColor),
         ),
       ),
     ];
   }
 }
+  

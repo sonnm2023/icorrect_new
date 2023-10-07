@@ -172,8 +172,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                         color: AppColor.defaultPurpleColor,
                       ),
                       centerTitle: true,
-                      leading:
-                          BackButtonWidget(backButtonTapped: _backButtonTapped),
+                      leading: GestureDetector(
+                        onTap: () {
+                          _backButtonTapped();
+                        },
+                        child:const Icon(Icons.arrow_back_rounded,
+                            color: AppColor.defaultPurpleColor),
+                      ),
                       title: Text(
                         widget.homeWorkModel.activityName,
                         style: CustomTextStyle.appbarTitle,
@@ -574,12 +579,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (_microPermissionStatus == PermissionStatus.denied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
           // _simulatorTestProvider!.setDialogShowing(true);
-          _showConfirmDialogWithMessage("This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
+          _showConfirmDialogWithMessage(
+              "This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
           // _showConfirmDialog();
         }
       } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
         // _simulatorTestProvider!.setDialogShowing(true);
-        _showConfirmDialogWithMessage("This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
+        _showConfirmDialogWithMessage(
+            "This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
       } else {
         _startToDoTest();
       }
@@ -606,7 +613,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _showConfirmDialogWithMessage(String message) async {
     // if (true == _simulatorTestProvider!.dialogShowing) {
-      await showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
@@ -632,8 +639,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
-    _simulatorTestPresenter!
-        .getTestDetail(context: context, homeworkId: widget.homeWorkModel.activityId.toString());
+    _simulatorTestPresenter!.getTestDetail(
+        context: context,
+        homeworkId: widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -800,7 +808,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
         }
-        _simulatorTestPresenter!.reDownloadFiles(context, widget.homeWorkModel.activityId.toString());
+        _simulatorTestPresenter!.reDownloadFiles(
+            context, widget.homeWorkModel.activityId.toString());
       }
     }
   }
