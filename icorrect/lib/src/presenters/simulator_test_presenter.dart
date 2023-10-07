@@ -214,11 +214,11 @@ class SimulatorTestPresenter {
       filesTopic.addAll(getAllFilesOfTopic(temp));
     }
 
-    //Part 2
-    // filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
+    // Part 2
+    filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
 
-    // //Part 3
-    // filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
+    //Part 3
+    filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
     return filesTopic;
   }
 
@@ -337,6 +337,7 @@ class SimulatorTestPresenter {
                 print("DEBUG: Save as PATH = $savePath");
               }
 
+
               Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
@@ -345,7 +346,7 @@ class SimulatorTestPresenter {
                 //     await Utils.convertVideoToBase64(response);
                 // await FileStorageHelper.writeVideo(
                 //     contentString, fileTopic, MediaType.video);
-                if (kDebugMode) {
+                if (kDebugMode) {   
                   print('DEBUG : save Path : $savePath');
                 }
 

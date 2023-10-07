@@ -24,7 +24,7 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
-  void onCountDown(String countDownString);
+  void onCountDown(String countDownString, bool isGreater2Seconds);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
@@ -76,6 +76,7 @@ class TestRoomPresenter {
     required int count,
     required bool isPart2,
     required bool isReAnswer,
+    required bool isLess2Seconds
   }) {
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
@@ -92,7 +93,11 @@ class TestRoomPresenter {
       dynamic minuteStr = minutes.toString().padLeft(2, '0');
       dynamic secondStr = seconds.toString().padLeft(2, '0');
 
-      _view!.onCountDown("$minuteStr:$secondStr");
+      if (count > 2) {
+        isLess2Seconds = false;
+      }
+
+      _view!.onCountDown("$minuteStr:$secondStr",isLess2Seconds);
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
@@ -293,7 +298,6 @@ class TestRoomPresenter {
 
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
-
       }).catchError((onError) {
         //Add log
         Utils.prepareLogData(
@@ -514,7 +518,7 @@ class TestRoomPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onUpdateReAnswersFail(
-          "invalid_return_type_for_catch_error: Has an error when submit this test!");
+            "invalid_return_type_for_catch_error: Has an error when submit this test!");
       });
     } on TimeoutException {
       //Add log
