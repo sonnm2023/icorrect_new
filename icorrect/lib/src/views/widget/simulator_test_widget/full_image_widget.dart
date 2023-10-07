@@ -40,10 +40,8 @@ class FullImageWidget extends StatelessWidget {
                 height: 50,
                 child: InkWell(
                   onTap: () {
-                    if (kDebugMode) {
                       provider.resetSelectedQuestionImageUrl();
                       provider.setShowFullImage(false);
-                    }
                   },
                   child: const Icon(
                     Icons.close,
