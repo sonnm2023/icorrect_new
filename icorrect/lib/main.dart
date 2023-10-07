@@ -130,7 +130,6 @@ void callbackDispatcher() {
       if (kDebugMode) {
         print("DEBUG: send log success");
       }
-      //TODO: Delete log file
       Utils.deleteLogFile();
     } else {
       if (kDebugMode) {

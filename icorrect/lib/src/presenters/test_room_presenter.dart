@@ -61,7 +61,6 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayIntroduce();
       } else {
-        //TODO: Download again
         _view!.onReDownload();
       }
     } else {
@@ -149,20 +148,12 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayEndOfTakeNote(fileName);
       } else {
-        //TODO: download again
         _view!.onReDownload();
       }
     } else {
       if (kDebugMode) {
         print("DEBUG: This topic has not end of take note file");
       }
-    }
-  }
-
-  void clickEndReAnswer(QuestionTopicModel question, String filePath) {
-    //TODO:
-    if (kDebugMode) {
-      print("DEBUG: clickEndReAnswer");
     }
   }
 
@@ -179,7 +170,6 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayEndOfTest(fileName);
       } else {
-        //TODO: Download again
         _view!.onReDownload();
       }
     } else {

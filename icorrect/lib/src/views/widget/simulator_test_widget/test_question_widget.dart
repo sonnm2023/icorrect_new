@@ -281,7 +281,6 @@ class TestQuestionWidget extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               reAnswerCallBack(question);
-                              // playReAnswerCallBack(index,question); //TODO
                             },
                             child: const Text(
                               "Re-answer",

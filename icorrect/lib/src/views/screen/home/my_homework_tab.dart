@@ -343,16 +343,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() async {
-    //TODO: For test
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => SimulatorTestScreen(
-    //       homeWorkModel: _selectedHomeWorkModel!,
-    //     ),
-    //   ),
-    // );
-
     Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
         _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
 

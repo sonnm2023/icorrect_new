@@ -50,12 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
     _loading = CircleLoading();
     _loginPresenter = LoginPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    //TODO: For test
-    // emailController.text = "hocvien02@nguyenhuytuong.com";
-    // passwordController.text = "123456";
-
-    // _getAppConfigInfo();
+    
     _checkPermission();
   }
 
