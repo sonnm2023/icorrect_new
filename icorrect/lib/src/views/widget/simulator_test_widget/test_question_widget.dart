@@ -335,7 +335,7 @@ class TestQuestionWidget extends StatelessWidget {
                         height: 50,
                       ),
                       errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
+                          const Icon(Icons.error_outline_sharp, weight: 60,),
                     ),
                   )
                 : const SizedBox(),
