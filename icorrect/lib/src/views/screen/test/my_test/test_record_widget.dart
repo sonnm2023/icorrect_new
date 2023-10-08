@@ -73,8 +73,8 @@ class TestRecordWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _buildFinishButton(currentQuestion),
-                            _buildCancelButton()
+                            _buildCancelButton(),
+                            _buildFinishButton(questionTopicModel: currentQuestion, isLess2Second: testProvider.isLessThan2Second),
                           ],
                         ),
                       ),
@@ -90,7 +90,7 @@ class TestRecordWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFinishButton(QuestionTopicModel questionTopicModel) {
+  Widget _buildFinishButton({required QuestionTopicModel questionTopicModel, required bool isLess2Second}) {
     return InkWell(
       onTap: () {
         finishAnswer(questionTopicModel);
@@ -100,7 +100,7 @@ class TestRecordWidget extends StatelessWidget {
         height: CustomSize.size_40,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(CustomSize.size_20),
-          color: Colors.green,
+          color:isLess2Second?const Color.fromARGB(255, 153, 201, 154): Colors.green,
         ),
         alignment: Alignment.center,
         child: const Text(

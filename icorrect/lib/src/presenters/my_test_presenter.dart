@@ -29,7 +29,7 @@ abstract class MyTestContract {
       double percent, int index, int total);
   void downloadFilesFail(AlertInfo alertInfo);
   void getMyTestFail(AlertInfo alertInfo);
-  void onCountDown(String time);
+  void onCountDown(String time, bool isLessThan2Seconds);
   void finishCountDown();
   void updateAnswersSuccess(String message);
   void updateAnswerFail(AlertInfo info);
@@ -466,7 +466,12 @@ class MyTestPresenter {
     }
   }
 
-  Timer startCountDown(BuildContext context, int count) {
+  Timer startCountDown({
+    required BuildContext context,
+    required int count,
+    required bool isLessThan2Seconds,
+  }) {
+    int temp = count;
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -482,7 +487,11 @@ class MyTestPresenter {
       dynamic minuteStr = minutes.toString().padLeft(2, '0');
       dynamic secondStr = seconds.toString().padLeft(2, '0');
 
-      _view!.onCountDown("$minuteStr:$secondStr");
+      if ((temp - count) >= 2) {
+        isLessThan2Seconds = false;
+      }
+
+      _view!.onCountDown("$minuteStr:$secondStr", isLessThan2Seconds);
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;

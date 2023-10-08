@@ -77,6 +77,7 @@ class TestRoomPresenter {
     required bool isReAnswer,
     required bool isLessThan2Seconds
   }) {
+    int temp = count;
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -92,7 +93,7 @@ class TestRoomPresenter {
       dynamic minuteStr = minutes.toString().padLeft(2, '0');
       dynamic secondStr = seconds.toString().padLeft(2, '0');
 
-      if (count > 2) {
+      if ((temp - count) >= 2) {
         isLessThan2Seconds = false;
       }
 

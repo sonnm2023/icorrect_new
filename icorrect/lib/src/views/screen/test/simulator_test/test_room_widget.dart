@@ -1680,6 +1680,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
+
+    _simulatorTestProvider!.setIsLessThan2Second(true);
     _countDown = _testRoomPresenter!.startCountDown(
         context: context,
         count: timeRecord,
@@ -2035,6 +2037,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onFinishForReAnswer() {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
     _timerProvider!.strCount;
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);

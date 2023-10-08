@@ -296,6 +296,11 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _onFinishReanswer(QuestionTopicModel question) {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+    
     widget.provider.setReAnswerOfQuestions(question);
     int index = widget.provider.myAnswerOfQuestions.indexWhere(
         (q) => q.id == question.id && q.repeatIndex == question.repeatIndex);
@@ -577,10 +582,11 @@ class _MyTestTabState extends State<MyTestTab>
     if (widget.provider.recordPermission.isGranted) {
       _stopCountTimer();
       widget.provider.setVisibleRecord(true);
+      widget.provider.setIsLessThan2Second(true);
       if (widget.provider.visibleRecord) {
         audioFile = '${await Utils.generateAudioFileName()}.wav';
 
-        timer = _presenter!.startCountDown(context, 30);
+        timer = _presenter!.startCountDown(context: context, count: 30, isLessThan2Seconds: true);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:
@@ -662,14 +668,30 @@ class _MyTestTabState extends State<MyTestTab>
     );
   }
 
+  bool _checkAnswerDuration() {
+    if (widget.provider.isLessThan2Second) {
+      Fluttertoast.showToast(
+        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        backgroundColor: Colors.blueGrey,
+        textColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+        fontSize: 15,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return true;
+    }
+    return false;
+  }
+
   @override
   void finishCountDown() {
     _onFinishReanswer(widget.provider.currentQuestion);
   }
 
   @override
-  void onCountDown(String time) {
+  void onCountDown(String time, bool isLessThan2Second) {
     widget.provider.setTimerCount(time);
+    widget.provider.setIsLessThan2Second(isLessThan2Second);
   }
 
   @override
