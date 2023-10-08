@@ -24,7 +24,7 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
-  void onCountDown(String countDownString, bool isGreater2Seconds);
+  void onCountDown(String countDownString, bool isLessThan2Seconds);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
@@ -75,7 +75,7 @@ class TestRoomPresenter {
     required int count,
     required bool isPart2,
     required bool isReAnswer,
-    required bool isLess2Seconds
+    required bool isLessThan2Seconds
   }) {
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
@@ -93,10 +93,10 @@ class TestRoomPresenter {
       dynamic secondStr = seconds.toString().padLeft(2, '0');
 
       if (count > 2) {
-        isLess2Seconds = false;
+        isLessThan2Seconds = false;
       }
 
-      _view!.onCountDown("$minuteStr:$secondStr",isLess2Seconds);
+      _view!.onCountDown("$minuteStr:$secondStr", isLessThan2Seconds);
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;

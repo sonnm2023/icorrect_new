@@ -1496,14 +1496,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         bitRate: 128000,
         samplingRate: 44100,
       );
-
-      // List<FileTopicModel> temp = _currentQuestion!.answers;
-      // if (!_checkAnswerFileExist(newFileName, temp)) {
-      //   temp.add(
-      //       FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-      //   _currentQuestion!.answers = temp;
-      //   _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
-      // }
     }
   }
 
@@ -1693,7 +1685,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         count: timeRecord,
         isPart2: isPart2,
         isReAnswer: true,
-        isLess2Seconds: true);
+        isLessThan2Seconds: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1723,13 +1715,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
-    _simulatorTestProvider!.setIsLess2Second(true);
+    _simulatorTestProvider!.setIsLessThan2Second(true);
     _countDown = _testRoomPresenter!.startCountDown(
         context: context,
         count: timeRecord,
         isPart2: isPart2,
         isReAnswer: false,
-        isLess2Seconds: true);
+        isLessThan2Seconds: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1805,7 +1797,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   bool _checkAnswerDuration() {
-    if (_simulatorTestProvider!.isLess2Second) {
+    if (_simulatorTestProvider!.isLessThan2Second) {
       Fluttertoast.showToast(
         msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
         backgroundColor: Colors.blueGrey,
@@ -1820,10 +1812,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onCountDown(String countDownString, bool isGreater2Second) {
+  void onCountDown(String countDownString, bool isLessThan2Second) {
     if (mounted) {
       _timerProvider!.setCountDown(countDownString);
-      _simulatorTestProvider!.setIsLess2Second(isGreater2Second);
+      _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
     }
   }
 

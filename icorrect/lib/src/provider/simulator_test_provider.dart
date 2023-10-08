@@ -381,10 +381,11 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _isLess2Second = true;
-  bool get isLess2Second  => _isLess2Second;
-  void setIsLess2Second(bool isLess) {
-    _isLess2Second = isLess;
+  bool _isLessThan2Second = true;
+  bool get isLessThan2Second  => _isLessThan2Second;
+  void setIsLessThan2Second(bool isLess) {
+    _isLessThan2Second = isLess;
+
     if (!isDisposed) {
       notifyListeners();
     }
@@ -542,7 +543,7 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   void resetAll() {
-    _isLess2Second = true;
+    _isLessThan2Second = true;
     _needDownloadAgain = false;
     _isLoadingVideo = false;
     _answerList.clear();

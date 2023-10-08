@@ -71,7 +71,7 @@ class TestRecordWidget extends StatelessWidget {
                         ),
                         _buildFinishButton(
                             question: currentQuestion,
-                            isLess2Second: simulatorTestProvider.isLess2Second),
+                            isLess2Second: simulatorTestProvider.isLessThan2Second),
                       ],
                     ),
                     const SizedBox(height: 20),
