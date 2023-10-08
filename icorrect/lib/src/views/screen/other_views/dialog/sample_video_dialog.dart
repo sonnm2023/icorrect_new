@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
@@ -38,59 +39,66 @@ class _SampleVideoState extends State<SampleVideo> {
 
   Widget _buildSampleVideo() {
     return Dialog(
-      child: Consumer<MyTestProvider>(builder: (context, provider, child) {
-        _playerController!.addListener(() {
-          if (!_playerController!.value.size.isEmpty) {
-            if (_playerController!.value.position ==
-                _playerController!.value.duration) {
-              provider.setSampleAudioPlaying(!provider.isSamplePlaying);
-            }
-          }
-        });
-        return Stack(
-          alignment: Alignment.topRight,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: InkWell(
-                onTap: () {
-                  _playerController!.pause();
-                  _playerController!.dispose();
-                  provider.setSampleAudioPlaying(false);
-                  Navigator.pop(context);
-                },
-                child: const Icon(
-                  Icons.cancel_outlined,
-                  color: AppColor.defaultGrayColor,
+      child: Consumer<MyTestProvider>(
+        builder: (context, provider, child) {
+          _playerController!.addListener(
+            () {
+              if (!_playerController!.value.size.isEmpty) {
+                if (_playerController!.value.position ==
+                    _playerController!.value.duration) {
+                  provider.setSampleAudioPlaying(!provider.isSamplePlaying);
+                }
+              }
+            },
+          );
+          return Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: InkWell(
+                  onTap: () {
+                    _playerController!.pause();
+                    _playerController!.dispose();
+                    provider.setSampleAudioPlaying(false);
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.cancel_outlined,
+                    color: AppColor.defaultGrayColor,
+                  ),
                 ),
               ),
-            ),
-            Container(
+              Container(
                 height: 300,
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const DefaultText(
-                        text: 'Sample Video',
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500),
+                      text: StringConstants.sample_video,
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
                     const SizedBox(height: 30),
                     Stack(
                       children: [
                         InkWell(
-                            onTap: () {
-                              provider.setSampleAudioPlaying(
-                                  !provider.isSamplePlaying);
-                              _playerController!.pause();
-                            },
-                            child: SizedBox(
-                                height: 200,
-                                child: AspectRatio(
-                                    aspectRatio:
-                                        _playerController!.value.aspectRatio,
-                                    child: VideoPlayer(_playerController!)))),
+                          onTap: () {
+                            provider.setSampleAudioPlaying(
+                                !provider.isSamplePlaying);
+                            _playerController!.pause();
+                          },
+                          child: SizedBox(
+                            height: 200,
+                            child: AspectRatio(
+                              aspectRatio: _playerController!.value.aspectRatio,
+                              child: VideoPlayer(_playerController!),
+                            ),
+                          ),
+                        ),
                         Visibility(
                           visible: !provider.isSamplePlaying,
                           child: Container(
@@ -114,10 +122,12 @@ class _SampleVideoState extends State<SampleVideo> {
                       ],
                     )
                   ],
-                ))
-          ],
-        );
-      }),
+                ),
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 }

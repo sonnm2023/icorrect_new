@@ -157,7 +157,7 @@ class _MyTestTabState extends State<MyTestTab>
                             width: constraint.maxWidth,
                             child: const Center(
                               child: Text(
-                                'View AI Response',
+                                StringConstants.view_ai_response_button_title,
                                 style: CustomTextStyle.textWhiteBold_16,
                               ),
                             ),
@@ -191,7 +191,7 @@ class _MyTestTabState extends State<MyTestTab>
                             width: constraint.maxWidth,
                             child: const Center(
                               child: Text(
-                                'Update Your Answer',
+                                StringConstants.update_answer_button_title,
                                 style: CustomTextStyle.textWhiteBold_16,
                               ),
                             ),
@@ -218,10 +218,10 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: "Confirm",
-          message: "Are you sure to save change your answers?",
-          cancelButtonTitle: "Cancel",
-          okButtonTitle: "Save",
+          title: StringConstants.confirm_title,
+          message: StringConstants.confirm_save_change_answers_message,
+          cancelButtonTitle: StringConstants.cancel_button_title,
+          okButtonTitle: StringConstants.save_button_title,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
@@ -265,7 +265,9 @@ class _MyTestTabState extends State<MyTestTab>
           '\\$audioFile';
       if (File(path).existsSync()) {
         await File(path).delete();
-        print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+        if (kDebugMode) {
+          print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+        }
       }
     }
 
@@ -396,7 +398,7 @@ class _MyTestTabState extends State<MyTestTab>
               color: Colors.white,
               child: const Center(
                 child: Text(
-                  'Nothing in here',
+                  StringConstants.nothing,
                   style: CustomTextStyle.textGrey_15,
                 ),
               ),
@@ -495,7 +497,7 @@ class _MyTestTabState extends State<MyTestTab>
                                           _onClickReanswer(provider, question);
                                         },
                                         child: const Text(
-                                          'Re-answer',
+                                          StringConstants.re_answer_button_title,
                                           style:
                                               CustomTextStyle.textBoldPurple_14,
                                         ),
@@ -510,7 +512,7 @@ class _MyTestTabState extends State<MyTestTab>
                                   },
                                   child: (question.tips.isNotEmpty)
                                       ? const Text(
-                                          'View Tips',
+                                          StringConstants.view_tips_button_title,
                                           style:
                                               CustomTextStyle.textBoldPurple_14,
                                         )
@@ -645,9 +647,9 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur. Please check your connection!",
-          okButtonTitle: "OK",
+          title: StringConstants.dialog_title,
+          description: StringConstants.network_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,

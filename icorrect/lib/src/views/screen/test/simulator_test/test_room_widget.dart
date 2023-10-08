@@ -206,28 +206,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Consumer<SimulatorTestProvider>(
-                        builder: (context, simulatorTestProvider, _) {
-                      return Expanded(
-                        child: simulatorTestProvider.questionHasImage
-                            ? Container(
-                                decoration: const BoxDecoration(
-                                  color: AppColor.defaultAppColor,
-                                ),
-                                child: Center(
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        simulatorTestProvider.questionImageUrl,
-                                    fit: BoxFit.fill,
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
+                      builder: (context, simulatorTestProvider, _) {
+                        return Expanded(
+                          child: simulatorTestProvider.questionHasImage
+                              ? Container(
+                                  decoration: const BoxDecoration(
+                                    color: AppColor.defaultAppColor,
                                   ),
-                                ),
-                              )
-                            : const SizedBox(),
-                      );
-                    }),
+                                  child: Center(
+                                    child: CachedNetworkImage(
+                                      imageUrl: simulatorTestProvider
+                                          .questionImageUrl,
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                        );
+                      },
+                    ),
                     SizedBox(
                       height: 200,
                       child: Stack(
@@ -259,82 +260,28 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     double h = 200;
 
     return Consumer<SimulatorTestProvider>(
-        builder: (context, simulatorTestProvider, child) {
-      if (kDebugMode) {
-        print("DEBUG: VideoPlayerWidget --- build");
-      }
+      builder: (context, simulatorTestProvider, child) {
+        if (kDebugMode) {
+          print("DEBUG: VideoPlayerWidget --- build");
+        }
 
-      if (simulatorTestProvider.isLoadingVideo) {
-        return SizedBox(
-          width: w,
-          height: h,
-          child: const Center(
-            child: DefaultLoadingIndicator(
-              color: AppColor.defaultPurpleColor,
+        if (simulatorTestProvider.isLoadingVideo) {
+          return SizedBox(
+            width: w,
+            height: h,
+            child: const Center(
+              child: DefaultLoadingIndicator(
+                color: AppColor.defaultPurpleColor,
+              ),
             ),
-          ),
-        );
-      } else {
-        Widget buttonsControllerSubView = Container();
+          );
+        } else {
+          Widget buttonsControllerSubView = Container();
 
-        switch (simulatorTestProvider.reviewingStatus.get) {
-          case -1: //None
-            {
-              buttonsControllerSubView = SizedBox(
-                width: w,
-                height: h,
-                child: Center(
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: InkWell(
-                      onTap: () {
-                        simulatorTestProvider.setStartDoingTest(true);
-                        simulatorTestProvider
-                            .updateReviewingStatus(ReviewingStatus.playing);
-                        _startToPlayVideo();
-                      },
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: AppColor.defaultAppColor,
-                        size: 50,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-              break;
-            }
-          case 0: //Playing
-            {
-              buttonsControllerSubView = SizedBox(
-                width: w,
-                height: h,
-                child: GestureDetector(onTap: () {
-                  //Update reviewing status from playing -> pause
-                  //show/hide pause button
-                  if (simulatorTestProvider.doingStatus != DoingStatus.doing) {
-                    if (simulatorTestProvider.reviewingStatus ==
-                        ReviewingStatus.playing) {
-                      simulatorTestProvider
-                          .updateReviewingStatus(ReviewingStatus.pause);
-                    }
-                  }
-                }),
-              );
-              break;
-            }
-          case 1: //Pause
-            {
-              buttonsControllerSubView = InkWell(
-                onTap: () {
-                  if (simulatorTestProvider.reviewingStatus ==
-                      ReviewingStatus.pause) {
-                    simulatorTestProvider
-                        .updateReviewingStatus(ReviewingStatus.playing);
-                  }
-                },
-                child: SizedBox(
+          switch (simulatorTestProvider.reviewingStatus.get) {
+            case -1: //None
+              {
+                buttonsControllerSubView = SizedBox(
                   width: w,
                   height: h,
                   child: Center(
@@ -343,95 +290,153 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                       height: 50,
                       child: InkWell(
                         onTap: () {
-                          //Update reviewing status from pause -> restart
-                          //TODO
-                          // simulatorTestProvider
-                          //     .updateReviewingStatus(ReviewingStatus.restart);
-                          // pauseToPlayVideo();
+                          simulatorTestProvider.setStartDoingTest(true);
+                          simulatorTestProvider
+                              .updateReviewingStatus(ReviewingStatus.playing);
+                          _startToPlayVideo();
                         },
                         child: const Icon(
-                          Icons.pause,
+                          Icons.play_arrow,
                           color: AppColor.defaultAppColor,
                           size: 50,
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-              break;
-            }
-          case 2: //Restart
-            {
-              buttonsControllerSubView = SizedBox(
-                width: w,
-                height: h,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
+                );
+                break;
+              }
+            case 0: //Playing
+              {
+                buttonsControllerSubView = SizedBox(
+                  width: w,
+                  height: h,
+                  child: GestureDetector(
+                    onTap: () {
+                      //Update reviewing status from playing -> pause
+                      //show/hide pause button
+                      if (simulatorTestProvider.doingStatus !=
+                          DoingStatus.doing) {
+                        if (simulatorTestProvider.reviewingStatus ==
+                            ReviewingStatus.playing) {
+                          simulatorTestProvider
+                              .updateReviewingStatus(ReviewingStatus.pause);
+                        }
+                      }
+                    },
+                  ),
+                );
+                break;
+              }
+            case 1: //Pause
+              {
+                buttonsControllerSubView = InkWell(
+                  onTap: () {
+                    if (simulatorTestProvider.reviewingStatus ==
+                        ReviewingStatus.pause) {
+                      simulatorTestProvider
+                          .updateReviewingStatus(ReviewingStatus.playing);
+                    }
+                  },
+                  child: SizedBox(
+                    width: w,
+                    height: h,
+                    child: Center(
+                      child: SizedBox(
                         width: 50,
                         height: 50,
                         child: InkWell(
                           onTap: () {
+                            //Update reviewing status from pause -> restart
                             //TODO
-                            // restartToPlayVideo();
+                            // simulatorTestProvider
+                            //     .updateReviewingStatus(ReviewingStatus.restart);
+                            // pauseToPlayVideo();
                           },
                           child: const Icon(
-                            Icons.restart_alt,
+                            Icons.pause,
                             color: AppColor.defaultAppColor,
                             size: 50,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: InkWell(
-                          onTap: () {
-                            //TODO
-                            // continueToPlayVideo();
-                          },
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: AppColor.defaultAppColor,
-                            size: 50,
+                    ),
+                  ),
+                );
+                break;
+              }
+            case 2: //Restart
+              {
+                buttonsControllerSubView = SizedBox(
+                  width: w,
+                  height: h,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: InkWell(
+                            onTap: () {
+                              //TODO
+                              // restartToPlayVideo();
+                            },
+                            child: const Icon(
+                              Icons.restart_alt,
+                              color: AppColor.defaultAppColor,
+                              size: 50,
+                            ),
                           ),
                         ),
-                      )
-                    ],
+                        const SizedBox(width: 10),
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: InkWell(
+                            onTap: () {
+                              //TODO
+                              // continueToPlayVideo();
+                            },
+                            child: const Icon(
+                              Icons.play_arrow,
+                              color: AppColor.defaultAppColor,
+                              size: 50,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
+                );
+                break;
+              }
+          }
+
+          return Stack(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: NativeVideoPlayerView(
+                  onViewReady: _initController,
                 ),
-              );
-              break;
-            }
-        }
-
-        return Stack(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: NativeVideoPlayerView(
-                onViewReady: _initController,
               ),
-            ),
 
-            //Play video controller buttons
-            _simulatorTestProvider!.doingStatus != DoingStatus.finish
-                ? buttonsControllerSubView
-                : Container(),
+              //Play video controller buttons
+              _simulatorTestProvider!.doingStatus != DoingStatus.finish
+                  ? buttonsControllerSubView
+                  : Container(),
 
-            //TODO
-            // Visibility(
-            //   visible: simulatorTestProvider.isReviewingPlayAnswer,
-            //   child: playAudioBackground(w, h),
-            // )
-          ],
-        );
-      }
-    });
+              //TODO
+              // Visibility(
+              //   visible: simulatorTestProvider.isReviewingPlayAnswer,
+              //   child: playAudioBackground(w, h),
+              // )
+            ],
+          );
+        }
+      },
+    );
   }
 
   //TODO
@@ -648,23 +653,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
-        await _audioPlayerController!.stop().then((_) {
-          //Check playing answers status
-          if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
-            if (selectedQuestionIndex !=
-                _playAnswerProvider!.selectedQuestionIndex) {
+        await _audioPlayerController!.stop().then(
+          (_) {
+            //Check playing answers status
+            if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+              if (selectedQuestionIndex !=
+                  _playAnswerProvider!.selectedQuestionIndex) {
+                _startPlayAudio(
+                    question: question,
+                    selectedQuestionIndex: selectedQuestionIndex);
+              } else {
+                _playAnswerProvider!.resetSelectedQuestionIndex();
+              }
+            } else {
               _startPlayAudio(
                   question: question,
                   selectedQuestionIndex: selectedQuestionIndex);
-            } else {
-              _playAnswerProvider!.resetSelectedQuestionIndex();
             }
-          } else {
-            _startPlayAudio(
-                question: question,
-                selectedQuestionIndex: selectedQuestionIndex);
-          }
-        });
+          },
+        );
       } else {
         //Check playing answers status
         if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
@@ -683,7 +690,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: "Please wait until the exam finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }
@@ -774,11 +781,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           context: context,
           builder: (BuildContext context) {
             return ConfirmDialogWidget(
-              title: "Notification",
-              message:
-                  "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
-              cancelButtonTitle: "Cancel",
-              okButtonTitle: "OK",
+              title: StringConstants.dialog_title,
+              message: StringConstants.confirm_reanswer_when_reviewing_message,
+              cancelButtonTitle: StringConstants.cancel_button_title,
+              okButtonTitle: StringConstants.ok_button_title,
               cancelButtonTapped: _cancelButtonTapped,
               okButtonTapped: () {
                 //TODO: Pause reviewing process
@@ -812,7 +818,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: "Please wait until the exam finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }
@@ -829,7 +835,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _showTip(question);
     } else {
       showToastMsg(
-        msg: "Please wait until the exam finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }
@@ -1044,7 +1050,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Comment for spin 1
       // _startReviewing();
       showToastMsg(
-        msg: "This feature is not available!",
+        msg: StringConstants.feature_not_available_message,
         toastState: ToastStatesType.warning,
       );
     } else {
@@ -1801,12 +1807,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _checkAnswerDuration() {
     if (_simulatorTestProvider!.isLess2Second) {
       Fluttertoast.showToast(
-          msg: "Your answer must be greater than 2 seconds",
-          backgroundColor: Colors.blueGrey,
-          textColor: Colors.white,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          toastLength: Toast.LENGTH_LONG);
+        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        backgroundColor: Colors.blueGrey,
+        textColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+        fontSize: 15,
+        toastLength: Toast.LENGTH_LONG,
+      );
       return true;
     }
     return false;
@@ -1944,9 +1951,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur, please try again later!",
-          okButtonTitle: "OK",
+          title: StringConstants.dialog_title,
+          description: StringConstants.submit_test_error_messge,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -1979,10 +1986,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         context: context,
         builder: (BuildContext context) {
           return CustomAlertDialog(
-            title: "Notify",
-            description: "Do you want to save this test?",
-            okButtonTitle: "Save",
-            cancelButtonTitle: "Don't Save",
+            title: StringConstants.dialog_title,
+            description: StringConstants.confirm_save_the_test_message,
+            okButtonTitle: StringConstants.save_button_title,
+            cancelButtonTitle: StringConstants.dont_save_button_title,
             borderRadius: 8,
             hasCloseButton: true,
             okButtonTapped: () {
@@ -2003,10 +2010,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         context: context,
         builder: (BuildContext context) {
           return CustomAlertDialog(
-            title: "Confirm",
-            description: "Are you sure to save change your answers?",
-            okButtonTitle: "Save",
-            cancelButtonTitle: "Cancel",
+            title: StringConstants.confirm_title,
+            description: StringConstants.confirm_save_change_answers_message,
+            okButtonTitle: StringConstants.save_button_title,
+            cancelButtonTitle: StringConstants.cancel_button_title,
             borderRadius: 8,
             hasCloseButton: true,
             okButtonTapped: () {
@@ -2097,11 +2104,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
 
     Fluttertoast.showToast(
-        msg: msg,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
-        fontSize: 18,
-        toastLength: Toast.LENGTH_LONG);
+      msg: msg,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      gravity: ToastGravity.BOTTOM,
+      fontSize: 18,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 }

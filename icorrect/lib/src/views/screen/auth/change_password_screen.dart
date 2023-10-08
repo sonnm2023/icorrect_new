@@ -65,17 +65,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Change password',
+          StringConstants.change_password_screen_title,
           style: CustomTextStyle.appbarTitle,
         ),
         centerTitle: true,
         leading: const BackButton(color: AppColor.defaultPurpleColor),
         bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(4.0),
-            child: Divider(
-              color: AppColor.defaultPurpleColor,
-              thickness: 1,
-            )),
+          preferredSize: Size.fromHeight(4.0),
+          child: Divider(
+            color: AppColor.defaultPurpleColor,
+            thickness: 1,
+          ),
+        ),
       ),
       body: SafeArea(
         child: CustomScrollView(
@@ -120,7 +121,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         if (newPasswordController.text.trim() !=
             confirmNewPasswordController.text.trim()) {
           showToastMsg(
-            msg: "Confirm new password must be equal new password!",
+            msg: StringConstants.confirm_new_password_error_message,
             toastState: ToastStatesType.error,
           );
         } else {
@@ -138,7 +139,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         }
       },
       background: AppColor.defaultPurpleColor,
-      text: 'Save change',
+      text: StringConstants.save_change_button_title,
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
       radius: 20,
@@ -153,7 +154,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       },
       background: AppColor.defaultWhiteColor,
       textColor: AppColor.defaultPurpleColor,
-      text: 'Cancel',
+      text: StringConstants.cancel_button_title,
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
       radius: 20,

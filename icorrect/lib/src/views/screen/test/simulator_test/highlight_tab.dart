@@ -111,7 +111,7 @@ class _HighLightTabState extends State<HighLightTab>
           );
         } else {
           return EmptyWidget.init().buildNothingWidget(
-            'No data, please come back later!',
+            StringConstants.no_data_message,
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
           );
@@ -132,13 +132,14 @@ class _HighLightTabState extends State<HighLightTab>
         right: CustomSize.size_10,
       ),
       decoration: BoxDecoration(
-          color: AppColor.defaultWhiteColor,
-          borderRadius: BorderRadius.circular(CustomSize.size_10),
-          border: Border.all(
-            color: AppColor.defaultPurpleColor,
-            style: BorderStyle.solid,
-            width: 0.5,
-          )),
+        color: AppColor.defaultWhiteColor,
+        borderRadius: BorderRadius.circular(CustomSize.size_10),
+        border: Border.all(
+          color: AppColor.defaultPurpleColor,
+          style: BorderStyle.solid,
+          width: 0.5,
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

@@ -22,7 +22,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
             child: CustomDivider(),
           ),
           title: const Text(
-            "Topics",
+            StringConstants.topics_screen_title,
             style: CustomTextStyle.appbarTitle,
           ),
           centerTitle: true,
@@ -63,7 +63,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
                         const Expanded(
                           flex: 4,
                           child: Text(
-                            'Selected topic (0/24)',
+                            StringConstants.selected_topics,
                             style: CustomTextStyle.textBlack_14,
                             textAlign: TextAlign.center,
                           ),
@@ -73,7 +73,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
                           child: TextButton(
                             onPressed: () {},
                             child: const Text(
-                              'Clear',
+                              StringConstants.clear_button_title,
                               style: CustomTextStyle.textBoldPurple_14,
                               textAlign: TextAlign.center,
                             ),

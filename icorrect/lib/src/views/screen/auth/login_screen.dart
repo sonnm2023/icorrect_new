@@ -16,8 +16,6 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
-import 'package:icorrect/src/views/widget/default_text.dart';
-import 'package:icorrect/src/views/widget/default_text_button.dart';
 import 'package:icorrect/src/views/widget/email_input_widget.dart';
 import 'package:icorrect/src/views/widget/logo_text_widget.dart';
 import 'package:icorrect/src/views/widget/logo_widget.dart';
@@ -50,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen>
     _loading = CircleLoading();
     _loginPresenter = LoginPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
+
     _checkPermission();
   }
 
@@ -85,7 +83,8 @@ class _LoginScreenState extends State<LoginScreen>
         if (_authProvider.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
-      } else if (_writeFilePermissionStatus == PermissionStatus.permanentlyDenied) {
+      } else if (_writeFilePermissionStatus ==
+          PermissionStatus.permanentlyDenied) {
         openAppSettings();
       } else {
         _getAppConfigInfo();
@@ -228,13 +227,15 @@ class _LoginScreenState extends State<LoginScreen>
           );
         }
       },
-      text: 'Sign In',
+      text: StringConstants.sign_in_button_title,
       background: AppColor.defaultPurpleColor,
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
     );
   }
 
+  //TODO: Next phase
+  /*
   Widget _buildSignUpButton() {
     return Align(
       alignment: Alignment.center,
@@ -247,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen>
           }
         },
         child: const DefaultText(
-          text: 'Sign up',
+          text: StringConstants.sign_up_button_title,
           color: Colors.black,
           textStyle: TextStyle(
             decoration: TextDecoration.underline,
@@ -269,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen>
           }
         },
         child: const DefaultText(
-          text: 'Forgot password?',
+          text: StringConstants.forgot_password_button_title,
           color: Colors.black,
           textStyle: TextStyle(
             decoration: TextDecoration.underline,
@@ -279,6 +280,7 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
+  */
 
   void _resetTextFieldControllers() {
     emailController.text = "";
@@ -301,10 +303,11 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider.updateProcessingStatus(isProcessing: false);
 
     showDialog(
-        context: context,
-        builder: (builder) {
-          return MessageDialog.alertDialog(context, message);
-        });
+      context: context,
+      builder: (builder) {
+        return MessageDialog.alertDialog(context, message);
+      },
+    );
   }
 
   @override
@@ -314,20 +317,21 @@ class _LoginScreenState extends State<LoginScreen>
     }
     //Show get app config info error
     showToastMsg(
-        msg: "Has an error when getting app config information!",
-        toastState: ToastStatesType.error);
+      msg: StringConstants.getting_app_config_information_error_message,
+      toastState: ToastStatesType.error,
+    );
   }
 
   @override
   void onGetAppConfigInfoSuccess() {
     _autoLogin();
   }
-  
+
   @override
   void onAlertExit(String keyInfo) {
     // TODO: implement onAlertExit
   }
-  
+
   @override
   void onAlertNextStep(String keyInfo) {
     // TODO: implement onAlertNextStep

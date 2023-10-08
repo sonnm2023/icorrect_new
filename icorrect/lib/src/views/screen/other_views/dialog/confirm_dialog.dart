@@ -22,7 +22,7 @@ class ConfirmDialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        return Center(
+    return Center(
       child: Wrap(
         children: [
           Dialog(
@@ -51,45 +51,53 @@ class ConfirmDialogWidget extends StatelessWidget {
                         title,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: FontsSize.fontSize_16,
-                            fontWeight: FontWeight.w600),
+                          color: Colors.black,
+                          fontSize: FontsSize.fontSize_16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 10),
-                      Text(message,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: FontsSize.fontSize_15,
-                              fontWeight: FontWeight.w400)),
+                      Text(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: FontsSize.fontSize_15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                cancelButtonTapped();
-                              },
-                              child: Text(
-                                cancelButtonTitle,
-                                style: const TextStyle(
-                                    color: AppColor.defaultGrayColor,
-                                    fontSize: FontsSize.fontSize_15,
-                                    fontWeight: FontWeight.w700),
-                              )),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              cancelButtonTapped();
+                            },
+                            child: Text(
+                              cancelButtonTitle,
+                              style: const TextStyle(
+                                color: AppColor.defaultGrayColor,
+                                fontSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                           TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                okButtonTapped();
-                              },
-                              child: Text(
-                                okButtonTitle,
-                                style: const TextStyle(
-                                    color: AppColor.defaultPurpleColor,
-                                    fontSize: FontsSize.fontSize_15,
-                                    fontWeight: FontWeight.w700),
-                              )),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              okButtonTapped();
+                            },
+                            child: Text(
+                              okButtonTitle,
+                              style: const TextStyle(
+                                color: AppColor.defaultPurpleColor,
+                                fontSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                         ],
                       )
                     ],

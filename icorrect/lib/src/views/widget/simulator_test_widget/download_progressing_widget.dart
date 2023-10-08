@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +19,12 @@ class DownloadProgressingWidget extends StatelessWidget {
           Image.asset(AppAsset.empty, width: 100, height: 100),
           const SizedBox(height: 8),
           //percent
-          Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-            double p = provider.downloadingPercent * 100;
-            return Text("${p.toStringAsFixed(0)}%");
-          }),
+          Consumer<SimulatorTestProvider>(
+            builder: (context, provider, child) {
+              double p = provider.downloadingPercent * 100;
+              return Text("${p.toStringAsFixed(0)}%");
+            },
+          ),
           const SizedBox(height: 8),
           //progress bar
           SizedBox(
@@ -31,11 +34,13 @@ class DownloadProgressingWidget extends StatelessWidget {
           const SizedBox(height: 8),
           //part of total
           Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-            return Text(
-                "${provider.downloadingIndex}/${provider.total}");
+            return Text("${provider.downloadingIndex}/${provider.total}");
           }),
           const SizedBox(height: 8),
-          const Text('Downloading...', style: TextStyle(fontSize: 15)),
+          const Text(
+            StringConstants.downloading,
+            style: TextStyle(fontSize: 15),
+          ),
           const SizedBox(height: 50),
         ],
       ),
@@ -43,13 +48,15 @@ class DownloadProgressingWidget extends StatelessWidget {
   }
 
   Widget _buildProgressBar() {
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      return LinearProgressIndicator(
-        backgroundColor: AppColor.defaultLightGrayColor,
-        valueColor:
-        const AlwaysStoppedAnimation<Color>(AppColor.defaultPurpleColor),
-        value: provider.downloadingPercent,
-      );
-    });
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        return LinearProgressIndicator(
+          backgroundColor: AppColor.defaultLightGrayColor,
+          valueColor:
+              const AlwaysStoppedAnimation<Color>(AppColor.defaultPurpleColor),
+          value: provider.downloadingPercent,
+        );
+      },
+    );
   }
 }

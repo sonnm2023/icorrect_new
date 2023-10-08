@@ -115,7 +115,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             },
           ),
           title: const Text(
-            "ICORRECT",
+            StringConstants.icorrect_title,
             style: CustomTextStyle.appbarTitle,
           ),
           bottom: PreferredSize(
@@ -147,7 +147,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         ? const [
             Tab(
               child: Text(
-                'MY EXAM',
+                StringConstants.my_exam_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -155,7 +155,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                'RESPONSE',
+                StringConstants.response_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -163,7 +163,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                'HIGHLIGHT',
+                StringConstants.highlight_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -171,7 +171,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                'OTHERS',
+                StringConstants.others_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -181,7 +181,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         : const [
             Tab(
               child: Text(
-                'MY EXAM',
+                StringConstants.my_exam_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -189,7 +189,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                'HIGHLIGHT',
+                StringConstants.highlight_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -197,7 +197,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                'OTHERS',
+                StringConstants.others_tab_title,
                 style: TextStyle(
                   fontSize: FontsSize.fontSize_14,
                 ),
@@ -245,10 +245,10 @@ class _MyTestScreenState extends State<MyTestScreen> {
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: "Are you sure to back ?",
-          message: "Your re-answers will not be saved ",
-          cancelButtonTitle: "Cancel",
-          okButtonTitle: "Back",
+          title: StringConstants.confirm_to_go_out_screen,
+          message: StringConstants.re_answer_not_be_save_message,
+          cancelButtonTitle: StringConstants.cancel_button_title,
+          okButtonTitle: StringConstants.back_button_title,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             deleteFileAnswers(provider.reAnswerOfQuestions);

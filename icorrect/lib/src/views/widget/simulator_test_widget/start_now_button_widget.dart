@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 class StartNowButtonWidget extends StatelessWidget {
   const StartNowButtonWidget({super.key, required this.startNowButtonTapped});
@@ -15,7 +16,7 @@ class StartNowButtonWidget extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(left: 20, right: 20),
           child: Text(
-            "Start the exam now or wait until the processing finished!",
+            StringConstants.start_now_description,
             style: TextStyle(fontSize: 15),
             textAlign: TextAlign.center,
           ),
@@ -32,7 +33,7 @@ class StartNowButtonWidget extends StatelessWidget {
                 startNowButtonTapped();
               },
               child: const Text(
-                "Start Now",
+                StringConstants.start_now_button_title,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/presenters/my_test_presenter.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/presenters/other_student_test_presenter.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
@@ -33,7 +33,7 @@ class DownloadAgainWidget extends StatelessWidget {
                   EdgeInsets.only(left: 40, top: 10, right: 40, bottom: 10),
               child: Center(
                 child: Text(
-                  "A part of data has not downloaded properly. Please check your internet connection and try again.",
+                  StringConstants.data_downloaded_error_message,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -53,7 +53,7 @@ class DownloadAgainWidget extends StatelessWidget {
                 height: 60,
                 child: Center(
                   child: Text(
-                    'Try Again',
+                    StringConstants.try_again_button_title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: AppColor.defaultPurpleColor,

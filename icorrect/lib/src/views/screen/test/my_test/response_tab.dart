@@ -10,13 +10,12 @@ import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/skill_problem_model.dart';
 import 'package:icorrect/src/presenters/response_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/sample_video_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/stream_audio_dialog.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
-
-import '../../other_views/dialog/circle_loading.dart';
 
 class ResponseTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
@@ -43,7 +42,7 @@ class _ResponseTabState extends State<ResponseTab>
       print('DEBUG: ResponseTab ${widget.homeWorkModel.activityId.toString()}');
     }
     _loading = CircleLoading();
-    _loading?.show(context);  
+    _loading?.show(context);
     if (widget.homeWorkModel.activityAnswer!.orderId.toString().isNotEmpty) {
       _presenter!.getResponse(
         context: context,
@@ -97,61 +96,65 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   Widget _buildOverview() {
-    return Consumer<MyTestProvider>(builder: (context, appState, child) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              'Overview',
-              style: CustomTextStyle.textBoldBlack_15,
-            ),
-          ),
-          const SizedBox(height: CustomSize.size_10),
-          Container(
-            child: (appState.visibleOverviewComment)
-                ? Text(
-                    appState.responseModel.overallComment ?? '',
-                    textAlign: TextAlign.justify,
-                    style: CustomTextStyle.textBlack_14,
-                  )
-                : Text(
-                    appState.responseModel.overallComment ?? '',
-                    style: CustomTextStyle.textBlack_14,
-                    textAlign: TextAlign.justify,
-                    maxLines: 4,
-                  ),
-          ),
-          LayoutBuilder(builder: (context, constraint) {
-            return Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: CustomSize.size_10,
+    return Consumer<MyTestProvider>(
+      builder: (context, appState, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                StringConstants.overview,
+                style: CustomTextStyle.textBoldBlack_15,
               ),
-              alignment: Alignment.centerRight,
-              width: constraint.maxWidth,
-              child: (appState.responseModel.isTooLong())
-                  ? InkWell(
-                      onTap: () {
-                        widget.provider.setVisibleOverviewComment(
-                            !appState.visibleOverviewComment);
-                      },
-                      child: Text(
-                        (appState.visibleOverviewComment)
-                            ? 'Show less'
-                            : 'Show more',
-                        style: CustomTextStyle.textBoldBlack_14,
-                        textAlign: TextAlign.justify,
-                        maxLines: 4,
-                      ),
+            ),
+            const SizedBox(height: CustomSize.size_10),
+            Container(
+              child: (appState.visibleOverviewComment)
+                  ? Text(
+                      appState.responseModel.overallComment ?? '',
+                      textAlign: TextAlign.justify,
+                      style: CustomTextStyle.textBlack_14,
                     )
-                  : Container(),
-            );
-          })
-        ],
-      );
-    });
+                  : Text(
+                      appState.responseModel.overallComment ?? '',
+                      style: CustomTextStyle.textBlack_14,
+                      textAlign: TextAlign.justify,
+                      maxLines: 4,
+                    ),
+            ),
+            LayoutBuilder(
+              builder: (context, constraint) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: CustomSize.size_10,
+                  ),
+                  alignment: Alignment.centerRight,
+                  width: constraint.maxWidth,
+                  child: (appState.responseModel.isTooLong())
+                      ? InkWell(
+                          onTap: () {
+                            widget.provider.setVisibleOverviewComment(
+                                !appState.visibleOverviewComment);
+                          },
+                          child: Text(
+                            (appState.visibleOverviewComment)
+                                ? StringConstants.show_less
+                                : StringConstants.show_more,
+                            style: CustomTextStyle.textBoldBlack_14,
+                            textAlign: TextAlign.justify,
+                            maxLines: 4,
+                          ),
+                        )
+                      : Container(),
+                );
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildOverallScore() {
@@ -162,29 +165,29 @@ class _ResponseTabState extends State<ResponseTab>
           children: [
             _scoreItem(
               index: 0,
-              title: 'Overall score: ${result.overallScore}',
+              title: '${StringConstants.overall_score} ${result.overallScore}',
             ),
             _scoreItem(
               index: 1,
-              title: 'Fluency : ${result.fluency}',
+              title: '${StringConstants.fluency} ${result.fluency}',
               problems: result.fluencyProblem,
               visible: appState.visibleFluency,
             ),
             _scoreItem(
               index: 2,
-              title: 'Lexical Resource : ${result.lexicalResource}',
+              title: '${StringConstants.lexical_resource} ${result.lexicalResource}',
               problems: result.lexicalResourceProblem,
               visible: appState.visibleLexical,
             ),
             _scoreItem(
               index: 3,
-              title: 'Grammatical : ${result.grammatical}',
+              title: '${StringConstants.grammatical} ${result.grammatical}',
               problems: result.grammaticalProblem,
               visible: appState.visibleGramatical,
             ),
             _scoreItem(
               index: 4,
-              title: 'Pronunciation : ${result.pronunciation}',
+              title: '${StringConstants.pronunciation} ${result.pronunciation}',
               problems: result.pronunciationProblem,
               visible: appState.visiblePronunciation,
             ),
@@ -341,7 +344,7 @@ class _ResponseTabState extends State<ResponseTab>
                         ),
                         SizedBox(width: CustomSize.size_10),
                         Text(
-                          'Problem',
+                          StringConstants.problem,
                           style: CustomTextStyle.textBoldBlack_14,
                         )
                       ],
@@ -361,7 +364,7 @@ class _ResponseTabState extends State<ResponseTab>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         const Text(
-                          'Solution',
+                          StringConstants.solution,
                           style: CustomTextStyle.textBoldBlack_14,
                         ),
                         const SizedBox(width: CustomSize.size_10),
@@ -380,7 +383,7 @@ class _ResponseTabState extends State<ResponseTab>
                 );
               })
           : EmptyWidget.init().buildNothingWidget(
-              'Nothing Problem in here',
+              StringConstants.nothing_problem_message,
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
             ),
@@ -404,7 +407,7 @@ class _ResponseTabState extends State<ResponseTab>
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
         child: const Text(
-          'View Sample',
+          StringConstants.view_sample_button_title,
           style: CustomTextStyle.textBoldPurple_14,
         ),
       ),

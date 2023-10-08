@@ -112,13 +112,13 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
     return const [
       Tab(
         child: Text(
-          'Test Detail',
+          StringConstants.test_detail_tab_title,
           style: TextStyle(fontSize: FontsSize.fontSize_14,color: AppColor.defaultPurpleColor),
         ),
       ),
       Tab(
         child: Text(
-          'Correction',
+          StringConstants.correction_tab_title,
           style: TextStyle(fontSize: FontsSize.fontSize_14,color: AppColor.defaultPurpleColor),
         ),
       ),

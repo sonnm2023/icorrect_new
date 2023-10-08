@@ -57,7 +57,11 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Text(widget.description, textAlign: TextAlign.center, style: const TextStyle(fontSize: fontSize_15),),
+                child: Text(
+                  widget.description,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: fontSize_15),
+                ),
               ),
               const SizedBox(height: 5),
               const Divider(
@@ -143,27 +147,30 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
               ),
             ],
           ),
-          if (widget.hasCloseButton) Positioned(
-            top: 0,
-            right: 0,
-            child: InkWell(
-              child: const SizedBox(
-                width: 40,
-                height: 40,
-                child: Center(
-                  child: Image(
-                    image: AssetImage("assets/images/ic_close_black.png"),
-                    width: 15,
-                    height: 15,
-                    fit: BoxFit.fitWidth,
+          if (widget.hasCloseButton)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: InkWell(
+                child: const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Center(
+                    child: Image(
+                      image: AssetImage("assets/images/ic_close_black.png"),
+                      width: 15,
+                      height: 15,
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
                 ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
               ),
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ) else const SizedBox(),
+            )
+          else
+            const SizedBox(),
         ],
       ),
     );

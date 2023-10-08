@@ -96,7 +96,7 @@ class _OtherTabState extends State<OtherTab>
             });
       } else {
         return EmptyWidget.init().buildNothingWidget(
-            'No data, please come back later!',
+            StringConstants.no_data_message,
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100);
       }

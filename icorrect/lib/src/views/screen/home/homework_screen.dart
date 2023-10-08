@@ -66,7 +66,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   void _getListHomeWork() {
     //Reset old data
-    _homeWorkProvider.updateFilterString('Add your filter!');
+    _homeWorkProvider.updateFilterString(StringConstants.add_your_filter);
     _homeWorkProvider.resetListSelectedClassFilter();
     _homeWorkProvider.resetListSelectedStatusFilter();
     _homeWorkProvider.resetListSelectedFilterIntoLocal();
@@ -142,7 +142,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             key: widget.scaffoldKey,
             appBar: AppBar(
               title: const Text(
-                "MY HOMEWORK",
+                StringConstants.my_homework_screen_title,
                 style: CustomTextStyle.appbarTitle,
               ),
               centerTitle: true,
@@ -214,10 +214,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notification",
-          description: "Do you want to exit app?",
-          okButtonTitle: "OK",
-          cancelButtonTitle: "Cancel",
+          title: StringConstants.dialog_title,
+          description: StringConstants.exit_app_message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: StringConstants.cancel_button_title,
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
@@ -253,10 +253,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notification",
-          description: "The test is not completed! Are you sure to quit?",
-          okButtonTitle: "OK",
-          cancelButtonTitle: "Cancel",
+          title: StringConstants.dialog_title,
+          description: StringConstants.quit_the_test_message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: StringConstants.cancel_button_title,
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {

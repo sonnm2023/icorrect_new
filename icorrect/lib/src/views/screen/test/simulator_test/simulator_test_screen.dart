@@ -76,7 +76,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return const [
       Tab(
         child: Text(
-          'MY EXAM',
+          StringConstants.my_exam_tab_title,
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,
@@ -86,7 +86,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          'HIGHLIGHT',
+          StringConstants.highlight_tab_title,
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,
@@ -96,7 +96,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          'OTHERS',
+          StringConstants.others_tab_title,
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,
@@ -176,7 +176,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                         onTap: () {
                           _backButtonTapped();
                         },
-                        child:const Icon(Icons.arrow_back_rounded,
+                        child: const Icon(Icons.arrow_back_rounded,
                             color: AppColor.defaultPurpleColor),
                       ),
                       title: Text(
@@ -300,11 +300,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           context: context,
           builder: (BuildContext context) {
             return CustomAlertDialog(
-              title: "Notify",
+              title: StringConstants.dialog_title,
               description:
-                  "Your answers have changed. Do you want to save this change?",
-              okButtonTitle: "Save",
-              cancelButtonTitle: "Don't Save",
+                  StringConstants.confirm_save_change_answers_message_1,
+              okButtonTitle: StringConstants.save_button_title,
+              cancelButtonTitle: StringConstants.dont_save_button_title,
               borderRadius: 8,
               hasCloseButton: true,
               okButtonTapped: () {
@@ -367,11 +367,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: "Notification",
-                  description:
-                      "The test is not completed! Are you sure to quit?",
-                  okButtonTitle: "OK",
-                  cancelButtonTitle: "Cancel",
+                  title: StringConstants.dialog_title,
+                  description: StringConstants.quit_the_test_message,
+                  okButtonTitle: StringConstants.ok_button_title,
+                  cancelButtonTitle: StringConstants.cancel_button_title,
                   borderRadius: 8,
                   hasCloseButton: false,
                   okButtonTapped: () {
@@ -407,10 +406,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: "Notify",
-                  description: "Do you want to save this test before quit?",
-                  okButtonTitle: "Save",
-                  cancelButtonTitle: "Don't Save",
+                  title: StringConstants.dialog_title,
+                  description:
+                      StringConstants.confirm_before_quit_the_test_message,
+                  okButtonTitle: StringConstants.save_button_title,
+                  cancelButtonTitle: StringConstants.cancel_button_title,
                   borderRadius: 8,
                   hasCloseButton: true,
                   okButtonTapped: () {
@@ -463,76 +463,82 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     for (String answer in answers) {
       FileStorageHelper.deleteFile(answer, MediaType.audio,
               _simulatorTestProvider!.currentTestDetail.testId.toString())
-          .then((value) {
-        if (false == value) {
-          showToastMsg(
-            msg: "Can not delete files!",
-            toastState: ToastStatesType.warning,
-          );
-        }
-      });
+          .then(
+        (value) {
+          if (false == value) {
+            showToastMsg(
+              msg: StringConstants.can_not_delete_files_message,
+              toastState: ToastStatesType.warning,
+            );
+          }
+        },
+      );
     }
   }
 
   Widget _buildBody() {
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (kDebugMode) {
-        print("DEBUG: SimulatorTest --- build -- buildBody");
-      }
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        if (kDebugMode) {
+          print("DEBUG: SimulatorTest --- build -- buildBody");
+        }
 
-      if (provider.isDownloadProgressing) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const DownloadProgressingWidget(),
-            Visibility(
-              visible: provider.startNowAvailable,
-              child: StartNowButtonWidget(
-                startNowButtonTapped: () {
-                  _checkPermission();
-                },
-              ),
-            ),
-          ],
-        );
-      }
-
-      if (provider.isGettingTestDetail) {
-        return const DefaultLoadingIndicator(
-          color: AppColor.defaultPurpleColor,
-        );
-      } else {
-        return SizedBox(
-          child: Stack(
+        if (provider.isDownloadProgressing) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TestRoomWidget(
-                homeWorkModel: widget.homeWorkModel,
-                simulatorTestPresenter: _simulatorTestPresenter!,
-              ),
+              const DownloadProgressingWidget(),
               Visibility(
-                visible: provider.submitStatus == SubmitStatus.submitting,
-                child: const DefaultLoadingIndicator(
-                  color: AppColor.defaultPurpleColor,
+                visible: provider.startNowAvailable,
+                child: StartNowButtonWidget(
+                  startNowButtonTapped: () {
+                    _checkPermission();
+                  },
                 ),
               ),
             ],
-          ),
-        );
-      }
-    });
+          );
+        }
+
+        if (provider.isGettingTestDetail) {
+          return const DefaultLoadingIndicator(
+            color: AppColor.defaultPurpleColor,
+          );
+        } else {
+          return SizedBox(
+            child: Stack(
+              children: [
+                TestRoomWidget(
+                  homeWorkModel: widget.homeWorkModel,
+                  simulatorTestPresenter: _simulatorTestPresenter!,
+                ),
+                Visibility(
+                  visible: provider.submitStatus == SubmitStatus.submitting,
+                  child: const DefaultLoadingIndicator(
+                    color: AppColor.defaultPurpleColor,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+    );
   }
 
   Widget _buildDownloadAgain() {
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (provider.needDownloadAgain) {
-        return DownloadAgainWidget(
-          simulatorTestPresenter: _simulatorTestPresenter!,
-          myTestPresenter: null,
-        );
-      } else {
-        return const SizedBox();
-      }
-    });
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.needDownloadAgain) {
+          return DownloadAgainWidget(
+            simulatorTestPresenter: _simulatorTestPresenter!,
+            myTestPresenter: null,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   void _checkPermission() async {
@@ -543,11 +549,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (mounted) {
       _requestPermission(_microPermission!, context);
     }
-
-    //TODO
-    // if (_statuses == null) {
-    //   await _initializePermission();
-    // }
   }
 
   Future<void> _requestPermission(
@@ -579,14 +580,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (_microPermissionStatus == PermissionStatus.denied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
           // _simulatorTestProvider!.setDialogShowing(true);
-          _showConfirmDialogWithMessage(
-              "This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
+          _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
           // _showConfirmDialog();
         }
       } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
         // _simulatorTestProvider!.setDialogShowing(true);
-        _showConfirmDialogWithMessage(
-            "This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.");
+        _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
       } else {
         _startToDoTest();
       }
@@ -617,10 +616,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notification",
+          title: StringConstants.dialog_title,
           description: message,
-          okButtonTitle: "OK",
-          cancelButtonTitle: "Cancel",
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: StringConstants.cancel_button_title,
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
@@ -659,9 +658,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur. Please check your connection!",
-          okButtonTitle: "OK",
+          title: StringConstants.dialog_title,
+          description: StringConstants.network_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,

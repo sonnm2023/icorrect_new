@@ -12,12 +12,12 @@ class ContactInfoWidget extends StatefulWidget {
 
 class _ContactInfoWidgetState extends State<ContactInfoWidget> {
   PackageInfo _packageInfo = PackageInfo(
-    appName: 'Unknown',
-    packageName: 'Unknown',
-    version: 'Unknown',
-    buildNumber: 'Unknown',
-    buildSignature: 'Unknown',
-    installerStore: 'Unknown',
+    appName: StringConstants.unknown,
+    packageName: StringConstants.unknown,
+    version: StringConstants.unknown,
+    buildNumber: StringConstants.unknown,
+    buildSignature: StringConstants.unknown,
+    installerStore: StringConstants.unknown,
   );
 
   @override
@@ -47,14 +47,14 @@ class _ContactInfoWidgetState extends State<ContactInfoWidget> {
             style: CustomTextStyle.textGrey_14,
           ),
           const Text(
-            'Contact: support@ielts-correction.com',
+            StringConstants.contact,
             style: CustomTextStyle.textGrey_14,
           ),
           const SizedBox(
             height: 8,
           ),
           const Text(
-            '@Csupporter JSC',
+            StringConstants.csupporter,
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ],
@@ -62,25 +62,3 @@ class _ContactInfoWidgetState extends State<ContactInfoWidget> {
     );
   }
 }
-
-// class ContactInfoWidget extends StatelessWidget {
-//   const ContactInfoWidget({super.key});
-//
-//   // final PackageInfo info;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         children: [
-//           // Text('$_appName version $_appVersion'),
-//           Text('${info.appName} version ${info.version}'),
-//           const Text('Contact: support@ielts-correction.com'),
-//           const SizedBox(height: 8,),
-//           Text('@Csupporter JSC', style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600)),
-//         ],
-//       ),
-//     );
-//   }
-// }

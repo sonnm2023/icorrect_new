@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,7 @@ class SaveTheTestWidget extends StatelessWidget {
                   },
                   child: const Center(
                     child: Text(
-                      "SAVE THE EXAM",
+                      StringConstants.save_the_exam_button_title,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

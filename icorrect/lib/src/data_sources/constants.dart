@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:icorrect/src/models/ui_models/alert_info.dart';
+// ignore_for_file: constant_identifier_names
 
-import '../../core/app_color.dart';
+import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 enum ToastStatesType {
   success,
@@ -446,3 +447,138 @@ class LogEvent {
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";
+
+
+class StringConstants {
+  //Button Titles
+  static const String sign_in_button_title = "Sign In";
+  static const String sign_up_button_title = "Sign Up";
+  static const String forgot_password_button_title = "Forgot password?";
+  static const String save_change_button_title = "Save change";
+  static const String cancel_button_title = "Cancel";
+  static const String ok_button_title = "OK";
+  static const String close_button_title = "Close";
+  static const String done_button_title = "Done";
+  static const String clear_button_title = "Clear";
+  static const String try_again_button_title = "Try Again";
+  static const String view_sample_button_title = "View Sample";
+  static const String view_tips_button_title = "View Tips";
+  static const String back_button_title = "Back";
+  static const String view_ai_response_button_title = "View AI Response";
+  static const String update_answer_button_title =  "Update Your Answer";
+  static const String save_button_title =  "Save";
+  static const String dont_save_button_title =  "Don't Save";
+  static const String re_answer_button_title = "Re-answer";
+  static const String finish_button_title = "Finish";
+  static const String save_the_exam_button_title = "SAVE THE EXAM";
+  static const String start_now_button_title = "Start Now";
+  static const String repeat_button_title = "Repeat";
+
+  //Dialog
+  static const String dialog_title = "Notification";
+  static const String exit_app_message = "Do you want to exit app?";
+  static const String quit_the_test_message = "The test is not completed! Are you sure to quit?";
+  static const String sample_video = "Sample Video";
+  static const String sample_audio = "Sample Audio";
+  static const String confirm_to_go_out_screen = "Are you sure to back?";
+  static const String confirm_title = "Confirm";
+  static const String confirm_save_change_answers_message = "Are you sure to save change your answers?";
+  static const String confirm_save_change_answers_message_1 = "Your answers have changed. Do you want to save this change?";
+  static const String confirm_before_quit_the_test_message = "Do you want to save this test before quit?";
+  static const String confirm_reanswer_when_reviewing_message = "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?";
+  static const String confirm_save_the_test_message = "Do you want to save this test?";
+
+  //Screen Titles
+  static const String change_password_screen_title = "Change password";
+  static const String my_homework_screen_title = "MY HOMEWORK";
+  static const String tips_screen_title = "Tips for you";
+  static const String practice_screen_title = "PRACTICE";
+  static const String topics_screen_title = "Topics";
+  static const String icorrect_title = "ICORRECT";
+
+  //Tab titles
+  static const String test_detail_tab_title =  "Test Detail";
+  static const String correction_tab_title = "Correction";
+  static const String my_exam_tab_title = "MY EXAM";
+  static const String response_tab_title = "RESPONSE";
+  static const String highlight_tab_title = "HIGHLIGHT";
+  static const String others_tab_title = "OTHERS";
+  static const String filter_choose_class_tab_title = "CHOOSE CLASS";
+  static const String filter_choose_status_tab_title = "CHOOSE STATUS";
+
+  //Text
+  static const String add_your_filter = "Add your filter!";
+  static const String cue_card = "Cue Card";
+  static const String another_tips = "Another tips";
+  static const String nothing_tips = "Nothing tips for you in here";
+  static const String practice_card_part_1_title = "Part I";
+  static const String practice_card_part_1_description = "Examiner will ask general questions on familiar topic";
+  static const String practice_card_part_2_title = "Part II";
+  static const String practice_card_part_2_description = "Test ability to talk about a topic, develop your ideas about a topic and relevant";
+  static const String practice_card_part_3_title = "Part III";
+  static const String practice_card_part_3_description = "Examiner will ask you talk about topics and include the point that you can cover";
+  static const String practice_card_part_2_3_title = "Part II and III";
+  static const String practice_card_part_2_3_description = "You will take test of part II and Ill with same topic";
+  static const String practice_card_full_test_title = "Full test";
+  static const String practice_card_full_test_description = "You will take a full sample test of IELTS Speaking Test";
+  static const String selected_topics = "Selected topic (0/24)";
+  static const String downloading = "Downloading...";
+  static const String overview = "Overview";
+  static const String show_less = "Show less";
+  static const String show_more = "Show more";
+  static const String overall_score = "Overall score:";
+  static const String fluency = "Fluency:";
+  static const String lexical_resource = "Lexical Resource:";
+  static const String grammatical = "Grammatical:";
+  static const String pronunciation = "Pronunciation:";
+  static const String problem = "Problem";
+  static const String solution = "Solution";
+  static const String nothing = "Nothing in here!";
+  static const String answer_being_recorded = "Your answer is being recorded";
+  static const String confirm_access_micro_permission_message = "This app needs to grant access to the microphone in order to record the answers during the exam process. Without granting permission, you will not be able to proceed with the exam.";
+  static const String start_now_description = "Start the exam now or wait until the processing finished!";
+  static const String part_1_header = "Practice Part 1";
+  static const String part_2_header = "Practice Part 2";
+  static const String part_3_header = "Practice Part 3";
+  static const String answer_of_part_2 = "Answer of Part 2";
+  static const String csupporter = "@Csupporter JSC";
+  static const String contact = "Contact: support@ielts-correction.com";
+  static const String unknown = "Unknown";
+  static const String home_menu_item_title = "Home";
+  static const String change_password_menu_item_title = "Change password";
+  static const String logout_menu_item_title = "Logout";
+  static const String email = "Email";
+  static const String part = "Part";
+  static const String logo_text = "REACH YOUR DREAM TARGET";
+  static const String password = "Password";
+  static const String retype_password = "Retype Password";
+  static const String current_password = "Current password";
+  static const String new_password = "New password";
+  static const String confirm_new_password = "Confirm new password";
+
+  //Warning Message
+  static const String choose_filter_message = "You must choose at least one class and one status!";
+  static const String no_data_filter_message = "No data, please choose other filter!";
+  static const String test_correction_wait_response_message = "Please wait until the response from examiners is finish!";
+  static const String nothing_problem_message = "Nothing Problem in here";
+  static const String no_answer_message = "No answer in here!";
+  static const String no_data_message = "No data, please come back later!";
+  static const String re_answer_not_be_save_message = "Your re-answers will not be saved.";
+  static const String can_not_delete_files_message = "Can not delete files!";
+  static const String wait_until_the_exam_finished_message = "Please wait until the exam finished!";
+  static const String feature_not_available_message = "This feature is not available!";
+  static const String answer_must_be_greater_than_2_seconds_message = "Your answer must be greater than 2 seconds";
+  static const String no_answer_please_start_your_test_message = "Oops, No answer here, please start your test!";
+  static const String empty_email_error_message = "E-mail can't be empty";
+  static const String invalid_email_error_message = "Invalid email .Please try again !";
+  static const String empty_password_error_message = "Password can't be empty";
+  static const String password_min_lenght_message = "Your password must be longer than 6 characters.";
+  static const String password_max_lenght_message = "Your password must be shorter than 32 characters.";
+
+  //Error message
+  static const String getting_app_config_information_error_message = "Has an error when getting app config information!";
+  static const String confirm_new_password_error_message = "Confirm new password must be equal new password!";
+  static const String data_downloaded_error_message = "A part of data has not downloaded properly. Please check your internet connection and try again.";
+  static const String network_error_message = "An error occur. Please check your connection!";
+  static const String submit_test_error_messge = "An error occur, please try again later!";
+}

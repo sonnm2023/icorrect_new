@@ -42,7 +42,7 @@ class TestRecordWidget extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    const Text('You answer is being recorded'),
+                    const Text(StringConstants.answer_being_recorded),
                     const SizedBox(height: 20),
                     Image.asset(
                       'assets/images/ic_record_2.png',
@@ -140,7 +140,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: const Text(
-          'Finish',
+          StringConstants.finish_button_title,
           style: TextStyle(
             color: Colors.white,
             fontSize: 15,
@@ -166,7 +166,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: const Text(
-          'Repeat',
+          StringConstants.repeat_button_title,
           style: TextStyle(
             color: Colors.black,
             fontSize: 15,
@@ -192,7 +192,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: const Text(
-          'Cancel',
+          StringConstants.cancel_button_title,
           style: TextStyle(
             color: Colors.black,
             fontSize: 15,

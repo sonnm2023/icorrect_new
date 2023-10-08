@@ -62,31 +62,34 @@ class _StudentCorrectionState extends State<StudentCorrection>
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicator(
-        color: AppColor.defaultPurpleColor,
-        onRefresh: () {
-          return Future.delayed(
-              const Duration(
-                seconds: 1,
-              ), () {
+      color: AppColor.defaultPurpleColor,
+      onRefresh: () {
+        return Future.delayed(
+          const Duration(
+            seconds: 1,
+          ),
+          () {
             _loading?.show(context);
             _presenter!.getResponse(
               context: context,
               orderId: widget.studentResultModel.orderId.toString(),
             );
-          });
-        },
-        child: (widget.studentResultModel.haveResponse())
-            ? _buildResponseTab()
-            : Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: const Text(
-                    "Please wait until the response from examiners is finish!",
-                    textAlign: TextAlign.center,
-                    style: CustomTextStyle.textBlack_15,
-                  ),
+          },
+        );
+      },
+      child: (widget.studentResultModel.haveResponse())
+          ? _buildResponseTab()
+          : Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: const Text(
+                  StringConstants.test_correction_wait_response_message,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyle.textBlack_15,
                 ),
-              ));
+              ),
+            ),
+    );
   }
 
   Widget _buildResponseTab() {
@@ -124,7 +127,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
             Container(
               alignment: Alignment.centerLeft,
               child: const Text(
-                'Overview',
+                StringConstants.overview,
                 style: CustomTextStyle.textBoldBlack_15,
               ),
             ),
@@ -157,8 +160,8 @@ class _StudentCorrectionState extends State<StudentCorrection>
                       },
                       child: Text(
                         (appState.visibleOverviewComment)
-                            ? 'Show less'
-                            : 'Show more',
+                            ? StringConstants.show_less
+                            : StringConstants.show_more,
                         style: CustomTextStyle.textBoldBlack_14,
                         textAlign: TextAlign.justify,
                         maxLines: 4,
@@ -181,29 +184,29 @@ class _StudentCorrectionState extends State<StudentCorrection>
           children: [
             _scoreItem(
               index: 0,
-              title: 'Overall score: ${result.overallScore}',
+              title: '${StringConstants.overall_score} ${result.overallScore}',
             ),
             _scoreItem(
               index: 1,
-              title: 'Fluency : ${result.fluency}',
+              title: '${StringConstants.fluency} ${result.fluency}',
               problems: result.fluencyProblem,
               visible: appState.visibleFluency,
             ),
             _scoreItem(
               index: 2,
-              title: 'Lexical Resource : ${result.lexicalResource}',
+              title: '${StringConstants.lexical_resource} ${result.lexicalResource}',
               problems: result.lexicalResourceProblem,
               visible: appState.visibleLexical,
             ),
             _scoreItem(
               index: 3,
-              title: 'Grammatical : ${result.grammatical}',
+              title: '${StringConstants.grammatical} ${result.grammatical}',
               problems: result.grammaticalProblem,
               visible: appState.visibleGramatical,
             ),
             _scoreItem(
               index: 4,
-              title: 'Pronunciation : ${result.pronunciation}',
+              title: '${StringConstants.pronunciation} ${result.pronunciation}',
               problems: result.pronunciationProblem,
               visible: appState.visiblePronunciation,
             ),
@@ -272,8 +275,9 @@ class _StudentCorrectionState extends State<StudentCorrection>
                 style: CustomTextStyle.textWhiteBold_15,
               ),
               Visibility(
-                  visible: (problems != null && problems.isNotEmpty),
-                  child: LayoutBuilder(builder: (_, constraint) {
+                visible: (problems != null && problems.isNotEmpty),
+                child: LayoutBuilder(
+                  builder: (_, constraint) {
                     if (index != 0) {
                       if (visible!) {
                         return const Icon(
@@ -291,7 +295,9 @@ class _StudentCorrectionState extends State<StudentCorrection>
                     } else {
                       return Container();
                     }
-                  })),
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -351,7 +357,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         ),
                         SizedBox(width: CustomSize.size_10),
                         Text(
-                          'Problem',
+                          StringConstants.problem,
                           style: CustomTextStyle.textBoldBlack_14,
                         )
                       ],
@@ -371,7 +377,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         const Text(
-                          'Solution',
+                          StringConstants.solution,
                           style: CustomTextStyle.textBoldBlack_14,
                         ),
                         const SizedBox(width: CustomSize.size_10),
@@ -391,7 +397,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
               },
             )
           : EmptyWidget.init().buildNothingWidget(
-              'Nothing Problem in here',
+              StringConstants.nothing_problem_message,
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
             ),
@@ -415,7 +421,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
         child: const Text(
-          'View Sample',
+          StringConstants.view_sample_button_title,
           style: CustomTextStyle.textBoldPurple_14,
         ),
       ),

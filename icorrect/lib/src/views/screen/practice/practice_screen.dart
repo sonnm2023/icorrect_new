@@ -7,7 +7,6 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/screen/practice/topics_screen.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
-import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:provider/provider.dart';
 
 class PracticeScreen extends StatefulWidget {
@@ -33,9 +32,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //navbar items
-    final drawerItems = navbarItems(context: context, homeWorkPresenter: null);
-
     return WillPopScope(
       onWillPop: () async {
         if (_authProvider.isShowDialog) {
@@ -63,7 +59,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
           key: GlobalScaffoldKey.practiceScreenScaffoldKey,
           appBar: AppBar(
             title: const Text(
-              "PRACTICE",
+             StringConstants.practice_screen_title,
               style: CustomTextStyle.appbarTitle,
             ),
             centerTitle: true,
@@ -86,33 +82,28 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   children: [
                     _buildInPracticeCard(
                       context,
-                      title: 'Part I',
-                      des:
-                          'Examiner will ask general questions on familiar topic',
+                      title: StringConstants.practice_card_part_1_title,
+                      des: StringConstants.practice_card_part_1_description,
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: 'Part II',
-                      des:
-                          'Test ability to talk about a topic, develop your ideas about a topic and relevant',
+                      title: StringConstants.practice_card_part_2_title,
+                      des: StringConstants.practice_card_part_2_description,
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: 'Part III',
-                      des:
-                          'Examiner will ask you talk about topics and include the point that you can cover',
+                      title: StringConstants.practice_card_part_3_title,
+                      des: StringConstants.practice_card_part_3_description,
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: 'Part II and III',
-                      des:
-                          'You will take test of part II and Ill with same topic',
+                      title: StringConstants.practice_card_part_2_3_title,
+                      des: StringConstants.practice_card_part_2_3_description,
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: 'Full test',
-                      des:
-                          'You will take a full sample test of IELTS Speaking Test',
+                      title: StringConstants.practice_card_full_test_title,
+                      des: StringConstants.practice_card_full_test_description,
                     ),
                   ],
                 ),

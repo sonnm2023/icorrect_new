@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class DownloadProgressingWidget extends StatelessWidget {
                 "${testProvider.downloadingIndex}/${testProvider.total}");
           }),
           const SizedBox(height: 8),
-          const Text('Downloading...', style: TextStyle(fontSize: 15)),
+          const Text(StringConstants.downloading, style: TextStyle(fontSize: 15)),
           const SizedBox(height: 50),
         ],
       ),

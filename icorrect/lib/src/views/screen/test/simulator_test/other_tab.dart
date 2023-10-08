@@ -66,22 +66,24 @@ class _OtherTabState extends State<OtherTab>
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicator(
-        color: AppColor.defaultPurpleColor,
-        onRefresh: () {
-          return Future.delayed(
-            const Duration(seconds: 1),
-            () {
-              _getOthersHomeWork();
-            },
-          );
-        },
-        child: _buildOthersHomeWorksList());
+      color: AppColor.defaultPurpleColor,
+      onRefresh: () {
+        return Future.delayed(
+          const Duration(seconds: 1),
+          () {
+            _getOthersHomeWork();
+          },
+        );
+      },
+      child: _buildOthersHomeWorksList(),
+    );
   }
 
   Widget _buildOthersHomeWorksList() {
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (provider.otherLightHomeWorks.isNotEmpty) {
-        return ListView.builder(
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.otherLightHomeWorks.isNotEmpty) {
+          return ListView.builder(
             shrinkWrap: true,
             padding: const EdgeInsets.all(8),
             itemCount: provider.otherLightHomeWorks.length,
@@ -91,22 +93,26 @@ class _OtherTabState extends State<OtherTab>
                   StudentResultModel resultModel =
                       provider.otherLightHomeWorks.elementAt(index);
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => StudentTestDetail(
-                              studentResultModel: resultModel)));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          StudentTestDetail(studentResultModel: resultModel),
+                    ),
+                  );
                 },
                 child:
                     _othersItem(provider.otherLightHomeWorks.elementAt(index)),
               );
-            });
-      } else {
-        return EmptyWidget.init().buildNothingWidget(
-            'No data, please come back later!',
-            widthSize: CustomSize.size_100,
-            heightSize: CustomSize.size_100);
-      }
-    });
+            },
+          );
+        } else {
+          return EmptyWidget.init().buildNothingWidget(
+              StringConstants.no_data_message,
+              widthSize: CustomSize.size_100,
+              heightSize: CustomSize.size_100);
+        }
+      },
+    );
   }
 
   Widget _othersItem(StudentResultModel resultModel) {
@@ -121,13 +127,14 @@ class _OtherTabState extends State<OtherTab>
         right: CustomSize.size_10,
       ),
       decoration: BoxDecoration(
-          color: AppColor.defaultWhiteColor,
-          borderRadius: BorderRadius.circular(CustomSize.size_10),
-          border: Border.all(
-            color: AppColor.defaultPurpleColor,
-            style: BorderStyle.solid,
-            width: 0.5,
-          )),
+        color: AppColor.defaultWhiteColor,
+        borderRadius: BorderRadius.circular(CustomSize.size_10),
+        border: Border.all(
+          color: AppColor.defaultPurpleColor,
+          style: BorderStyle.solid,
+          width: 0.5,
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -189,11 +196,12 @@ class _OtherTabState extends State<OtherTab>
   void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
     Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: message,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: Colors.black,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   @override

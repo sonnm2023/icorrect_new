@@ -41,7 +41,7 @@ class TestQuestionWidget extends StatelessWidget {
             margin: const EdgeInsets.all(20),
             height: 300,
             child: const Text(
-              "Oops, No answer here, please start your test!",
+              StringConstants.no_answer_please_start_your_test_message,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 15,
@@ -67,7 +67,7 @@ class TestQuestionWidget extends StatelessWidget {
                           child: const ListTile(
                             title: Center(
                               child: Text(
-                                'Practice Part 1',
+                                StringConstants.part_1_header,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -103,7 +103,7 @@ class TestQuestionWidget extends StatelessWidget {
                           child: const ListTile(
                             title: Center(
                               child: Text(
-                                'Practice Part 2',
+                                StringConstants.part_2_header,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -139,7 +139,7 @@ class TestQuestionWidget extends StatelessWidget {
                           child: const ListTile(
                             title: Center(
                               child: Text(
-                                'Practice Part 3',
+                                StringConstants.part_3_header,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -189,7 +189,7 @@ class TestQuestionWidget extends StatelessWidget {
 
     if (question.cueCard.trim().isNotEmpty) {
       hasCueCard = true;
-      questionStr = 'Answer of Part 2';
+      questionStr = StringConstants.answer_of_part_2;
     }
 
     SimulatorTestProvider prepareSimulatorTestProvider =
@@ -283,7 +283,7 @@ class TestQuestionWidget extends StatelessWidget {
                               reAnswerCallBack(question);
                             },
                             child: const Text(
-                              "Re-answer",
+                              StringConstants.re_answer_button_title,
                               style: TextStyle(
                                 color: AppColor.defaultPurpleColor,
                                 fontWeight: FontWeight.w700,
@@ -303,7 +303,7 @@ class TestQuestionWidget extends StatelessWidget {
                                   showTipCallBack(question);
                                 },
                                 child: const Text(
-                                  "View tips",
+                                  StringConstants.view_tips_button_title,
                                   style: TextStyle(
                                     color: AppColor.defaultPurpleColor,
                                     fontSize: 14,
@@ -355,7 +355,7 @@ class TestQuestionWidget extends StatelessWidget {
       simulatorTestProvider.setShowFullImage(true);
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }

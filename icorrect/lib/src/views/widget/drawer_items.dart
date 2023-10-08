@@ -21,7 +21,7 @@ Widget navbarItems({
       ),
       ListTile(
         title: const Text(
-          "Home",
+          StringConstants.home_menu_item_title,
           style: CustomTextStyle.textGrey_15,
         ),
         leading: const Icon(
@@ -60,7 +60,7 @@ Widget navbarItems({
       ),*/
       ListTile(
         title: const Text(
-          "Change password",
+          StringConstants.change_password_menu_item_title,
           style: CustomTextStyle.textGrey_15,
         ),
         leading: const Icon(
@@ -79,7 +79,7 @@ Widget navbarItems({
       ),
       ListTile(
         title: const Text(
-          "Logout",
+          StringConstants.logout_menu_item_title,
           style: CustomTextStyle.textGrey_15,
         ),
         leading: const Icon(

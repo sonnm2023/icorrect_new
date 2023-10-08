@@ -142,116 +142,122 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   Widget _buildMyTest() {
-    return Consumer<StudentTestProvider>(builder: (context, provider, child) {
-      if (provider.isDownloading) {
-        return const DownloadProgressingWidget();
-      } else {
-        return Stack(
-          children: [
-            Column(
-              children: [
-                // Expanded(flex: 5, child: VideoMyTest()),
-                Expanded(
+    return Consumer<StudentTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.isDownloading) {
+          return const DownloadProgressingWidget();
+        } else {
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  // Expanded(flex: 5, child: VideoMyTest()),
+                  Expanded(
                     flex: 9,
                     child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: provider.myAnswerOfQuestions.length,
-                        itemBuilder: (context, index) {
-                          return _questionItem(
-                              provider.myAnswerOfQuestions[index]);
-                        })),
-              ],
-            ),
-            provider.needDownloadAgain
-                ? DownloadAgainWidget(
-                    simulatorTestPresenter: null,
-                    otherStudentTestPresenter: _presenter,
-                  )
-                : const SizedBox(),
-          ],
-        );
-      }
-    });
+                      shrinkWrap: true,
+                      itemCount: provider.myAnswerOfQuestions.length,
+                      itemBuilder: (context, index) {
+                        return _questionItem(
+                            provider.myAnswerOfQuestions[index]);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              provider.needDownloadAgain
+                  ? DownloadAgainWidget(
+                      simulatorTestPresenter: null,
+                      otherStudentTestPresenter: _presenter,
+                    )
+                  : const SizedBox(),
+            ],
+          );
+        }
+      },
+    );
   }
 
   Widget _questionItem(QuestionTopicModel question) {
-    return Consumer<StudentTestProvider>(builder: (context, provider, child) {
-      return Card(
-        elevation: 2,
-        child: LayoutBuilder(builder: (_, constraint) {
-          return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_10,
-              vertical: CustomSize.size_10,
-            ),
-            margin: const EdgeInsets.only(
-              top: CustomSize.size_10,
-            ),
-            width: constraint.maxWidth,
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                (provider.playAnswer &&
-                        question.id.toString() == provider.questionId)
-                    ? InkWell(
-                        onTap: () async {
-                          widget.provider
-                              .setPlayAnswer(false, question.id.toString());
-                          _stopAudio();
-                        },
-                        child: const Image(
-                          image: AssetImage(AppAsset.play),
-                          width: CustomSize.size_50,
-                          height: CustomSize.size_50,
-                        ),
-                      )
-                    : InkWell(
-                        onTap: () async {
-                          _onClickPlayAnswer(question);
-                        },
-                        child: const Image(
-                          image: AssetImage(AppAsset.stop),
-                          width: CustomSize.size_50,
-                          height: CustomSize.size_50,
-                        ),
-                      ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      left: CustomSize.size_10,
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          question.content.toString(),
-                          style: CustomTextStyle.textBlack_14,
-                        ),
-                        const SizedBox(height: CustomSize.size_10),
-                        InkWell(
-                          onTap: () {
-                            _showTips(question);
+    return Consumer<StudentTestProvider>(
+      builder: (context, provider, child) {
+        return Card(
+          elevation: 2,
+          child: LayoutBuilder(builder: (_, constraint) {
+            return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: CustomSize.size_10,
+                vertical: CustomSize.size_10,
+              ),
+              margin: const EdgeInsets.only(
+                top: CustomSize.size_10,
+              ),
+              width: constraint.maxWidth,
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  (provider.playAnswer &&
+                          question.id.toString() == provider.questionId)
+                      ? InkWell(
+                          onTap: () async {
+                            widget.provider
+                                .setPlayAnswer(false, question.id.toString());
+                            _stopAudio();
                           },
-                          child: (question.tips.isNotEmpty)
-                              ? const Text(
-                                  'View Tips',
-                                  style: CustomTextStyle.textBoldPurple_14,
-                                )
-                              : Container(),
+                          child: const Image(
+                            image: AssetImage(AppAsset.play),
+                            width: CustomSize.size_50,
+                            height: CustomSize.size_50,
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () async {
+                            _onClickPlayAnswer(question);
+                          },
+                          child: const Image(
+                            image: AssetImage(AppAsset.stop),
+                            width: CustomSize.size_50,
+                            height: CustomSize.size_50,
+                          ),
                         ),
-                      ],
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        left: CustomSize.size_10,
+                      ),
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            question.content.toString(),
+                            style: CustomTextStyle.textBlack_14,
+                          ),
+                          const SizedBox(height: CustomSize.size_10),
+                          InkWell(
+                            onTap: () {
+                              _showTips(question);
+                            },
+                            child: (question.tips.isNotEmpty)
+                                ? const Text(
+                                    StringConstants.view_tips_button_title,
+                                    style: CustomTextStyle.textBoldPurple_14,
+                                  )
+                                : Container(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          );
-        }),
-      );
-    });
+                  )
+                ],
+              ),
+            );
+          }),
+        );
+      },
+    );
   }
 
   Future _onClickPlayAnswer(QuestionTopicModel question) async {
@@ -262,9 +268,10 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           questionId: question.id.toString());
     } else {
       Fluttertoast.showToast(
-          msg: 'No answer in here !',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM);
+        msg: StringConstants.no_answer_message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
     }
   }
 
@@ -299,34 +306,35 @@ class _TestDetailScreenState extends State<TestDetailScreen>
             true, GlobalScaffoldKey.showTipScaffoldKey);
 
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        enableDrag: false,
-        barrierColor: AppColor.defaultGrayColor,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      enableDrag: false,
+      barrierColor: AppColor.defaultGrayColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
-        builder: (_) {
-          return TipQuestionDialog.tipQuestionDialog(
-              context, questionTopicModel);
-        });
+      ),
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 20),
+      builder: (_) {
+        return TipQuestionDialog.tipQuestionDialog(context, questionTopicModel);
+      },
+    );
   }
 
   @override
   void downloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
     Fluttertoast.showToast(
-        msg: alertInfo.description,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: alertInfo.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: Colors.black,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   @override
@@ -374,9 +382,9 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur. Please check your connection!",
-          okButtonTitle: "OK",
+          title: StringConstants.dialog_title,
+          description: StringConstants.network_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
