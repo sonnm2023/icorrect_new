@@ -20,6 +20,8 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:workmanager/workmanager.dart';
 
+import '../video_authentication/submit_video_auth.dart';
+
 class HomeWorkScreen extends StatefulWidget {
   final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
 
@@ -38,7 +40,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   //         Tab(text: 'NEXT HOMEWORK'),
   //       ],
   //     );
-  
+
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
@@ -89,7 +91,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async {
         if (_authProvider.isShowDialog) {
@@ -162,7 +163,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 Consumer<HomeWorkProvider>(
                   builder: (context, homeWorkProvider, child) {
                     if (kDebugMode) {
-                      print("DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
+                      print(
+                          "DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
                     }
                     if (homeWorkProvider.isProcessing) {
                       return Container(
@@ -175,7 +177,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                             height: 50,
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(100)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100)),
                                 color: Colors.white),
                             child: const CircularProgressIndicator(
                               strokeWidth: 4,
@@ -194,7 +197,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ),
               ],
             ),
-            drawer: Utils.navbar(context: context, homeWorkPresenter: _homeWorkPresenter),
+            drawer: Utils.navbar(
+                context: context, homeWorkPresenter: _homeWorkPresenter),
             drawerEnableOpenDragGesture: false,
           ),
         ),
@@ -309,8 +313,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onGetListHomeworkComplete(
-      List<ActivitiesModel> activities, List<NewClassModel> classes, String serverCurrentTime) async {
+  void onGetListHomeworkComplete(List<ActivitiesModel> activities,
+      List<NewClassModel> classes, String serverCurrentTime) async {
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -23,7 +24,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
           url,
           true,
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       return response.body;
     });

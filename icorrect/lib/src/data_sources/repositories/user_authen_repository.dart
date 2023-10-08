@@ -1,35 +1,33 @@
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
-// ignore: depend_on_referenced_packages
+
+import 'app_repository.dart';
 import 'package:http/http.dart' as http;
 
-abstract class SimulatorTestRepository {
-  Future<String> getTestDetail(String homeworkId, String distributeCode);
-  Future<String> submitTest(http.MultipartRequest multiRequest);
+abstract class UserAuthRepository {
+  Future<String> getUserAuthDetail();
+  Future<String> submitAuth(http.MultipartRequest multiRequest);
 }
 
-class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
+class UserAuthRepositoryImpl implements UserAuthRepository {
   @override
-  Future<String> getTestDetail(String homeworkId, String distributeCode) {
-    String url = '$apiDomain$getTestInfoEP';
-
+  Future<String> getUserAuthDetail() {
+    String url = getUserAuthDetailEP();
     return AppRepository.init()
         .sendRequest(
-      RequestMethod.post,
-      url,
-      true,
-      body: <String, String>{'activity_id': homeworkId, 'distribute_code': distributeCode},
-    )
+          RequestMethod.get,
+          url,
+          true,
+        )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
     });
   }
-
+  
   @override
-  Future<String> submitTest(http.MultipartRequest multiRequest) async {
+  Future<String> submitAuth(http.MultipartRequest multiRequest) async{
     return await multiRequest
         .send()
         .timeout(const Duration(seconds: timeout))
@@ -40,11 +38,14 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;
+        }).catchError((onError) {
+          return '';
         });
       } else {
         return '';
       }
+    }).catchError((onError) {
+      return '';
     });
   }
-
 }
