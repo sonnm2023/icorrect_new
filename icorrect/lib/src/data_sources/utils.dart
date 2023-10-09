@@ -372,6 +372,7 @@ class Utils {
     }
     if (fileExtension == 'wav' ||
         fileExtension == 'mp3' ||
+        fileExtension == 'm4a' ||
         fileExtension == 'aac') {
       return StringClass.audio;
     }
