@@ -252,6 +252,11 @@ class _MyTestTabState extends State<MyTestTab>
           print('DEBUG:App detached');
         }
         break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG:App hidden');
+        }
+        break;
     }
   }
 
@@ -300,7 +305,7 @@ class _MyTestTabState extends State<MyTestTab>
     if (_checkAnswerDuration()) {
       return;
     }
-    
+
     widget.provider.setReAnswerOfQuestions(question);
     int index = widget.provider.myAnswerOfQuestions.indexWhere(
         (q) => q.id == question.id && q.repeatIndex == question.repeatIndex);
@@ -502,7 +507,8 @@ class _MyTestTabState extends State<MyTestTab>
                                           _onClickReanswer(provider, question);
                                         },
                                         child: const Text(
-                                          StringConstants.re_answer_button_title,
+                                          StringConstants
+                                              .re_answer_button_title,
                                           style:
                                               CustomTextStyle.textBoldPurple_14,
                                         ),
@@ -517,7 +523,8 @@ class _MyTestTabState extends State<MyTestTab>
                                   },
                                   child: (question.tips.isNotEmpty)
                                       ? const Text(
-                                          StringConstants.view_tips_button_title,
+                                          StringConstants
+                                              .view_tips_button_title,
                                           style:
                                               CustomTextStyle.textBoldPurple_14,
                                         )
@@ -586,7 +593,8 @@ class _MyTestTabState extends State<MyTestTab>
       if (widget.provider.visibleRecord) {
         audioFile = '${await Utils.generateAudioFileName()}.wav';
 
-        timer = _presenter!.startCountDown(context: context, count: 30, isLessThan2Seconds: true);
+        timer = _presenter!.startCountDown(
+            context: context, count: 30, isLessThan2Seconds: true);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:

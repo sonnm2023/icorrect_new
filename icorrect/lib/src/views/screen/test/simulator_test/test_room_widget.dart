@@ -151,6 +151,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print('DEBUG: App detached');
         }
         break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG: App hidden');
+        }
+        break;
     }
   }
 
@@ -180,8 +185,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 ),
                 child: _buildVideoPlayerView(),
               ),
-              ( _isExam &&
-                _cameraService!.cameraController != null &&
+              (_isExam &&
+                      _cameraService!.cameraController != null &&
                       provider.visibleCameraLive)
                   ? Container(
                       alignment: Alignment.bottomRight,
@@ -502,7 +507,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (kDebugMode) {
         print("RECORDING_VIDEO :Stop Recoring And Save Video By Limited Time");
       }
-    } 
+    }
   }
 
   void _hideCameraLive() {
@@ -1684,7 +1689,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
-    File? videoConfirmFile = _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+    File? videoConfirmFile =
+        _isExam ? _simulatorTestProvider!.savedVideoFile : null;
 
     _testRoomPresenter!.submitTest(
       context: context,

@@ -416,6 +416,8 @@ class TestRoomPresenter {
     if (null != logAction) {
       if (logAction.isNotEmpty) {
         formData.addEntries([MapEntry('log_action', logAction.toString())]);
+      } else {
+        formData.addEntries([const MapEntry('log_action', '[]')]);
       }
     }
 
@@ -467,6 +469,8 @@ class TestRoomPresenter {
     }
 
     if (null != videoConfirmFile) {
+      String fileName = videoConfirmFile.path.split('/').last;
+      formData.addEntries([MapEntry('video_confirm', fileName)]);
       request.files
           .add(await http.MultipartFile.fromPath('video_confirm', videoConfirmFile.path));
     }
