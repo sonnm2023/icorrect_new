@@ -13,7 +13,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
   Future<String> getListHomeWork(String email, String status) {
     Map<String, String> queryParameters = {'email': email, 'status': status};
     String url = getActivitiesList(queryParameters);
-            
+
     if (kDebugMode) {
       print('DEBUG: HomeWorkRepositoryImpl - url :$url');
     }
@@ -23,7 +23,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
           url,
           true,
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
       return response.body;
     });

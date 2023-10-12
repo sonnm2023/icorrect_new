@@ -28,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
           false,
           body: <String, String>{'email': email, 'password': password},
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;
@@ -56,7 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'os': os
           },
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
           return response.body;
         });
@@ -72,7 +72,7 @@ class AuthRepositoryImpl implements AuthRepository {
           url,
           true,
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -98,7 +98,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'password_confirmation': confirmNewPassword,
           },
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
           return response.body;
         });
@@ -116,7 +116,7 @@ class AuthRepositoryImpl implements AuthRepository {
           url,
           false,
         )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
       return response.body;
     });
