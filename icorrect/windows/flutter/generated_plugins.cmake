@@ -8,6 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_localization
   permission_handler_windows
   record_windows
+  url_launcher_windows
   video_player_win
 )
 

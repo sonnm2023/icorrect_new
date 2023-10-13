@@ -33,6 +33,7 @@ import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyTestTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
@@ -153,8 +154,13 @@ class _MyTestTabState extends State<MyTestTab>
                 ? LayoutBuilder(
                     builder: (_, constraint) {
                       return InkWell(
-                        onTap: () {
-                          _showAiResponse();
+                        onTap: () async {
+                          String aiResponseLink = await aiResponseEP(widget
+                              .homeWorkModel.activityAnswer!.aiOrder
+                              .toString());
+                          Uri toLaunch = Uri.parse(aiResponseLink);
+
+                          await launchUrl(toLaunch);
                         },
                         child: Container(
                           height: 50,
@@ -215,91 +221,6 @@ class _MyTestTabState extends State<MyTestTab>
                 : const SizedBox(),
           ],
         );
-        // if (provider.isDownloading) {
-        //   return const DownloadProgressingWidget();
-        // } else {
-        //   return Stack(
-        //     alignment: Alignment.bottomCenter,
-        //     children: [
-        //       Container(
-        //         alignment: Alignment.topCenter,
-        //         padding: const EdgeInsets.only(top: 10, bottom: 70),
-        //         child: ListView.builder(
-        //           shrinkWrap: true,
-        //           itemCount: provider.myAnswerOfQuestions.length,
-        //           itemBuilder: (context, index) {
-        //             return _questionItem(provider.myAnswerOfQuestions[index]);
-        //           },
-        //         ),
-        //       ),
-        //       (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
-        //           ? LayoutBuilder(
-        //               builder: (_, constraint) {
-        //                 return InkWell(
-        //                   onTap: () {
-        //                     _showAiResponse();
-        //                   },
-        //                   child: Container(
-        //                     height: 50,
-        //                     padding: const EdgeInsets.symmetric(
-        //                       vertical: CustomSize.size_10,
-        //                     ),
-        //                     color: Colors.green,
-        //                     width: constraint.maxWidth,
-        //                     child: const Center(
-        //                       child: Text(
-        //                         StringConstants.view_ai_response_button_title,
-        //                         style: CustomTextStyle.textWhiteBold_16,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 );
-        //               },
-        //             )
-        //           : Container(),
-        //       TestRecordWidget(
-        //         finishAnswer: (currentQuestion) {
-        //           _onFinishReanswer(currentQuestion);
-        //         },
-        //         cancelAnswer: () {
-        //           _onCancelReanswer();
-        //         },
-        //       ),
-        //       (provider.reAnswerOfQuestions.isNotEmpty &&
-        //               !provider.visibleRecord)
-        //           ? LayoutBuilder(
-        //               builder: (_, constraint) {
-        //                 return InkWell(
-        //                   onTap: () {
-        //                     _showDialogConfirmSaveChange(provider: provider);
-        //                   },
-        //                   child: Container(
-        //                     height: 50,
-        //                     padding: const EdgeInsets.symmetric(
-        //                       vertical: CustomSize.size_10,
-        //                     ),
-        //                     color: AppColor.defaultPurpleColor,
-        //                     width: constraint.maxWidth,
-        //                     child: const Center(
-        //                       child: Text(
-        //                         StringConstants.update_answer_button_title,
-        //                         style: CustomTextStyle.textWhiteBold_16,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 );
-        //               },
-        //             )
-        //           : Container(),
-        //       provider.needDownloadAgain
-        //           ? const DownloadAgainWidget(
-        //               simulatorTestPresenter: null,
-        //               myTestPresenter: null,
-        //             )
-        //           : const SizedBox(),
-        //     ],
-        //   );
-        // }
       },
     );
   }
@@ -437,77 +358,6 @@ class _MyTestTabState extends State<MyTestTab>
     _stopCountTimer();
     widget.provider.setCountDownTimer(null);
     _record.stop();
-  }
-
-  _showAiResponse() {
-    Provider.of<AuthProvider>(context, listen: false)
-        .setShowDialogWithGlobalScaffoldKey(
-            true, GlobalScaffoldKey.aiResponseScaffoldKey);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      enableDrag: false,
-      barrierColor: AppColor.defaultGrayColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(CustomSize.size_20),
-          topRight: Radius.circular(CustomSize.size_20),
-        ),
-      ),
-      constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height - CustomSize.size_20),
-      builder: (_) {
-        return FutureBuilder(
-          future: aiResponseEP(
-              widget.homeWorkModel.activityAnswer!.aiOrder.toString()),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.hasData) {
-              return Scaffold(
-                key: GlobalScaffoldKey.aiResponseScaffoldKey,
-                body: Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                        top: CustomSize.size_10,
-                      ),
-                      child: AiResponse(
-                        url: snapshot.data.toString(),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(CustomSize.size_10),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(
-                          Icons.cancel_outlined,
-                          color: AppColor.defaultBlackColor,
-                          size: CustomSize.size_25,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return Container(
-              height: CustomSize.size_400,
-              color: Colors.white,
-              child: const Center(
-                child: Text(
-                  StringConstants.nothing,
-                  style: CustomTextStyle.textGrey_15,
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   Widget _questionItem(QuestionTopicModel question) {

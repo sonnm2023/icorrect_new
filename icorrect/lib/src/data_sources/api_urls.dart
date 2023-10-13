@@ -5,6 +5,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 
 const apiDomain = "http://api.ielts-correction.com/";
 const icorrectDomain = "https://ielts-correction.com/";
+const icorrectDomain1 = "ielts-correction.com";
 const publicDomain = "http://public.icorrect.vn/";
 const toolDomain = "http://tool.ielts-correction.com/";
 
