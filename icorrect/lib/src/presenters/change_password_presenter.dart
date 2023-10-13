@@ -64,12 +64,12 @@ class ChangePasswordPresenter {
         Utils.prepareLogData(
           log: log,
           data: null,
-          message: "Change password error: ${dataMap['error_code']}${dataMap['status']}",
+          message:
+              "Change password error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
         );
 
-        _view!.onChangePasswordError(
-            "Change password error: ${dataMap['error_code']}${dataMap['status']}");
+        _view!.onChangePasswordError(StringConstants.common_error_messge);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -82,7 +82,7 @@ class ChangePasswordPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onChangePasswordError(onError.toString());
+        _view!.onChangePasswordError(StringConstants.common_error_messge);
       },
     );
   }

@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -47,6 +48,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   bool isOffline = false;
   StreamSubscription? connection;
+  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -86,7 +88,17 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   void _getData() async {
     await _presenter!.initializeData();
-    _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+    var connectivity = await connectivityService.checkConnectivity();
+
+    if (connectivity.name != "none") {
+      _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+    } else {
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+      }
+      Utils.showConnectionErrorDialog(context);
+    }
   }
 
   @override

@@ -93,8 +93,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(
-            "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}");
+        _view!.onGetListHomeworkError(StringConstants.common_error_messge);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -107,7 +106,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(onError.toString());
+        _view!.onGetListHomeworkError(StringConstants.common_error_messge);
       },
     );
   }
@@ -173,8 +172,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLogoutError(
-            "Logout error: ${dataMap['error_code']}${dataMap['status']}");
+        _view!.onLogoutError(StringConstants.common_error_messge);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -187,7 +185,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLogoutError(onError.toString());
+        _view!.onLogoutError(StringConstants.common_error_messge);
       },
     );
   }

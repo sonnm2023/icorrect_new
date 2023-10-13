@@ -23,7 +23,6 @@ class MyTestProvider extends ChangeNotifier {
     setResultResponseModel(ResultResponseModel());
     setOtherLightHomeWorks([]);
     setHighLightHomeworks([]);
-    setDownloadingFile(false);
     setTotal(0);
     updateDownloadingIndex(0);
     updateDownloadingPercent(0);
@@ -39,16 +38,6 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   ///////////////My Test Screen/////////////////////////////////////////////////
-
-  bool _isDownloading = false;
-  bool get isDownloading => _isDownloading;
-
-  void setDownloadingFile(bool downloading) {
-    _isDownloading = downloading;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
 
   int _total = 0;
   int get total => _total;
@@ -290,7 +279,7 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   bool _isLessThan2Second = true;
-  bool get isLessThan2Second  => _isLessThan2Second;
+  bool get isLessThan2Second => _isLessThan2Second;
   void setIsLessThan2Second(bool isLess) {
     _isLessThan2Second = isLess;
 

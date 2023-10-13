@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -490,7 +491,8 @@ class Utils {
   }) {
     return Drawer(
       backgroundColor: AppColor.defaultWhiteColor,
-      child: navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
+      child:
+          navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
     );
   }
 
@@ -629,9 +631,19 @@ class Utils {
           cancelButtonTitle: "Cancel",
           borderRadius: 8,
           hasCloseButton: false,
-          okButtonTapped: () {
+          okButtonTapped: () async {
             if (null != homeWorkPresenter) {
-              homeWorkPresenter.logout(context);
+              var connectivity =
+                  await ConnectivityService().checkConnectivity();
+              if (connectivity.name != "none") {
+                homeWorkPresenter.logout(context);
+              } else {
+                //Show connect error here
+                if (kDebugMode) {
+                  print("DEBUG: Connect error here!");
+                }
+                Utils.showConnectionErrorDialog(context);
+              }
             } else {
               Navigator.of(context).pop();
             }
@@ -768,9 +780,11 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != "none") { //NOT Action log
-      DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
-      DateTime responseTime =  DateTime.now();
+    if (status != "none") {
+      //NOT Action log
+      DateTime createdTime =
+          DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+      DateTime responseTime = DateTime.now();
 
       Duration diff = responseTime.difference(createdTime);
 
@@ -878,5 +892,25 @@ class Utils {
         print("DEBUG: Delete log file error: ${e.toString()}");
       }
     }
+  }
+
+  static void showConnectionErrorDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: StringConstants.dialog_title,
+          description: StringConstants.network_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
   }
 }

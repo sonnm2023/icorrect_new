@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -27,7 +28,6 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
-import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -57,6 +57,7 @@ class _MyTestTabState extends State<MyTestTab>
   StreamSubscription? connection;
   String audioFile = "";
   Timer? timer;
+  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -95,16 +96,26 @@ class _MyTestTabState extends State<MyTestTab>
   void _prepareDataForMyTestDetail() async {
     final status = await Permission.microphone.status;
     await _presenter!.initializeData();
-    _presenter!.getMyTest(
-      context: context,
-      activityId: widget.homeWorkModel.activityId.toString(),
-      testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
-    );
+    var connectivity = await connectivityService.checkConnectivity();
 
-    Future.delayed(Duration.zero, () {
-      widget.provider.setPermissionRecord(status);
-      widget.provider.setDownloadingFile(true);
-    });
+    if (connectivity.name != "none") {
+      _presenter!.getMyTest(
+        context: context,
+        activityId: widget.homeWorkModel.activityId.toString(),
+        testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
+      );
+
+      Future.delayed(Duration.zero, () {
+        widget.provider.setPermissionRecord(status);
+      });
+    } else {
+      _loading!.hide();
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+      }
+      Utils.showConnectionErrorDialog(context);
+    }
   }
 
   @override
@@ -124,91 +135,171 @@ class _MyTestTabState extends State<MyTestTab>
   Widget _buildMyTest() {
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
-        if (provider.isDownloading) {
-          return const DownloadProgressingWidget();
-        } else {
-          return Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Container(
-                alignment: Alignment.topCenter,
-                padding: const EdgeInsets.only(top: 10, bottom: 70),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: provider.myAnswerOfQuestions.length,
-                  itemBuilder: (context, index) {
-                    return _questionItem(provider.myAnswerOfQuestions[index]);
-                  },
-                ),
-              ),
-              (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
-                  ? LayoutBuilder(
-                      builder: (_, constraint) {
-                        return InkWell(
-                          onTap: () {
-                            _showAiResponse();
-                          },
-                          child: Container(
-                            height: 50,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: CustomSize.size_10,
-                            ),
-                            color: Colors.green,
-                            width: constraint.maxWidth,
-                            child: const Center(
-                              child: Text(
-                                StringConstants.view_ai_response_button_title,
-                                style: CustomTextStyle.textWhiteBold_16,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : Container(),
-              TestRecordWidget(
-                finishAnswer: (currentQuestion) {
-                  _onFinishReanswer(currentQuestion);
-                },
-                cancelAnswer: () {
-                  _onCancelReanswer();
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.only(top: 10, bottom: 70),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: provider.myAnswerOfQuestions.length,
+                itemBuilder: (context, index) {
+                  return _questionItem(provider.myAnswerOfQuestions[index]);
                 },
               ),
-              (provider.reAnswerOfQuestions.isNotEmpty &&
-                      !provider.visibleRecord)
-                  ? LayoutBuilder(
-                      builder: (_, constraint) {
-                        return InkWell(
-                          onTap: () {
-                            _showDialogConfirmSaveChange(provider: provider);
-                          },
-                          child: Container(
-                            height: 50,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: CustomSize.size_10,
-                            ),
-                            color: AppColor.defaultPurpleColor,
-                            width: constraint.maxWidth,
-                            child: const Center(
-                              child: Text(
-                                StringConstants.update_answer_button_title,
-                                style: CustomTextStyle.textWhiteBold_16,
-                              ),
+            ),
+            (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
+                ? LayoutBuilder(
+                    builder: (_, constraint) {
+                      return InkWell(
+                        onTap: () {
+                          _showAiResponse();
+                        },
+                        child: Container(
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: CustomSize.size_10,
+                          ),
+                          color: Colors.green,
+                          width: constraint.maxWidth,
+                          child: const Center(
+                            child: Text(
+                              StringConstants.view_ai_response_button_title,
+                              style: CustomTextStyle.textWhiteBold_16,
                             ),
                           ),
-                        );
-                      },
-                    )
-                  : Container(),
-              provider.needDownloadAgain
-                  ? const DownloadAgainWidget(
-                      simulatorTestPresenter: null,
-                      myTestPresenter: null,
-                    )
-                  : const SizedBox(),
-            ],
-          );
-        }
+                        ),
+                      );
+                    },
+                  )
+                : Container(),
+            TestRecordWidget(
+              finishAnswer: (currentQuestion) {
+                _onFinishReanswer(currentQuestion);
+              },
+              cancelAnswer: () {
+                _onCancelReanswer();
+              },
+            ),
+            (provider.reAnswerOfQuestions.isNotEmpty && !provider.visibleRecord)
+                ? LayoutBuilder(
+                    builder: (_, constraint) {
+                      return InkWell(
+                        onTap: () {
+                          _showDialogConfirmSaveChange(provider: provider);
+                        },
+                        child: Container(
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: CustomSize.size_10,
+                          ),
+                          color: AppColor.defaultPurpleColor,
+                          width: constraint.maxWidth,
+                          child: const Center(
+                            child: Text(
+                              StringConstants.update_answer_button_title,
+                              style: CustomTextStyle.textWhiteBold_16,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : Container(),
+            provider.needDownloadAgain
+                ? const DownloadAgainWidget(
+                    simulatorTestPresenter: null,
+                    myTestPresenter: null,
+                  )
+                : const SizedBox(),
+          ],
+        );
+        // if (provider.isDownloading) {
+        //   return const DownloadProgressingWidget();
+        // } else {
+        //   return Stack(
+        //     alignment: Alignment.bottomCenter,
+        //     children: [
+        //       Container(
+        //         alignment: Alignment.topCenter,
+        //         padding: const EdgeInsets.only(top: 10, bottom: 70),
+        //         child: ListView.builder(
+        //           shrinkWrap: true,
+        //           itemCount: provider.myAnswerOfQuestions.length,
+        //           itemBuilder: (context, index) {
+        //             return _questionItem(provider.myAnswerOfQuestions[index]);
+        //           },
+        //         ),
+        //       ),
+        //       (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
+        //           ? LayoutBuilder(
+        //               builder: (_, constraint) {
+        //                 return InkWell(
+        //                   onTap: () {
+        //                     _showAiResponse();
+        //                   },
+        //                   child: Container(
+        //                     height: 50,
+        //                     padding: const EdgeInsets.symmetric(
+        //                       vertical: CustomSize.size_10,
+        //                     ),
+        //                     color: Colors.green,
+        //                     width: constraint.maxWidth,
+        //                     child: const Center(
+        //                       child: Text(
+        //                         StringConstants.view_ai_response_button_title,
+        //                         style: CustomTextStyle.textWhiteBold_16,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 );
+        //               },
+        //             )
+        //           : Container(),
+        //       TestRecordWidget(
+        //         finishAnswer: (currentQuestion) {
+        //           _onFinishReanswer(currentQuestion);
+        //         },
+        //         cancelAnswer: () {
+        //           _onCancelReanswer();
+        //         },
+        //       ),
+        //       (provider.reAnswerOfQuestions.isNotEmpty &&
+        //               !provider.visibleRecord)
+        //           ? LayoutBuilder(
+        //               builder: (_, constraint) {
+        //                 return InkWell(
+        //                   onTap: () {
+        //                     _showDialogConfirmSaveChange(provider: provider);
+        //                   },
+        //                   child: Container(
+        //                     height: 50,
+        //                     padding: const EdgeInsets.symmetric(
+        //                       vertical: CustomSize.size_10,
+        //                     ),
+        //                     color: AppColor.defaultPurpleColor,
+        //                     width: constraint.maxWidth,
+        //                     child: const Center(
+        //                       child: Text(
+        //                         StringConstants.update_answer_button_title,
+        //                         style: CustomTextStyle.textWhiteBold_16,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 );
+        //               },
+        //             )
+        //           : Container(),
+        //       provider.needDownloadAgain
+        //           ? const DownloadAgainWidget(
+        //               simulatorTestPresenter: null,
+        //               myTestPresenter: null,
+        //             )
+        //           : const SizedBox(),
+        //     ],
+        //   );
+        // }
       },
     );
   }
@@ -709,7 +800,6 @@ class _MyTestTabState extends State<MyTestTab>
     widget.provider.updateDownloadingPercent(percent);
     widget.provider.updateDownloadingIndex(index);
     if (index == total) {
-      widget.provider.setDownloadingFile(false);
       widget.provider.setTotal(0);
       widget.provider.updateDownloadingPercent(0.0);
       widget.provider.updateDownloadingIndex(0);
@@ -801,7 +891,6 @@ class _MyTestTabState extends State<MyTestTab>
     if (kDebugMode) {
       print("DEBUG: TODO: implement onReDownload");
     }
-    widget.provider.setDownloadingFile(false);
     widget.provider.setNeedDownloadAgain(true);
   }
 
@@ -824,6 +913,5 @@ class _MyTestTabState extends State<MyTestTab>
 
   void updateStatusForReDownload() {
     widget.provider.setNeedDownloadAgain(false);
-    widget.provider.setDownloadingFile(true);
   }
 }

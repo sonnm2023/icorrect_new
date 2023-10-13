@@ -5,9 +5,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
@@ -58,6 +60,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   StreamSubscription? connection;
   bool isOffline = false;
   CircleLoading? _loading;
+  final connectivityService = ConnectivityService();
 
   TabBar get _tabBar {
     return TabBar(
@@ -580,12 +583,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (_microPermissionStatus == PermissionStatus.denied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
           // _simulatorTestProvider!.setDialogShowing(true);
-          _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
+          _showConfirmDialogWithMessage(
+              StringConstants.confirm_access_micro_permission_message);
           // _showConfirmDialog();
         }
       } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
         // _simulatorTestProvider!.setDialogShowing(true);
-        _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
+        _showConfirmDialogWithMessage(
+            StringConstants.confirm_access_micro_permission_message);
       } else {
         _startToDoTest();
       }
@@ -638,9 +643,18 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
-    _simulatorTestPresenter!.getTestDetail(
-        context: context,
-        homeworkId: widget.homeWorkModel.activityId.toString());
+    var connectivity = await connectivityService.checkConnectivity();
+    if (connectivity.name != "none") {
+      _simulatorTestPresenter!.getTestDetail(
+          context: context,
+          homeworkId: widget.homeWorkModel.activityId.toString());
+    } else {
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+      }
+      Utils.showConnectionErrorDialog(context);
+    }
   }
 
   void _startToDoTest() {
