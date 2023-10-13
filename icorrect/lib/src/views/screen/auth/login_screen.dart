@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -79,7 +81,17 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _initializePermission() async {
-    _writeFilePermission = Permission.storage;
+    if (Platform.isAndroid) {
+      DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+      final androidInfo = await deviceInfoPlugin.androidInfo;
+      if (androidInfo.version.sdkInt < 30) {
+        _writeFilePermission = Permission.storage;
+      }else{
+        _writeFilePermission = Permission.manageExternalStorage;
+      }
+    } else {
+      _writeFilePermission = Permission.storage;
+    }
   }
 
   void _listenForPermissionStatus(BuildContext context) async {
@@ -90,7 +102,8 @@ class _LoginScreenState extends State<LoginScreen>
         if (_authProvider.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
-      } else if (_writeFilePermissionStatus == PermissionStatus.permanentlyDenied) {
+      } else if (_writeFilePermissionStatus ==
+          PermissionStatus.permanentlyDenied) {
         openAppSettings();
       } else {
         _getAppConfigInfo();
@@ -327,12 +340,12 @@ class _LoginScreenState extends State<LoginScreen>
   void onGetAppConfigInfoSuccess() {
     _autoLogin();
   }
-  
+
   @override
   void onAlertExit(String keyInfo) {
     // TODO: implement onAlertExit
   }
-  
+
   @override
   void onAlertNextStep(String keyInfo) {
     // TODO: implement onAlertNextStep
