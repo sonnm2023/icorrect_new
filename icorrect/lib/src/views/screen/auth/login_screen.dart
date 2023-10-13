@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -41,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen>
   CircleLoading? _loading;
   Permission? _writeFilePermission;
   PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
+  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -67,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider.setPermissionDeniedTime();
     // ignore: unused_local_variable
     final status = await permission.request();
-    // ignore: use_build_context_synchronously
     _listenForPermissionStatus(context);
   }
 
@@ -111,13 +114,21 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _getAppConfigInfo() async {
-    String appConfigInfo =
-        await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
-    if (appConfigInfo.isEmpty) {
-      // ignore: use_build_context_synchronously
-      _loginPresenter!.getAppConfigInfo(context);
+    var connectivity = await connectivityService.checkConnectivity();
+    if (connectivity.name != "none") {
+      String appConfigInfo = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.secretkey);
+      if (appConfigInfo.isEmpty) {
+        _loginPresenter!.getAppConfigInfo(context);
+      } else {
+        _autoLogin();
+      }
     } else {
-      _autoLogin();
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+        Utils.showConnectionErrorDialog(context);
+      }
     }
   }
 
@@ -214,17 +225,26 @@ class _LoginScreenState extends State<LoginScreen>
   Widget _buildSignInButton() {
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
-      onPressed: () {
+      onPressed: () async {
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
-          _authProvider.updateProcessingStatus(isProcessing: true);
+          var connectivity = await connectivityService.checkConnectivity();
+          if (connectivity.name != "none") {
+            _authProvider.updateProcessingStatus(isProcessing: true);
 
-          _loginPresenter!.login(
-            emailController.text.trim(),
-            passwordController.text.trim(),
-            context,
-          );
+            _loginPresenter!.login(
+              emailController.text.trim(),
+              passwordController.text.trim(),
+              context,
+            );
+          } else {
+            //Show connect error here
+            if (kDebugMode) {
+              print("DEBUG: Connect error here!");
+              Utils.showConnectionErrorDialog(context);
+            }
+          }
         }
       },
       text: StringConstants.sign_in_button_title,

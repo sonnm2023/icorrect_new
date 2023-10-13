@@ -879,4 +879,24 @@ class Utils {
       }
     }
   }
+
+  static void showConnectionErrorDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: StringConstants.dialog_title,
+          description: StringConstants.connection_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
+  }
 }
