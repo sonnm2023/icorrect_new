@@ -82,15 +82,18 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       ),
       child: Stack(
         children: [
-          Container(
-            alignment: Alignment.center,
-            child: Consumer<HomeWorkProvider>(
-              builder: (context, homeworkProvider, child) {
-                return Text(
-                  homeworkProvider.filterString,
-                  style: CustomTextStyle.textBoldBlack_14,
-                );
-              },
+          GestureDetector(
+            onTap: _showFilterView,
+            child: Container(
+              alignment: Alignment.center,
+              child: Consumer<HomeWorkProvider>(
+                builder: (context, homeworkProvider, child) {
+                  return Text(
+                    homeworkProvider.filterString,
+                    style: CustomTextStyle.textBoldBlack_14,
+                  );
+                },
+              ),
             ),
           ),
           Container(
@@ -105,28 +108,30 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 height: CustomSize.size_25,
                 width: CustomSize.size_25,
               ),
-              onPressed: () {
-                Provider.of<AuthProvider>(context, listen: false)
-                    .setShowDialogWithGlobalScaffoldKey(
-                  true,
-                  GlobalScaffoldKey.filterScaffoldKey,
-                );
-
-                showModalBottomSheet<void>(
-                  context: context,
-                  isDismissible: true,
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: CustomSize.size_400,
-                      child: _buildFilterBottomSheet(),
-                    );
-                  },
-                );
-              },
+              onPressed: _showFilterView,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showFilterView() {
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+      true,
+      GlobalScaffoldKey.filterScaffoldKey,
+    );
+
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: CustomSize.size_400,
+          child: _buildFilterBottomSheet(),
+        );
+      },
     );
   }
 
