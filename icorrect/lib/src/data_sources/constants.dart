@@ -500,8 +500,6 @@ class StringConstants {
       "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?";
   static const String confirm_save_the_test_message =
       "Do you want to save this test?";
-  static const String connection_error_message =
-      "Please check your connection and try again!";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
@@ -618,5 +616,7 @@ class StringConstants {
   static const String network_error_message =
       "An error occur. Please check your connection!";
   static const String submit_test_error_messge =
+      "An error occur, please try again later!";
+  static const String common_error_messge =
       "An error occur, please try again later!";
 }

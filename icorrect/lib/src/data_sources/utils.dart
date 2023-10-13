@@ -490,7 +490,8 @@ class Utils {
   }) {
     return Drawer(
       backgroundColor: AppColor.defaultWhiteColor,
-      child: navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
+      child:
+          navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
     );
   }
 
@@ -768,9 +769,11 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != "none") { //NOT Action log
-      DateTime createdTime = DateTime.fromMillisecondsSinceEpoch(log.createdTime);
-      DateTime responseTime =  DateTime.now();
+    if (status != "none") {
+      //NOT Action log
+      DateTime createdTime =
+          DateTime.fromMillisecondsSinceEpoch(log.createdTime);
+      DateTime responseTime = DateTime.now();
 
       Duration diff = responseTime.difference(createdTime);
 
@@ -886,7 +889,7 @@ class Utils {
       builder: (BuildContext context) {
         return CustomAlertDialog(
           title: StringConstants.dialog_title,
-          description: StringConstants.connection_error_message,
+          description: StringConstants.network_error_message,
           okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,

@@ -58,10 +58,10 @@ class LoginPresenter {
       } else {
         String message = '';
         if (authModel.message.isNotEmpty) {
-          _view!.onLoginError('Please check your Internet and try again !');
-          message = "Please check your Internet and try again !";
+          _view!.onLoginError(StringConstants.network_error_message);
+          message = StringConstants.network_error_message;
         } else {
-          _view!.onLoginError('${authModel.errorCode}: ${authModel.status}');
+          _view!.onLoginError(StringConstants.common_error_messge);
           message = '${authModel.errorCode}: ${authModel.status}';
         }
         //Add log
@@ -75,11 +75,11 @@ class LoginPresenter {
     }).catchError((onError) {
       String message = '';
       if (onError is http.ClientException || onError is SocketException) {
-        _view!.onLoginError('Please check your Internet and try again!');
-        message = "Please check your Internet and try again !";
+        _view!.onLoginError(StringConstants.network_error_message);
+        message = StringConstants.network_error_message;
       } else {
-        _view!.onLoginError("An error occur. Please try again!");
-        message = "An error occur. Please try again!";
+        _view!.onLoginError(StringConstants.common_error_messge);
+        message = StringConstants.common_error_messge;
       }
       //Add log
       Utils.prepareLogData(
@@ -138,20 +138,18 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(
-            "Login error: ${dataMap['error_code']}${dataMap['status']}");
+        _view!.onLoginError(StringConstants.common_error_messge);
       }
     }).catchError((onError) {
       String message = '';
       if (onError is http.ClientException || onError is SocketException) {
-        message = 'Please check your Internet and try again!';
+        message = StringConstants.network_error_message;
 
-        _view!.onGetAppConfigInfoFail(
-            'Please check your Internet and try again!');
+        _view!.onGetAppConfigInfoFail(StringConstants.network_error_message);
       } else {
-        message = "An error occur. Please try again!";
+        message = StringConstants.common_error_messge;
 
-        _view!.onGetAppConfigInfoFail("An error occur. Please try again!");
+        _view!.onGetAppConfigInfoFail(StringConstants.common_error_messge);
       }
       //Add log
       Utils.prepareLogData(
@@ -206,8 +204,7 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(
-            "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}");
+        _view!.onLoginError(StringConstants.common_error_messge);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -220,7 +217,7 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(onError.toString());
+        _view!.onLoginError(StringConstants.common_error_messge);
       },
     );
   }
