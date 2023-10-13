@@ -148,8 +148,7 @@ class SimulatorTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetTestDetailError(
-            "Loading homework detail error: ${map['error_code']}${map['status']}");
+        _view!.onGetTestDetailError(StringConstants.common_error_messge);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -162,7 +161,7 @@ class SimulatorTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetTestDetailError(onError.toString());
+        _view!.onGetTestDetailError(StringConstants.common_error_messge);
       },
     );
   }
@@ -345,7 +344,7 @@ class SimulatorTestPresenter {
                 //     await Utils.convertVideoToBase64(response);
                 // await FileStorageHelper.writeVideo(
                 //     contentString, fileTopic, MediaType.video);
-                if (kDebugMode) {   
+                if (kDebugMode) {
                   print('DEBUG : save Path : $savePath');
                 }
 

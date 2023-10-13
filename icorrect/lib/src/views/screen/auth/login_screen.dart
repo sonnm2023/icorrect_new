@@ -127,8 +127,8 @@ class _LoginScreenState extends State<LoginScreen>
       //Show connect error here
       if (kDebugMode) {
         print("DEBUG: Connect error here!");
-        Utils.showConnectionErrorDialog(context);
       }
+      Utils.showConnectionErrorDialog(context);
     }
   }
 
@@ -242,8 +242,8 @@ class _LoginScreenState extends State<LoginScreen>
             //Show connect error here
             if (kDebugMode) {
               print("DEBUG: Connect error here!");
-              Utils.showConnectionErrorDialog(context);
             }
+            Utils.showConnectionErrorDialog(context);
           }
         }
       },

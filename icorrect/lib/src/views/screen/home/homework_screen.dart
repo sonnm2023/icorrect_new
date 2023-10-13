@@ -85,8 +85,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       //Show connect error here
       if (kDebugMode) {
         print("DEBUG: Connect error here!");
-        Utils.showConnectionErrorDialog(context);
       }
+      Utils.showConnectionErrorDialog(context);
     }
 
     Future.delayed(Duration.zero, () {

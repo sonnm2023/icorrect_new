@@ -641,8 +641,8 @@ class Utils {
                 //Show connect error here
                 if (kDebugMode) {
                   print("DEBUG: Connect error here!");
-                  Utils.showConnectionErrorDialog(context);
                 }
+                Utils.showConnectionErrorDialog(context);
               }
             } else {
               Navigator.of(context).pop();
