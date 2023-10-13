@@ -110,11 +110,11 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           print('DEBUG:App detached');
         }
         break;
-      case AppLifecycleState.hidden:
-        if (kDebugMode) {
-          print('DEBUG:App hidden');
-        }
-        break;
+      // case AppLifecycleState.hidden:
+      //   if (kDebugMode) {
+      //     print('DEBUG:App hidden');
+      //   }
+      //   break;
     }
   }
 
