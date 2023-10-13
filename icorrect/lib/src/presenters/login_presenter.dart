@@ -55,6 +55,16 @@ class LoginPresenter {
 
         await _saveAccessToken(authModel.data.accessToken);
         _getUserInfo(context);
+      }
+      if (authModel.errorCode == 401) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: jsonDecode(value),
+          message: authModel.status,
+          status: LogEvent.success,
+        );
+        _view!.onLoginError(authModel.status);
       } else {
         String message = '';
         if (authModel.message.isNotEmpty) {
