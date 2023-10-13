@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -630,9 +631,19 @@ class Utils {
           cancelButtonTitle: "Cancel",
           borderRadius: 8,
           hasCloseButton: false,
-          okButtonTapped: () {
+          okButtonTapped: () async {
             if (null != homeWorkPresenter) {
-              homeWorkPresenter.logout(context);
+              var connectivity =
+                  await ConnectivityService().checkConnectivity();
+              if (connectivity.name != "none") {
+                homeWorkPresenter.logout(context);
+              } else {
+                //Show connect error here
+                if (kDebugMode) {
+                  print("DEBUG: Connect error here!");
+                  Utils.showConnectionErrorDialog(context);
+                }
+              }
             } else {
               Navigator.of(context).pop();
             }
