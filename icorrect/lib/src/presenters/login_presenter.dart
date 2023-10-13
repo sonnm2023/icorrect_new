@@ -55,8 +55,7 @@ class LoginPresenter {
 
         await _saveAccessToken(authModel.data.accessToken);
         _getUserInfo(context);
-      }
-      if (authModel.errorCode == 401) {
+      } else if (authModel.errorCode == 401) {
         //Add log
         Utils.prepareLogData(
           log: log,

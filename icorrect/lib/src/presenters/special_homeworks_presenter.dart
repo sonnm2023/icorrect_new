@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -63,11 +64,10 @@ class SpecialHomeworksPresenter {
         } else {
           //Add log
           Utils.prepareLogData(
-              log: log,
-              data: null,
-              message:
-              'GetSpecialHomeWorks: result fail!',
-              status: LogEvent.failed,
+            log: log,
+            data: null,
+            message: 'GetSpecialHomeWorks: result fail!',
+            status: LogEvent.failed,
           );
 
           _view!.getSpecialHomeWorksFail('GetSpecialHomeWorks: result fail!');
@@ -78,7 +78,7 @@ class SpecialHomeworksPresenter {
           log: log,
           data: null,
           message:
-          'GetSpecialHomeWorks fail.Please check your internet and try again!',
+              'GetSpecialHomeWorks fail.Please check your internet and try again!',
           status: LogEvent.failed,
         );
 
@@ -86,6 +86,7 @@ class SpecialHomeworksPresenter {
             'GetSpecialHomeWorks fail.Please check your internet and try again!');
       }
     }).catchError((onError) {
+      String message = '';
       //Add log
       Utils.prepareLogData(
         log: log,
@@ -94,8 +95,13 @@ class SpecialHomeworksPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.getSpecialHomeWorksFail(
-          'Error when getSpecialHomeWorks : ${onError.toString()}');
+      if (onError is SocketException) {
+        message = StringConstants.network_error_message;
+      } else {
+        message = StringConstants.common_error_messge;
+      }
+      _view!.getSpecialHomeWorksFail(message);
+
       if (kDebugMode) {
         print("DEBUG: getSpecialHomeWorks ${onError.toString()}");
       }
