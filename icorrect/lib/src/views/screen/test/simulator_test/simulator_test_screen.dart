@@ -429,7 +429,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           okButtonTapped: () {
             //Reset question image
             _resetQuestionImage();
-
+          
             //Submit
             _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
             _simulatorTestPresenter!.submitTest(
@@ -440,6 +440,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               questions: _simulatorTestProvider!.questionList,
               isUpdate: false,
             );
+            _simulatorTestProvider!.setShowConfirmSaveTest(false);
           },
           cancelButtonTapped: () {
             cancelButtonTapped = true;
