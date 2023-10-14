@@ -556,8 +556,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (null != _countDownCueCard) {
           _countDownCueCard!.cancel();
         }
-
-        _simulatorTestProvider!.setVisibleRecord(false);
       }
 
       if (_audioPlayerController!.state == PlayerState.playing) {
