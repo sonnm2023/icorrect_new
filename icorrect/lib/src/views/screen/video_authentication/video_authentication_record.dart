@@ -333,7 +333,10 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
               cancelButtonTitle: "Exit",
               okButtonTitle: "Submit",
               cancelButtonTapped: () async {
-                // await _videoAuthProvider!.savedFile.delete();
+                await _videoAuthProvider!.savedFile.delete().then((value) {
+                  Navigator.of(contextBuild).pop();
+                  Navigator.of(context).pop();
+                });
               },
               okButtonTapped: () {
                 _onSubmitVideoAuth(_videoAuthProvider!.savedFile);
@@ -390,7 +393,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       ),
       constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height - CustomSize.size_20),
-      builder: (BuildContext context) {
+      builder: (BuildContext buildContext) {
         return WillPopScope(
             child: SubmitVideoAuthentication(
               videoFile: savedFile,
@@ -403,7 +406,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
             ),
             onWillPop: () async {
               if (_videoAuthProvider!.savedFile.existsSync()) {
-                _backWhenNotSubmitVideo(context);
+                _backWhenNotSubmitVideo(buildContext);
               }
               return false;
             });

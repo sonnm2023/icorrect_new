@@ -16,7 +16,8 @@ class SubmitVideoAuthentication extends StatefulWidget {
   Function onClickSubmit;
   Function onClickRecordNewVideo;
   SubmitVideoAuthentication(
-      {required this.videoFile,
+      {
+        required this.videoFile,
       required this.onClickSubmit,
       required this.onClickRecordNewVideo,
       super.key});
@@ -63,21 +64,21 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
         width: w,
         alignment: Alignment.center,
         padding: const EdgeInsets.all(10),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-                child: Container(
-              height: h,
+            Container(
+              height: h / 2,
+              width: w,
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey,
                 border: Border.all(color: Colors.white, width: 2.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.3), // Shadow color
                     spreadRadius: 5,
-                    blurRadius: 10,
+                    blurRadius: 5,
                     offset: const Offset(0, 7), // Shadow offset
                   ),
                 ],
@@ -91,50 +92,48 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
                   child: Chewie(controller: _chewieController!),
                 ),
               ),
-            )),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Confirm to submit your video !",
-                      style: TextStyle(
-                          color: AppColor.defaultPurpleColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  const Text(
-                      "This video will be used to confirm when you do your exam. So you want submit this video ?",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: AppColor.defaultPurpleColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400)),
-                  const SizedBox(height: 20),
-                  Stack(
-                    children: [
-                      Visibility(
-                          visible: !provider.isSubmitLoading,
-                          child: Column(
-                            children: [
-                              _submitVideoButton(),
-                              _deniedSubmitVideoButton()
-                            ],
-                          )),
-                      Visibility(
-                          visible: provider.isSubmitLoading,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColor.defaultPurpleColor,
-                              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Confirm to submit your video !",
+                    style: TextStyle(
+                        color: AppColor.defaultPurpleColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                const Text(
+                    "This video will be used to confirm when you do your exam. So you want submit this video ?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: AppColor.defaultPurpleColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400)),
+                const SizedBox(height: 20),
+                Stack(
+                  children: [
+                    Visibility(
+                        visible: !provider.isSubmitLoading,
+                        child: Column(
+                          children: [
+                            _submitVideoButton(),
+                            _deniedSubmitVideoButton()
+                          ],
+                        )),
+                    Visibility(
+                        visible: provider.isSubmitLoading,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 4,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColor.defaultPurpleColor,
                             ),
-                          ))
-                    ],
-                  )
-                ],
-              ),
-            )
+                          ),
+                        ))
+                  ],
+                )
+              ],
+            ),
           ],
         ),
       );

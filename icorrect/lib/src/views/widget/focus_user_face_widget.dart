@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class FocusUserFaceWidget extends StatefulWidget {
   const FocusUserFaceWidget({super.key});
@@ -11,6 +13,7 @@ class FocusUserFaceWidget extends StatefulWidget {
 class _FocusUserFaceWidgetState extends State<FocusUserFaceWidget>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
+  Animation<double>? _animation;
   @override
   void initState() {
     super.initState();
@@ -18,11 +21,14 @@ class _FocusUserFaceWidgetState extends State<FocusUserFaceWidget>
       vsync: this,
       duration: Duration(seconds: 1),
     )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 2, end: 1.3).animate(_controller!);
+    _controller!.forward();
   }
 
   @override
   void dispose() {
     _controller!.dispose();
+
     super.dispose();
   }
 
@@ -31,26 +37,14 @@ class _FocusUserFaceWidgetState extends State<FocusUserFaceWidget>
     return AnimatedBuilder(
       animation: _controller!,
       builder: (context, child) {
-          final zoom = _controller!.value;
-        final centerX = 100.0; // Center X coordinate of the square
-        final centerY = 100.0; // Center Y coordinate of the square
-
-        final focus = (1.0 - zoom) * 0.5; // Adjust the focus point based on zoom level
-
-        final transformMatrix = Matrix4.identity()
-          ..translate(centerX, centerY) // Move to the center
-          ..scale(1.0 + zoom) // Apply zoom
-          ..translate(-centerX, -centerY) // Move back to original position
-          ..translate(centerX * focus, centerY * focus);
-
         return Center(
-          child: Transform(
-            transform: transformMatrix,
+          child: Transform.scale(
+            scale: _animation!.value,
             child: Container(
               width: 200,
               height: 200,
               child: CustomPaint(
-                painter: ColoredCornersPainter(),
+                painter: CornerBorderPainter(),
               ),
             ),
           ),
@@ -59,36 +53,45 @@ class _FocusUserFaceWidgetState extends State<FocusUserFaceWidget>
     );
   }
 }
-class ColoredCornersPainter extends CustomPainter {
+
+class CornerBorderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.transparent;
+    final paint = Paint()
+      ..color = const Color.fromARGB(255, 228, 171, 0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
 
-    final rect = Rect.fromPoints(Offset(0, 0), Offset(size.width, size.height));
-    canvas.drawRect(rect, paint);
+    final cornerSize = 30.0;
+    final halfCornerSize = cornerSize / 2;
 
-    final topLeftColor = Colors.amber;
-    final topRightColor = Colors.amber;
-    final bottomLeftColor = Colors.amber;
-    final bottomRightColor = Colors.amber;
+    // Draw perpendicular lines in each corner
+    // Top-left corner
+    canvas.drawLine(Offset(0, halfCornerSize),
+        Offset(halfCornerSize, halfCornerSize), paint);
+    canvas.drawLine(Offset(halfCornerSize, 0),
+        Offset(halfCornerSize, halfCornerSize), paint);
 
-    paint.color = topLeftColor;
-    canvas.drawRect(Rect.fromPoints(Offset(0, 0), Offset(20, 20)), paint);
+    // Top-right corner
+    canvas.drawLine(Offset(size.width, halfCornerSize),
+        Offset(size.width - halfCornerSize, halfCornerSize), paint);
+    canvas.drawLine(Offset(size.width - halfCornerSize, 0),
+        Offset(size.width - halfCornerSize, halfCornerSize), paint);
 
-    paint.color = topRightColor;
-    canvas.drawRect(
-        Rect.fromPoints(Offset(size.width - 20, 0), Offset(size.width, 20)),
+    // Bottom-left corner
+    canvas.drawLine(Offset(0, size.height - halfCornerSize),
+        Offset(halfCornerSize, size.height - halfCornerSize), paint);
+    canvas.drawLine(Offset(halfCornerSize, size.height),
+        Offset(halfCornerSize, size.height - halfCornerSize), paint);
+
+    // Bottom-right corner
+    canvas.drawLine(
+        Offset(size.width, size.height - halfCornerSize),
+        Offset(size.width - halfCornerSize, size.height - halfCornerSize),
         paint);
-
-    paint.color = bottomLeftColor;
-    canvas.drawRect(
-        Rect.fromPoints(Offset(0, size.height - 20), Offset(20, size.height)),
-        paint);
-
-    paint.color = bottomRightColor;
-    canvas.drawRect(
-        Rect.fromPoints(Offset(size.width - 20, size.height - 20),
-            Offset(size.width, size.height)),
+    canvas.drawLine(
+        Offset(size.width - halfCornerSize, size.height),
+        Offset(size.width - halfCornerSize, size.height - halfCornerSize),
         paint);
   }
 
@@ -97,6 +100,3 @@ class ColoredCornersPainter extends CustomPainter {
     return false;
   }
 }
-
-
-
