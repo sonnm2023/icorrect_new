@@ -665,6 +665,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setDownloadProgressingStatus(false);
 
     _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
+
+    if (_simulatorTestProvider!.isReDownload) {
+      //Reset isReDownload
+      _simulatorTestProvider!.setIsReDownload(false);
+      _simulatorTestProvider!.updateReviewingStatus(ReviewingStatus.none);
+    }
   }
 
   void _showCheckNetworkDialog() async {
@@ -720,7 +726,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setActivityType(widget.homeWorkModel.activityType);
 
     //Enable Start Testing Button
-    if (index >= 5) {
+    if (index >= 5 && _simulatorTestProvider!.isReDownload == false) {
       _simulatorTestProvider!.setStartNowStatus(true);
     }
 
@@ -798,12 +804,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onReDownload() {
-    _simulatorTestProvider!.setNeedDownloadAgain(true);
+    if (_simulatorTestProvider!.doingStatus == DoingStatus.doing) {
+      _simulatorTestProvider!.setNeedDownloadAgain(false);
+    } else {
+      _simulatorTestProvider!.setNeedDownloadAgain(true);
+    }
     _simulatorTestProvider!.setDownloadProgressingStatus(false);
     _simulatorTestProvider!.setGettingTestDetailStatus(false);
   }
 
   void updateStatusForReDownload() {
+    // if (_simulatorTestProvider!.isReDownload) {
+    //   _simulatorTestProvider!.setNeedDownloadAgain(false);
+    // } else {
+    //   _simulatorTestProvider!.setNeedDownloadAgain(true);
+    // }
     _simulatorTestProvider!.setNeedDownloadAgain(false);
     _simulatorTestProvider!.setStartNowStatus(false);
     _simulatorTestProvider!.setDownloadProgressingStatus(true);

@@ -913,4 +913,10 @@ class Utils {
       },
     );
   }
+
+  static Future<bool> checkVideoFileExist(
+      String path, MediaType mediaType) async {
+    bool result = await File(path).exists();
+    return result;
+  }
 }

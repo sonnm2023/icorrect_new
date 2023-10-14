@@ -81,6 +81,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _isBackgroundMode = false;
   String _reanswerFilePath = "";
   CircleLoading? _loading;
+  bool _isReDownload = false;
 
   //TODO
   // bool _cameraIsRecording = false;
@@ -501,17 +502,43 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _loadVideoSource(String fileName) async {
-    final videoSource = await _createVideoSource(fileName);
-    await _videoPlayerController!.loadVideoSource(videoSource);
+    VideoSource? videoSource = await _createVideoSource(fileName);
+    if (null == videoSource) {
+      if (kDebugMode) {
+        print("DEBUG: _loadVideoSource fail");
+      }
+    } else {
+      // final videoSource = await _createVideoSource(fileName);
+      await _videoPlayerController!.loadVideoSource(videoSource);
+    }
   }
 
-  Future<VideoSource> _createVideoSource(String fileName) async {
+  Future<VideoSource?> _createVideoSource(String fileName) async {
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
-    return VideoSource.init(
-      path: path,
-      type: VideoSourceType.file,
-    );
+
+    VideoSource? result;
+
+    bool isExist = await Utils.checkVideoFileExist(path, MediaType.video);
+    if (isExist) {
+      try {
+        result = await VideoSource.init(
+          path: path,
+          type: VideoSourceType.file,
+        );
+        if (kDebugMode) {
+          print("DEBUG: init video controller: $result");
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print("DEBUG: init video controller fail");
+        }
+        result = null;
+      }
+    } else {
+      result = null;
+    }
+    return result;
   }
 
   void _createLog(
@@ -601,6 +628,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         } else {
           if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
               _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
+              _isReDownload == false &&
               _simulatorTestProvider!.visibleRecord == false) {
             _videoPlayerController!.play();
           } else if (_simulatorTestProvider!.visibleRecord == true) {
@@ -1376,6 +1404,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _initVideoController({required isIntroduceVideo}) async {
+    if (_simulatorTestProvider!.playingIndexWhenReDownload != 0) {
+      _playingIndex = _simulatorTestProvider!.playingIndexWhenReDownload;
+
+      //Reset _playingIndexWhenReDownload
+      _simulatorTestProvider!.setPlayingIndexWhenReDownload(0);
+    }
     FileTopicModel currentPlayingFile =
         _simulatorTestProvider!.listVideoSource[_playingIndex];
     if (kDebugMode) {
@@ -1413,9 +1447,23 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       _createVideoSource(currentPlayingFile.url).then((value) async {
-        _videoPlayerController!.loadVideoSource(value).then((_) {
-          _videoPlayerController!.play();
-        });
+        if (kDebugMode) {
+          print(
+              "DEBUG: _createVideoSource: ${currentPlayingFile.url} - $value");
+        }
+        if (null == value) {
+          //TODO: ReDownload here
+          if (kDebugMode) {
+            print("DEBUG: ReDownload here");
+          }
+          _isReDownload = true;
+          _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
+          _redownload();
+        } else {
+          _videoPlayerController!.loadVideoSource(value).then((_) {
+            _videoPlayerController!.play();
+          });
+        }
       });
 
       if (currentPlayingFile.fileTopicType == FileTopicType.introduce ||
@@ -1428,6 +1476,36 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             _reviewingList.add(_currentQuestion!); //Add file
           }
         }
+      }
+    }
+  }
+
+  void _redownload() async {
+    _simulatorTestProvider!.setNeedDownloadAgain(true);
+    _simulatorTestProvider!.setIsReDownload(true);
+    _setVisibleRecord(false, null, null);
+
+    if (null != _videoPlayerController) {
+      bool isPlaying = await _videoPlayerController!.isPlaying();
+      if (isPlaying) {
+        _videoPlayerController!.stop();
+      }
+
+      if (_simulatorTestProvider!.visibleRecord) {
+        _recordController!.stop();
+
+        if (null != _countDown) {
+          _countDown!.cancel();
+        }
+
+        if (null != _countDownCueCard) {
+          _countDownCueCard!.cancel();
+        }
+      }
+
+      if (_audioPlayerController!.state == PlayerState.playing) {
+        _audioPlayerController!.stop();
+        _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
   }

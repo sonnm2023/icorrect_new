@@ -382,7 +382,7 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   bool _isLessThan2Second = true;
-  bool get isLessThan2Second  => _isLessThan2Second;
+  bool get isLessThan2Second => _isLessThan2Second;
   void setIsLessThan2Second(bool isLess) {
     _isLessThan2Second = isLess;
 
@@ -542,7 +542,21 @@ class SimulatorTestProvider with ChangeNotifier {
     _selectedQuestionImageUrl = '';
   }
 
+  bool _isReDownload = false;
+  bool get isReDownload => _isReDownload;
+  void setIsReDownload(bool reDownload) {
+    _isReDownload = reDownload;
+  }
+
+  int _playingIndexWhenReDownload = 0;
+  int get playingIndexWhenReDownload => _playingIndexWhenReDownload;
+  void setPlayingIndexWhenReDownload(int index) {
+    _playingIndexWhenReDownload = index;
+  }
+
   void resetAll() {
+    _playingIndexWhenReDownload = 0;
+    _isReDownload = false;
     _isLessThan2Second = true;
     _needDownloadAgain = false;
     _isLoadingVideo = false;
