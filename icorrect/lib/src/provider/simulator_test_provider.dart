@@ -56,6 +56,15 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _isShowConfirmSaveTest = false;
+  bool get isShowConfirmSaveTest => _isShowConfirmSaveTest;
+  void setShowConfirmSaveTest(bool isShow) {
+    _isShowConfirmSaveTest = isShow;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   bool _isDownloadProgressing = false;
   bool get isDownloadProgressing => _isDownloadProgressing;
   void setDownloadProgressingStatus(bool isDownloading) {
@@ -382,7 +391,7 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   bool _isLessThan2Second = true;
-  bool get isLessThan2Second  => _isLessThan2Second;
+  bool get isLessThan2Second => _isLessThan2Second;
   void setIsLessThan2Second(bool isLess) {
     _isLessThan2Second = isLess;
 
@@ -543,6 +552,7 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   void resetAll() {
+    _isShowConfirmSaveTest = false;
     _isLessThan2Second = true;
     _needDownloadAgain = false;
     _isLoadingVideo = false;

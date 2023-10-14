@@ -159,6 +159,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       debugShowCheckedModeBanner: false,
       home: Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTest, child) {
+          if (simulatorTest.isShowConfirmSaveTest) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showConfirmSaveTestBeforeExit();
+            });
+          }
           if (simulatorTest.submitStatus == SubmitStatus.success) {
             return Stack(
               children: [
@@ -400,51 +405,54 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               print("DEBUG: Status is finish doing the exam!");
             }
 
-            bool cancelButtonTapped = false;
-
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CustomAlertDialog(
-                  title: StringConstants.dialog_title,
-                  description:
-                      StringConstants.confirm_before_quit_the_test_message,
-                  okButtonTitle: StringConstants.save_button_title,
-                  cancelButtonTitle: StringConstants.cancel_button_title,
-                  borderRadius: 8,
-                  hasCloseButton: true,
-                  okButtonTapped: () {
-                    //Reset question image
-                    _resetQuestionImage();
-
-                    //Submit
-                    _simulatorTestProvider!
-                        .updateSubmitStatus(SubmitStatus.submitting);
-                    _simulatorTestPresenter!.submitTest(
-                      context: context,
-                      testId: _simulatorTestProvider!.currentTestDetail.testId
-                          .toString(),
-                      activityId: widget.homeWorkModel.activityId.toString(),
-                      questions: _simulatorTestProvider!.questionList,
-                      isUpdate: false,
-                    );
-                  },
-                  cancelButtonTapped: () {
-                    cancelButtonTapped = true;
-                    _deleteAllAnswer();
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            );
-
-            if (cancelButtonTapped) {
-              Navigator.of(context).pop();
-            }
+            _showConfirmSaveTestBeforeExit();
 
             break;
           }
       }
+    }
+  }
+
+  Future _showConfirmSaveTestBeforeExit() async {
+    bool cancelButtonTapped = false;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: StringConstants.dialog_title,
+          description: StringConstants.confirm_before_quit_the_test_message,
+          okButtonTitle: StringConstants.save_button_title,
+          cancelButtonTitle: StringConstants.cancel_button_title,
+          borderRadius: 8,
+          hasCloseButton: true,
+          okButtonTapped: () {
+            //Reset question image
+            _resetQuestionImage();
+
+            //Submit
+            _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+            _simulatorTestPresenter!.submitTest(
+              context: context,
+              testId:
+                  _simulatorTestProvider!.currentTestDetail.testId.toString(),
+              activityId: widget.homeWorkModel.activityId.toString(),
+              questions: _simulatorTestProvider!.questionList,
+              isUpdate: false,
+            );
+          },
+          cancelButtonTapped: () {
+            cancelButtonTapped = true;
+            _simulatorTestProvider!.setShowConfirmSaveTest(false);
+            _deleteAllAnswer();
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+
+    if (cancelButtonTapped) {
+      Navigator.of(context).pop();
     }
   }
 
@@ -580,12 +588,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (_microPermissionStatus == PermissionStatus.denied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
           // _simulatorTestProvider!.setDialogShowing(true);
-          _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
+          _showConfirmDialogWithMessage(
+              StringConstants.confirm_access_micro_permission_message);
           // _showConfirmDialog();
         }
       } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
         // _simulatorTestProvider!.setDialogShowing(true);
-        _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
+        _showConfirmDialogWithMessage(
+            StringConstants.confirm_access_micro_permission_message);
       } else {
         _startToDoTest();
       }
