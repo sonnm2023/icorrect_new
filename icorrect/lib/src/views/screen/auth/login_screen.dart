@@ -81,17 +81,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _initializePermission() async {
-    if (Platform.isAndroid) {
-      DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-      final androidInfo = await deviceInfoPlugin.androidInfo;
-      if (androidInfo.version.sdkInt < 30) {
-        _writeFilePermission = Permission.storage;
-      }else{
-        _writeFilePermission = Permission.manageExternalStorage;
-      }
-    } else {
-      _writeFilePermission = Permission.storage;
-    }
+   _writeFilePermission = Permission.storage;
   }
 
   void _listenForPermissionStatus(BuildContext context) async {
