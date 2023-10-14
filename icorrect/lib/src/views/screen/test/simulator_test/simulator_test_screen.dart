@@ -312,7 +312,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               hasCloseButton: true,
               okButtonTapped: () {
                 //Update reanswer
-                _loading!.show(context);
+                _loading!.show(context: context, isViewAIResponse: false);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
                 _simulatorTestPresenter!.submitTest(
                   context: context,

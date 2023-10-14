@@ -1792,7 +1792,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (null != _loading) {
-      _loading!.show(context);
+      _loading!.show(context: context, isViewAIResponse: false);
     }
 
     _testRoomPresenter!.updateMyAnswer(

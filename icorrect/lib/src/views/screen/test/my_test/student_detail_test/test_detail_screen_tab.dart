@@ -78,7 +78,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     _loading = CircleLoading();
     _presenter = OtherStudentTestPresenter(this);
     _player = AudioPlayer();
-    _loading!.show(context);
+    _loading!.show(context: context, isViewAIResponse: false);
 
     _getData();
     Future.delayed(Duration.zero, () {

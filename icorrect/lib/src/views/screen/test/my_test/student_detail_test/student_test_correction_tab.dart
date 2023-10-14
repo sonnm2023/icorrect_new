@@ -46,7 +46,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
           'DEBUG: ResponseTab ${widget.studentResultModel.activityId.toString()}');
     }
     _loading = CircleLoading();
-    _loading?.show(context);
+    _loading?.show(context: context, isViewAIResponse: false);
     String orderId = widget.studentResultModel.orderId.toString();
     if (orderId.isNotEmpty) {
       _presenter!.getResponse(context: context, orderId: orderId);
@@ -69,7 +69,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
             seconds: 1,
           ),
           () {
-            _loading?.show(context);
+            _loading?.show(context: context, isViewAIResponse: false);
             _presenter!.getResponse(
               context: context,
               orderId: widget.studentResultModel.orderId.toString(),
@@ -194,7 +194,8 @@ class _StudentCorrectionState extends State<StudentCorrection>
             ),
             _scoreItem(
               index: 2,
-              title: '${StringConstants.lexical_resource} ${result.lexicalResource}',
+              title:
+                  '${StringConstants.lexical_resource} ${result.lexicalResource}',
               problems: result.lexicalResourceProblem,
               visible: appState.visibleLexical,
             ),

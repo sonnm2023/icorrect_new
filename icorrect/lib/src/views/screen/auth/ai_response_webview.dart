@@ -19,7 +19,7 @@ class _AIResponseState extends State<AiResponse> {
   void initState() {
     super.initState();
     _loading = CircleLoading();
-    _loading!.show(context);
+    _loading!.show(context: context, isViewAIResponse: false);
 
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)

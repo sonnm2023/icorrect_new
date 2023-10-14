@@ -42,7 +42,7 @@ class _ResponseTabState extends State<ResponseTab>
       print('DEBUG: ResponseTab ${widget.homeWorkModel.activityId.toString()}');
     }
     _loading = CircleLoading();
-    _loading?.show(context);
+    _loading?.show(context: context, isViewAIResponse: false);
     if (widget.homeWorkModel.activityAnswer!.orderId.toString().isNotEmpty) {
       _presenter!.getResponse(
         context: context,
@@ -66,7 +66,7 @@ class _ResponseTabState extends State<ResponseTab>
               const Duration(
                 seconds: 1,
               ), () {
-            _loading?.show(context);
+            _loading?.show(context: context, isViewAIResponse: false);
             _presenter!.getResponse(
               context: context,
               orderId: widget.homeWorkModel.activityAnswer!.orderId.toString(),
@@ -175,7 +175,8 @@ class _ResponseTabState extends State<ResponseTab>
             ),
             _scoreItem(
               index: 2,
-              title: '${StringConstants.lexical_resource} ${result.lexicalResource}',
+              title:
+                  '${StringConstants.lexical_resource} ${result.lexicalResource}',
               problems: result.lexicalResourceProblem,
               visible: appState.visibleLexical,
             ),

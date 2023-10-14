@@ -49,7 +49,7 @@ class _OtherTabState extends State<OtherTab>
             widget.provider.otherLightHomeWorks;
 
         if (homeWorks.isEmpty) {
-          _loading?.show(context);
+          _loading?.show(context: context, isViewAIResponse: false);
           _presenter!.getSpecialHomeWorks(
             context: context,
             email: userDataModel.userInfoModel.email.toString(),

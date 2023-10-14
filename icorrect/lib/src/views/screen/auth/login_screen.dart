@@ -209,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen>
             Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 if (authProvider.isProcessing) {
-                  _loading!.show(context);
+                  _loading!.show(context: context, isViewAIResponse: false);
                 } else {
                   _loading!.hide();
                 }

@@ -22,7 +22,6 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/my_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
-import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
@@ -89,7 +88,7 @@ class _MyTestTabState extends State<MyTestTab>
     _loading = CircleLoading();
     _presenter = MyTestPresenter(this);
     _player = AudioPlayer();
-    _loading!.show(context);
+    _loading!.show(context: context, isViewAIResponse: true);
 
     _prepareDataForMyTestDetail();
   }
@@ -163,7 +162,7 @@ class _MyTestTabState extends State<MyTestTab>
                           await launchUrl(toLaunch);
                         },
                         child: Container(
-                          height: 50,
+                          height: 51,
                           padding: const EdgeInsets.symmetric(
                             vertical: CustomSize.size_10,
                           ),
@@ -302,7 +301,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _onClickUpdateReAnswer(List<QuestionTopicModel> requestions) {
-    _loading!.show(context);
+    _loading!.show(context: context, isViewAIResponse: false);
     ActivitiesModel homework = widget.homeWorkModel;
     _presenter!.updateMyAnswer(
       context: context,

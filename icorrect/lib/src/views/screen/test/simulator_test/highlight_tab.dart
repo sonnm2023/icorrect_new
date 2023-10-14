@@ -53,7 +53,7 @@ class _HighLightTabState extends State<HighLightTab>
       () {
         List<StudentResultModel> homeWorks = widget.provider.highLightHomeworks;
         if (homeWorks.isEmpty) {
-          _loading?.show(context);
+          _loading?.show(context: context, isViewAIResponse: false);
           _presenter!.getSpecialHomeWorks(
             context: context,
             email: userDataModel.userInfoModel.email.toString(),
