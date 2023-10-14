@@ -118,7 +118,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               _authProvider.scaffoldKeys;
           GlobalKey<ScaffoldState> key = scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
-            _showQuitAppConfirmDialog();
+            SimulatorTestProvider simulatorTestProvider =
+                Provider.of<SimulatorTestProvider>(context, listen: false);
+            if (simulatorTestProvider.doingStatus.get == 1) {
+              simulatorTestProvider.setShowConfirmSaveTest(true);
+            } else {
+              _showQuitAppConfirmDialog();
+            }
           } else {
             Navigator.of(key.currentState!.context).pop();
             scaffoldKeys.removeFirst();
