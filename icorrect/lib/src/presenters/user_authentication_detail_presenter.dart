@@ -1,16 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/user_authen_repository.dart';
 import 'package:icorrect/src/models/user_authentication/user_authentication_detail.dart';
-import 'package:path/path.dart';
-
-import '../data_sources/utils.dart';
-import 'package:http/http.dart' as http;
 
 abstract class UserAuthDetailContract {
   void getUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel);
@@ -30,7 +23,11 @@ class UserAuthDetailPresenter {
     assert(_view != null);
     _repository!.getUserAuthDetail().then((value) {
       Map<String, dynamic> map = jsonDecode(value);
-      print('dada: ${map.toString()}');
+
+      if (kDebugMode) {
+        print('dada: ${map.toString()}');
+      }
+
       if (map['error_code'] == 200 && map['status'] == 'success') {
         Map<String, dynamic> data = map['data'] ?? {};
         if (data.isNotEmpty) {

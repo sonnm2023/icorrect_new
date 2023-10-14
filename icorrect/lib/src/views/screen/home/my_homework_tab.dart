@@ -25,7 +25,7 @@ class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
       {Key? key,
       required this.homeWorkProvider,
-      required this.homeWorkPresenter, 
+      required this.homeWorkPresenter,
       required this.pullToRefreshCallBack})
       : super(key: key);
 
@@ -170,7 +170,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             },
             child: const Center(
               child: Text(
-                "Close",
+                StringConstants.close_button_title,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColor.defaultGrayColor,
@@ -198,15 +198,18 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 widget.homeWorkProvider.filterHomeWork();
                 Navigator.pop(context);
               } else {
-                widget.homeWorkProvider.setProcessingStatus(isProcessing: false);
+                widget.homeWorkProvider
+                    .setProcessingStatus(isProcessing: false);
+
                 showToastMsg(
-                    msg: "You must choose at least one class and one status!",
-                    toastState: ToastStatesType.warning);
+                  msg: StringConstants.choose_filter_message,
+                  toastState: ToastStatesType.warning,
+                );
               }
             },
             child: const Center(
               child: Text(
-                "Done",
+                StringConstants.done_button_title,
                 style: CustomTextStyle.textBoldPurple_14,
               ),
             ),
@@ -225,7 +228,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
               !homeworkProvider.isProcessing) {
             return const NoDataWidget(
-                msg: 'No data, please choose other filter!');
+                msg: StringConstants.no_data_filter_message);
           }
           return RefreshIndicator(
             onRefresh: widget.pullToRefreshCallBack,
@@ -277,7 +280,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
-    widget.homeWorkPresenter.clickOnHomeworkItem(context: context, homework: homeWorkModel);
+    widget.homeWorkPresenter
+        .clickOnHomeworkItem(context: context, homework: homeWorkModel);
 
     _selectedHomeWorkModel = homeWorkModel;
 
@@ -343,16 +347,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() async {
-    //TODO: For test
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => SimulatorTestScreen(
-    //       homeWorkModel: _selectedHomeWorkModel!,
-    //     ),
-    //   ),
-    // );
-
     Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
         _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
 

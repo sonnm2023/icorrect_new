@@ -380,6 +380,7 @@ class Utils {
     }
     if (fileExtension == 'wav' ||
         fileExtension == 'mp3' ||
+        fileExtension == 'm4a' ||
         fileExtension == 'aac') {
       return StringClass.audio;
     }
@@ -607,6 +608,8 @@ class Utils {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                //TODO: Cần check kỹ và giải thích cho việc dùng các gói VIP ...
+                /*
                 const SizedBox(height: CustomSize.size_5),
                 Row(
                   children: [
@@ -645,6 +648,7 @@ class Utils {
                     ),
                   ],
                 ),
+                */
               ],
             ),
           )
@@ -928,5 +932,10 @@ class Utils {
         print("DEBUG: Delete log file error: ${e.toString()}");
       }
     }
+  }
+
+  static int getBeingOutTimeInSeconds(DateTime startTime, DateTime endTime) {
+    Duration diff = endTime.difference(startTime);
+    return diff.inSeconds;
   }
 }

@@ -1,7 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -9,12 +12,10 @@ import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/special_homeworks_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/test/my_test/student_detail_test/student_test_screen.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../core/app_color.dart';
-import '../../other_views/dialog/circle_loading.dart';
 
 class HighLightTab extends StatefulWidget {
   MyTestProvider provider;
@@ -107,7 +108,7 @@ class _HighLightTabState extends State<HighLightTab>
           );
         } else {
           return EmptyWidget.init().buildNothingWidget(
-            'No data, please come back later!',
+            StringConstants.no_data_message,
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
           );

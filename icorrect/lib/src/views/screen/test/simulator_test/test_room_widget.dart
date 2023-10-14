@@ -83,6 +83,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   CircleLoading? _loading;
   bool _cameraIsRecording = false;
   bool _isExam = false;
+  List<Map<String, int>> _logActions = [];
+  DateTime? _startTime;
+  DateTime? _endTime;
 
   @override
   void initState() {
@@ -148,6 +151,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print('DEBUG: App detached');
         }
         break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG: App hidden');
+        }
+        break;
     }
   }
 
@@ -177,8 +185,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 ),
                 child: _buildVideoPlayerView(),
               ),
-              ( _isExam &&
-                _cameraService!.cameraController != null &&
+              (_isExam &&
+                      _cameraService!.cameraController != null &&
                       provider.visibleCameraLive)
                   ? Container(
                       alignment: Alignment.bottomRight,
@@ -207,28 +215,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Consumer<SimulatorTestProvider>(
-                        builder: (context, simulatorTestProvider, _) {
-                      return Expanded(
-                        child: simulatorTestProvider.questionHasImage
-                            ? Container(
-                                decoration: const BoxDecoration(
-                                  color: AppColor.defaultAppColor,
-                                ),
-                                child: Center(
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        simulatorTestProvider.questionImageUrl,
-                                    fit: BoxFit.fill,
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
+                      builder: (context, simulatorTestProvider, _) {
+                        return Expanded(
+                          child: simulatorTestProvider.questionHasImage
+                              ? Container(
+                                  decoration: const BoxDecoration(
+                                    color: AppColor.defaultAppColor,
                                   ),
-                                ),
-                              )
-                            : const SizedBox(),
-                      );
-                    }),
+                                  child: Center(
+                                    child: CachedNetworkImage(
+                                      imageUrl: simulatorTestProvider
+                                          .questionImageUrl,
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                        );
+                      },
+                    ),
                     SizedBox(
                       height: 200,
                       child: Stack(
@@ -260,82 +269,28 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     double h = 200;
 
     return Consumer<SimulatorTestProvider>(
-        builder: (context, simulatorTestProvider, child) {
-      if (kDebugMode) {
-        print("DEBUG: VideoPlayerWidget --- build");
-      }
+      builder: (context, simulatorTestProvider, child) {
+        if (kDebugMode) {
+          print("DEBUG: VideoPlayerWidget --- build");
+        }
 
-      if (simulatorTestProvider.isLoadingVideo) {
-        return SizedBox(
-          width: w,
-          height: h,
-          child: const Center(
-            child: DefaultLoadingIndicator(
-              color: AppColor.defaultPurpleColor,
+        if (simulatorTestProvider.isLoadingVideo) {
+          return SizedBox(
+            width: w,
+            height: h,
+            child: const Center(
+              child: DefaultLoadingIndicator(
+                color: AppColor.defaultPurpleColor,
+              ),
             ),
-          ),
-        );
-      } else {
-        Widget buttonsControllerSubView = Container();
+          );
+        } else {
+          Widget buttonsControllerSubView = Container();
 
-        switch (simulatorTestProvider.reviewingStatus.get) {
-          case -1: //None
-            {
-              buttonsControllerSubView = SizedBox(
-                width: w,
-                height: h,
-                child: Center(
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: InkWell(
-                      onTap: () {
-                        simulatorTestProvider.setStartDoingTest(true);
-                        simulatorTestProvider
-                            .updateReviewingStatus(ReviewingStatus.playing);
-                        _startToPlayVideo();
-                      },
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: AppColor.defaultAppColor,
-                        size: 50,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-              break;
-            }
-          case 0: //Playing
-            {
-              buttonsControllerSubView = SizedBox(
-                width: w,
-                height: h,
-                child: GestureDetector(onTap: () {
-                  //Update reviewing status from playing -> pause
-                  //show/hide pause button
-                  if (simulatorTestProvider.doingStatus != DoingStatus.doing) {
-                    if (simulatorTestProvider.reviewingStatus ==
-                        ReviewingStatus.playing) {
-                      simulatorTestProvider
-                          .updateReviewingStatus(ReviewingStatus.pause);
-                    }
-                  }
-                }),
-              );
-              break;
-            }
-          case 1: //Pause
-            {
-              buttonsControllerSubView = InkWell(
-                onTap: () {
-                  if (simulatorTestProvider.reviewingStatus ==
-                      ReviewingStatus.pause) {
-                    simulatorTestProvider
-                        .updateReviewingStatus(ReviewingStatus.playing);
-                  }
-                },
-                child: SizedBox(
+          switch (simulatorTestProvider.reviewingStatus.get) {
+            case -1: //None
+              {
+                buttonsControllerSubView = SizedBox(
                   width: w,
                   height: h,
                   child: Center(
@@ -344,95 +299,153 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                       height: 50,
                       child: InkWell(
                         onTap: () {
-                          //Update reviewing status from pause -> restart
-                          //TODO
-                          // simulatorTestProvider
-                          //     .updateReviewingStatus(ReviewingStatus.restart);
-                          // pauseToPlayVideo();
+                          simulatorTestProvider.setStartDoingTest(true);
+                          simulatorTestProvider
+                              .updateReviewingStatus(ReviewingStatus.playing);
+                          _startToPlayVideo();
                         },
                         child: const Icon(
-                          Icons.pause,
+                          Icons.play_arrow,
                           color: AppColor.defaultAppColor,
                           size: 50,
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-              break;
-            }
-          case 2: //Restart
-            {
-              buttonsControllerSubView = SizedBox(
-                width: w,
-                height: h,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
+                );
+                break;
+              }
+            case 0: //Playing
+              {
+                buttonsControllerSubView = SizedBox(
+                  width: w,
+                  height: h,
+                  child: GestureDetector(
+                    onTap: () {
+                      //Update reviewing status from playing -> pause
+                      //show/hide pause button
+                      if (simulatorTestProvider.doingStatus !=
+                          DoingStatus.doing) {
+                        if (simulatorTestProvider.reviewingStatus ==
+                            ReviewingStatus.playing) {
+                          simulatorTestProvider
+                              .updateReviewingStatus(ReviewingStatus.pause);
+                        }
+                      }
+                    },
+                  ),
+                );
+                break;
+              }
+            case 1: //Pause
+              {
+                buttonsControllerSubView = InkWell(
+                  onTap: () {
+                    if (simulatorTestProvider.reviewingStatus ==
+                        ReviewingStatus.pause) {
+                      simulatorTestProvider
+                          .updateReviewingStatus(ReviewingStatus.playing);
+                    }
+                  },
+                  child: SizedBox(
+                    width: w,
+                    height: h,
+                    child: Center(
+                      child: SizedBox(
                         width: 50,
                         height: 50,
                         child: InkWell(
                           onTap: () {
+                            //Update reviewing status from pause -> restart
                             //TODO
-                            // restartToPlayVideo();
+                            // simulatorTestProvider
+                            //     .updateReviewingStatus(ReviewingStatus.restart);
+                            // pauseToPlayVideo();
                           },
                           child: const Icon(
-                            Icons.restart_alt,
+                            Icons.pause,
                             color: AppColor.defaultAppColor,
                             size: 50,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: InkWell(
-                          onTap: () {
-                            //TODO
-                            // continueToPlayVideo();
-                          },
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: AppColor.defaultAppColor,
-                            size: 50,
+                    ),
+                  ),
+                );
+                break;
+              }
+            case 2: //Restart
+              {
+                buttonsControllerSubView = SizedBox(
+                  width: w,
+                  height: h,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: InkWell(
+                            onTap: () {
+                              //TODO
+                              // restartToPlayVideo();
+                            },
+                            child: const Icon(
+                              Icons.restart_alt,
+                              color: AppColor.defaultAppColor,
+                              size: 50,
+                            ),
                           ),
                         ),
-                      )
-                    ],
+                        const SizedBox(width: 10),
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: InkWell(
+                            onTap: () {
+                              //TODO
+                              // continueToPlayVideo();
+                            },
+                            child: const Icon(
+                              Icons.play_arrow,
+                              color: AppColor.defaultAppColor,
+                              size: 50,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
+                );
+                break;
+              }
+          }
+
+          return Stack(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: NativeVideoPlayerView(
+                  onViewReady: _initController,
                 ),
-              );
-              break;
-            }
-        }
-
-        return Stack(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: NativeVideoPlayerView(
-                onViewReady: _initController,
               ),
-            ),
 
-            //Play video controller buttons
-            _simulatorTestProvider!.doingStatus != DoingStatus.finish
-                ? buttonsControllerSubView
-                : Container(),
+              //Play video controller buttons
+              _simulatorTestProvider!.doingStatus != DoingStatus.finish
+                  ? buttonsControllerSubView
+                  : Container(),
 
-            //TODO
-            // Visibility(
-            //   visible: simulatorTestProvider.isReviewingPlayAnswer,
-            //   child: playAudioBackground(w, h),
-            // )
-          ],
-        );
-      }
-    });
+              //TODO
+              // Visibility(
+              //   visible: simulatorTestProvider.isReviewingPlayAnswer,
+              //   child: playAudioBackground(w, h),
+              // )
+            ],
+          );
+        }
+      },
+    );
   }
 
   Future _recordingUserDoesTestListener() async {
@@ -494,7 +507,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (kDebugMode) {
         print("RECORDING_VIDEO :Stop Recoring And Save Video By Limited Time");
       }
-    } 
+    }
   }
 
   void _hideCameraLive() {
@@ -502,6 +515,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countRecording!.cancel();
     }
     _simulatorTestProvider!.setVisibleCameraLive(false);
+
+    if (null == _cameraService) {
+      return;
+    }
 
     CameraController? cameraController = _cameraService!.cameraController;
     if (cameraController != null) {
@@ -623,10 +640,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         cameraController.pauseVideoRecording();
       }
     }
+
+    _startTime = DateTime.now();
+  }
+
+  void _resetActionLogTimes() {
+    _startTime = null;
+    _endTime = null;
   }
 
   Future _onAppActive() async {
     _isBackgroundMode = false;
+
+    //Caculation time of being out and save into a action log
+    if (null != _startTime && null != _currentQuestion) {
+      _endTime = DateTime.now();
+
+      int second = Utils.getBeingOutTimeInSeconds(_startTime!, _endTime!);
+
+      Map<String, int> map = {_currentQuestion!.id.toString(): second};
+      //Print action log
+      if (kDebugMode) {
+        print("DEBUG: action log: question ${_currentQuestion!.content}");
+        print("DEBUG: action log: $map");
+      }
+
+      _resetActionLogTimes();
+
+      //Add action log
+      _logActions.add(map);
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       if (_audioPlayerController != null) {
         //Re play answer audio
@@ -722,23 +766,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
-        await _audioPlayerController!.stop().then((_) {
-          //Check playing answers status
-          if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
-            if (selectedQuestionIndex !=
-                _playAnswerProvider!.selectedQuestionIndex) {
+        await _audioPlayerController!.stop().then(
+          (_) {
+            //Check playing answers status
+            if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+              if (selectedQuestionIndex !=
+                  _playAnswerProvider!.selectedQuestionIndex) {
+                _startPlayAudio(
+                    question: question,
+                    selectedQuestionIndex: selectedQuestionIndex);
+              } else {
+                _playAnswerProvider!.resetSelectedQuestionIndex();
+              }
+            } else {
               _startPlayAudio(
                   question: question,
                   selectedQuestionIndex: selectedQuestionIndex);
-            } else {
-              _playAnswerProvider!.resetSelectedQuestionIndex();
             }
-          } else {
-            _startPlayAudio(
-                question: question,
-                selectedQuestionIndex: selectedQuestionIndex);
-          }
-        });
+          },
+        );
       } else {
         //Check playing answers status
         if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
@@ -757,7 +803,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }
@@ -848,11 +894,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           context: context,
           builder: (BuildContext context) {
             return ConfirmDialogWidget(
-              title: "Notification",
-              message:
-                  "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?",
-              cancelButtonTitle: "Cancel",
-              okButtonTitle: "OK",
+              title: StringConstants.dialog_title,
+              message: StringConstants.confirm_reanswer_when_reviewing_message,
+              cancelButtonTitle: StringConstants.cancel_button_title,
+              okButtonTitle: StringConstants.ok_button_title,
               cancelButtonTapped: _cancelButtonTapped,
               okButtonTapped: () {
                 //TODO: Pause reviewing process
@@ -886,7 +931,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }
@@ -903,7 +948,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _showTip(question);
     } else {
       showToastMsg(
-        msg: "Please wait until the test is finished!",
+        msg: StringConstants.wait_until_the_exam_finished_message,
         toastState: ToastStatesType.warning,
       );
     }
@@ -999,6 +1044,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
     Map<String, dynamic> info = {
       "question_id": questionTopicModel.id.toString(),
       "question_content": questionTopicModel.content,
@@ -1114,7 +1164,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Comment for spin 1
       // _startReviewing();
       showToastMsg(
-        msg: "This feature is not available!",
+        msg: StringConstants.feature_not_available_message,
         toastState: ToastStatesType.warning,
       );
     } else {
@@ -1560,14 +1610,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         bitRate: 128000,
         samplingRate: 44100,
       );
-
-      // List<FileTopicModel> temp = _currentQuestion!.answers;
-      // if (!_checkAnswerFileExist(newFileName, temp)) {
-      //   temp.add(
-      //       FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-      //   _currentQuestion!.answers = temp;
-      //   _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
-      // }
     }
   }
 
@@ -1630,8 +1672,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Hide cameraLive
     _hideCameraLive();
-    //Auto submit test for activity type = test
-    if (_simulatorTestProvider!.activityType == "test") {
+
+    //Auto submit test for activity type = test or type = exam
+    if (_simulatorTestProvider!.activityType == "test" || _isExam) {
       _startSubmitTest();
     } else {
       //Activity Type = "homework"
@@ -1646,11 +1689,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
+    File? videoConfirmFile =
+        _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+
     _testRoomPresenter!.submitTest(
       context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       questions: questions,
+      isExam: _isExam,
+      videoConfirmFile: videoConfirmFile,
+      logAction: _logActions,
     );
   }
 
@@ -1756,12 +1805,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
+
+    _simulatorTestProvider!.setIsLessThan2Second(true);
     _countDown = _testRoomPresenter!.startCountDown(
-      context: context,
-      count: timeRecord,
-      isPart2: isPart2,
-      isReAnswer: true,
-    );
+        context: context,
+        count: timeRecord,
+        isPart2: isPart2,
+        isReAnswer: true,
+        isLessThan2Seconds: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1791,11 +1842,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countDown) {
       _countDown!.cancel();
     }
+    _simulatorTestProvider!.setIsLessThan2Second(true);
     _countDown = _testRoomPresenter!.startCountDown(
         context: context,
         count: timeRecord,
         isPart2: isPart2,
-        isReAnswer: false);
+        isReAnswer: false,
+        isLessThan2Seconds: true);
 
     _setVisibleRecord(true, _countDown, fileName);
 
@@ -1867,18 +1920,40 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       reQuestions: _simulatorTestProvider!.questionList,
+      isExam: _isExam,
     );
   }
 
+  bool _checkAnswerDuration() {
+    if (_simulatorTestProvider!.isLessThan2Second) {
+      Fluttertoast.showToast(
+        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        backgroundColor: Colors.blueGrey,
+        textColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+        fontSize: 15,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return true;
+    }
+    return false;
+  }
+
   @override
-  void onCountDown(String countDownString) {
+  void onCountDown(String countDownString, bool isLessThan2Second) {
     if (mounted) {
       _timerProvider!.setCountDown(countDownString);
+      _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
     }
   }
 
   @override
   void onFinishAnswer(bool isPart2) {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
     //Finish answer
     _resetQuestionImage();
 
@@ -1997,9 +2072,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur, please try again later!",
-          okButtonTitle: "OK",
+          title: StringConstants.dialog_title,
+          description: StringConstants.submit_test_error_messge,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -2032,10 +2107,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         context: context,
         builder: (BuildContext context) {
           return CustomAlertDialog(
-            title: "Notify",
-            description: "Do you want to save this test?",
-            okButtonTitle: "Save",
-            cancelButtonTitle: "Don't Save",
+            title: StringConstants.dialog_title,
+            description: StringConstants.confirm_save_the_test_message,
+            okButtonTitle: StringConstants.save_button_title,
+            cancelButtonTitle: StringConstants.dont_save_button_title,
             borderRadius: 8,
             hasCloseButton: true,
             okButtonTapped: () {
@@ -2056,10 +2131,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         context: context,
         builder: (BuildContext context) {
           return CustomAlertDialog(
-            title: "Confirm",
-            description: "Are you sure to save change your answers?",
-            okButtonTitle: "Save",
-            cancelButtonTitle: "Cancel",
+            title: StringConstants.confirm_title,
+            description: StringConstants.confirm_save_change_answers_message,
+            okButtonTitle: StringConstants.save_button_title,
+            cancelButtonTitle: StringConstants.cancel_button_title,
             borderRadius: 8,
             hasCloseButton: true,
             okButtonTapped: () {
@@ -2089,6 +2164,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onFinishForReAnswer() {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
+    _timerProvider!.strCount;
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
 
@@ -2149,11 +2230,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
 
     Fluttertoast.showToast(
-        msg: msg,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
-        fontSize: 18,
-        toastLength: Toast.LENGTH_LONG);
+      msg: msg,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      gravity: ToastGravity.BOTTOM,
+      fontSize: 18,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 }

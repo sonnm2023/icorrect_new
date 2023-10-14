@@ -24,7 +24,7 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
-  void onCountDown(String countDownString);
+  void onCountDown(String countDownString, bool isLessThan2Seconds);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
@@ -63,7 +63,6 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayIntroduce();
       } else {
-        //TODO: Download again
         _view!.onReDownload();
       }
     } else {
@@ -78,7 +77,9 @@ class TestRoomPresenter {
     required int count,
     required bool isPart2,
     required bool isReAnswer,
+    required bool isLessThan2Seconds
   }) {
+    int temp = count;
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -94,7 +95,11 @@ class TestRoomPresenter {
       dynamic minuteStr = minutes.toString().padLeft(2, '0');
       dynamic secondStr = seconds.toString().padLeft(2, '0');
 
-      _view!.onCountDown("$minuteStr:$secondStr");
+      if ((temp - count) >= 2) {
+        isLessThan2Seconds = false;
+      }
+
+      _view!.onCountDown("$minuteStr:$secondStr", isLessThan2Seconds);
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
@@ -165,20 +170,12 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayEndOfTakeNote(fileName);
       } else {
-        //TODO: download again
         _view!.onReDownload();
       }
     } else {
       if (kDebugMode) {
         print("DEBUG: This topic has not end of take note file");
       }
-    }
-  }
-
-  void clickEndReAnswer(QuestionTopicModel question, String filePath) {
-    //TODO:
-    if (kDebugMode) {
-      print("DEBUG: clickEndReAnswer");
     }
   }
 
@@ -195,7 +192,6 @@ class TestRoomPresenter {
       if (isExist) {
         _view!.onPlayEndOfTest(fileName);
       } else {
-        //TODO: Download again
         _view!.onReDownload();
       }
     } else {
@@ -252,6 +248,9 @@ class TestRoomPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
+    required bool isExam,
+    required File? videoConfirmFile,
+    required List<Map<String, dynamic>>? logAction,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -270,6 +269,9 @@ class TestRoomPresenter {
       questions: questions,
       isUpdate: false,
       dataLog: dataLog,
+      isExam: isExam,
+      videoConfirmFile: videoConfirmFile,
+      logAction: logAction,
     );
 
     if (kDebugMode) {
@@ -312,7 +314,6 @@ class TestRoomPresenter {
 
           _view!.onSubmitTestFail("Has an error when submit this test!");
         }
-
       }).catchError((onError) {
         //Add log
         Utils.prepareLogData(
@@ -381,8 +382,16 @@ class TestRoomPresenter {
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
     required Map<String, dynamic>? dataLog,
+    required bool isExam,
+    required File? videoConfirmFile,
+    required List<Map<String, dynamic>>? logAction,
   }) async {
     String url = submitHomeWorkV2EP();
+
+    if (isExam) {
+      url = submitExam();
+    }
+
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -403,6 +412,14 @@ class TestRoomPresenter {
     }
     String appVersion = await Utils.getAppVersion();
     formData.addEntries([MapEntry('app_version', appVersion)]);
+
+    if (null != logAction) {
+      if (logAction.isNotEmpty) {
+        formData.addEntries([MapEntry('log_action', logAction.toString())]);
+      } else {
+        formData.addEntries([const MapEntry('log_action', '[]')]);
+      }
+    }
 
     for (QuestionTopicModel q in questions) {
       String part = '';
@@ -451,6 +468,13 @@ class TestRoomPresenter {
       }
     }
 
+    if (null != videoConfirmFile) {
+      String fileName = videoConfirmFile.path.split('/').last;
+      formData.addEntries([MapEntry('video_confirm', fileName)]);
+      request.files
+          .add(await http.MultipartFile.fromPath('video_confirm', videoConfirmFile.path));
+    }
+
     request.fields.addAll(formData);
 
     if (null != dataLog) {
@@ -465,6 +489,7 @@ class TestRoomPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> reQuestions,
+    required bool isExam,
   }) async {
     //Add log
     LogModel? log;
@@ -481,6 +506,9 @@ class TestRoomPresenter {
       questions: reQuestions,
       isUpdate: true,
       dataLog: dataLog,
+      isExam: isExam,
+      videoConfirmFile: null,
+      logAction: null,
     );
     if (kDebugMode) {
       print("DEBUG: submitTest");
@@ -533,7 +561,7 @@ class TestRoomPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onUpdateReAnswersFail(
-          "invalid_return_type_for_catch_error: Has an error when submit this test!");
+            "invalid_return_type_for_catch_error: Has an error when submit this test!");
       });
     } on TimeoutException {
       //Add log

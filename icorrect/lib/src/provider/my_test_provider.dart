@@ -18,6 +18,7 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   void clearData() {
+    _isLessThan2Second = true;
     setVisibleOverviewComment(false);
     setResultResponseModel(ResultResponseModel());
     setOtherLightHomeWorks([]);
@@ -282,6 +283,16 @@ class MyTestProvider extends ChangeNotifier {
   bool get needDownloadAgain => _needDownloadAgain;
   void setNeedDownloadAgain(bool need) {
     _needDownloadAgain = need;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _isLessThan2Second = true;
+  bool get isLessThan2Second  => _isLessThan2Second;
+  void setIsLessThan2Second(bool isLess) {
+    _isLessThan2Second = isLess;
 
     if (!isDisposed) {
       notifyListeners();

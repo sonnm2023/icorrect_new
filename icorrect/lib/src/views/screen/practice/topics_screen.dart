@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-
-import '../../../../core/app_color.dart';
-import '../../widget/divider.dart';
+import 'package:icorrect/src/views/widget/divider.dart';
 
 class TopicsScreen extends StatefulWidget {
   const TopicsScreen({super.key});
@@ -23,7 +22,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
             child: CustomDivider(),
           ),
           title: const Text(
-            "Topics",
+            StringConstants.topics_screen_title,
             style: CustomTextStyle.appbarTitle,
           ),
           centerTitle: true,
@@ -64,7 +63,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
                         const Expanded(
                           flex: 4,
                           child: Text(
-                            'Selected topic (0/24)',
+                            StringConstants.selected_topics,
                             style: CustomTextStyle.textBlack_14,
                             textAlign: TextAlign.center,
                           ),
@@ -74,7 +73,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
                           child: TextButton(
                             onPressed: () {},
                             child: const Text(
-                              'Clear',
+                              StringConstants.clear_button_title,
                               style: CustomTextStyle.textBoldPurple_14,
                               textAlign: TextAlign.center,
                             ),

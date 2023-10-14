@@ -18,9 +18,12 @@ import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart'
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
+import 'package:icorrect/src/presenters/my_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/screen/auth/ai_response_webview.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
@@ -30,10 +33,6 @@ import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
-
-import '../../../../presenters/my_test_presenter.dart';
-import '../../other_views/dialog/alert_dialog.dart';
-import '../../other_views/dialog/circle_loading.dart';
 
 class MyTestTab extends StatefulWidget {
   final ActivitiesModel homeWorkModel;
@@ -123,8 +122,6 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _buildMyTest() {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         if (provider.isDownloading) {
@@ -160,7 +157,7 @@ class _MyTestTabState extends State<MyTestTab>
                             width: constraint.maxWidth,
                             child: const Center(
                               child: Text(
-                                'View AI Response',
+                                StringConstants.view_ai_response_button_title,
                                 style: CustomTextStyle.textWhiteBold_16,
                               ),
                             ),
@@ -194,7 +191,7 @@ class _MyTestTabState extends State<MyTestTab>
                             width: constraint.maxWidth,
                             child: const Center(
                               child: Text(
-                                'Update Your Answer',
+                                StringConstants.update_answer_button_title,
                                 style: CustomTextStyle.textWhiteBold_16,
                               ),
                             ),
@@ -206,7 +203,7 @@ class _MyTestTabState extends State<MyTestTab>
               provider.needDownloadAgain
                   ? const DownloadAgainWidget(
                       simulatorTestPresenter: null,
-                      myTestPresenter: null, //_presenter!, //TODO
+                      myTestPresenter: null,
                     )
                   : const SizedBox(),
             ],
@@ -221,10 +218,10 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: "Confirm",
-          message: "Are you sure to save change your answers?",
-          cancelButtonTitle: "Cancel",
-          okButtonTitle: "Save",
+          title: StringConstants.confirm_title,
+          message: StringConstants.confirm_save_change_answers_message,
+          cancelButtonTitle: StringConstants.cancel_button_title,
+          okButtonTitle: StringConstants.save_button_title,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
@@ -255,6 +252,11 @@ class _MyTestTabState extends State<MyTestTab>
           print('DEBUG:App detached');
         }
         break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG:App hidden');
+        }
+        break;
     }
   }
 
@@ -268,7 +270,9 @@ class _MyTestTabState extends State<MyTestTab>
           '\\$audioFile';
       if (File(path).existsSync()) {
         await File(path).delete();
-        print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+        if (kDebugMode) {
+          print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+        }
       }
     }
 
@@ -297,6 +301,11 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   void _onFinishReanswer(QuestionTopicModel question) {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
     widget.provider.setReAnswerOfQuestions(question);
     int index = widget.provider.myAnswerOfQuestions.indexWhere(
         (q) => q.id == question.id && q.repeatIndex == question.repeatIndex);
@@ -399,7 +408,7 @@ class _MyTestTabState extends State<MyTestTab>
               color: Colors.white,
               child: const Center(
                 child: Text(
-                  'Nothing in here',
+                  StringConstants.nothing,
                   style: CustomTextStyle.textGrey_15,
                 ),
               ),
@@ -449,7 +458,7 @@ class _MyTestTabState extends State<MyTestTab>
                                   question.repeatIndex, question.id);
 
                               if (question.answers.isNotEmpty) {
-                                _preparePlayAudio(
+                                _prepareToPlayAudio(
                                     fileName: Utils.convertFileName(question
                                         .answers[question.repeatIndex].url
                                         .toString()),
@@ -498,7 +507,8 @@ class _MyTestTabState extends State<MyTestTab>
                                           _onClickReanswer(provider, question);
                                         },
                                         child: const Text(
-                                          'Re-answer',
+                                          StringConstants
+                                              .re_answer_button_title,
                                           style:
                                               CustomTextStyle.textBoldPurple_14,
                                         ),
@@ -513,7 +523,8 @@ class _MyTestTabState extends State<MyTestTab>
                                   },
                                   child: (question.tips.isNotEmpty)
                                       ? const Text(
-                                          'View Tips',
+                                          StringConstants
+                                              .view_tips_button_title,
                                           style:
                                               CustomTextStyle.textBoldPurple_14,
                                         )
@@ -578,10 +589,12 @@ class _MyTestTabState extends State<MyTestTab>
     if (widget.provider.recordPermission.isGranted) {
       _stopCountTimer();
       widget.provider.setVisibleRecord(true);
+      widget.provider.setIsLessThan2Second(true);
       if (widget.provider.visibleRecord) {
         audioFile = '${await Utils.generateAudioFileName()}.wav';
 
-        timer = _presenter!.startCountDown(context, 30);
+        timer = _presenter!.startCountDown(
+            context: context, count: 30, isLessThan2Seconds: true);
         widget.provider.setCountDownTimer(timer);
         await _record.start(
           path:
@@ -615,10 +628,9 @@ class _MyTestTabState extends State<MyTestTab>
         question.answers.last.url;
   }
 
-  Future _preparePlayAudio(
+  Future _prepareToPlayAudio(
       {required String fileName, required int questionId}) async {
     Utils.prepareAudioFile(fileName, null).then((value) {
-      //TODO
       if (kDebugMode) {
         print('DEBUG: _playAudio:${value.path.toString()}');
       }
@@ -644,14 +656,50 @@ class _MyTestTabState extends State<MyTestTab>
     await _player!.stop();
   }
 
+  void _showCheckNetworkDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: StringConstants.dialog_title,
+          description: StringConstants.network_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
+  }
+
+  bool _checkAnswerDuration() {
+    if (widget.provider.isLessThan2Second) {
+      Fluttertoast.showToast(
+        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        backgroundColor: Colors.blueGrey,
+        textColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+        fontSize: 15,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return true;
+    }
+    return false;
+  }
+
   @override
   void finishCountDown() {
     _onFinishReanswer(widget.provider.currentQuestion);
   }
 
   @override
-  void onCountDown(String time) {
+  void onCountDown(String time, bool isLessThan2Second) {
     widget.provider.setTimerCount(time);
+    widget.provider.setIsLessThan2Second(isLessThan2Second);
   }
 
   @override
@@ -772,26 +820,6 @@ class _MyTestTabState extends State<MyTestTab>
             context, widget.homeWorkModel.activityId.toString());
       }
     }
-  }
-
-  void _showCheckNetworkDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur. Please check your connection!",
-          okButtonTitle: "OK",
-          cancelButtonTitle: null,
-          borderRadius: 8,
-          hasCloseButton: false,
-          okButtonTapped: () {
-            Navigator.of(context).pop();
-          },
-          cancelButtonTapped: null,
-        );
-      },
-    );
   }
 
   void updateStatusForReDownload() {

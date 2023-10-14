@@ -1,15 +1,14 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/dependency_injection.dart';
+import 'package:icorrect/src/data_sources/repositories/user_authen_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:path/path.dart';
-
-import '../data_sources/api_urls.dart';
-import '../data_sources/dependency_injection.dart';
-import '../data_sources/repositories/user_authen_repository.dart';
-import '../data_sources/utils.dart';
 import 'package:http/http.dart' as http;
 
 abstract class VideoAuthenticationContract {
@@ -41,7 +40,6 @@ class VideoAuthenticationPresenter {
   }
 
   String formatDuration(Duration duration) {
-    int hours = duration.inHours;
     int minutes = (duration.inMinutes % 60);
     int seconds = (duration.inSeconds % 60);
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
@@ -79,7 +77,7 @@ class VideoAuthenticationPresenter {
         } else {
           List<String> categoriesList = List<String>.from(isUploadVideo
               ? json['data']['video'] ?? []
-              : json['data']['audio'] ?? [] as List);
+              : json['data']['audio'] ?? []);
 
           _view!.submitAuthFail('Error : ${categoriesList.toString().replaceAll(RegExp(r'[\[\]]'), "")}');
         }

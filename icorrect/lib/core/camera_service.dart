@@ -34,13 +34,11 @@ class CameraService {
   void saveVideoDoingTest(Function(File savedFile) saveVideoCallBack) {
     try {
       _cameraController!.stopVideoRecording().then((value) async {
-        if (value != null) {
-          saveVideoCallBack(File(value.path));
-          if (kDebugMode) {
-            int length = (await value.readAsBytes()).lengthInBytes;
-            print(
-                "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
-          }
+        saveVideoCallBack(File(value.path));
+        if (kDebugMode) {
+          int length = (await value.readAsBytes()).lengthInBytes;
+          print(
+              "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
         }
       });
     } catch (e) {

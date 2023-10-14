@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 
 class CustomDivider extends StatelessWidget {

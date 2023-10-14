@@ -48,6 +48,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
     <key>NSAppleMusicUsageDescription</key>
-    <string>Play using while you are doing the test or exam</string>
+    <string>Play using while you are doing the exam</string>
 </dict>
 </plist>

@@ -1,4 +1,5 @@
 import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -20,7 +21,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
       true,
       body: <String, String>{'activity_id': homeworkId, 'distribute_code': distributeCode},
     )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -31,11 +32,11 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
   Future<String> submitTest(http.MultipartRequest multiRequest) async {
     return await multiRequest
         .send()
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: timeout))
         .then((http.StreamedResponse streamResponse) async {
       if (streamResponse.statusCode == 200) {
         return await http.Response.fromStream(streamResponse)
-            .timeout(const Duration(seconds: 15))
+            .timeout(const Duration(seconds: timeout))
             .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;

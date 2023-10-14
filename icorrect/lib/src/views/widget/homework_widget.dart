@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-
-import '../../data_sources/constants.dart';
 
 class HomeWorkWidget extends StatelessWidget {
   const HomeWorkWidget(
@@ -60,7 +59,7 @@ class HomeWorkWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Part",
+                    StringConstants.part,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColor.defaultPurpleColor,

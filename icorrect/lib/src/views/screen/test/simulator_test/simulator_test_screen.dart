@@ -51,10 +51,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   SimulatorTestProvider? _simulatorTestProvider;
 
-  // Permission? _microPermission;
-  // PermissionStatus _microPermissionStatus = PermissionStatus.denied;
+  Permission? _microPermission;
+  PermissionStatus _microPermissionStatus = PermissionStatus.denied;
 
-  Map<Permission, PermissionStatus>? _statuses;
+  // Map<Permission, PermissionStatus>? _statuses; //TODO
 
   StreamSubscription? connection;
   bool isOffline = false;
@@ -77,7 +77,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return const [
       Tab(
         child: Text(
-          'MY TEST',
+          StringConstants.my_exam_tab_title,
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,
@@ -87,7 +87,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          'HIGHLIGHT',
+          StringConstants.highlight_tab_title,
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,
@@ -97,7 +97,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          'OTHERS',
+          StringConstants.others_tab_title,
           style: TextStyle(
             fontSize: FontsSize.fontSize_14,
             color: AppColor.defaultPurpleColor,
@@ -173,8 +173,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                         color: AppColor.defaultPurpleColor,
                       ),
                       centerTitle: true,
-                      leading:
-                          BackButtonWidget(backButtonTapped: _backButtonTapped),
+                      leading: GestureDetector(
+                        onTap: () {
+                          _backButtonTapped();
+                        },
+                        child: const Icon(Icons.arrow_back_rounded,
+                            color: AppColor.defaultPurpleColor),
+                      ),
                       title: Text(
                         widget.homeWorkModel.activityName,
                         style: CustomTextStyle.appbarTitle,
@@ -296,11 +301,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           context: context,
           builder: (BuildContext context) {
             return CustomAlertDialog(
-              title: "Notify",
+              title: StringConstants.dialog_title,
               description:
-                  "Your answers have changed. Do you want to save this change?",
-              okButtonTitle: "Save",
-              cancelButtonTitle: "Don't Save",
+                  StringConstants.confirm_save_change_answers_message_1,
+              okButtonTitle: StringConstants.save_button_title,
+              cancelButtonTitle: StringConstants.dont_save_button_title,
               borderRadius: 8,
               hasCloseButton: true,
               okButtonTapped: () {
@@ -345,7 +350,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           {
             //None
             if (kDebugMode) {
-              print("DEBUG: Status is not start to do the test!");
+              print("DEBUG: Status is not start to do the exam!");
             }
             Navigator.of(context).pop();
             break;
@@ -354,7 +359,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           {
             //Doing
             if (kDebugMode) {
-              print("DEBUG: Status is doing the test!");
+              print("DEBUG: Status is doing the exam!");
             }
 
             bool okButtonTapped = false;
@@ -363,11 +368,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: "Notification",
-                  description:
-                      "The test is not completed! Are you sure to quit?",
-                  okButtonTitle: "OK",
-                  cancelButtonTitle: "Cancel",
+                  title: StringConstants.dialog_title,
+                  description: StringConstants.quit_the_test_message,
+                  okButtonTitle: StringConstants.ok_button_title,
+                  cancelButtonTitle: StringConstants.cancel_button_title,
                   borderRadius: 8,
                   hasCloseButton: false,
                   okButtonTapped: () {
@@ -394,7 +398,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           {
             //Finish
             if (kDebugMode) {
-              print("DEBUG: Status is finish doing the test!");
+              print("DEBUG: Status is finish doing the exam!");
             }
 
             bool cancelButtonTapped = false;
@@ -403,10 +407,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: "Notify",
-                  description: "Do you want to save this test before quit?",
-                  okButtonTitle: "Save",
-                  cancelButtonTitle: "Don't Save",
+                  title: StringConstants.dialog_title,
+                  description:
+                      StringConstants.confirm_before_quit_the_test_message,
+                  okButtonTitle: StringConstants.save_button_title,
+                  cancelButtonTitle: StringConstants.cancel_button_title,
                   borderRadius: 8,
                   hasCloseButton: true,
                   okButtonTapped: () {
@@ -467,105 +472,109 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     for (String answer in answers) {
       FileStorageHelper.deleteFile(answer, MediaType.audio,
               _simulatorTestProvider!.currentTestDetail.testId.toString())
-          .then((value) {
-        if (false == value) {
-          showToastMsg(
-            msg: "Can not delete files!",
-            toastState: ToastStatesType.warning,
-          );
-        }
-      });
+          .then(
+        (value) {
+          if (false == value) {
+            showToastMsg(
+              msg: StringConstants.can_not_delete_files_message,
+              toastState: ToastStatesType.warning,
+            );
+          }
+        },
+      );
     }
   }
 
   Widget _buildBody() {
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (kDebugMode) {
-        print("DEBUG: SimulatorTest --- build -- buildBody");
-      }
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        if (kDebugMode) {
+          print("DEBUG: SimulatorTest --- build -- buildBody");
+        }
 
-      if (provider.isDownloadProgressing) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const DownloadProgressingWidget(),
-            Visibility(
-              visible: provider.startNowAvailable,
-              child: StartNowButtonWidget(
-                startNowButtonTapped: () {
-                  _checkPermission();
-                },
-              ),
-            ),
-          ],
-        );
-      }
-
-      if (provider.isGettingTestDetail) {
-        return const DefaultLoadingIndicator(
-          color: AppColor.defaultPurpleColor,
-        );
-      } else {
-        return SizedBox(
-          child: Stack(
+        if (provider.isDownloadProgressing) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TestRoomWidget(
-                homeWorkModel: widget.homeWorkModel,
-                simulatorTestPresenter: _simulatorTestPresenter!,
-              ),
+              const DownloadProgressingWidget(),
               Visibility(
-                visible: provider.submitStatus == SubmitStatus.submitting,
-                child: const DefaultLoadingIndicator(
-                  color: AppColor.defaultPurpleColor,
+                visible: provider.startNowAvailable,
+                child: StartNowButtonWidget(
+                  startNowButtonTapped: () {
+                    _checkPermission();
+                  },
                 ),
               ),
             ],
-          ),
-        );
-      }
-    });
+          );
+        }
+
+        if (provider.isGettingTestDetail) {
+          return const DefaultLoadingIndicator(
+            color: AppColor.defaultPurpleColor,
+          );
+        } else {
+          return SizedBox(
+            child: Stack(
+              children: [
+                TestRoomWidget(
+                  homeWorkModel: widget.homeWorkModel,
+                  simulatorTestPresenter: _simulatorTestPresenter!,
+                ),
+                Visibility(
+                  visible: provider.submitStatus == SubmitStatus.submitting,
+                  child: const DefaultLoadingIndicator(
+                    color: AppColor.defaultPurpleColor,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+    );
   }
 
   Widget _buildDownloadAgain() {
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (provider.needDownloadAgain) {
-        return DownloadAgainWidget(
-          simulatorTestPresenter: _simulatorTestPresenter!,
-          myTestPresenter: null,
-        );
-      } else {
-        return const SizedBox();
-      }
-    });
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.needDownloadAgain) {
+          return DownloadAgainWidget(
+            simulatorTestPresenter: _simulatorTestPresenter!,
+            myTestPresenter: null,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   void _checkPermission() async {
-    // if (_microPermission == null) {
-    //   await _initializePermission();
-    // }
-
-    // if (mounted) {
-    //   _requestPermission(_microPermission!, context);
-    // }
-
-    if (_statuses == null) {
+    if (_microPermission == null) {
       await _initializePermission();
+    }
+
+    if (mounted) {
+      _requestPermission(_microPermission!, context);
     }
   }
 
-  // Future<void> _requestPermission(
-  //     Permission permission, BuildContext context) async {
-  //   _simulatorTestProvider!.setPermissionDeniedTime();
-  //   // ignore: unused_local_variable
-  //   final status = await permission.request();
-  //   _listenForPermissionStatus(context);
-  // }
+  Future<void> _requestPermission(
+      Permission permission, BuildContext context) async {
+    _simulatorTestProvider!.setPermissionDeniedTime();
+    // ignore: unused_local_variable
+    final status = await permission.request();
+    _listenForPermissionStatus(context);
+  }
 
   Future<void> _initializePermission() async {
-    // _microPermission = Permission.microphone;
+    _microPermission = Permission.microphone;
     if (mounted) {
       _simulatorTestProvider!.setPermissionDeniedTime();
-      _statuses = await [Permission.microphone, Permission.camera].request();
+
+      //TODO
+      // _statuses = await [Permission.microphone, Permission.camera].request();
 
       _listenForPermissionStatus(context);
     }
@@ -574,56 +583,73 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _listenForPermissionStatus(BuildContext context) async {
     // Permission? _microPermission;
     // PermissionStatus _microPermissionStatus = PermissionStatus.denied;
-    // if (_microPermission != null) {
-    //   _microPermissionStatus = await _microPermission!.status;
+    if (_microPermission != null) {
+      _microPermissionStatus = await _microPermission!.status;
 
-    //   if (_microPermissionStatus == PermissionStatus.denied) {
-    //     if (_simulatorTestProvider!.permissionDeniedTime > 2) {
-    //       _showConfirmDialog();
-    //     }
-    //   } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
-    //     openAppSettings();
-    //   } else {
-    //     _startToDoTest();
-    //   }
-    // }
-    if (_statuses != null) {
-      if (_statuses![Permission.microphone]!.isDenied ||
-          _statuses![Permission.camera]!.isDenied) {
+      if (_microPermissionStatus == PermissionStatus.denied) {
         if (_simulatorTestProvider!.permissionDeniedTime > 2) {
-          _showConfirmDialog();
+          // _simulatorTestProvider!.setDialogShowing(true);
+          _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
+          // _showConfirmDialog();
         }
-      } else if (_statuses![Permission.microphone]!.isPermanentlyDenied ||
-          _statuses![Permission.camera]!.isPermanentlyDenied) {
-        openAppSettings();
+      } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
+        // _simulatorTestProvider!.setDialogShowing(true);
+        _showConfirmDialogWithMessage(StringConstants.confirm_access_micro_permission_message);
       } else {
         _startToDoTest();
       }
     }
   }
 
-  void _showConfirmDialog() {
-    if (false == _simulatorTestProvider!.dialogShowing) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertsDialog.init().showDialog(
-            context,
-            AlertClass.microPermissionAlert,
-            this,
-            keyInfo: StringClass.permissionDenied,
-          );
-        },
-      );
-      _simulatorTestProvider!.setDialogShowing(true);
-    }
+  // void _showConfirmDialog() {
+  //   if (false == _simulatorTestProvider!.dialogShowing) {
+  //     showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (context) {
+  //         return AlertsDialog.init().showDialog(
+  //           context,
+  //           AlertClass.microPermissionAlert,
+  //           this,
+  //           keyInfo: StringClass.permissionDenied,
+  //         );
+  //       },
+  //     );
+  //     _simulatorTestProvider!.setDialogShowing(true);
+  //   }
+  // }
+
+  void _showConfirmDialogWithMessage(String message) async {
+    // if (true == _simulatorTestProvider!.dialogShowing) {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: StringConstants.dialog_title,
+          description: message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: StringConstants.cancel_button_title,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            // _simulatorTestProvider!.setDialogShowing(false);
+            openAppSettings();
+          },
+          cancelButtonTapped: () {
+            // _simulatorTestProvider!.setDialogShowing(false);
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+    // }
   }
 
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
-    _simulatorTestPresenter!
-        .getTestDetail(context: context, homeworkId: widget.homeWorkModel.activityId.toString());
+    _simulatorTestPresenter!.getTestDetail(
+        context: context,
+        homeworkId: widget.homeWorkModel.activityId.toString());
   }
 
   void _startToDoTest() {
@@ -641,9 +667,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notify",
-          description: "An error occur. Please check your connection!",
-          okButtonTitle: "OK",
+          title: StringConstants.dialog_title,
+          description: StringConstants.network_error_message,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -790,7 +816,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
         }
-        _simulatorTestPresenter!.reDownloadFiles(context, widget.homeWorkModel.activityId.toString());
+        _simulatorTestPresenter!.reDownloadFiles(
+            context, widget.homeWorkModel.activityId.toString());
       }
     }
   }

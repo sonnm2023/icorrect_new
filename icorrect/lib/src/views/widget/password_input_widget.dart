@@ -14,26 +14,26 @@ class PasswordInputWidget extends StatelessWidget {
     String text = '';
     switch (type) {
       case PasswordType.password:
-        text = 'Password';
+        text = StringConstants.password;
       case PasswordType.confirmPassword:
-        text = 'Retype Password';
+        text = StringConstants.retype_password;
       case PasswordType.currentPassword:
-        text = 'Current password';
+        text = StringConstants.current_password;
       case PasswordType.newPassword:
-        text = 'New password';
+        text = StringConstants.new_password;
       case PasswordType.confirmNewPassword:
-        text = 'Confirm new password';
+        text = StringConstants.confirm_new_password;
 
     }
 
     return AuthFormField(
       validator: (value) {
         if (passwordController.text.isEmpty) {
-          return "Password can't be empty";
+          return StringConstants.empty_password_error_message;
         } else if (passwordController.text.length < 6) {
-          return 'Your password must be longer than 6 characters';
+          return StringConstants.password_min_lenght_message;
         } else if (passwordController.text.length > 32) {
-          return 'Your password must be shorter than 32 characters';
+          return StringConstants.password_max_lenght_message;
         }
         return null;
       },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +31,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                   const SizedBox(height: 10),
                   const Center(
                     child: Text(
-                      "Cue Card",
+                      StringConstants.cue_card,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,

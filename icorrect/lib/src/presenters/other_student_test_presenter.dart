@@ -76,6 +76,9 @@ class OtherStudentTestPresenter {
 
     _repository!.getTestDetailWithId(testId).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
+      if (kDebugMode) {
+        print('DEBUG : test of other student : ${json.toString()}');
+      }
       if (json.isNotEmpty) {
         if (json['error_code'] == 200) {
           Map<String, dynamic> dataMap = json['data'];
@@ -193,6 +196,10 @@ class OtherStudentTestPresenter {
             fileTopic = Utils.convertFileName(fileTopic);
           }
 
+          if (kDebugMode) {
+            print('DEBUG : download file name $fileNameForDownload');
+          }
+
           if (fileType.isNotEmpty &&
               !await Utils.isExist(fileTopic, _mediaType(fileType))) {
             try {
@@ -206,10 +213,14 @@ class OtherStudentTestPresenter {
               // use client.get as you would http.get
 
               String savePath =
-                  '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileTopic';
+                  '${await FileStorageHelper.getFolderPath(MediaType.audio, testDetail.testId.toString())}\\$fileTopic';
               Response response = await dio!.download(url, savePath);
+              if (kDebugMode) {
+                print('DEBUG save path: $savePath');
+              }
 
               if (response.statusCode == 200) {
+                print('save Path: $savePath');
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);

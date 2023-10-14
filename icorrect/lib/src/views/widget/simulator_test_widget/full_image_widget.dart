@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 
@@ -40,10 +39,8 @@ class FullImageWidget extends StatelessWidget {
                 height: 50,
                 child: InkWell(
                   onTap: () {
-                    if (kDebugMode) {
                       provider.resetSelectedQuestionImageUrl();
                       provider.setShowFullImage(false);
-                    }
                   },
                   child: const Icon(
                     Icons.close,

@@ -64,7 +64,8 @@ class ChangePasswordPresenter {
         Utils.prepareLogData(
           log: log,
           data: null,
-          message: "Change password error: ${dataMap['error_code']}${dataMap['status']}",
+          message:
+              "Change password error: ${dataMap['error_code']}${dataMap['status']}",
           status: LogEvent.failed,
         );
 

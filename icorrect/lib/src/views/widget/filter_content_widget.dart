@@ -19,15 +19,13 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   TabBar get _tabBar => const TabBar(
         indicatorColor: AppColor.defaultPurpleColor,
         tabs: [
-          Tab(text: 'CHOOSE CLASS'),
-          Tab(text: 'CHOOSE STATUS'),
+          Tab(text: StringConstants.filter_choose_class_tab_title),
+          Tab(text: StringConstants.filter_choose_status_tab_title),
         ],
       );
   // late List<ClassModel> _listSelectedClass = [];
   late List<NewClassModel> _listSelectedClass = [];
   late List<HomeWorkStatusModel> _listSelectedStatus = [];
-  late List<NewClassModel> _listSelectedClassTemp = [];
-  late List<HomeWorkStatusModel> _listSelectedStatusTemp = [];
 
   @override
   void initState() {
@@ -35,9 +33,6 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
     _listSelectedClass = widget.homeWorkProvider.listSelectedClassFilter;
     _listSelectedStatus = widget.homeWorkProvider.listSelectedStatusFilter;
- 
-    _listSelectedClassTemp = widget.homeWorkProvider.listSelectedClassFilter;
-    _listSelectedStatusTemp = widget.homeWorkProvider.listSelectedStatusFilter;
   }
 
   @override
