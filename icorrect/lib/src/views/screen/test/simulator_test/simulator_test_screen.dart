@@ -32,6 +32,8 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../provider/auth_provider.dart';
+
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class SimulatorTestScreen extends StatefulWidget {
@@ -52,6 +54,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
+  AuthProvider? _authProvider;
 
   // Map<Permission, PermissionStatus>? _statuses; //TODO
 
@@ -134,11 +137,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _simulatorTestPresenter = SimulatorTestPresenter(this);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     Provider.of<HomeWorkProvider>(context, listen: false)
         .setSimulatorTestPresenter(_simulatorTestPresenter);
 
     _loading = CircleLoading();
+
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
+    });
 
     _getTestDetail();
   }
@@ -155,9 +164,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Consumer<SimulatorTestProvider>(
+    return  Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTest, child) {
           if (simulatorTest.isShowConfirmSaveTest) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -170,7 +177,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 DefaultTabController(
                   length: 3,
                   child: Scaffold(
-                    key: _scaffoldKey,
+                    key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                     appBar: AppBar(
                       elevation: 0.0,
                       iconTheme: const IconThemeData(
@@ -235,6 +242,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             return Stack(
               children: [
                 Scaffold(
+                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                   body: Align(
                     alignment: Alignment.topLeft,
                     child: SafeArea(
@@ -259,8 +267,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             );
           }
         },
-      ),
-    );
+      );
   }
 
   Widget _buildFullImage() {
@@ -429,7 +436,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           okButtonTapped: () {
             //Reset question image
             _resetQuestionImage();
-          
+
             //Submit
             _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
             _simulatorTestPresenter!.submitTest(
@@ -661,7 +668,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Hide Loading view
     _simulatorTestProvider!.setDownloadProgressingStatus(false);
 
-    _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
+    // _simulatorTestProvider!.updateDoingStatus(DoingStatus.doing);
   }
 
   void _showCheckNetworkDialog() async {

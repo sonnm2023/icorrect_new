@@ -296,6 +296,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                       child: InkWell(
                         onTap: () {
                           simulatorTestProvider.setStartDoingTest(true);
+                          _simulatorTestProvider!
+                              .updateDoingStatus(DoingStatus.doing);
                           simulatorTestProvider
                               .updateReviewingStatus(ReviewingStatus.playing);
                           _startToPlayVideo();

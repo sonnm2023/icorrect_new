@@ -39,7 +39,7 @@ class AuthProvider with ChangeNotifier {
   void setQueueScaffoldKeys(GlobalKey<ScaffoldState> key,
       {Queue<GlobalKey<ScaffoldState>>? scaffoldKeys}) {
     _scaffoldKeys.addFirst(key);
-    if (scaffoldKeys != null) {
+    if (scaffoldKeys != null && scaffoldKeys.isNotEmpty) {
       _scaffoldKeys.clear();
       _scaffoldKeys.addAll(scaffoldKeys);
     }
