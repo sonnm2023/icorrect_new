@@ -17,7 +17,6 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -168,6 +167,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //   _recordingUserDoesTestListener();
       // }
 
+      bool showSaveTheExamButton =
+          _simulatorTestProvider!.activityType == "homework" ||
+              _simulatorTestProvider!.submitStatus == SubmitStatus.fail;
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -244,7 +247,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                             repeatQuestion: _repeatQuestionCallBack,
                             cancelReAnswer: _cancelReanswerCallBack,
                           ),
-                          _simulatorTestProvider!.activityType == "homework"
+                          showSaveTheExamButton
                               ? SaveTheTestWidget(
                                   testRoomPresenter: _testRoomPresenter!)
                               : const SizedBox(),
@@ -2022,6 +2025,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onSubmitTestFail(String msg) async {
     //Update indicator process status
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+    _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
     //Show submit error popup
     await showDialog(
@@ -2177,7 +2181,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer) {
+  void onUpdateReAnswersSuccess(String msg) {
     if (null != _loading) {
       _loading!.hide();
     }

@@ -11,7 +11,6 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
@@ -797,8 +796,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       msg: msg,
       toastState: ToastStatesType.error,
     );
-
-    Navigator.of(context).pop();
   }
 
   @override
