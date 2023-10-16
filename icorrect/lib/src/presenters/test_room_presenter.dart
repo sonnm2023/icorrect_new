@@ -28,7 +28,7 @@ abstract class TestRoomViewContract {
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
-  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
+  void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
   void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer);
   void onUpdateReAnswersFail(String msg);
@@ -70,13 +70,12 @@ class TestRoomPresenter {
     }
   }
 
-  Timer startCountDown({
-    required BuildContext context,
-    required int count,
-    required bool isPart2,
-    required bool isReAnswer,
-    required bool isLessThan2Seconds
-  }) {
+  Timer startCountDown(
+      {required BuildContext context,
+      required int count,
+      required bool isPart2,
+      required bool isReAnswer,
+      required bool isLessThan2Seconds}) {
     int temp = count;
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
@@ -265,9 +264,6 @@ class TestRoomPresenter {
         dataLog['response'] = json;
 
         if (json['error_code'] == 200) {
-          ActivityAnswer activityAnswer =
-              ActivityAnswer.fromJson(json['data']['activities_answer']);
-
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -276,8 +272,7 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onSubmitTestSuccess(
-              'Save your answers successfully!', activityAnswer);
+          _view!.onSubmitTestSuccess('Save your answers successfully!');
         } else {
           //Add log
           Utils.prepareLogData(

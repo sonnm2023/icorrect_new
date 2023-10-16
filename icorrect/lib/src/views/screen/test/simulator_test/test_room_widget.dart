@@ -2044,7 +2044,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
+  void onSubmitTestSuccess(String msg) {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();

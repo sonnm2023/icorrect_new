@@ -31,7 +31,7 @@ abstract class SimulatorTestViewContract {
       double percent, int index, int total);
   void onDownloadFailure(AlertInfo info);
   void onSaveTopicListIntoProvider(List<TopicModel> list);
-  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
+  void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
   void onReDownload();
   void onTryAgainToDownload();
@@ -574,9 +574,6 @@ class SimulatorTestPresenter {
         dataLog['response'] = json;
 
         if (json['error_code'] == 200) {
-          ActivityAnswer activityAnswer =
-              ActivityAnswer.fromJson(json['data']['activities_answer']);
-
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -585,8 +582,7 @@ class SimulatorTestPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onSubmitTestSuccess(
-              'Save your answers successfully!', activityAnswer);
+          _view!.onSubmitTestSuccess('Save your answers successfully!');
         } else {
           //Add log
           Utils.prepareLogData(
