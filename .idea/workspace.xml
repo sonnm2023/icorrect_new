@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="52000e1c-4e34-45d8-be37-3c37cd6d570e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/presenters/user_authentication_detail_presenter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/presenters/user_authentication_detail_presenter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/icorrect/lib/src/views/screen/video_authentication/user_auth_detail_status_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/lib/src/views/screen/video_authentication/user_auth_detail_status_widget.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/linux/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/icorrect/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -55,6 +55,9 @@ class LoginPresenter {
 
         await _saveAccessToken(authModel.data.accessToken);
         _getUserInfo(context);
+        if (kDebugMode) {
+          print("_saveAccessToken");
+        }
       } else {
         String message = '';
         if (authModel.message.isNotEmpty) {

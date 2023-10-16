@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -72,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _initializePermission() async {
-    _writeFilePermission = Permission.storage;
+   _writeFilePermission = Permission.storage;
   }
 
   void _listenForPermissionStatus(BuildContext context) async {

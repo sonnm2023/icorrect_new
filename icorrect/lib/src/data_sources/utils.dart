@@ -282,7 +282,7 @@ class Utils {
 
   static UserAuthenStatusUI getUserAuthenStatus(int status) {
     switch (status) {
-      case 0:
+      case 4:
         return UserAuthenStatusUI(
             title: 'Authentication video was rejected',
             description:
@@ -309,7 +309,15 @@ class Utils {
             titleColor: Colors.blue,
             iconColor: Colors.blue);
       case 2:
+      return UserAuthenStatusUI(
+            title: 'You was locked',
+            description: 'Please contact the I Correct administrator for assistance',
+            icon: Icons.lock,
+            backgroundColor: const Color.fromARGB(255, 248, 179, 179),
+            titleColor: Colors.red,
+            iconColor: Colors.red);
       case 99:
+      case 0:
       default:
         return UserAuthenStatusUI(
             title: 'Not Authenticated',

@@ -10,6 +10,7 @@ import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
+import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/app_color.dart';
@@ -47,10 +48,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+
     _cameraService = CameraService();
     _loading = CircleLoading();
     _presenter = VideoAuthenticationPresenter(this);
@@ -67,10 +65,6 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     if (null != _count) {
       _count!.cancel();
     }
@@ -154,95 +148,109 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     return Consumer<VideoAuthProvider>(builder: (context, provider, child) {
       return WillPopScope(
           child: Scaffold(
-            backgroundColor: Colors.black,
-            body: SafeArea(
-              left: true,
-              top: true,
-              right: true,
-              child: Row(
-                children: [
-                  Expanded(
-                      flex: 2,
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: w - 200,
-                            height: h,
-                            child: (_cameraService!.cameraController != null)
-                                ? CameraPreview(
-                                    _cameraService!.cameraController!)
-                                : Container(),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      _onBackPress();
-                                    },
-                                    child: const Icon(
-                                      Icons.arrow_back_rounded,
-                                      color: Colors.white,
-                                      size: 25,
-                                    )),
-                                Visibility(
-                                    visible: provider.isRecordingVideo,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 1),
-                                      decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 126, 126, 126),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.circle,
-                                            color: Colors.red,
-                                            size: 10,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Text(provider.strCount,
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15))
-                                        ],
-                                      ),
-                                    ))
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
-                  Expanded(
-                      child: Column(
+              backgroundColor: Colors.black,
+              body: SafeArea(
+                  left: true,
+                  top: true,
+                  right: true,
+                  child: Column(
                     children: [
                       Expanded(
-                          child: Container(
-                        padding:
-                            const EdgeInsets.only(right: 10, left: 10, top: 5),
-                        child: const SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          flex: 6,
+                          child: Stack(
                             children: [
-                              Text("Sample Text :",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 17)),
-                              Text(
-                                  "It appears as though that may be from the Android Emulator. If that is the case, it uses a low-quality renderer so that it runs fast enough especially on less powerful hardware. Test it out on a real device and you'll likely see better results.",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16))
+                              SizedBox(
+                                width: w,
+                                height: h,
+                                child:
+                                    (_cameraService!.cameraController != null)
+                                        ? CameraPreview(
+                                            _cameraService!.cameraController!)
+                                        : Container(),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () {
+                                          _onBackPress();
+                                        },
+                                        child: const Icon(
+                                          Icons.arrow_back_rounded,
+                                          color: Colors.white,
+                                          size: 25,
+                                        )),
+                                    Visibility(
+                                        visible: provider.isRecordingVideo,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 1),
+                                          decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  255, 126, 126, 126),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.circle,
+                                                color: Colors.red,
+                                                size: 10,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(provider.strCount,
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15))
+                                            ],
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: <Color>[
+                                        Colors.transparent,
+                                        Color.fromARGB(181, 0, 0, 0),
+                                        Color.fromARGB(181, 0, 0, 0),
+                                        Colors.black
+                                      ])),
+                                  height: h / 7,
+                                  padding: const EdgeInsets.only(
+                                      right: 10, left: 10, top: 5),
+                                  child: const SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Sample Text :",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 17)),
+                                        Text(
+                                            "It appears as though that may be from the Android Emulator. If that is the case, it uses a low-quality renderer so that it runs fast enough especially on less powerful hardware. Test it out on a real device and you'll likely see better results.",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 16))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              FocusUserFaceWidget()
                             ],
-                          ),
-                        ),
-                      )),
+                          )),
                       Expanded(
                           child: Container(
                         alignment: Alignment.bottomCenter,
@@ -273,11 +281,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                         ),
                       ))
                     ],
-                  ))
-                ],
-              ),
-            ),
-          ),
+                  ))),
           onWillPop: () async {
             _onBackPress();
             return false;
@@ -334,7 +338,10 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
               cancelButtonTitle: "Exit",
               okButtonTitle: "Submit",
               cancelButtonTapped: () async {
-                // await _videoAuthProvider!.savedFile.delete();
+                await _videoAuthProvider!.savedFile.delete().then((value) {
+                  Navigator.of(contextBuild).pop();
+                  Navigator.of(context).pop();
+                });
               },
               okButtonTapped: () {
                 _onSubmitVideoAuth(_videoAuthProvider!.savedFile);
@@ -391,7 +398,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       ),
       constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height - CustomSize.size_20),
-      builder: (BuildContext context) {
+      builder: (BuildContext buildContext) {
         return WillPopScope(
             child: SubmitVideoAuthentication(
               videoFile: savedFile,
@@ -404,7 +411,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
             ),
             onWillPop: () async {
               if (_videoAuthProvider!.savedFile.existsSync()) {
-                _backWhenNotSubmitVideo(context);
+                _backWhenNotSubmitVideo(buildContext);
               }
               return false;
             });
@@ -521,10 +528,5 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         backgroundColor: AppColor.defaultGreenLightColor,
         textColor: AppColor.defaultAppColor,
         fontSize: 15.0);
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
   }
 }
