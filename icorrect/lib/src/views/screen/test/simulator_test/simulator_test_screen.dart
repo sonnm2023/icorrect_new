@@ -776,7 +776,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
+  void onSubmitTestSuccess(String msg) {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _loading!.hide();
     } else {

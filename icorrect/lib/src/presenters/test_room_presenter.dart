@@ -30,7 +30,7 @@ abstract class TestRoomViewContract {
   void onFinishForReAnswer();
   void onCountRecordingVideo(int currentCount);
   void onLimitedRecordingVideo();
-  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer);
+  void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
   void onUpdateReAnswersSuccess(String msg, ActivityAnswer activityAnswer);
   void onUpdateReAnswersFail(String msg);
@@ -290,9 +290,6 @@ class TestRoomPresenter {
         dataLog['response'] = json;
 
         if (json['error_code'] == 200) {
-          ActivityAnswer activityAnswer =
-              ActivityAnswer.fromJson(json['data']['activities_answer']);
-
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -302,7 +299,7 @@ class TestRoomPresenter {
           );
 
           _view!.onSubmitTestSuccess(
-              'Save your answers successfully!', activityAnswer);
+              'Save your answers successfully!');
         } else {
           //Add log
           Utils.prepareLogData(
