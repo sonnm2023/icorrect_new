@@ -35,8 +35,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../provider/auth_provider.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({super.key, required this.homeWorkModel});
 
@@ -154,14 +152,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _getTestDetail();
   }
 
-  @override
-  void dispose() {
-    connection!.cancel();
-    _simulatorTestPresenter!.closeClientRequest();
-    _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
-    _simulatorTestProvider!.resetAll();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   connection!.cancel();
+  //   _simulatorTestPresenter!.closeClientRequest();
+  //   _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
+  //   _simulatorTestProvider!.resetAll();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -789,6 +787,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _loading!.hide();
     } else {
+      _loading!.hide();
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     }
 
@@ -803,6 +802,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _loading!.hide();
     } else {
+      _loading!.hide();
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     }
 
