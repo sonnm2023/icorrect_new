@@ -34,6 +34,8 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../provider/auth_provider.dart';
+
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class SimulatorTestScreen extends StatefulWidget {
@@ -54,6 +56,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Permission? _microPermission;
   PermissionStatus _microPermissionStatus = PermissionStatus.denied;
+  AuthProvider? _authProvider;
 
   // Map<Permission, PermissionStatus>? _statuses; //TODO
 
@@ -137,11 +140,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _simulatorTestPresenter = SimulatorTestPresenter(this);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     Provider.of<HomeWorkProvider>(context, listen: false)
         .setSimulatorTestPresenter(_simulatorTestPresenter);
 
     _loading = CircleLoading();
+
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
+    });
 
     _getTestDetail();
   }
@@ -158,111 +167,108 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Consumer<SimulatorTestProvider>(
-        builder: (context, simulatorTest, child) {
-          if (simulatorTest.isShowConfirmSaveTest) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showConfirmSaveTestBeforeExit();
-            });
-          }
-          if (simulatorTest.submitStatus == SubmitStatus.success) {
-            return Stack(
-              children: [
-                DefaultTabController(
-                  length: 3,
-                  child: Scaffold(
-                    key: _scaffoldKey,
-                    appBar: AppBar(
-                      elevation: 0.0,
-                      iconTheme: const IconThemeData(
-                        color: AppColor.defaultPurpleColor,
-                      ),
-                      centerTitle: true,
-                      leading: GestureDetector(
-                        onTap: () {
-                          _backButtonTapped();
-                        },
-                        child: const Icon(Icons.arrow_back_rounded,
-                            color: AppColor.defaultPurpleColor),
-                      ),
-                      title: Text(
-                        widget.homeWorkModel.activityName,
-                        style: CustomTextStyle.appbarTitle,
-                      ),
-                      bottom: PreferredSize(
-                        preferredSize:
-                            const Size.fromHeight(CustomSize.size_40),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColor.defaultPurpleColor,
-                              ),
-                            ),
-                          ),
-                          child: _tabBar,
-                        ),
-                      ),
-                      backgroundColor: AppColor.defaultWhiteColor,
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, simulatorTest, child) {
+        if (simulatorTest.isShowConfirmSaveTest) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showConfirmSaveTestBeforeExit();
+          });
+        }
+        if (simulatorTest.submitStatus == SubmitStatus.success) {
+          return Stack(
+            children: [
+              DefaultTabController(
+                length: 3,
+                child: Scaffold(
+                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                  appBar: AppBar(
+                    elevation: 0.0,
+                    iconTheme: const IconThemeData(
+                      color: AppColor.defaultPurpleColor,
                     ),
-                    body: TabBarView(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: SafeArea(
-                            left: true,
-                            top: true,
-                            right: true,
-                            bottom: true,
-                            child: Stack(
-                              children: [
-                                _buildBody(),
-                              ],
+                    centerTitle: true,
+                    leading: GestureDetector(
+                      onTap: () {
+                        _backButtonTapped();
+                      },
+                      child: const Icon(Icons.arrow_back_rounded,
+                          color: AppColor.defaultPurpleColor),
+                    ),
+                    title: Text(
+                      widget.homeWorkModel.activityName,
+                      style: CustomTextStyle.appbarTitle,
+                    ),
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(CustomSize.size_40),
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: AppColor.defaultPurpleColor,
                             ),
                           ),
                         ),
-                        _buildHighLightTab(),
-                        _buildOtherTab(),
+                        child: _tabBar,
+                      ),
+                    ),
+                    backgroundColor: AppColor.defaultWhiteColor,
+                  ),
+                  body: TabBarView(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: SafeArea(
+                          left: true,
+                          top: true,
+                          right: true,
+                          bottom: true,
+                          child: Stack(
+                            children: [
+                              _buildBody(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _buildHighLightTab(),
+                      _buildOtherTab(),
+                    ],
+                  ),
+                ),
+              ),
+              _buildFullImage(),
+            ],
+          );
+        } else {
+          return Stack(
+            children: [
+              Scaffold(
+                key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                body: Align(
+                  alignment: Alignment.topLeft,
+                  child: SafeArea(
+                    left: true,
+                    top: true,
+                    right: true,
+                    bottom: true,
+                    child: Stack(
+                      children: [
+                        _buildBody(),
+                        _buildDownloadAgain(),
+                        BackButtonWidget(
+                          backButtonTapped: _backButtonTapped,
+                        ),
                       ],
                     ),
                   ),
                 ),
-                _buildFullImage(),
-              ],
-            );
-          } else {
-            return Stack(
-              children: [
-                Scaffold(
-                  body: Align(
-                    alignment: Alignment.topLeft,
-                    child: SafeArea(
-                      left: true,
-                      top: true,
-                      right: true,
-                      bottom: true,
-                      child: Stack(
-                        children: [
-                          _buildBody(),
-                          _buildDownloadAgain(),
-                          BackButtonWidget(
-                            backButtonTapped: _backButtonTapped,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                _buildFullImage(),
-              ],
-            );
-          }
-        },
-      ),
+              ),
+              _buildFullImage(),
+            ],
+          );
+        }
+      },
     );
   }
 
@@ -432,7 +438,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           okButtonTapped: () {
             //Reset question image
             _resetQuestionImage();
-          
+
             //Submit
             _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
             _simulatorTestPresenter!.submitTest(

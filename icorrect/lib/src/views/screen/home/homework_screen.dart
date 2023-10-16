@@ -104,33 +104,27 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        SimulatorTestProvider simulatorTestProvider =
+            Provider.of<SimulatorTestProvider>(context, listen: false);
         if (_authProvider.isShowDialog) {
           GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
           _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
 
           Navigator.of(key.currentState!.context).pop();
-        } else if (Provider.of<SimulatorTestProvider>(context, listen: false)
-                .doingStatus ==
-            DoingStatus.doing) {
+        } else if (simulatorTestProvider.doingStatus == DoingStatus.doing) {
           _showQuitTheTestConfirmDialog();
+        } else if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
+          simulatorTestProvider.setShowConfirmSaveTest(true);
         } else {
-          Queue<GlobalKey<ScaffoldState>> scaffoldKeys =
-              _authProvider.scaffoldKeys;
-          GlobalKey<ScaffoldState> key = scaffoldKeys.first;
+          
+          GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
-            SimulatorTestProvider simulatorTestProvider =
-                Provider.of<SimulatorTestProvider>(context, listen: false);
-            if (simulatorTestProvider.doingStatus.get == 1) {
-              simulatorTestProvider.setShowConfirmSaveTest(true);
-            } else {
-              _showQuitAppConfirmDialog();
-            }
+            _showQuitAppConfirmDialog();
           } else {
             Navigator.of(key.currentState!.context).pop();
-            scaffoldKeys.removeFirst();
+            _authProvider.scaffoldKeys.removeFirst();
           }
         }
-
         return false;
       },
       child: MaterialApp(
