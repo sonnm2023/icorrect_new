@@ -5,12 +5,13 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:camera/camera.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/camera_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -40,8 +41,6 @@ import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
-// import '../../../../../core/camera_service.dart'; //TODO
-
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
       {super.key,
@@ -66,10 +65,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayer? _audioPlayerController;
   Record? _recordController;
-  // CameraService? _cameraService; //TODO
+  CameraService? _cameraService;
 
   Timer? _countDown;
   Timer? _countDownCueCard;
+  Timer? _countRecording;
   QuestionTopicModel? _currentQuestion;
   int _countRepeat = 0;
   final List<dynamic> _reviewingList = [];
@@ -81,10 +81,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   String _reanswerFilePath = "";
   CircleLoading? _loading;
   bool _isReDownload = false;
-
-  //TODO
-  // bool _cameraIsRecording = false;
-  // bool _stopRecording = false;
+  bool _cameraIsRecording = false;
+  bool _isExam = false;
+  List<Map<String, int>> _logActions = [];
+  DateTime? _startTime;
+  DateTime? _endTime;
 
   @override
   void initState() {
@@ -92,7 +93,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     super.initState();
     _audioPlayerController = AudioPlayer();
     _recordController = Record();
-    // _cameraService = CameraService(); //TODO
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -113,10 +113,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setTopicRandom(randomTopic);
     });
 
-    //TODO
-    // _cameraService!.initialize(() {
-    //   setState(() {});
-    // });
+    _isExam = widget.homeWorkModel.activityType == "exam";
+
+    if (_isExam) {
+      _cameraService = CameraService();
+      _cameraService!.initialize(() {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -162,10 +166,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: TestRoomWidget --- build");
     }
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      //TODO
-      // if (provider.startDoingTest) {
-      //   _recordingUserDoesTestListener();
-      // }
+      if (provider.startDoingTest && _isExam) {
+        _recordingUserDoesTestListener();
+      }
 
       bool showSaveTheExamButton =
           _simulatorTestProvider!.activityType == "homework" ||
@@ -186,15 +189,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 ),
                 child: _buildVideoPlayerView(),
               ),
-              //TODO
-              // (_cameraService!.cameraController != null &&
-              //         !provider.isVisibleSaveTheTest)
-              //     ? Container(
-              //         alignment: Alignment.bottomRight,
-              //         margin: const EdgeInsets.all(10),
-              //         child: _buildCameraLive(),
-              //       )
-              //     : Container()
+              (_isExam &&
+                      _cameraService!.cameraController != null &&
+                      provider.visibleCameraLive)
+                  ? Container(
+                      alignment: Alignment.bottomRight,
+                      margin: const EdgeInsets.all(10),
+                      child: _buildCameraLive(),
+                    )
+                  : Container()
             ],
           ),
           Expanded(
@@ -208,6 +211,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                     reAnswerCallBack: _reAnswerCallBack,
                     showTipCallBack: _showTipCallBack,
                     simulatorTestProvider: _simulatorTestProvider!,
+                    isExam: _isExam,
                   ),
                 ),
                 const CueCardWidget(),
@@ -450,8 +454,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  //TODO
-  /*
   Future _recordingUserDoesTestListener() async {
     if (_simulatorTestProvider!.topicsQueue.isNotEmpty &&
         _simulatorTestProvider!.topicRandom != TopicModel()) {
@@ -461,19 +463,76 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           currentQuestion: _simulatorTestProvider!.currentQuestion,
           startRecordingVideo: () {
             if (!_cameraIsRecording) {
-              print(
-                  "DEBUG : _startCameraRecording(direction: directionCamera);");
+              if (kDebugMode) {
+                print("RECORDING_VIDEO: Start Recording Video");
+              }
+
+              _countRecording =
+                  _testRoomPresenter!.startCountRecording(countFrom: 30);
               _cameraService!.startCameraRecording();
               _cameraIsRecording = true;
             }
           },
           stopRecordingVideo: () {
-            if (!_stopRecording) {
-              print("DEBUG : _saveVideoDoingTest();");
-              _cameraService!.saveVideoDoingTest();
-              _stopRecording = true;
-            }
+            // if (!_stopRecording) {
+            //   if (null != _countRecording) {
+            //     _countRecording!.cancel();
+            //   }
+            //   if (kDebugMode) {
+            //     print("RECORDING_VIDEO: Stop Recording Video By End A Topic");
+            //   }
+            //   _cameraService!.saveVideoDoingTest();
+            //   _stopRecording = true;
+            // }
           });
+    }
+  }
+
+  @override
+  void onCountRecordingVideo(int currentCount) {
+    if (kDebugMode) {
+      print("RECORDING_VIDEO: onCountRecording : $currentCount ");
+    }
+    _simulatorTestProvider!.setCurrentCountRecordingVideo(currentCount);
+  }
+
+  @override
+  void onLimitedRecordingVideo() {
+    _saveVideoRecording();
+
+    if (null != _countRecording) {
+      _countRecording!.cancel();
+    }
+  }
+
+  void _saveVideoRecording() {
+    if (_cameraService!.cameraController!.value.isRecordingVideo) {
+      _cameraService!.saveVideoDoingTest((savedFile) {
+        _simulatorTestProvider!.setVideoFile(savedFile);
+      });
+      if (kDebugMode) {
+        print("RECORDING_VIDEO :Stop Recoring And Save Video By Limited Time");
+      }
+    }
+  }
+
+  void _hideCameraLive() {
+    if (null != _countRecording) {
+      _countRecording!.cancel();
+    }
+    _simulatorTestProvider!.setVisibleCameraLive(false);
+
+    if (null == _cameraService) {
+      return;
+    }
+
+    CameraController? cameraController = _cameraService!.cameraController;
+    if (cameraController != null) {
+      _saveVideoRecording();
+
+      if (cameraController.value.isInitialized) {
+        cameraController.dispose();
+      }
     }
   }
 
@@ -494,7 +553,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       ),
     );
   }
-  */
 
   Future<void> _initController(NativeVideoPlayerController controller) async {
     _videoPlayerController = controller;
@@ -596,19 +654,53 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    //TODO:
-    // CameraController cameraController = _cameraService!.cameraController!;
+    if (null != _countRecording) {
+      _countRecording!.cancel();
+    }
 
-    // if (cameraController.value.isInitialized) {
-    //   cameraController.pausePreview();
-    //   if (cameraController.value.isRecordingVideo) {
-    //     cameraController.pauseVideoRecording();
-    //   }
-    // }
+    if (null == _cameraService) return;
+
+    if (null == _cameraService!.cameraController) return;
+
+    CameraController? cameraController = _cameraService!.cameraController;
+
+    if (cameraController != null && cameraController.value.isInitialized) {
+      cameraController.pausePreview();
+      if (cameraController.value.isRecordingVideo) {
+        cameraController.pauseVideoRecording();
+      }
+    }
+
+    _startTime = DateTime.now();
+  }
+
+  void _resetActionLogTimes() {
+    _startTime = null;
+    _endTime = null;
   }
 
   Future _onAppActive() async {
     _isBackgroundMode = false;
+
+    //Caculation time of being out and save into a action log
+    if (null != _startTime && null != _currentQuestion) {
+      _endTime = DateTime.now();
+
+      int second = Utils.getBeingOutTimeInSeconds(_startTime!, _endTime!);
+
+      Map<String, int> map = {_currentQuestion!.id.toString(): second};
+      //Print action log
+      if (kDebugMode) {
+        print("DEBUG: action log: question ${_currentQuestion!.content}");
+        print("DEBUG: action log: $map");
+      }
+
+      _resetActionLogTimes();
+
+      //Add action log
+      _logActions.add(map);
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       if (_audioPlayerController != null) {
         //Re play answer audio
@@ -619,6 +711,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
       if (_simulatorTestProvider!.submitStatus != SubmitStatus.success ||
           _simulatorTestProvider!.needUpdateReanswer) {
+        _hideCameraLive();
         _simulatorTestProvider!.setVisibleSaveTheTest(true);
       }
     } else {
@@ -644,18 +737,27 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    //TODO
-    // CameraController cameraController = _cameraService!.cameraController!;
+    if (null == _cameraService) return;
 
-    // if (cameraController.value.isInitialized) {
-    //   if (cameraController.value.isPreviewPaused) {
-    //     cameraController.resumePreview();
-    //   }
+    if (null == _cameraService!.cameraController) return;
 
-    //   if (cameraController.value.isRecordingPaused) {
-    //     cameraController.resumeVideoRecording();
-    //   }
-    // }
+    CameraController cameraController = _cameraService!.cameraController!;
+
+    if (cameraController.value.isInitialized) {
+      if (cameraController.value.isPreviewPaused) {
+        cameraController.resumePreview();
+      }
+
+      if (cameraController.value.isRecordingPaused) {
+        if (null != _countRecording) {
+          _countRecording!.cancel();
+        }
+        int countFrom = _simulatorTestProvider!.currentCountRecordingVideo;
+        _countRecording =
+            _testRoomPresenter!.startCountRecording(countFrom: countFrom);
+        cameraController.resumeVideoRecording();
+      }
+    }
   }
 
   void _deallocateMemory() async {
@@ -668,10 +770,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
+    if (null != _countRecording) {
+      _countRecording!.cancel();
+    }
+
     await _stopRecord();
     await _recordController!.dispose();
-    //TODO
-    // _cameraService!.dispose();
+
+    if (null != _cameraService) {
+      _cameraService!.dispose();
+    }
 
     if (_audioPlayerController!.state == PlayerState.playing) {
       _audioPlayerController!.stop();
@@ -950,6 +1058,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _resetDataAfterReanswer() {
     //Show SAVE THE TEST when re answer
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _hideCameraLive();
       _simulatorTestProvider!.setVisibleSaveTheTest(true);
     }
     _currentQuestion = null;
@@ -1625,8 +1734,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Stop camera record
     _simulatorTestProvider!.setStartDoingTest(false);
-    //TODO
-    // _cameraService!.dispose();
+
+    // if (null != _cameraService) {
+    //   _cameraService!.dispose();
+    // }
 
     //Reset playingIndex
     _playingIndex = 0;
@@ -1640,8 +1751,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     List<String> temp = _prepareAnswerListForDelete();
     _simulatorTestProvider!.setAnswerList(temp);
 
-    //Auto submit test for activity type = test
-    if (_simulatorTestProvider!.activityType == "test") {
+    //Hide cameraLive
+    _hideCameraLive();
+
+    //Auto submit test for activity type = test or type = exam
+    if (_simulatorTestProvider!.activityType == "test" || _isExam) {
       _startSubmitTest();
     } else {
       //Activity Type = "homework"
@@ -1656,11 +1770,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
+    File? videoConfirmFile =
+        _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+
     _testRoomPresenter!.submitTest(
       context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       questions: questions,
+      isExam: _isExam,
+      videoConfirmFile: videoConfirmFile,
+      logAction: _logActions,
     );
   }
 
@@ -1881,6 +2001,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
       activityId: widget.homeWorkModel.activityId.toString(),
       reQuestions: _simulatorTestProvider!.questionList,
+      isExam: _isExam,
     );
   }
 
@@ -1930,6 +2051,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Show SAVE THE TEST when re answer
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+      _hideCameraLive();
       _simulatorTestProvider!.setVisibleSaveTheTest(true);
     }
 

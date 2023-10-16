@@ -220,6 +220,7 @@ class OtherStudentTestPresenter {
               }
 
               if (response.statusCode == 200) {
+                print('save Path: $savePath');
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);

@@ -34,6 +34,27 @@ enum HandleWhenFinish {
   reviewingPlayTheQuestionType,
 }
 
+enum UserAuthStatus {
+  draft(0),
+  active(1),
+  lock(2),
+  waitingModelFile(3),
+  errorAuth(99);
+
+  const UserAuthStatus(this.get);
+
+  final int get;
+}
+
+enum FileAuthStatus {
+  newAdd(0),
+  waitingModelFile(1);
+
+  const FileAuthStatus(this.get);
+
+  final int get;
+}
+
 enum Status {
   corrected(2),
   late(-1),
@@ -573,6 +594,7 @@ class StringConstants {
   static const String current_password = "Current password";
   static const String new_password = "New password";
   static const String confirm_new_password = "Confirm new password";
+  static const String video_authen_menu_item_title = "Videos Authentication";
 
   //Warning Message
   static const String choose_filter_message =
@@ -618,3 +640,5 @@ class StringConstants {
   static const String common_error_messge =
       "An error occur, please try again later!";
 }
+
+const int timeout = 30;

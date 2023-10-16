@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -28,7 +29,7 @@ class AuthRepositoryImpl implements AuthRepository {
           false,
           body: <String, String>{'email': email, 'password': password},
         )
-        .timeout(const Duration(seconds: 30))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;
@@ -56,7 +57,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'os': os
           },
         )
-        .timeout(const Duration(seconds: 30))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
           return response.body;
         });
@@ -72,7 +73,7 @@ class AuthRepositoryImpl implements AuthRepository {
           url,
           true,
         )
-        .timeout(const Duration(seconds: 30))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -98,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'password_confirmation': confirmNewPassword,
           },
         )
-        .timeout(const Duration(seconds: 30))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
           return response.body;
         });
@@ -116,7 +117,7 @@ class AuthRepositoryImpl implements AuthRepository {
           url,
           false,
         )
-        .timeout(const Duration(seconds: 30))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       return response.body;
     });

@@ -15,6 +15,7 @@ import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
+import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => HomeWorkProvider(),
         ),
+        ChangeNotifierProvider(create: (_)=>VideoAuthProvider())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

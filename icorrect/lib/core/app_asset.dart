@@ -11,4 +11,5 @@ class AppAsset {
   static const dimond = 'assets/images/ic_diamond.png';
   static const gold = 'assets/images/ic_gold.png';
   static const playAnswerBackground = 'assets/images/bg_recording.png';
+  static const imgSecurity = 'assets/images/img_insurance.png';
 }

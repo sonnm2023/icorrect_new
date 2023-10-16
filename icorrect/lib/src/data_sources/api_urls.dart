@@ -53,11 +53,20 @@ String submitHomeWorkV2EP() {
   return '${icorrectDomain}api/v1/ielts-test/submit-v2';
 }
 
+String submitExam() {
+  return '${icorrectDomain}api/v1/exam/submit';
+}
+
 String getTestDetailWithIdEP(String testId) =>
     '${toolDomain}api/get-test-with-id/$testId';
 
 String getActivitiesList(Map<String, String> queryParameters) {
   return '${apiDomain}api/v1/syllabus/activities-of-class/index?${Uri(queryParameters: queryParameters).query}';
+}
+
+String getUserAuthDetailEP()=>'$icorrectDomain/api/v1/exam/voice-bio/detail';
+String submitAuthEP(Map<String, String> queryParameters) {
+  return  '$icorrectDomain/api/v1/exam/voice-bio/submit?${Uri(queryParameters: queryParameters).query}';
 }
 
 class RequestMethod {

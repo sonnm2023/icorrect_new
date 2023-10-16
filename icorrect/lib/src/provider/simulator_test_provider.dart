@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -45,6 +46,33 @@ class SimulatorTestProvider with ChangeNotifier {
   //     notifyListeners();
   //   }
   // }
+
+  bool _visibleCameraLive = true;
+  bool get visibleCameraLive => _visibleCameraLive;
+  void setVisibleCameraLive(bool visible) {
+    _visibleCameraLive = visible;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  File _savedVideoFile = File("");
+  File get savedVideoFile => _savedVideoFile;
+  void setVideoFile(File file) {
+    _savedVideoFile = file;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _currentCountRecordingVideo = 0;
+  int get currentCountRecordingVideo => _currentCountRecordingVideo;
+  void setCurrentCountRecordingVideo(int count) {
+    _currentCountRecordingVideo = count;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 
   bool _isGettingTestDetail = true;
   bool get isGettingTestDetail => _isGettingTestDetail;
@@ -568,6 +596,9 @@ class SimulatorTestProvider with ChangeNotifier {
     _isReDownload = false;
     _isShowConfirmSaveTest = false;
     _isLessThan2Second = true;
+    _visibleCameraLive = true;
+    _savedVideoFile = File("");
+    _currentCountRecordingVideo = 0;
     _needDownloadAgain = false;
     _isLoadingVideo = false;
     _answerList.clear();

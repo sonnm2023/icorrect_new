@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+<<<<<<< HEAD
       <excludeFolder url="file://$MODULE_DIR$/icorrect/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/icorrect/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/icorrect/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows/build" />
@@ -123,6 +124,11 @@
       <excludeFolder url="file://$MODULE_DIR$/icorrect/windows/flutter/ephemeral/.plugin_symlinks/shared_preferences_windows/example/build" />
       <excludeFolder url="file://$MODULE_DIR$/icorrect/windows/flutter/ephemeral/.plugin_symlinks/shared_preferences_windows/example/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/icorrect/windows/flutter/ephemeral/.plugin_symlinks/shared_preferences_windows/example/.pub" />
+=======
+      <excludeFolder url="file://$MODULE_DIR$/icorrect/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/icorrect/build" />
+      <excludeFolder url="file://$MODULE_DIR$/icorrect/.dart_tool" />
+>>>>>>> build/build_exam
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
