@@ -65,8 +65,8 @@ String getActivitiesList(Map<String, String> queryParameters) {
 }
 
 String getUserAuthDetailEP()=>'$icorrectDomain/api/v1/exam/voice-bio/detail';
-String submitAuthEP(Map<String, String> queryParameters) {
-  return  '$icorrectDomain/api/v1/exam/voice-bio/submit?${Uri(queryParameters: queryParameters).query}';
+String submitAuthEP() {
+  return  '$icorrectDomain/api/v1/exam/voice-bio/submit';
 }
 
 class RequestMethod {

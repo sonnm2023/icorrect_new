@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/user_authen_status.dart';
 import 'package:icorrect/src/models/user_authentication/user_authentication_detail.dart';
 import 'package:icorrect/src/presenters/user_authentication_detail_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
@@ -50,6 +51,9 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   void _getUserAuthDetail() {
     _circleLoading!.show(context: context, isViewAIResponse: false);
     _authDetailPresenter!.getUserAuthDetail();
+    Future.delayed(Duration.zero, () {
+      _provider!.clearData();
+    });
   }
 
   @override
@@ -59,12 +63,12 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
         _provider!.chewiePlayController!.isPlaying) {
       _provider!.chewiePlayController!.pause();
     }
-    if (_playerController != null) {
-      _playerController!.dispose();
-    }
-    if (_chewieController != null) {
-      _chewieController!.dispose();
-    }
+    // if (_playerController != null) {
+    //   _playerController!.dispose();
+    // }
+    // if (_chewieController != null) {
+    //   _chewieController!.dispose();
+    // }
   }
 
   @override
@@ -77,23 +81,32 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
           top: true,
           right: true,
           bottom: true,
-          child: Container(
-            width: w,
-            height: h,
-            padding: const EdgeInsets.only(top: 10),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColor.defaultPurpleColor,
-                  AppColor.defaultPurpleColor,
-                  AppColor.defaultBlueColor
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          child: Consumer<UserAuthDetailProvider>(
+              builder: (context, provider, child) {
+            if (provider.startGetUserAuthDetail) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _provider!.clearData();
+                _getUserAuthDetail();
+              });
+            }
+            return Container(
+              width: w,
+              height: h,
+              padding: const EdgeInsets.only(top: 10),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColor.defaultPurpleColor,
+                    AppColor.defaultPurpleColor,
+                    AppColor.defaultBlueColor
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-            ),
-            child: _buildMainScreen(),
-          )),
+              child: _buildMainScreen(),
+            );
+          })),
     );
   }
 
@@ -233,10 +246,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                 )
               : GestureDetector(
                   onTap: () {
+                    _stopVideo();
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => VideoAuthenticationRecord(
-                            userCode: provider.userAuthenDetailModel.userCode),
+                            userAuthDetailProvider: provider),
                       ),
                     );
                   },
@@ -317,10 +331,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
         builder: (context, provider, child) {
       return GestureDetector(
         onTap: () {
+          _stopVideo();
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => VideoAuthenticationRecord(
-                  userCode: provider.userAuthenDetailModel.userCode),
+              builder: (context) =>
+                  VideoAuthenticationRecord(userAuthDetailProvider: provider),
             ),
           );
         },
@@ -364,10 +379,17 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     });
   }
 
+  void _stopVideo() {
+    if (_provider!.chewiePlayController != null &&
+        _provider!.chewiePlayController!.isPlaying) {
+      _provider!.chewiePlayController!.pause();
+    }
+  }
+
   @override
   void getUserAuthDetailFail(String message) {
     _circleLoading!.hide();
-
+    _provider!.setStartGetUserAuthDetail(false);
     showDialog(
         context: context,
         builder: (builder) {
@@ -377,11 +399,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   @override
   void getUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel) {
+    _provider!.setStartGetUserAuthDetail(false);
     _circleLoading!.hide();
     _provider!.setUserAuthenModel(userAuthenDetailModel);
     if (userAuthenDetailModel.videosAuthDetail.isNotEmpty) {
-      String urlVideo =
-          fileEP(userAuthenDetailModel.videosAuthDetail.first.url);
+      String urlVideo = fileEP(userAuthenDetailModel.videosAuthDetail.last.url);
       if (kDebugMode) {
         print('DEBUG : Authentication urlVideo: $urlVideo');
       }
@@ -394,22 +416,22 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   @override
   void userNotFoundWhenLoadAuth(String message) {
     _circleLoading!.hide();
-
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (builder) {
-          return ConfirmDialogWidget(
-              title: "Warning",
-              message: message,
-              cancelButtonTitle: "Exit to Home",
-              okButtonTitle: "I Know",
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
-              },
-              okButtonTapped: () {
-                Navigator.of(context).pop();
-              });
-        });
+    _provider!.setStartGetUserAuthDetail(false);
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (builder) {
+    //       return ConfirmDialogWidget(
+    //           title: "Warning",
+    //           message: message,
+    //           cancelButtonTitle: "Exit to Home",
+    //           okButtonTitle: "I Know",
+    //           cancelButtonTapped: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //           okButtonTapped: () {
+    //             Navigator.of(context).pop();
+    //           });
+    //     });
   }
 }
