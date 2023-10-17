@@ -95,9 +95,7 @@ Widget navbarItems({
 
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                  create: (_) => UserAuthDetailProvider(),
-                  child: const UserAuthDetailStatus()),
+              builder: (context) => const UserAuthDetailStatus(),
             ),
           );
         },

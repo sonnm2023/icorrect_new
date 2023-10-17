@@ -18,14 +18,15 @@ import '../../../../core/camera_service.dart';
 import '../../../data_sources/constant_methods.dart';
 import '../../../data_sources/constants.dart';
 import '../../../presenters/video_authentication_persenter.dart';
+import '../../../provider/user_auth_detail_provider.dart';
 import '../../../provider/video_authentication_provider.dart';
 import 'package:record/record.dart';
 
 import '../other_views/dialog/message_dialog.dart';
 
 class VideoAuthenticationRecord extends StatefulWidget {
-  String userCode;
-  VideoAuthenticationRecord({required this.userCode, super.key});
+  UserAuthDetailProvider userAuthDetailProvider;
+  VideoAuthenticationRecord({required this.userAuthDetailProvider,super.key});
 
   @override
   State<VideoAuthenticationRecord> createState() =>
@@ -93,11 +94,11 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
           print('DEBUG: App detached');
         }
         break;
-      case AppLifecycleState.hidden:
-        if (kDebugMode) {
-          print('DEBUG: App hidden');
-        }
-        break;
+      // case AppLifecycleState.hidden:
+      //   if (kDebugMode) {
+      //     print('DEBUG: App hidden');
+      //   }
+      //   break;
     }
   }
 
@@ -421,8 +422,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
 
   void _onSubmitVideoAuth(File savedFile) {
     _videoAuthProvider!.setIsSubmitLoading(true);
-    _presenter!.submitAuth(
-        userCode: widget.userCode, authFile: savedFile, isUploadVideo: true);
+    _presenter!.submitAuth(authFile: savedFile, isUploadVideo: true);
   }
 
   void _showAlertWhenLessSecondsRecording() {
@@ -516,6 +516,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     _loading!.hide();
 
     _deleteFile(File(savedFile.path)).then((value) {
+      widget.userAuthDetailProvider.setStartGetUserAuthDetail(true);
       Navigator.of(context).pop();
       Navigator.of(context).pop();
     });

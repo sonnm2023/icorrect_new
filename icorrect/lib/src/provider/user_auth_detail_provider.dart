@@ -21,6 +21,24 @@ class UserAuthDetailProvider extends ChangeNotifier {
     }
   }
 
+  void clearData() {
+    _startGetUserAuthDetail = false;
+    _userAuthenDetailModel = UserAuthenDetailModel();
+    _chewieController = null;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _startGetUserAuthDetail = false;
+  bool get startGetUserAuthDetail => _startGetUserAuthDetail;
+  void setStartGetUserAuthDetail(bool isStart) {
+    _startGetUserAuthDetail = isStart;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   UserAuthenDetailModel _userAuthenDetailModel = UserAuthenDetailModel();
   UserAuthenDetailModel get userAuthenDetailModel => _userAuthenDetailModel;
   void setUserAuthenModel(UserAuthenDetailModel model) {

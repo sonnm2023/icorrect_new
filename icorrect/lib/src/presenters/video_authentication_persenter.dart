@@ -46,14 +46,11 @@ class VideoAuthenticationPresenter {
   }
 
   Future submitAuth(
-      {required String userCode,
+      {
       required File authFile,
       required isUploadVideo}) async {
-         
-    Map<String, String> queryMap = {
-      'user_code': userCode,
-    };
-    String url = submitAuthEP(queryMap);
+   
+    String url = submitAuthEP();
     http.MultipartRequest multiRequest =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     multiRequest.headers.addAll({
