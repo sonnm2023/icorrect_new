@@ -84,8 +84,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _cameraIsRecording = false;
   bool _isExam = false;
   final List<Map<String, int>> _logActions = [];
-  DateTime? _startTime;
-  DateTime? _endTime;
+  DateTime? _logStartTime;
+  DateTime? _logEndTime;
 
   @override
   void initState() {
@@ -672,22 +672,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    _startTime = DateTime.now();
+    _logStartTime = DateTime.now();
   }
 
   void _resetActionLogTimes() {
-    _startTime = null;
-    _endTime = null;
+    _logStartTime = null;
+    _logEndTime = null;
   }
 
   Future _onAppActive() async {
     _isBackgroundMode = false;
 
     //Caculation time of being out and save into a action log
-    if (null != _startTime && null != _currentQuestion) {
-      _endTime = DateTime.now();
+    if (null != _logStartTime && null != _currentQuestion) {
+      _logEndTime = DateTime.now();
 
-      int second = Utils.getBeingOutTimeInSeconds(_startTime!, _endTime!);
+      int second = Utils.getBeingOutTimeInSeconds(_logStartTime!, _logEndTime!);
 
       Map<String, int> map = {_currentQuestion!.id.toString(): second};
       //Print action log
