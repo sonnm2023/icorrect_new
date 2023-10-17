@@ -798,6 +798,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     } else {
       _loading!.hide();
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+      _simulatorTestProvider!.setVisibleSaveTheTest(true);
     }
 
     showToastMsg(
