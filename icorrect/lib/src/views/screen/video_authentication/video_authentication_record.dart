@@ -26,7 +26,7 @@ import '../other_views/dialog/message_dialog.dart';
 
 class VideoAuthenticationRecord extends StatefulWidget {
   UserAuthDetailProvider userAuthDetailProvider;
-  VideoAuthenticationRecord({required this.userAuthDetailProvider,super.key});
+  VideoAuthenticationRecord({required this.userAuthDetailProvider, super.key});
 
   @override
   State<VideoAuthenticationRecord> createState() =>
@@ -94,11 +94,11 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
           print('DEBUG: App detached');
         }
         break;
-      // case AppLifecycleState.hidden:
-      //   if (kDebugMode) {
-      //     print('DEBUG: App hidden');
-      //   }
-      //   break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG: App hidden');
+        }
+        break;
     }
   }
 
