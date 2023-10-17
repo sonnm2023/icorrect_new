@@ -153,14 +153,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _getTestDetail();
   }
 
-  // @override
-  // void dispose() {
-  //   connection!.cancel();
-  //   _simulatorTestPresenter!.closeClientRequest();
-  //   _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
-  //   _simulatorTestProvider!.resetAll();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    connection!.cancel();
+    _simulatorTestPresenter!.closeClientRequest();
+    _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
+    _simulatorTestProvider!.resetAll();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

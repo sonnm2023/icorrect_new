@@ -83,7 +83,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _isReDownload = false;
   bool _cameraIsRecording = false;
   bool _isExam = false;
-  List<Map<String, int>> _logActions = [];
+  final List<Map<String, int>> _logActions = [];
   DateTime? _startTime;
   DateTime? _endTime;
 
@@ -113,7 +113,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setTopicRandom(randomTopic);
     });
 
-    _isExam = widget.homeWorkModel.activityType == "exam";
+    _isExam = widget.homeWorkModel.activityType == "exam" ||
+        widget.homeWorkModel.activityType == "test";
 
     if (_isExam) {
       _cameraService = CameraService();
@@ -1755,7 +1756,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _hideCameraLive();
 
     //Auto submit test for activity type = test or type = exam
-    if (_simulatorTestProvider!.activityType == "test" || _isExam) {
+    if (_isExam) {
       _startSubmitTest();
     } else {
       //Activity Type = "homework"
