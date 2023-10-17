@@ -11,10 +11,8 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/user_authen_status.dart';
 import 'package:icorrect/src/models/user_authentication/user_authentication_detail.dart';
 import 'package:icorrect/src/presenters/user_authentication_detail_presenter.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/video_authentication_record.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +29,6 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     implements UserAuthDetailContract {
   double w = 0, h = 0;
   VideoPlayerController? _playerController;
-  ChewieController? _chewieController;
   UserAuthDetailPresenter? _authDetailPresenter;
   CircleLoading? _circleLoading;
   UserAuthDetailProvider? _provider;
@@ -50,7 +47,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   void _getUserAuthDetail() {
     _circleLoading!.show(context: context, isViewAIResponse: false);
-    _authDetailPresenter!.getUserAuthDetail();
+    _authDetailPresenter!.getUserAuthDetail(context);
     Future.delayed(Duration.zero, () {
       _provider!.clearData();
     });
@@ -77,17 +74,19 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SafeArea(
-          left: true,
-          top: true,
-          right: true,
-          bottom: true,
-          child: Consumer<UserAuthDetailProvider>(
-              builder: (context, provider, child) {
+        left: true,
+        top: true,
+        right: true,
+        bottom: true,
+        child: Consumer<UserAuthDetailProvider>(
+          builder: (context, provider, child) {
             if (provider.startGetUserAuthDetail) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _provider!.clearData();
-                _getUserAuthDetail();
-              });
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) {
+                  _provider!.clearData();
+                  _getUserAuthDetail();
+                },
+              );
             }
             return Container(
               width: w,
@@ -106,48 +105,51 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
               ),
               child: _buildMainScreen(),
             );
-          })),
+          },
+        ),
+      ),
     );
   }
 
   Widget _buildMainScreen() {
     return RefreshIndicator(
-        color: AppColor.defaultPurpleColor,
-        onRefresh: () {
-          return Future.delayed(
-            const Duration(seconds: 1),
-            () {
-              _getUserAuthDetail();
-            },
-          );
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_outlined,
-                      color: Colors.white,
-                      size: 25,
-                    ),
+      color: AppColor.defaultPurpleColor,
+      onRefresh: () {
+        return Future.delayed(
+          const Duration(seconds: 1),
+          () {
+            _getUserAuthDetail();
+          },
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(10),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_outlined,
+                    color: Colors.white,
+                    size: 25,
                   ),
                 ),
-                const SizedBox(height: 10),
-                _headerRequireVideo()
-              ],
-            ),
-            _videoAndStatus()
-          ],
-        ));
+              ),
+              const SizedBox(height: 10),
+              _headerRequireVideo()
+            ],
+          ),
+          _videoAndStatus()
+        ],
+      ),
+    );
   }
 
   Widget _headerRequireVideo() {
@@ -167,7 +169,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                 image: AssetImage(AppAsset.imgSecurity),
                 width: 50,
               ),
-              Container(
+              SizedBox(
                 width: (w - 20) / 1.6,
                 child: const Text(
                   'Please send video sample for authentication',
@@ -208,8 +210,8 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   Widget _videoPlayer() {
     return Consumer<UserAuthDetailProvider>(
-        builder: (context, provider, child) {
-      return Container(
+      builder: (context, provider, child) {
+        return Container(
           height: h / 3.5,
           width: w,
           margin: const EdgeInsets.all(20),
@@ -269,8 +271,10 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                       ],
                     ),
                   ),
-                ));
-    });
+                ),
+        );
+      },
+    );
   }
 
   bool _userHadVideoAuth() {
@@ -282,10 +286,10 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   Widget _statusVideo() {
     return Consumer<UserAuthDetailProvider>(
-        builder: (context, provider, child) {
-      UserAuthenStatusUI statusUI =
-          Utils.getUserAuthenStatus(provider.userAuthenDetailModel.status);
-      return Visibility(
+      builder: (context, provider, child) {
+        UserAuthenStatusUI statusUI =
+            Utils.getUserAuthenStatus(provider.userAuthenDetailModel.status);
+        return Visibility(
           visible: provider.userAuthenDetailModel.id != 0,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -321,62 +325,66 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                 )
               ],
             ),
-          ));
-    });
+          ),
+        );
+      },
+    );
   }
 
   Widget _submitVideoAgainButton() {
     double w = MediaQuery.of(context).size.width;
     return Consumer<UserAuthDetailProvider>(
-        builder: (context, provider, child) {
-      return GestureDetector(
-        onTap: () {
-          _stopVideo();
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  VideoAuthenticationRecord(userAuthDetailProvider: provider),
-            ),
-          );
-        },
-        child: Container(
-          width: w,
-          alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          decoration: BoxDecoration(
-              color: provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
-                  ? AppColor.defaultYellowColor
-                  : AppColor.defaultPurpleColor,
-              borderRadius: BorderRadius.circular(100)),
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Icon(
-                  provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
-                      ? Icons.refresh
-                      : Icons.video_camera_front_outlined,
-                  size: 30,
-                  color: Colors.white,
-                ),
+      builder: (context, provider, child) {
+        return GestureDetector(
+          onTap: () {
+            _stopVideo();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    VideoAuthenticationRecord(userAuthDetailProvider: provider),
               ),
-              Align(
-                alignment: Alignment.center,
-                child: Text(
+            );
+          },
+          child: Container(
+            width: w,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            decoration: BoxDecoration(
+                color:
                     provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
-                        ? "Record Video Again"
-                        : "Record Video Authentication",
-                    style: const TextStyle(
-                        color: AppColor.defaultWhiteColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400)),
-              )
-            ],
+                        ? AppColor.defaultYellowColor
+                        : AppColor.defaultPurpleColor,
+                borderRadius: BorderRadius.circular(100)),
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Icon(
+                    provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
+                        ? Icons.refresh
+                        : Icons.video_camera_front_outlined,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                      provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
+                          ? "Record Video Again"
+                          : "Record Video Authentication",
+                      style: const TextStyle(
+                          color: AppColor.defaultWhiteColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400)),
+                )
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   void _stopVideo() {
@@ -391,10 +399,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     _circleLoading!.hide();
     _provider!.setStartGetUserAuthDetail(false);
     showDialog(
-        context: context,
-        builder: (builder) {
-          return MessageDialog.alertDialog(context, message);
-        });
+      context: context,
+      builder: (builder) {
+        return MessageDialog.alertDialog(context, message);
+      },
+    );
   }
 
   @override

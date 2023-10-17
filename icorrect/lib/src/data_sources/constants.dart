@@ -456,6 +456,9 @@ class LogEvent {
       'call_api_get_response'; //'${toolDomain}api/response?order_id=$orderId';
   static const String callApiGetSpecialHomework =
       'call_api_get_special_homework'; //specialHomeWorksEP
+  static const String callApiGetUserAuthDetail =
+      'call_api_get_user_auth_detail';
+  static const String callApiSubmitAuth = 'call_api_submit_auth';
 
   //Action log event
   static const String actionLogin = 'action_login';

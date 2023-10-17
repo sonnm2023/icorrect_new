@@ -673,6 +673,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     _logStartTime = DateTime.now();
+    if (kDebugMode) {
+      print("DEBUG: log starttime: $_logStartTime");
+    }
   }
 
   void _resetActionLogTimes() {
@@ -686,6 +689,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Caculation time of being out and save into a action log
     if (null != _logStartTime && null != _currentQuestion) {
       _logEndTime = DateTime.now();
+      if (kDebugMode) {
+        print("DEBUG: log endtime: $_logEndTime");
+      }
 
       int second = Utils.getBeingOutTimeInSeconds(_logStartTime!, _logEndTime!);
 

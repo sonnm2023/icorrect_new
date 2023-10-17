@@ -973,7 +973,7 @@ class Utils {
   }
 
   static int getBeingOutTimeInSeconds(DateTime startTime, DateTime endTime) {
-    Duration diff = endTime.difference(startTime);
-    return diff.inSeconds;
+    int diff = endTime.second - startTime.second;
+    return diff; //.inSeconds;
   }
 }
