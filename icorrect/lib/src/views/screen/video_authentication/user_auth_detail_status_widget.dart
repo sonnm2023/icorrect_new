@@ -197,7 +197,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     return Consumer<UserAuthDetailProvider>(
         builder: (context, provider, child) {
       return Container(
-          height: h / 3.5,
+          height: h / 2,
           width: w,
           margin: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -395,21 +395,21 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   void userNotFoundWhenLoadAuth(String message) {
     _circleLoading!.hide();
 
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (builder) {
-          return ConfirmDialogWidget(
-              title: "Warning",
-              message: message,
-              cancelButtonTitle: "Exit to Home",
-              okButtonTitle: "I Know",
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
-              },
-              okButtonTapped: () {
-                Navigator.of(context).pop();
-              });
-        });
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (builder) {
+    //       return ConfirmDialogWidget(
+    //           title: "Warning",
+    //           message: message,
+    //           cancelButtonTitle: "Exit to Home",
+    //           okButtonTitle: "I Know",
+    //           cancelButtonTapped: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //           okButtonTapped: () {
+    //             Navigator.of(context).pop();
+    //           });
+    //     });
   }
 }

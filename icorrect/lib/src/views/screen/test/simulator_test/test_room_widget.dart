@@ -638,7 +638,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
-        _recordController!.stop();
+        int numPart = _simulatorTestProvider!.currentQuestion.numPart;
+        if (numPart == PartOfTest.part2.get &&
+            await _recordController!.isRecording()) {
+          _recordController!.pause();
+        } else {
+          _recordController!.stop();
+        }
 
         if (null != _countDown) {
           _countDown!.cancel();
@@ -719,8 +725,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (null != _videoPlayerController) {
         if (_simulatorTestProvider!.visibleCueCard) {
           //Playing end_of_take_note ==> replay end_of_take_note
+
           if (_endOfTakeNoteIndex != 0) {
             _rePlayEndOfTakeNote();
+          } else {
+            _continueRecordPart2();
           }
 
           //Recording the answer for Part 2 ==> Re record the answer
@@ -731,7 +740,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _simulatorTestProvider!.visibleRecord == false) {
             _videoPlayerController!.play();
           } else if (_simulatorTestProvider!.visibleRecord == true) {
-            //Re record answer
             _reRecordAnswer();
           }
         }
@@ -1964,6 +1972,36 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _initVideoController(isIntroduceVideo: false);
   }
 
+  void _continueRecordPart2() async {
+    if (kDebugMode) {
+      print("DEBUG: _continueRecordPart2");
+    }
+
+    int timeRecordCounting = _simulatorTestProvider!.timeRecordCounting;
+
+    String timeString = Utils.getTimeRecordString(timeRecordCounting);
+    int totalTimeRecordPart2 = Utils.getRecordTime(PartOfTest.part2.get);
+
+    if (timeRecordCounting < totalTimeRecordPart2) {
+      _timerProvider!.setCountDown(timeString);
+      if (null != _countDown) {
+        _countDown!.cancel();
+      }
+
+      if (await _recordController!.isPaused()) {
+        _recordController!.resume();
+      }
+
+      _simulatorTestProvider!.setIsLessThan2Second(true);
+      _countDown = _testRoomPresenter!.startCountDown(
+          context: context,
+          count: timeRecordCounting,
+          isPart2: true,
+          isReAnswer: false,
+          isLessThan2Seconds: true);
+    }
+  }
+
   void _reRecordAnswer() {
     if (kDebugMode) {
       print("DEBUG: _reRecordAnswer");
@@ -2022,8 +2060,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onCountDown(String countDownString, bool isLessThan2Second) {
+  void onCountDown(
+      String countDownString, bool isLessThan2Second, int timeCounting) {
     if (mounted) {
+      int numPart = _simulatorTestProvider!.currentQuestion.numPart;
+      if (numPart == PartOfTest.part2.get) {
+        _simulatorTestProvider!.setTimeRecordCounting(timeCounting);
+      }
       _timerProvider!.setCountDown(countDownString);
       _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
     }

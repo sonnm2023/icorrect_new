@@ -47,6 +47,15 @@ class SimulatorTestProvider with ChangeNotifier {
   //   }
   // }
 
+  int _timeRecordCounting = 0;
+  int get timeRecordCounting => _timeRecordCounting;
+  void setTimeRecordCounting(int count) {
+    _timeRecordCounting = count;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   bool _visibleCameraLive = true;
   bool get visibleCameraLive => _visibleCameraLive;
   void setVisibleCameraLive(bool visible) {
@@ -592,6 +601,7 @@ class SimulatorTestProvider with ChangeNotifier {
   }
 
   void resetAll() {
+    _timeRecordCounting = 0;
     _playingIndexWhenReDownload = 0;
     _isReDownload = false;
     _isShowConfirmSaveTest = false;
