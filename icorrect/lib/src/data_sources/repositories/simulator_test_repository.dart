@@ -5,13 +5,25 @@ import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 import 'package:http/http.dart' as http;
 
 abstract class SimulatorTestRepository {
-  Future<String> getTestDetail(String homeworkId, String distributeCode);
+  Future<String> getTestDetail({
+    required String homeworkId,
+    required String distributeCode,
+    required String platform,
+    required String appVersion,
+    required String deviceId,
+  });
   Future<String> submitTest(http.MultipartRequest multiRequest);
 }
 
 class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
   @override
-  Future<String> getTestDetail(String homeworkId, String distributeCode) {
+  Future<String> getTestDetail({
+    required String homeworkId,
+    required String distributeCode,
+    required String platform,
+    required String appVersion,
+    required String deviceId,
+  }) {
     String url = '$apiDomain$getTestInfoEP';
 
     return AppRepository.init()
@@ -21,7 +33,10 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           true,
           body: <String, String>{
             'activity_id': homeworkId,
-            'distribute_code': distributeCode
+            'distribute_code': distributeCode,
+            'platform': platform,
+            'app_version': appVersion,
+            'device_id': deviceId,
           },
         )
         .timeout(const Duration(seconds: timeout))

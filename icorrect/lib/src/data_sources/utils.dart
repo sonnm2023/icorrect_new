@@ -65,20 +65,20 @@ class Utils {
   }
 
   static Future<String> getOS() async {
-    String os = "unknown-flutter";
+    String os = "unknown_flutter";
 
     if (Platform.isAndroid) {
-      os = "android-flutter";
+      os = "android_flutter";
     } else if (Platform.isIOS) {
-      os = "ios-flutter";
+      os = "ios_flutter";
     } else if (kIsWeb) {
-      os = "web-flutter";
+      os = "web_flutter";
     } else if (Platform.isLinux) {
-      os = "linux-flutter";
+      os = "linux_flutter";
     } else if (Platform.isMacOS) {
-      os = "macos-flutter";
+      os = "macos_flutter";
     } else if (Platform.isWindows) {
-      os = "window-flutter";
+      os = "window_flutter";
     }
     return os;
   }

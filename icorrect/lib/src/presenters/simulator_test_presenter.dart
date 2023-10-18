@@ -96,8 +96,17 @@ class SimulatorTestPresenter {
           action: LogEvent.callApiGetTestDetail);
     }
 
+    String platform = await Utils.getOS();
+    String appVersion = await Utils.getAppVersion();
+    String deviceId = await Utils.getDeviceIdentifier();
+
     _testRepository!
-        .getTestDetail(homeworkId, distributeCode)
+        .getTestDetail(
+            homeworkId: homeworkId,
+            distributeCode: distributeCode,
+            platform: platform,
+            appVersion: appVersion,
+            deviceId: deviceId)
         .then((value) async {
       Map<String, dynamic> map = jsonDecode(value);
       if (kDebugMode) {
