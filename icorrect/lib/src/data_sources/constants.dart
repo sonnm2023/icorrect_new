@@ -644,4 +644,4 @@ class StringConstants {
       "An error occur, please try again later!";
 }
 
-const int timeout = 30;
+const int timeout = 60;

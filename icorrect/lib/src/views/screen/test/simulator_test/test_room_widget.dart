@@ -83,9 +83,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _isReDownload = false;
   bool _cameraIsRecording = false;
   bool _isExam = false;
-  final List<Map<String, int>> _logActions = [];
+  final List<Map<String, dynamic>> _logActions = [];
   DateTime? _logStartTime;
   DateTime? _logEndTime;
+  //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
+  int _typeOfActionLog = 0; //Default
 
   @override
   void initState() {
@@ -634,11 +636,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _videoPlayerController) {
       bool isPlaying = await _videoPlayerController!.isPlaying();
       if (isPlaying) {
+        _typeOfActionLog = 1;
         _videoPlayerController!.stop();
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
+        _typeOfActionLog = 2;
         int numPart = _simulatorTestProvider!.currentQuestion.numPart;
+
         if (numPart == PartOfTest.part2.get &&
             await _recordController!.isRecording()) {
           _recordController!.pause();
@@ -652,6 +657,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         if (null != _countDownCueCard) {
           _countDownCueCard!.cancel();
+        }
+      } else {
+        if (null != _countDownCueCard) {
+          _typeOfActionLog = 3;
         }
       }
 
@@ -680,7 +689,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _logStartTime = DateTime.now();
     if (kDebugMode) {
-      print("DEBUG: log starttime: $_logStartTime");
+      print("DEBUG: action log starttime: $_logStartTime");
     }
   }
 
@@ -696,22 +705,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _logStartTime && null != _currentQuestion) {
       _logEndTime = DateTime.now();
       if (kDebugMode) {
-        print("DEBUG: log endtime: $_logEndTime");
+        print("DEBUG: action log endtime: $_logEndTime");
       }
 
       int second = Utils.getBeingOutTimeInSeconds(_logStartTime!, _logEndTime!);
 
-      Map<String, int> map = {_currentQuestion!.id.toString(): second};
-      //Print action log
-      if (kDebugMode) {
-        print("DEBUG: action log: question ${_currentQuestion!.content}");
-        print("DEBUG: action log: $map");
-      }
+      var jsonData = {
+        "question_id": _currentQuestion!.id.toString(),
+        "question_text": _currentQuestion!.content,
+        "type": _typeOfActionLog,
+        "time": second
+      };
 
       _resetActionLogTimes();
 
       //Add action log
-      _logActions.add(map);
+      _logActions.add(jsonData);
     }
 
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
@@ -734,7 +743,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
           if (_endOfTakeNoteIndex != 0) {
             _rePlayEndOfTakeNote();
-          } else {
+          } else if (_simulatorTestProvider!.visibleRecord) {
             _continueRecordPart2();
           }
 
@@ -1436,6 +1445,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       TopicModel? topicModel = _getCurrentPart();
       List<QuestionTopicModel> questionList = topicModel!.questionList;
       int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+
+      //TODO: Need check again here
+      // if (questionList.isEmpty) return;
+      // if (index >= questionList.length) return;
+
       QuestionTopicModel question = questionList.elementAt(index);
       question.numPart = topicModel.numPart;
       _currentQuestion = question;
