@@ -23,7 +23,8 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
-  void onCountDown(String countDownString, bool isLessThan2Seconds);
+  void onCountDown(
+      String countDownString, bool isLessThan2Seconds, int timeCounting);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
@@ -97,7 +98,7 @@ class TestRoomPresenter {
         isLessThan2Seconds = false;
       }
 
-      _view!.onCountDown("$minuteStr:$secondStr", isLessThan2Seconds);
+      _view!.onCountDown("$minuteStr:$secondStr", isLessThan2Seconds, count);
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;

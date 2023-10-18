@@ -212,7 +212,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     return Consumer<UserAuthDetailProvider>(
       builder: (context, provider, child) {
         return Container(
-          height: h / 3.5,
+          height: h / 2,
           width: w,
           margin: const EdgeInsets.all(20),
           decoration: BoxDecoration(
