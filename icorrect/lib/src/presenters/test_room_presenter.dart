@@ -410,10 +410,6 @@ class TestRoomPresenter {
 
     if (null != logAction) {
       if (logAction.isNotEmpty) {
-        if (kDebugMode) {
-          print(logAction.toString());
-          print(jsonEncode(logAction));
-        }
         formData.addEntries([MapEntry('log_action', jsonEncode(logAction))]);
       } else {
         formData.addEntries([const MapEntry('log_action', '[]')]);
