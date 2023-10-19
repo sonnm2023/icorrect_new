@@ -283,6 +283,14 @@ class Utils {
 
   static UserAuthenStatusUI getUserAuthenStatus(int status) {
     switch (status) {
+      case 0:
+        return UserAuthenStatusUI(
+            title: 'Not Authenticated',
+            description: 'You need to record and send video for authentication',
+            icon: Icons.cancel_outlined,
+            backgroundColor: const Color.fromARGB(255, 248, 179, 179),
+            titleColor: Colors.red,
+            iconColor: Colors.red);
       case 4:
         return UserAuthenStatusUI(
             title: 'Authentication video was rejected',
@@ -319,12 +327,12 @@ class Utils {
             titleColor: Colors.red,
             iconColor: Colors.red);
       case 99:
-      case 0:
       default:
         return UserAuthenStatusUI(
-            title: 'Not Authenticated',
-            description: 'You need to record and send video for authentication',
-            icon: Icons.cancel_outlined,
+            title: 'Error Authentication',
+            description:
+                'An error occurs during verification,please contact ICorrect support',
+            icon: Icons.error_outline,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
             iconColor: Colors.red);

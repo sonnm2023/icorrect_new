@@ -40,6 +40,7 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
       allowedScreenSleep: false,
       allowFullScreen: false,
       videoPlayerController: _playerController!,
+      aspectRatio: 9/16
     );
   }
 
@@ -87,10 +88,7 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
               padding: const EdgeInsets.all(5),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: AspectRatio(
-                  aspectRatio: _playerController!.value.aspectRatio,
-                  child: Chewie(controller: _chewieController!),
-                ),
+                child: Chewie(controller: _chewieController!),
               ),
             ),
             Column(
