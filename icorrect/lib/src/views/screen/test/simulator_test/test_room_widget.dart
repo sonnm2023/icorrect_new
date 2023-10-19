@@ -142,12 +142,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _onAppActive();
         break;
       case AppLifecycleState.paused:
+        _onAppInBackground();
         if (kDebugMode) {
           print('DEBUG: App paused');
         }
         break;
       case AppLifecycleState.inactive:
-        _onAppInBackground();
+        if (kDebugMode) {
+          print('DEBUG: App inactive');
+        }
         break;
       case AppLifecycleState.detached:
         if (kDebugMode) {

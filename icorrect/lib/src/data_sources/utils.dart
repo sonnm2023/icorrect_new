@@ -974,6 +974,6 @@ class Utils {
 
   static int getBeingOutTimeInSeconds(DateTime startTime, DateTime endTime) {
     Duration diff = endTime.difference(startTime);
-    return diff.inMilliseconds;
+    return diff.inSeconds;
   }
 }
