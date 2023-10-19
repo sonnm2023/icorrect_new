@@ -310,9 +310,9 @@ class Utils {
             iconColor: Colors.green);
       case 3:
         return UserAuthenStatusUI(
-            title: 'Authentication in progress',
+            title: 'Waiting for review',
             description:
-                'The verification process takes some time, please wait until the results are available',
+                'Your sample is watting for review by teacher',
             icon: Icons.change_circle_sharp,
             backgroundColor: const Color.fromARGB(255, 179, 222, 248),
             titleColor: Colors.blue,
