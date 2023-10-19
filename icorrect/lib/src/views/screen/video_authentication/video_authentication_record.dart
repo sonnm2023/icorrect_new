@@ -92,11 +92,11 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
           print('DEBUG: App detached');
         }
         break;
-      // case AppLifecycleState.hidden:
-      //   if (kDebugMode) {
-      //     print('DEBUG: App hidden');
-      //   }
-      //   break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG: App hidden');
+        }
+        break;
     }
   }
 
@@ -268,15 +268,13 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                         onTap: () {
                           if (!provider.isRecordingVideo) {
                             _onStartRecording();
-                            _videoAuthProvider!
-                                .setRecordingVideo(true);
+                            _videoAuthProvider!.setRecordingVideo(true);
                           } else {
                             int minSeconds =
                                 _videoAuthProvider!.currentDuration.inSeconds;
                             if (minSeconds >= 15) {
                               _onStopRecording();
-                              _videoAuthProvider!
-                                .setRecordingVideo(false);
+                              _videoAuthProvider!.setRecordingVideo(false);
                             } else {
                               Fluttertoast.showToast(
                                 msg:
