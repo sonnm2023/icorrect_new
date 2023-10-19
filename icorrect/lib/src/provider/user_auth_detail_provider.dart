@@ -52,7 +52,7 @@ class UserAuthDetailProvider extends ChangeNotifier {
   ChewieController? get chewiePlayController => _chewieController;
   void setChewiePlay(VideoPlayerController controller) {
     _chewieController = ChewieController(
-        videoPlayerController: controller, aspectRatio: 16 / 9);
+        videoPlayerController: controller, aspectRatio: 9 / 16);
     if (!isDisposed) {
       notifyListeners();
     }

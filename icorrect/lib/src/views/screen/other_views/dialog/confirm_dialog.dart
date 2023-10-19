@@ -10,12 +10,14 @@ class ConfirmDialogWidget extends StatelessWidget {
     required this.cancelButtonTitle,
     required this.okButtonTitle,
     required this.cancelButtonTapped,
+    this.dimissButtonTapped,
     required this.okButtonTapped,
   });
 
   final String title;
   final String message;
   final String cancelButtonTitle;
+  final Function? dimissButtonTapped;
   final String okButtonTitle;
   final Function cancelButtonTapped;
   final Function okButtonTapped;
@@ -37,7 +39,7 @@ class ConfirmDialogWidget extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        cancelButtonTapped();
+                        dimissButtonTapped!();
                       },
                       child: const Icon(Icons.cancel_outlined, size: 25),
                     ),

@@ -18,6 +18,8 @@ import 'package:icorrect/src/views/screen/video_authentication/video_authenticat
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import '../other_views/dialog/confirm_dialog.dart';
+
 class UserAuthDetailStatus extends StatefulWidget {
   const UserAuthDetailStatus({super.key});
 
@@ -212,7 +214,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     return Consumer<UserAuthDetailProvider>(
       builder: (context, provider, child) {
         return Container(
-          height: h / 2,
+          height: h / 2.5,
           width: w,
           margin: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -232,11 +234,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: provider.chewiePlayController != null
-                      ? AspectRatio(
-                          aspectRatio:
-                              provider.chewiePlayController!.aspectRatio!,
-                          child: Chewie(
-                              controller: provider.chewiePlayController!))
+                      ? Chewie(controller: provider.chewiePlayController!)
                       : const Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 4,
@@ -289,6 +287,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
       builder: (context, provider, child) {
         UserAuthenStatusUI statusUI =
             Utils.getUserAuthenStatus(provider.userAuthenDetailModel.status);
+        String note = provider.userAuthenDetailModel.note;
         return Visibility(
           visible: provider.userAuthenDetailModel.id != 0,
           child: Container(
@@ -314,7 +313,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                     SizedBox(
                       width: w / 1.4,
                       child: Text(
-                        statusUI.description,
+                        note.isNotEmpty ? note : statusUI.description,
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -335,56 +334,98 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     double w = MediaQuery.of(context).size.width;
     return Consumer<UserAuthDetailProvider>(
       builder: (context, provider, child) {
-        return GestureDetector(
-          onTap: () {
-            _stopVideo();
+        int statusUser = provider.userAuthenDetailModel.status;
+        return Visibility(
+            visible: _canStartRecord(statusUser),
+            child: GestureDetector(
+              onTap: () {
+                if (statusUser == UserAuthStatus.waitingModelFile.get) {
+                  _showConfirmBeforeRecord();
+                } else {
+                  _stopVideo();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => VideoAuthenticationRecord(
+                          userAuthDetailProvider: provider),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                width: w,
+                alignment: Alignment.center,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                decoration: BoxDecoration(
+                    color: provider
+                            .userAuthenDetailModel.videosAuthDetail.isNotEmpty
+                        ? AppColor.defaultYellowColor
+                        : AppColor.defaultPurpleColor,
+                    borderRadius: BorderRadius.circular(100)),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        provider.userAuthenDetailModel.videosAuthDetail
+                                .isNotEmpty
+                            ? Icons.refresh
+                            : Icons.video_camera_front_outlined,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                          provider.userAuthenDetailModel.videosAuthDetail
+                                  .isNotEmpty
+                              ? "Record Video Again"
+                              : "Record Video Authentication",
+                          style: const TextStyle(
+                              color: AppColor.defaultWhiteColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400)),
+                    )
+                  ],
+                ),
+              ),
+            ));
+      },
+    );
+  }
+
+  void _showConfirmBeforeRecord() {
+    _stopVideo();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (builderContext) {
+        return ConfirmDialogWidget(
+          title: "Your sample is waiting for review",
+          message: "Are you sure to create new sample and sent to review ?",
+          cancelButtonTitle: "Cancel",
+          okButtonTitle: "OK",
+          cancelButtonTapped: () {},
+          okButtonTapped: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) =>
-                    VideoAuthenticationRecord(userAuthDetailProvider: provider),
+                builder: (context) => VideoAuthenticationRecord(
+                    userAuthDetailProvider: _provider!),
               ),
             );
           },
-          child: Container(
-            width: w,
-            alignment: Alignment.center,
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            decoration: BoxDecoration(
-                color:
-                    provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
-                        ? AppColor.defaultYellowColor
-                        : AppColor.defaultPurpleColor,
-                borderRadius: BorderRadius.circular(100)),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Icon(
-                    provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
-                        ? Icons.refresh
-                        : Icons.video_camera_front_outlined,
-                    size: 30,
-                    color: Colors.white,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                      provider.userAuthenDetailModel.videosAuthDetail.isNotEmpty
-                          ? "Record Video Again"
-                          : "Record Video Authentication",
-                      style: const TextStyle(
-                          color: AppColor.defaultWhiteColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400)),
-                )
-              ],
-            ),
-          ),
         );
       },
     );
+  }
+
+  bool _canStartRecord(int status) {
+    return status == UserAuthStatus.reject.get ||
+        status == UserAuthStatus.lock.get ||
+        status == UserAuthStatus.errorAuth.get ||
+        status == UserAuthStatus.draft.get;
   }
 
   void _stopVideo() {

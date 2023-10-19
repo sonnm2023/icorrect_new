@@ -38,6 +38,7 @@ enum UserAuthStatus {
   draft(0),
   active(1),
   lock(2),
+  reject(4),
   waitingModelFile(3),
   errorAuth(99);
 

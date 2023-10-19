@@ -92,11 +92,11 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
           print('DEBUG: App detached');
         }
         break;
-      case AppLifecycleState.hidden:
-        if (kDebugMode) {
-          print('DEBUG: App hidden');
-        }
-        break;
+      // case AppLifecycleState.hidden:
+      //   if (kDebugMode) {
+      //     print('DEBUG: App hidden');
+      //   }
+      //   break;
     }
   }
 
@@ -266,12 +266,29 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                       padding: const EdgeInsets.all(20),
                       child: GestureDetector(
                         onTap: () {
-                          _videoAuthProvider!
-                              .setRecordingVideo(!provider.isRecordingVideo);
-                          if (provider.isRecordingVideo) {
+                          if (!provider.isRecordingVideo) {
                             _onStartRecording();
+                            _videoAuthProvider!
+                                .setRecordingVideo(true);
                           } else {
-                            _onStopRecording();
+                            int minSeconds =
+                                _videoAuthProvider!.currentDuration.inSeconds;
+                            if (minSeconds >= 15) {
+                              _onStopRecording();
+                              _videoAuthProvider!
+                                .setRecordingVideo(false);
+                            } else {
+                              Fluttertoast.showToast(
+                                msg:
+                                    "This video record must be greater than 15s",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 5,
+                                backgroundColor: AppColor.defaultGrayColor,
+                                textColor: AppColor.defaultAppColor,
+                                fontSize: 15.0,
+                              );
+                            }
                           }
                         },
                         child: Container(
@@ -303,9 +320,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   }
 
   Future _onBackPress() async {
-    if (_cameraService!.cameraController != null &&
-        _cameraService!.cameraController!.value.isInitialized &&
-        _cameraService!.cameraController!.value.isRecordingVideo) {
+    if (_videoRecording()) {
       _backWhenRecordingVideo();
     } else if (_videoAuthProvider!.savedFile.existsSync()) {
       _backWhenNotSubmitVideo(context);
@@ -314,17 +329,27 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     }
   }
 
+  bool _videoRecording() {
+    return _cameraService!.cameraController != null &&
+        _cameraService!.cameraController!.value.isInitialized &&
+        _cameraService!.cameraController!.value.isRecordingVideo;
+  }
+
   Future _backWhenRecordingVideo() async {
     _cancelRecordingVideo(isStop: false);
     showDialog(
       context: context,
-      builder: (builder) {
+      barrierDismissible: false,
+      builder: (builderContext) {
         return ConfirmDialogWidget(
           title: "Are you sure to exit?",
           message:
               "Your video authentication is recording, are you sure to exit?",
           cancelButtonTitle: "Exit",
-          okButtonTitle: "Continue",
+          okButtonTitle: "Later",
+          dimissButtonTapped: () {
+            _continueRecodingVideo();
+          },
           cancelButtonTapped: () {
             _cameraService!.cameraController!.stopVideoRecording().then(
               (value) {
@@ -378,30 +403,21 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
 
   Future _onStopRecording() async {
     if (_cameraService!.cameraController!.value.isRecordingVideo) {
-      int minSeconds = _videoAuthProvider!.currentDuration.inSeconds;
-      if (minSeconds < 15) {
-        if (kDebugMode) {
-          print("DEBUG : Min recording less than 15 second");
-        }
-        _cancelRecordingVideo(isStop: false);
-        _showAlertWhenLessSecondsRecording();
-      } else {
-        _loading!.show(context: context, isViewAIResponse: false);
-        _cameraService!.saveVideoDoingTest(
-          (savedFile) {
-            _cameraService!.cameraController!.pausePreview();
-            _videoAuthProvider!.setSavedFile(savedFile);
-            _showSubmitVideoAuthen(savedFile);
-            _loading!.hide();
-          },
-        );
+      _loading!.show(context: context, isViewAIResponse: false);
+      _cameraService!.saveVideoDoingTest(
+        (savedFile) {
+          _cameraService!.cameraController!.pausePreview();
+          _videoAuthProvider!.setSavedFile(savedFile);
+          _showSubmitVideoAuthen(savedFile);
+          _loading!.hide();
+        },
+      );
 
-        if (null != _count) {
-          _count!.cancel();
-        }
-        _videoAuthProvider!.setRecordingVideo(false);
-        _videoAuthProvider!.setCurrentDuration(Duration.zero, "00:00");
+      if (null != _count) {
+        _count!.cancel();
       }
+      _videoAuthProvider!.setRecordingVideo(false);
+      _videoAuthProvider!.setCurrentDuration(Duration.zero, "00:00");
     }
   }
 
@@ -450,26 +466,6 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       authFile: savedFile,
       isUploadVideo: true,
       context: context,
-    );
-  }
-
-  void _showAlertWhenLessSecondsRecording() {
-    showDialog(
-      context: context,
-      builder: (builder) {
-        return ConfirmDialogWidget(
-          title: "Warning",
-          message: "This video record must be greater than 15s",
-          cancelButtonTitle: "Stop Now",
-          okButtonTitle: "Continue",
-          cancelButtonTapped: () {
-            _cancelRecordingVideo(isStop: true);
-          },
-          okButtonTapped: () {
-            _continueRecodingVideo();
-          },
-        );
-      },
     );
   }
 
