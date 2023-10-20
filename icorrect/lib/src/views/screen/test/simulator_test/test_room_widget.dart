@@ -555,7 +555,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: CameraPreview(_cameraService!.cameraController!),
+        child: OverflowBox(
+          alignment: Alignment.center,
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+                height: 1,
+                child: AspectRatio(
+                  aspectRatio: 1 / 2,
+                  child: CameraPreview(_cameraService!.cameraController!),
+                )),
+          ),
+        ),
       ),
     );
   }
@@ -2238,6 +2249,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onSubmitTestSuccess(String msg) {
+    _hideCameraLive();
+
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();

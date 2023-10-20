@@ -90,22 +90,34 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                 },
               );
             }
-            return Container(
-              width: w,
-              height: h,
-              padding: const EdgeInsets.only(top: 10),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColor.defaultPurpleColor,
-                    AppColor.defaultPurpleColor,
-                    AppColor.defaultBlueColor
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            return RefreshIndicator(
+              onRefresh: () {
+                return Future.delayed(
+                  const Duration(seconds: 1),
+                  () {
+                    _provider!.clearData();
+                    _getUserAuthDetail();
+                  },
+                );
+              },
+              child: SingleChildScrollView(
+                  child: Container(
+                width: w,
+                height: h,
+                padding: const EdgeInsets.only(top: 10),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColor.defaultPurpleColor,
+                      AppColor.defaultPurpleColor,
+                      AppColor.defaultBlueColor
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-              ),
-              child: _buildMainScreen(),
+                child: _buildMainScreen(),
+              )),
             );
           },
         ),
@@ -114,43 +126,32 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   Widget _buildMainScreen() {
-    return RefreshIndicator(
-      color: AppColor.defaultPurpleColor,
-      onRefresh: () {
-        return Future.delayed(
-          const Duration(seconds: 1),
-          () {
-            _getUserAuthDetail();
-          },
-        );
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(10),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_outlined,
-                    color: Colors.white,
-                    size: 25,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Icon(
+                  Icons.arrow_back_outlined,
+                  color: Colors.white,
+                  size: 25,
                 ),
               ),
-              const SizedBox(height: 10),
-              _headerRequireVideo()
-            ],
-          ),
-          _videoAndStatus()
-        ],
-      ),
+            ),
+            const SizedBox(height: 10),
+            _headerRequireVideo()
+          ],
+        ),
+        _videoAndStatus()
+      ],
     );
   }
 
