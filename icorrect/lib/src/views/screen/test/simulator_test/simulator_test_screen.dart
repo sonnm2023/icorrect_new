@@ -516,7 +516,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 visible: provider.startNowAvailable,
                 child: StartNowButtonWidget(
                   startNowButtonTapped: () {
-                    _checkPermission();
+                    _startToDoTest();
                   },
                 ),
               ),
@@ -563,103 +563,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
       },
     );
-  }
-
-  void _checkPermission() async {
-    if (_microPermission == null) {
-      await _initializePermission();
-    }
-
-    if (mounted) {
-      _requestPermission(_microPermission!, context);
-    }
-  }
-
-  Future<void> _requestPermission(
-      Permission permission, BuildContext context) async {
-    _simulatorTestProvider!.setPermissionDeniedTime();
-    // ignore: unused_local_variable
-    final status = await permission.request();
-    _listenForPermissionStatus(context);
-  }
-
-  Future<void> _initializePermission() async {
-    _microPermission = Permission.microphone;
-    if (mounted) {
-      _simulatorTestProvider!.setPermissionDeniedTime();
-
-      //TODO
-      // _statuses = await [Permission.microphone, Permission.camera].request();
-
-      _listenForPermissionStatus(context);
-    }
-  }
-
-  void _listenForPermissionStatus(BuildContext context) async {
-    // Permission? _microPermission;
-    // PermissionStatus _microPermissionStatus = PermissionStatus.denied;
-    if (_microPermission != null) {
-      _microPermissionStatus = await _microPermission!.status;
-
-      if (_microPermissionStatus == PermissionStatus.denied) {
-        if (_simulatorTestProvider!.permissionDeniedTime > 2) {
-          // _simulatorTestProvider!.setDialogShowing(true);
-          _showConfirmDialogWithMessage(
-              StringConstants.confirm_access_micro_permission_message);
-          // _showConfirmDialog();
-        }
-      } else if (_microPermissionStatus == PermissionStatus.permanentlyDenied) {
-        // _simulatorTestProvider!.setDialogShowing(true);
-        _showConfirmDialogWithMessage(
-            StringConstants.confirm_access_micro_permission_message);
-      } else {
-        _startToDoTest();
-      }
-    }
-  }
-
-  // void _showConfirmDialog() {
-  //   if (false == _simulatorTestProvider!.dialogShowing) {
-  //     showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (context) {
-  //         return AlertsDialog.init().showDialog(
-  //           context,
-  //           AlertClass.microPermissionAlert,
-  //           this,
-  //           keyInfo: StringClass.permissionDenied,
-  //         );
-  //       },
-  //     );
-  //     _simulatorTestProvider!.setDialogShowing(true);
-  //   }
-  // }
-
-  void _showConfirmDialogWithMessage(String message) async {
-    // if (true == _simulatorTestProvider!.dialogShowing) {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: message,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
-          borderRadius: 8,
-          hasCloseButton: false,
-          okButtonTapped: () {
-            // _simulatorTestProvider!.setDialogShowing(false);
-            openAppSettings();
-          },
-          cancelButtonTapped: () {
-            // _simulatorTestProvider!.setDialogShowing(false);
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
-    // }
   }
 
   void _getTestDetail() async {
@@ -753,7 +656,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     if (index == total) {
       //Auto start to do test
-      _checkPermission();
+      _startToDoTest();
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,8 +9,19 @@ import 'package:permission_handler/permission_handler.dart';
 class FileStorageHelper {
   static Future<String> getExternalDocumentPath() async {
     var status = await Permission.storage.status;
+    var permission = Permission.storage;
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+      int sdk = android.version.sdkInt;
+
+      if (sdk >= 33) {
+        status = await Permission.manageExternalStorage.status;
+        permission = Permission.manageExternalStorage;
+      }
+    }
+
     if (!status.isGranted) {
-      await Permission.storage.request();
+      await permission.request();
     }
 
     Directory directory = Directory('');
@@ -54,7 +66,7 @@ class FileStorageHelper {
     return hideDirectory.path;
   }
 
-   static Future<String> getFolderPathVideoDIO(
+  static Future<String> getFolderPathVideoDIO(
       MediaType mediaType, String? testId) async {
     final path = await _getRootPath;
 

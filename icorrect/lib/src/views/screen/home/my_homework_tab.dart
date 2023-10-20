@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -20,6 +21,8 @@ import 'package:icorrect/src/views/widget/homework_widget.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+
+import '../../../models/ui_models/alert_info.dart';
 
 class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
@@ -288,13 +291,60 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     widget.homeWorkPresenter
         .clickOnHomeworkItem(context: context, homework: homeWorkModel);
 
-    _selectedHomeWorkModel = homeWorkModel;
+    _requestMicroAndCameraPermissions(homeWorkModel);
+  }
 
-    if (_storagePermission == null) {
-      await _initializePermission();
+  Future _requestMicroAndCameraPermissions(
+      ActivitiesModel homeWorkModel) async {
+    try {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.camera,
+        Permission.microphone,
+      ].request();
+
+      if (statuses[Permission.camera]! == PermissionStatus.denied ||
+          statuses[Permission.microphone]! == PermissionStatus.denied) {
+        if (widget.homeWorkProvider.permissionDeniedTime > 2) {
+          _showConfirmDeniedDialog(AlertClass.microCameraPermissionAlert);
+        } else {
+          widget.homeWorkProvider.setPermissionDeniedTime();
+        }
+      } else if (statuses[Permission.camera]! ==
+              PermissionStatus.permanentlyDenied ||
+          statuses[Permission.microphone]! ==
+              PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      } else {
+        _selectedHomeWorkModel = homeWorkModel;
+
+        if (_storagePermission == null) {
+          await _initializePermission();
+        }
+
+        _requestPermission(_storagePermission!);
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: Permission error ${e.toString()}");
+      }
     }
+  }
 
-    _requestPermission(_storagePermission!);
+  void _showConfirmDeniedDialog(AlertInfo alertInfo) {
+    if (false == widget.homeWorkProvider.dialogShowing) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertsDialog.init().showDialog(
+              context,
+              alertInfo,
+              this,
+              keyInfo: StringClass.permissionDenied,
+            );
+          });
+      widget.homeWorkProvider.setDialogShowing(true);
+    }
   }
 
   Future<void> _initializePermission() async {
@@ -367,7 +417,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       );
 
       if (!mounted) return;
-
       // After the SimulatorTest returns a result
       // and refresh list of homework if needed
       if (result == 'refresh') {
