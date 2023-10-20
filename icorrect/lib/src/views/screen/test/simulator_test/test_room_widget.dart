@@ -105,16 +105,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _testRoomPresenter = TestRoomPresenter(this);
     _loading = CircleLoading();
 
-    Future.delayed(Duration.zero, () {
-      TopicModel randomTopic = _testRoomPresenter!
-          .getTopicModelRandom(topicsList: _simulatorTestProvider!.topicsList);
-      if (kDebugMode) {
-        print(
-            "DEBUG :Question list of random topic:  ${randomTopic.questionList.length.toString()}");
-      }
-      _simulatorTestProvider!.setTopicRandom(randomTopic);
-    });
-
     _isExam = widget.homeWorkModel.activityType == "exam" ||
         widget.homeWorkModel.activityType == "test";
 
@@ -122,6 +112,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _cameraService = CameraService();
       _cameraService!.initialize(() {
         setState(() {});
+      });
+      Future.delayed(Duration.zero, () {
+        TopicModel randomTopic = _testRoomPresenter!.getTopicModelRandom(
+            topicsList: _simulatorTestProvider!.topicsList);
+        if (kDebugMode) {
+          print(
+              "DEBUG :Question list of random topic:  ${randomTopic.questionList.length.toString()}");
+        }
+        _simulatorTestProvider!.setTopicRandom(randomTopic);
       });
     }
   }
@@ -171,6 +170,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (kDebugMode) {
       print("DEBUG: TestRoomWidget --- build");
     }
+
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
       if (provider.startDoingTest && _isExam) {
         _recordingUserDoesTestListener();
@@ -628,7 +628,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       LogModel actionLog =
           await Utils.prepareToCreateLog(context, action: action);
       if (null != data) {
-        actionLog.addData(key: "data", value: jsonEncode(data));
+        if (data.isNotEmpty) {
+          actionLog.addData(key: "data", value: jsonEncode(data));
+        }
       }
       Utils.addLog(actionLog, LogEvent.none);
     }

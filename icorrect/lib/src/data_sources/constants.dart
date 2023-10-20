@@ -198,6 +198,12 @@ class AlertClass {
     Alert.permissionDenied.type,
   );
 
+  static AlertInfo microCameraPermissionAlert = AlertInfo(
+    'Permisson Warning',
+    "This app needs recording, camera permission to start doing your homeworks",
+    Alert.permissionDenied.type,
+  );
+
   static AlertInfo storagePermissionAlert = AlertInfo(
     'Warning',
     "You must allow storage permission to continue.",
