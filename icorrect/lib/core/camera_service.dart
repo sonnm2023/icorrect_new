@@ -12,7 +12,7 @@ class CameraService {
     _cameras = await availableCameras();
     _cameraController = CameraController(
       _cameras![1],
-      ResolutionPreset.high,
+      ResolutionPreset.high, 
       enableAudio: true,
     );
 
@@ -25,7 +25,7 @@ class CameraService {
     });
   }
 
-  void startCameraRecording() {
+  void startCameraRecording()async {
     if (_cameraController != null) {
       _cameraController!.startVideoRecording();
     }

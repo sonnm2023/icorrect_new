@@ -41,7 +41,6 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     _circleLoading = CircleLoading();
     _authDetailPresenter = UserAuthDetailPresenter(this);
     _provider = Provider.of<UserAuthDetailProvider>(context, listen: false);
-
     _playerController = VideoPlayerController.file(File(""));
 
     _getUserAuthDetail();

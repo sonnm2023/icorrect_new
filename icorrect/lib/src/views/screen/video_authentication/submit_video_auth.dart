@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/video_compress_service.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../provider/video_authentication_provider.dart';
@@ -16,8 +18,7 @@ class SubmitVideoAuthentication extends StatefulWidget {
   Function onClickSubmit;
   Function onClickRecordNewVideo;
   SubmitVideoAuthentication(
-      {
-        required this.videoFile,
+      {required this.videoFile,
       required this.onClickSubmit,
       required this.onClickRecordNewVideo,
       super.key});
@@ -37,11 +38,10 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
     _playerController = VideoPlayerController.file(widget.videoFile)
       ..initialize();
     _chewieController = ChewieController(
-      allowedScreenSleep: false,
-      allowFullScreen: false,
-      videoPlayerController: _playerController!,
-      aspectRatio: 9/16
-    );
+        allowedScreenSleep: false,
+        allowFullScreen: false,
+        videoPlayerController: _playerController!,
+        aspectRatio: 9 / 16);
   }
 
   @override

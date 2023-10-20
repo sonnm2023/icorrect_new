@@ -7,8 +7,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/core/video_compress_service.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
 import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';
 import 'package:provider/provider.dart';
@@ -406,7 +408,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         (savedFile) {
           _cameraService!.cameraController!.pausePreview();
           _videoAuthProvider!.setSavedFile(savedFile);
-          _showSubmitVideoAuthen(savedFile);
+          _showResizeFileDialog(savedFile);
           _loading!.hide();
         },
       );
@@ -416,6 +418,40 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       }
       _videoAuthProvider!.setRecordingVideo(false);
       _videoAuthProvider!.setCurrentDuration(Duration.zero, "00:00");
+    }
+  }
+
+  void _showResizeFileDialog(File savedFile) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (builderContext) {
+        return ResizeVideoDialog(
+            videoFile: savedFile,
+            onResizeCompleted: (resizedFile) {
+              _videoAuthProvider!.setSavedFile(resizedFile);
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _showSubmitVideoAuthen(resizedFile);
+              });
+            },
+            onCancelResizeFile: () {
+              _continuePreviewVideo();
+            });
+      },
+    );
+  }
+
+  void _continuePreviewVideo() {
+    CameraController cameraController = _cameraService!.cameraController!;
+
+    if (cameraController.value.isInitialized) {
+      if (null != _count) {
+        _count!.cancel();
+      }
+      if (cameraController.value.isPreviewPaused) {
+        cameraController.resumePreview();
+      }
     }
   }
 
