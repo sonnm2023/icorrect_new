@@ -28,12 +28,18 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Play using while you are doing the exam</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app require permission to access to the camera to record video file for answering the question</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app require permission to access to the microphone to record audio file for answering the question</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -47,7 +53,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>Play using while you are doing the exam</string>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.csupporter.sendlogtask</string>
+    </array>
+    <key>FLTEnableImpeller</key>
+    <false />
 </dict>
 </plist>

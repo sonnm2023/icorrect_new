@@ -434,20 +434,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           borderRadius: 8,
           hasCloseButton: true,
           okButtonTapped: () {
-            //Reset question image
-            _resetQuestionImage();
-
-            //Submit
-            _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
-            _simulatorTestPresenter!.submitTest(
-              context: context,
-              testId:
-                  _simulatorTestProvider!.currentTestDetail.testId.toString(),
-              activityId: widget.homeWorkModel.activityId.toString(),
-              questions: _simulatorTestProvider!.questionList,
-              isUpdate: false,
-            );
-            _simulatorTestProvider!.setShowConfirmSaveTest(false);
+            _startSubmitTest();
           },
           cancelButtonTapped: () {
             cancelButtonTapped = true;
@@ -461,6 +448,32 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     if (cancelButtonTapped) {
       Navigator.of(context).pop();
+    }
+  }
+
+  void _startSubmitTest() async {
+    //Check connection
+    var connectivity = await connectivityService.checkConnectivity();
+    if (connectivity.name != "none") {
+      //Reset question image
+      _resetQuestionImage();
+
+      //Submit
+      _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+      _simulatorTestPresenter!.submitTest(
+        context: context,
+        testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+        activityId: widget.homeWorkModel.activityId.toString(),
+        questions: _simulatorTestProvider!.questionList,
+        isUpdate: false,
+      );
+      _simulatorTestProvider!.setShowConfirmSaveTest(false);
+    } else {
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+      }
+      Utils.showConnectionErrorDialog(context);
     }
   }
 

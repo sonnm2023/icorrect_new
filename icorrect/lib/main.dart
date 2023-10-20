@@ -65,8 +65,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => HomeWorkProvider(),
         ),
-        ChangeNotifierProvider(create: (_)=>VideoAuthProvider()),
-        ChangeNotifierProvider(create: (_)=>UserAuthDetailProvider()),
+        ChangeNotifierProvider(create: (_) => VideoAuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -84,6 +84,12 @@ class MyApp extends StatelessWidget {
 
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
+    switch (taskName) {
+      case Workmanager.iOSBackgroundTask:
+        stderr.writeln("The iOS background fetch was triggered");
+        break;
+    }
+
     //Check logs file is exist
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
     String path = "$folderPath/flutter_logs.txt";

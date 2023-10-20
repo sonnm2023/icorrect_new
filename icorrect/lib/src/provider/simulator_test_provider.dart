@@ -97,9 +97,10 @@ class SimulatorTestProvider with ChangeNotifier {
   bool get isShowConfirmSaveTest => _isShowConfirmSaveTest;
   void setShowConfirmSaveTest(bool isShow) {
     _isShowConfirmSaveTest = isShow;
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    //TODO: ???
+    // if (!isDisposed) {
+    //   notifyListeners();
+    // }
   }
 
   bool _isDownloadProgressing = false;
