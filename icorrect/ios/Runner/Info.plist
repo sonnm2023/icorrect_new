@@ -49,5 +49,7 @@
 	<false/>
     <key>NSAppleMusicUsageDescription</key>
     <string>Play using while you are doing the exam</string>
+    <key>FLTEnableImpeller</key>
+    <false />
 </dict>
 </plist>

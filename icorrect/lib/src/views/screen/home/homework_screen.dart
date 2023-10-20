@@ -5,6 +5,7 @@ import 'dart:core';
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
@@ -64,10 +65,18 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   void _sendLog() {
-    Workmanager().registerOneOffTask(
-      sendLogsTask,
-      sendLogsTask,
-    );
+    if (Platform.isIOS) {
+      const MethodChannel channel = MethodChannel('nativeChannel');
+      String apiUrl = "abc";
+      String filePath = "def";
+      channel.invokeMethod('com.csupporter.sendlogtask',
+          {"api_url": apiUrl, "file_path": filePath});
+    } else {
+      Workmanager().registerOneOffTask(
+        sendLogsTask,
+        sendLogsTask,
+      );
+    }
   }
 
   void _getListHomeWork() async {
@@ -118,7 +127,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         } else if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
           simulatorTestProvider.setShowConfirmSaveTest(true);
         } else {
-          
           GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
             _showQuitAppConfirmDialog();
