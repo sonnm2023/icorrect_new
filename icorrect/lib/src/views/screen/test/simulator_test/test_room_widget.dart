@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -88,6 +89,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   DateTime? _logEndTime;
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
+  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -2265,51 +2267,61 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onClickSaveTheTest() async {
-    if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
-        SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            title: StringConstants.dialog_title,
-            description: StringConstants.confirm_save_the_test_message,
-            okButtonTitle: StringConstants.save_button_title,
-            cancelButtonTitle: StringConstants.dont_save_button_title,
-            borderRadius: 8,
-            hasCloseButton: true,
-            okButtonTapped: () {
-              _startSubmitTest();
-            },
-            cancelButtonTapped: () {
-              Navigator.of(context).pop();
-            },
-          );
-        },
-      );
-    } else if (SubmitStatus.success == _simulatorTestProvider!.submitStatus) {
-      if (kDebugMode) {
-        print("DEBUG: Submit success: update answer after reanswer");
-      }
+    //Check connection
+    var connectivity = await connectivityService.checkConnectivity();
+    if (connectivity.name != "none") {
+      if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
+          SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomAlertDialog(
+              title: StringConstants.dialog_title,
+              description: StringConstants.confirm_save_the_test_message,
+              okButtonTitle: StringConstants.save_button_title,
+              cancelButtonTitle: StringConstants.dont_save_button_title,
+              borderRadius: 8,
+              hasCloseButton: true,
+              okButtonTapped: () {
+                _startSubmitTest();
+              },
+              cancelButtonTapped: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        );
+      } else if (SubmitStatus.success == _simulatorTestProvider!.submitStatus) {
+        if (kDebugMode) {
+          print("DEBUG: Submit success: update answer after reanswer");
+        }
 
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            title: StringConstants.confirm_title,
-            description: StringConstants.confirm_save_change_answers_message,
-            okButtonTitle: StringConstants.save_button_title,
-            cancelButtonTitle: StringConstants.cancel_button_title,
-            borderRadius: 8,
-            hasCloseButton: true,
-            okButtonTapped: () {
-              _updateReAnswers();
-            },
-            cancelButtonTapped: () {
-              Navigator.of(context).pop();
-            },
-          );
-        },
-      );
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomAlertDialog(
+              title: StringConstants.confirm_title,
+              description: StringConstants.confirm_save_change_answers_message,
+              okButtonTitle: StringConstants.save_button_title,
+              cancelButtonTitle: StringConstants.cancel_button_title,
+              borderRadius: 8,
+              hasCloseButton: true,
+              okButtonTapped: () {
+                _updateReAnswers();
+              },
+              cancelButtonTapped: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        );
+      }
+    } else {
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+      }
+      Utils.showConnectionErrorDialog(context);
     }
   }
 

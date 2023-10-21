@@ -64,7 +64,7 @@ dependencies:
   camera: ^0.10.5+4
   image: ^3.0.1
   flutter_localization: ^0.1.14
-  workmanager: ^0.5.1
+  workmanager: ^0.5.2
   change_app_package_name: ^1.1.0
   url_launcher: ^6.1.14 
   chewie: ^1.7.1

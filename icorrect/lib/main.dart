@@ -65,8 +65,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => HomeWorkProvider(),
         ),
-        ChangeNotifierProvider(create: (_)=>VideoAuthProvider()),
-        ChangeNotifierProvider(create: (_)=>UserAuthDetailProvider()),
+        ChangeNotifierProvider(create: (_) => VideoAuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

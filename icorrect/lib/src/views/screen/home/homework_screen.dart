@@ -7,6 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icorrect/core/connectivity_service.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -64,13 +67,22 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _sendLog();
   }
 
-  void _sendLog() {
+  void _sendLog() async {
     if (Platform.isIOS) {
       const MethodChannel channel = MethodChannel('nativeChannel');
-      String apiUrl = "abc";
-      String filePath = "def";
+      String apiUrl = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.logApiUrl);
+      String secretkey = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.secretkey);
+      String folderPath = await FileStorageHelper.getExternalDocumentPath();
+      String filePath = "$folderPath/flutter_logs.txt";
+
+      if (apiUrl.isEmpty || secretkey.isEmpty || filePath.isEmpty) {
+        return;
+      }
+
       channel.invokeMethod('com.csupporter.sendlogtask',
-          {"api_url": apiUrl, "file_path": filePath});
+          {"api_url": apiUrl, "secretkey": secretkey, "file_path": filePath});
     } else {
       Workmanager().registerOneOffTask(
         sendLogsTask,
