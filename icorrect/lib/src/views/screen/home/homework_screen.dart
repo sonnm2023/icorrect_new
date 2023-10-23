@@ -5,7 +5,11 @@ import 'dart:core';
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/connectivity_service.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -63,11 +67,28 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _sendLog();
   }
 
-  void _sendLog() {
-    Workmanager().registerOneOffTask(
-      sendLogsTask,
-      sendLogsTask,
-    );
+  void _sendLog() async {
+    if (Platform.isIOS) {
+      const MethodChannel channel = MethodChannel('nativeChannel');
+      String apiUrl = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.logApiUrl);
+      String secretkey = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.secretkey);
+      String folderPath = await FileStorageHelper.getExternalDocumentPath();
+      String filePath = "$folderPath/flutter_logs.txt";
+
+      if (apiUrl.isEmpty || secretkey.isEmpty || filePath.isEmpty) {
+        return;
+      }
+
+      channel.invokeMethod('com.csupporter.sendlogtask',
+          {"api_url": apiUrl, "secretkey": secretkey, "file_path": filePath});
+    } else {
+      Workmanager().registerOneOffTask(
+        sendLogsTask,
+        sendLogsTask,
+      );
+    }
   }
 
   void _getListHomeWork() async {
@@ -118,7 +139,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         } else if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
           simulatorTestProvider.setShowConfirmSaveTest(true);
         } else {
-          
           GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
             _showQuitAppConfirmDialog();

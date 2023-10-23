@@ -8,7 +8,6 @@ class StartNowButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -22,17 +21,17 @@ class StartNowButtonWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          width: 100,
-          height: 40,
-          alignment: Alignment.center,
-          child: Center(
-            child: InkWell(
-              onTap: () {
-                startNowButtonTapped();
-              },
-              child: const Text(
+        GestureDetector(
+          onTap: () {
+            startNowButtonTapped();
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            width: 100,
+            height: 60,
+            alignment: Alignment.center,
+            child: const Center(
+              child: Text(
                 StringConstants.start_now_button_title,
                 style: TextStyle(
                   fontSize: 15,
