@@ -84,7 +84,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _isReDownload = false;
   bool _cameraIsRecording = false;
   bool _isExam = false;
-  final List<Map<String, dynamic>> _logActions = [];
   DateTime? _logStartTime;
   DateTime? _logEndTime;
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
@@ -738,7 +737,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _resetActionLogTimes();
 
       //Add action log
-      _logActions.add(jsonData);
+      _simulatorTestProvider!.addLogActions(jsonData);
     }
 
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
@@ -1828,7 +1827,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       questions: questions,
       isExam: _isExam,
       videoConfirmFile: videoConfirmFile,
-      logAction: _logActions,
+      logAction: _simulatorTestProvider!.logActions,
     );
   }
 

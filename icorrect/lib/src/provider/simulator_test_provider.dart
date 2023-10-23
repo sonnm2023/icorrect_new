@@ -601,7 +601,18 @@ class SimulatorTestProvider with ChangeNotifier {
     _playingIndexWhenReDownload = index;
   }
 
+  final List<Map<String, dynamic>> _logActions = [];
+  List<Map<String, dynamic>> get logActions => _logActions;
+  void addLogActions(Map<String, dynamic> log) {
+    _logActions.add(log);
+  }
+
+  void resetLogActions() {
+    _logActions.clear();
+  }
+
   void resetAll() {
+    resetLogActions();
     _timeRecordCounting = 0;
     _playingIndexWhenReDownload = 0;
     _isReDownload = false;

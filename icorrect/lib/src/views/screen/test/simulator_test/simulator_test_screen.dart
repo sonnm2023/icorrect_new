@@ -62,6 +62,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   bool isOffline = false;
   CircleLoading? _loading;
   final connectivityService = ConnectivityService();
+  bool _isExam = false;
 
   TabBar get _tabBar {
     return TabBar(
@@ -149,6 +150,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       _authProvider!
           .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
     });
+
+    _isExam = widget.homeWorkModel.activityType == "exam" ||
+        widget.homeWorkModel.activityType == "test";
 
     _getTestDetail();
   }
@@ -323,13 +327,18 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 //Update reanswer
                 _loading!.show(context: context, isViewAIResponse: false);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
+                File? videoConfirmFile =
+                _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+
                 _simulatorTestPresenter!.submitTest(
                   context: context,
                   testId: _simulatorTestProvider!.currentTestDetail.testId
                       .toString(),
                   activityId: widget.homeWorkModel.activityId.toString(),
                   questions: _simulatorTestProvider!.questionList,
-                  isUpdate: true,
+                  isExam: _isExam,
+                  videoConfirmFile: videoConfirmFile,
+                  logAction: _simulatorTestProvider!.logActions,
                 );
               },
               cancelButtonTapped: () {
@@ -458,6 +467,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       //Reset question image
       _resetQuestionImage();
 
+      File? videoConfirmFile =
+      _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+
       //Submit
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
       _simulatorTestPresenter!.submitTest(
@@ -465,7 +477,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
         activityId: widget.homeWorkModel.activityId.toString(),
         questions: _simulatorTestProvider!.questionList,
-        isUpdate: false,
+        isExam: _isExam,
+        videoConfirmFile: videoConfirmFile,
+        logAction: _simulatorTestProvider!.logActions,
       );
       _simulatorTestProvider!.setShowConfirmSaveTest(false);
     } else {

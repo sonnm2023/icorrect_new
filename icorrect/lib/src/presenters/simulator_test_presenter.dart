@@ -546,13 +546,15 @@ class SimulatorTestPresenter {
     required String testId,
     required String activityId,
     required List<QuestionTopicModel> questions,
-    required bool isUpdate,
+    required bool isExam,
+    required File? videoConfirmFile,
+    required List<Map<String, dynamic>>? logAction,
   }) async {
     assert(_view != null && _testRepository != null);
 
     //Add log
     LogModel? log;
-    Map<String, dynamic>? dataLog = {};
+    Map<String, dynamic> dataLog = {};
 
     if (context.mounted) {
       log = await Utils.prepareToCreateLog(context,
@@ -563,11 +565,15 @@ class SimulatorTestPresenter {
       testId: testId,
       activityId: activityId,
       questions: questions,
-      isUpdate: isUpdate,
+      isUpdate: false,
       dataLog: dataLog,
+      isExam: isExam,
+      videoConfirmFile: videoConfirmFile,
+      logAction: logAction,
     );
 
     if (kDebugMode) {
+      print("DEBUG: submitTest");
       print("DEBUG: testId = $testId");
       print("DEBUG: activityId = $activityId");
     }
@@ -645,6 +651,7 @@ class SimulatorTestPresenter {
         message: "ClientException: Has an error when submit this test!",
         status: LogEvent.failed,
       );
+
       _view!.onSubmitTestFail(
           "ClientException: Has an error when submit this test!");
     }
@@ -669,10 +676,18 @@ class SimulatorTestPresenter {
     required List<QuestionTopicModel> questions,
     required bool isUpdate,
     required Map<String, dynamic>? dataLog,
+    required bool isExam,
+    required File? videoConfirmFile,
+    required List<Map<String, dynamic>>? logAction,
   }) async {
     String url = submitHomeWorkV2EP();
+
+    if (isExam) {
+      url = submitExam();
+    }
+
     http.MultipartRequest request =
-        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+    http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
       'Content-Type': 'multipart/form-data',
       'Authorization': 'Bearer ${await Utils.getAccessToken()}'
@@ -692,45 +707,43 @@ class SimulatorTestPresenter {
     String appVersion = await Utils.getAppVersion();
     formData.addEntries([MapEntry('app_version', appVersion)]);
 
+    if (null != logAction) {
+      if (logAction.isNotEmpty) {
+        formData.addEntries([MapEntry('log_action', jsonEncode(logAction))]);
+      } else {
+        formData.addEntries([const MapEntry('log_action', '[]')]);
+      }
+    }
+
     for (QuestionTopicModel q in questions) {
       String part = '';
-      String reanswer = '';
       switch (q.numPart) {
         case 0:
           {
             part = "introduce";
-            reanswer = 'reanswer_introduce';
             break;
           }
         case 1:
           {
             part = "part1";
-            reanswer = 'reanswer_part1';
             break;
           }
         case 2:
           {
             part = "part2";
-            reanswer = 'reanswer_part2';
             break;
           }
         case 3:
           {
             part = "part3";
-            reanswer = 'reanswer_part3';
             if (q.isFollowUp == 1) {
               part = "followup";
-              reanswer = 'reanswer_followup';
             }
             break;
           }
       }
 
       String prefix = "$part[${q.id}]";
-      String reanswerFormat = "$reanswer[${q.id}]";
-
-      formData
-          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
 
       List<MapEntry<String, String>> temp = _generateFormat(q, prefix);
       if (temp.isNotEmpty) {
@@ -747,6 +760,13 @@ class SimulatorTestPresenter {
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
       }
+    }
+
+    if (null != videoConfirmFile) {
+      String fileName = videoConfirmFile.path.split('/').last;
+      formData.addEntries([MapEntry('video_confirm', fileName)]);
+      request.files.add(await http.MultipartFile.fromPath(
+          'video_confirm', videoConfirmFile.path));
     }
 
     request.fields.addAll(formData);
