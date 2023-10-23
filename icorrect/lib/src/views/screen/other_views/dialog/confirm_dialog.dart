@@ -39,7 +39,9 @@ class ConfirmDialogWidget extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        dimissButtonTapped!();
+                        if (dimissButtonTapped != null) {
+                          dimissButtonTapped!();
+                        }
                       },
                       child: const Icon(Icons.cancel_outlined, size: 25),
                     ),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -16,8 +17,7 @@ class SubmitVideoAuthentication extends StatefulWidget {
   Function onClickSubmit;
   Function onClickRecordNewVideo;
   SubmitVideoAuthentication(
-      {
-        required this.videoFile,
+      {required this.videoFile,
       required this.onClickSubmit,
       required this.onClickRecordNewVideo,
       super.key});
@@ -37,11 +37,10 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
     _playerController = VideoPlayerController.file(widget.videoFile)
       ..initialize();
     _chewieController = ChewieController(
-      allowedScreenSleep: false,
-      allowFullScreen: false,
-      videoPlayerController: _playerController!,
-      aspectRatio: 9/16
-    );
+        allowedScreenSleep: false,
+        allowFullScreen: false,
+        videoPlayerController: _playerController!,
+        aspectRatio: 9 / 16);
   }
 
   @override
@@ -94,14 +93,13 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Confirm to submit your video !",
+                const Text(StringConstants.confirm_submit_video_auth_title,
                     style: TextStyle(
                         color: AppColor.defaultPurpleColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
-                const Text(
-                    "This video will be used to confirm when you do your exam. So you want submit this video ?",
+                const Text(StringConstants.confirm_submit_video_auth_content,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: AppColor.defaultPurpleColor,
@@ -152,7 +150,7 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
         decoration: BoxDecoration(
             color: AppColor.defaultPurpleColor,
             borderRadius: BorderRadius.circular(100)),
-        child: const Text("Submit Now",
+        child: const Text(StringConstants.submit_now_title,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -180,7 +178,7 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
         decoration: BoxDecoration(
             border: Border.all(color: AppColor.defaultPurpleColor, width: 1.5),
             borderRadius: BorderRadius.circular(100)),
-        child: const Text("Record New Video",
+        child: const Text(StringConstants.record_new_video_title,
             style: TextStyle(
                 color: AppColor.defaultPurpleColor,
                 fontSize: 18,

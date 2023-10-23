@@ -243,7 +243,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {  
     super.didChangeAppLifecycleState(state);
 
     switch (state) {

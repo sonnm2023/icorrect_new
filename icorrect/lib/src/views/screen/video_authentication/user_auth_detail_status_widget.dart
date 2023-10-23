@@ -174,7 +174,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
               SizedBox(
                 width: (w - 20) / 1.6,
                 child: const Text(
-                  'Please send video sample for authentication',
+                  StringConstants.require_user_authentication_title,
                   textAlign: TextAlign.start,
                   style: TextStyle(
                       fontSize: 16,
@@ -261,7 +261,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                       children: [
                         Icon(Icons.video_camera_front_outlined,
                             size: 100, color: AppColor.defaultPurpleSightColor),
-                        Text("Start Recording Video",
+                        Text(StringConstants.start_record_video_title,
                             style: TextStyle(
                                 color: AppColor.defaultGrayColor,
                                 fontSize: 17,
@@ -287,6 +287,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
       builder: (context, provider, child) {
         UserAuthenStatusUI statusUI =
             Utils.getUserAuthenStatus(provider.userAuthenDetailModel.status);
+        if (_inProgressForAuthentication()) {
+          statusUI =
+              Utils.getUserAuthenStatus(UserAuthStatus.waitingModelFile.get);
+        }
+
         String note = provider.userAuthenDetailModel.note;
         return Visibility(
           visible: provider.userAuthenDetailModel.id != 0,
@@ -330,6 +335,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     );
   }
 
+  bool _inProgressForAuthentication() {
+    return _provider!.userAuthenDetailModel.videosAuthDetail.isNotEmpty &&
+        _provider!.userAuthenDetailModel.status == UserAuthStatus.draft.get;
+  }
+
   Widget _submitVideoAgainButton() {
     double w = MediaQuery.of(context).size.width;
     return Consumer<UserAuthDetailProvider>(
@@ -339,7 +349,8 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
             visible: _canStartRecord(statusUser),
             child: GestureDetector(
               onTap: () {
-                if (statusUser == UserAuthStatus.waitingModelFile.get) {
+                if (provider
+                    .userAuthenDetailModel.videosAuthDetail.isNotEmpty) {
                   _showConfirmBeforeRecord();
                 } else {
                   _stopVideo();
@@ -381,8 +392,9 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                       child: Text(
                           provider.userAuthenDetailModel.videosAuthDetail
                                   .isNotEmpty
-                              ? "Record Video Again"
-                              : "Record Video Authentication",
+                              ? StringConstants.record_video_again_title
+                              : StringConstants
+                                  .record_video_authentication_title,
                           style: const TextStyle(
                               color: AppColor.defaultWhiteColor,
                               fontSize: 18,
@@ -403,10 +415,10 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
       barrierDismissible: false,
       builder: (builderContext) {
         return ConfirmDialogWidget(
-          title: "Your sample is waiting for review",
-          message: "Are you sure to create new sample and sent to review ?",
-          cancelButtonTitle: "Cancel",
-          okButtonTitle: "OK",
+          title: StringConstants.waiting_review_video,
+          message: StringConstants.confirm_record_new_video,
+          cancelButtonTitle: StringConstants.cancel_button_title,
+          okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             Navigator.of(context).push(
