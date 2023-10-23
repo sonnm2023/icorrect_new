@@ -1499,7 +1499,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           {
             //prepare to record answer
             bool isPart2 = current.numPart == PartOfTest.part2.get;
-            _prepareStep1RecordAnswer(fileName: current.url, isPart2: isPart2);
+            String fileName = current.id.toString();
+            _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
             if (_countRepeat == 0) {
               _calculateIndexOfHeader();
             }
@@ -2048,7 +2049,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _simulatorTestProvider!.listVideoSource[_playingIndex];
     //prepare to record answer
     bool isPart2 = current.numPart == PartOfTest.part2.get;
-    _prepareStep1RecordAnswer(fileName: current.url, isPart2: isPart2);
+    String fileName = current.id.toString();
+    _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
   }
 
   void _reRecordReanswer() {
