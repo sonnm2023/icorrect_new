@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/video_compress_service.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
@@ -238,7 +239,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Sample Text :",
+                                    StringConstants.sampleTextTitle,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500,
@@ -246,7 +247,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                     ),
                                   ),
                                   Text(
-                                    "It appears as though that may be from the Android Emulator. If that is the case, it uses a low-quality renderer so that it runs fast enough especially on less powerful hardware. Test it out on a real device and you'll likely see better results.",
+                                    StringConstants.sampleTextContent,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,
@@ -279,8 +280,8 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                               _videoAuthProvider!.setRecordingVideo(false);
                             } else {
                               Fluttertoast.showToast(
-                                msg:
-                                    "This video record must be greater than 15s",
+                                msg: StringConstants
+                                    .video_record_duration_less_than_15s,
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 5,
@@ -341,27 +342,31 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       context: context,
       barrierDismissible: false,
       builder: (builderContext) {
-        return ConfirmDialogWidget(
-          title: "Are you sure to exit?",
-          message:
-              "Your video authentication is recording, are you sure to exit?",
-          cancelButtonTitle: "Exit",
-          okButtonTitle: "Later",
-          dimissButtonTapped: () {
-            _continueRecodingVideo();
-          },
-          cancelButtonTapped: () {
-            _cameraService!.cameraController!.stopVideoRecording().then(
-              (value) {
-                _deleteFile(File(value.path));
-                Navigator.of(context).pop();
+        return WillPopScope(
+            child: ConfirmDialogWidget(
+              title: StringConstants.confirm_exit_screen_title,
+              message: StringConstants.confirm_exit_content,
+              cancelButtonTitle: StringConstants.exit_button_title,
+              okButtonTitle: StringConstants.later_button_title,
+              dimissButtonTapped: () {
+                _continueRecodingVideo();
               },
-            );
-          },
-          okButtonTapped: () {
-            _continueRecodingVideo();
-          },
-        );
+              cancelButtonTapped: () {
+                _cameraService!.cameraController!.stopVideoRecording().then(
+                  (value) {
+                    _deleteFile(File(value.path));
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+              okButtonTapped: () {
+                _continueRecodingVideo();
+              },
+            ),
+            onWillPop: () async {
+              _continueRecodingVideo();
+              return true;
+            });
       },
     );
   }
@@ -372,11 +377,10 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       context: contextBuild,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: "Are you sure to exit?",
-          message:
-              "Your video authentication is not submitted, do you want to submit and exit?",
-          cancelButtonTitle: "Exit",
-          okButtonTitle: "Submit",
+          title: StringConstants.confirm_exit_screen_title,
+          message: StringConstants.confirm_submit_before_out_screen,
+          cancelButtonTitle: StringConstants.exit_button_title,
+          okButtonTitle: StringConstants.submit_button_title,
           cancelButtonTapped: () async {
             await _videoAuthProvider!.savedFile.delete().then(
               (value) {

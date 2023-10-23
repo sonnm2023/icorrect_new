@@ -285,43 +285,40 @@ class Utils {
     switch (status) {
       case 0:
         return UserAuthenStatusUI(
-            title: 'Not Authenticated',
-            description: 'You need to record and send video for authentication',
+            title: StringConstants.not_auth_title,
+            description: StringConstants.not_auth_content,
             icon: Icons.cancel_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
             iconColor: Colors.red);
       case 4:
         return UserAuthenStatusUI(
-            title: 'Authentication video was rejected',
-            description:
-                'You need to record a new video for authentication .Click the button below!',
+            title: StringConstants.reject_auth_title,
+            description: StringConstants.reject_auth_content,
             icon: Icons.video_camera_front_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 233, 179),
             titleColor: Colors.amber,
             iconColor: Colors.amber);
       case 1:
         return UserAuthenStatusUI(
-            title: 'You have been authenticated',
-            description: 'Get ready for the upcoming exams',
+            title: StringConstants.user_authed_title,
+            description: StringConstants.user_authed_content,
             icon: Icons.check_circle_outline_rounded,
             backgroundColor: const Color.fromARGB(255, 179, 248, 195),
             titleColor: Colors.green,
             iconColor: Colors.green);
       case 3:
         return UserAuthenStatusUI(
-            title: 'Waiting for review',
-            description:
-                'Your sample is watting for review by teacher',
+            title: StringConstants.progress_auth_title,
+            description: StringConstants.progress_auth_content,
             icon: Icons.change_circle_sharp,
             backgroundColor: const Color.fromARGB(255, 179, 222, 248),
             titleColor: Colors.blue,
             iconColor: Colors.blue);
       case 2:
         return UserAuthenStatusUI(
-            title: 'You was locked',
-            description:
-                'Please contact the I Correct administrator for assistance',
+            title: StringConstants.lock_auth_title,
+            description: StringConstants.lock_auth_content,
             icon: Icons.lock,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -329,9 +326,8 @@ class Utils {
       case 99:
       default:
         return UserAuthenStatusUI(
-            title: 'Error Authentication',
-            description:
-                'An error occurs during verification,please contact ICorrect support',
+            title: StringConstants.error_auth_title,
+            description: StringConstants.error_auth_content,
             icon: Icons.error_outline,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,

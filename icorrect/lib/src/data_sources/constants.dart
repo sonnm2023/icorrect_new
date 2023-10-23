@@ -509,7 +509,15 @@ class StringConstants {
   static const String save_the_exam_button_title = "SAVE THE EXAM";
   static const String start_now_button_title = "Start Now";
   static const String repeat_button_title = "Repeat";
-
+  static const String exit_button_title = "Exit";
+  static const String later_button_title = "Later";
+  static const String submit_button_title = "Submit";
+  static const String start_record_video_title = "Start Recording Video";
+  static const String record_video_again_title = "Record Video Again";
+  static const String record_video_authentication_title =
+      "Record Video Authentication";
+  static const String submit_now_title = "Submit Now";
+  static const String record_new_video_title = "Record New Video";
   //Dialog
   static const String dialog_title = "Notification";
   static const String exit_app_message = "Do you want to exit app?";
@@ -529,6 +537,15 @@ class StringConstants {
       "You are going to re-answer this question.The reviewing process will be stopped. Are you sure?";
   static const String confirm_save_the_test_message =
       "Do you want to save this test?";
+  static const String confirm_exit_screen_title = "Are you sure to exit?";
+  static const String confirm_exit_content =
+      "Your video authentication is recording, are you sure to exit?";
+  static const String confirm_submit_before_out_screen =
+      "Your video authentication is not submitted, do you want to submit and exit?";
+  static const String waiting_review_video =
+      "Your sample is waiting for review";
+  static const String confirm_record_new_video =
+      "Are you sure to create new sample and sent to review ?";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
@@ -605,6 +622,34 @@ class StringConstants {
   static const String new_password = "New password";
   static const String confirm_new_password = "Confirm new password";
   static const String video_authen_menu_item_title = "Videos Authentication";
+  static const String sampleTextTitle = "Sample Text :";
+  static const String sampleTextContent =
+      "Hello, my full name is ... (Nguyen Van Nam)."
+      "I am ... (12) years old. I come from ...(Ninh Bình). I live with my family. I like to eat apples and bananas. "
+      "My school's name is ... (Đồng Phong). Nice to meet you. can you introduce yourself?";
+  static const String require_user_authentication_title =
+      "Please send video sample for authentication";
+  static const String confirm_submit_video_auth_title =
+      "Confirm to submit your video !";
+  static const String confirm_submit_video_auth_content =
+      "This video will be used to confirm when you do your exam. So you want submit this video ?";
+  static const String not_auth_title = "Not Authenticated";
+  static const String not_auth_content =
+      "You need to record and send video for authentication";
+  static const String reject_auth_title = "Authentication video was rejected";
+  static const String reject_auth_content =
+      "You need to record a new video for authentication .Click the button below!";
+  static const String user_authed_title = "You have been authenticated";
+  static const String user_authed_content = "Get ready for the upcoming exams";
+  static const String progress_auth_title = "Authentication in progress";
+  static const String progress_auth_content =
+      "The verification process takes some time, please wait until the results are available";
+  static const String lock_auth_title = "You was locked";
+  static const String lock_auth_content =
+      "Please contact the I Correct administrator for assistance";
+  static const String error_auth_title = "Error Authentication";
+  static const String error_auth_content =
+      "An error occurs during verification,please contact ICorrect support";
 
   //Warning Message
   static const String choose_filter_message =
@@ -635,6 +680,8 @@ class StringConstants {
       "Your password must be longer than 6 characters.";
   static const String password_max_lenght_message =
       "Your password must be shorter than 32 characters.";
+  static const String video_record_duration_less_than_15s =
+      "This video record must be greater than 15s";
 
   //Error message
   static const String getting_app_config_information_error_message =
