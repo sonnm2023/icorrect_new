@@ -304,7 +304,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
       if (statuses[Permission.camera]! == PermissionStatus.denied ||
           statuses[Permission.microphone]! == PermissionStatus.denied) {
-        if (widget.homeWorkProvider.permissionDeniedTime > 2) {
+        if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microCameraPermissionAlert);
         } else {
           widget.homeWorkProvider.setPermissionDeniedTime();
