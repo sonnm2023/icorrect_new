@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _initializePermission() async {
-    if (Platform.isAndroid) {
+     if (Platform.isAndroid) {
       AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
       int sdk = android.version.sdkInt;
 

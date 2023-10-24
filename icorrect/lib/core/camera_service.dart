@@ -12,7 +12,7 @@ class CameraService {
     _cameras = await availableCameras();
     _cameraController = CameraController(
       _cameras![1],
-      ResolutionPreset.high, 
+      ResolutionPreset.high,
       enableAudio: true,
     );
 
@@ -25,7 +25,7 @@ class CameraService {
     });
   }
 
-  void startCameraRecording()async {
+  void startCameraRecording() async {
     if (_cameraController != null) {
       _cameraController!.startVideoRecording();
     }
@@ -38,12 +38,13 @@ class CameraService {
         if (kDebugMode) {
           int length = (await value.readAsBytes()).lengthInBytes;
           print(
-              "DEBUG : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
+              "RECORDING_VIDEO : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
         }
       });
     } catch (e) {
       if (kDebugMode) {
-        print("DEBUG : ERROR WHEN SAVE RECORDING VIDEO : ${e.toString()}");
+        print(
+            "RECORDING_VIDEO : ERROR WHEN SAVE RECORDING VIDEO : ${e.toString()}");
       }
     }
   }

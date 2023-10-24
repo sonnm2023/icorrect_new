@@ -12,6 +12,7 @@ import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -29,7 +30,6 @@ abstract class TestRoomViewContract {
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
   void onCountRecordingVideo(int currentCount);
-  void onLimitedRecordingVideo();
   void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
   void onUpdateReAnswersSuccess(String msg);
@@ -113,6 +113,12 @@ class TestRoomPresenter {
     });
   }
 
+  String getVideoLongestDuration(List<VideoExamRecordInfo> videosSaved) {
+    videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
+    VideoExamRecordInfo maxValue = videosSaved.last;
+    return maxValue.filePath ?? '';
+  }
+
   Timer startCountDownForCueCard(
       {required BuildContext context,
       required int count,
@@ -137,25 +143,6 @@ class TestRoomPresenter {
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
         _view!.onFinishAnswer(isPart2);
-      }
-    });
-  }
-
-  Timer startCountRecording({required int countFrom}) {
-    bool finishCountDown = false;
-    const oneSec = Duration(seconds: 1);
-    return Timer.periodic(oneSec, (Timer timer) {
-      if (countFrom < 1) {
-        timer.cancel();
-      } else {
-        countFrom = countFrom - 1;
-      }
-
-      _view!.onCountRecordingVideo(countFrom);
-
-      if (countFrom == 0 && !finishCountDown) {
-        finishCountDown = true;
-        _view!.onLimitedRecordingVideo();
       }
     });
   }
@@ -199,47 +186,13 @@ class TestRoomPresenter {
     }
   }
 
-/////////////////////////Random Topic to record video user ////////////////////
-  void recodingUserDoesTestListener(
-      {required TopicModel randomTopic,
-      required TopicModel currentTopic,
-      required QuestionTopicModel currentQuestion,
-      required Function startRecordingVideo,
-      required Function stopRecordingVideo}) {
-    print("DEBUG: part Topic : ${randomTopic.numPart.toString()}");
-    if (_canStartRecording(randomTopic, currentTopic)) {
-      startRecordingVideo();
-    }
-    List<QuestionTopicModel> questions = randomTopic.questionList;
-    QuestionTopicModel question = _questionForStopRecording(questions);
-    if (_isStopRecodingVideo(currentQuestion, question)) {
-      stopRecordingVideo();
-    }
-  }
-
-  TopicModel getTopicModelRandom({required List<TopicModel> topicsList}) {
-    Random random = Random();
-    int randomIndex = random.nextInt(topicsList.length);
-
-    return topicsList.elementAt(randomIndex);
-  }
-
-  bool _canStartRecording(TopicModel randomTopic, TopicModel currentTopic) {
-    return randomTopic.id == currentTopic.id;
-  }
-
-  final _limitedMaxQuestion = 3;
-  QuestionTopicModel _questionForStopRecording(
-      List<QuestionTopicModel> questions) {
-    return (questions.length - 1 >= _limitedMaxQuestion)
-        ? questions[_limitedMaxQuestion]
-        : questions[questions.length - 1];
-  }
-
-  bool _isStopRecodingVideo(
-      QuestionTopicModel currentQuestion, QuestionTopicModel questionLimited) {
-    return currentQuestion != QuestionTopicModel() &&
-        currentQuestion.id == questionLimited.id;
+  Timer startCountRecording({int? countFrom}) {
+    const oneSec = Duration(seconds: 1);
+    int count = countFrom ?? 0;
+    return Timer.periodic(oneSec, (Timer timer) {
+      count = count + 1;
+      _view!.onCountRecordingVideo(count);
+    });
   }
 
   Future<void> submitTest({

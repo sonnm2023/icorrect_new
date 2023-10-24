@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -73,6 +75,32 @@ class SimulatorTestPresenter {
 
   void resetAutoRequestDownloadTimes() {
     _autoRequestDownloadTimes = 0;
+  }
+
+  String randomVideoRecordExam(List<VideoExamRecordInfo> videosSaved) {
+    if (videosSaved.length > 1) {
+      List<VideoExamRecordInfo> prepareVideoForRandom = [];
+      for (int i = 0; i < videosSaved.length; i++) {
+        if (videosSaved[i].duration! >= 7) {
+          prepareVideoForRandom.add(videosSaved[i]);
+        }
+      }
+      if (prepareVideoForRandom.isEmpty) {
+        return _getMaxDurationVideo(videosSaved);
+      } else {
+        Random random = Random();
+        int elementRandom = random.nextInt(prepareVideoForRandom.length);
+        return prepareVideoForRandom[elementRandom].filePath ?? "";
+      }
+    } else {
+      return _getMaxDurationVideo(videosSaved);
+    }
+  }
+
+  String _getMaxDurationVideo(List<VideoExamRecordInfo> videosSaved) {
+    videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
+    VideoExamRecordInfo maxValue = videosSaved.last;
+    return maxValue.filePath ?? '';
   }
 
   TestDetailModel? testDetail;
@@ -687,7 +715,7 @@ class SimulatorTestPresenter {
     }
 
     http.MultipartRequest request =
-    http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
       'Content-Type': 'multipart/form-data',
       'Authorization': 'Bearer ${await Utils.getAccessToken()}'

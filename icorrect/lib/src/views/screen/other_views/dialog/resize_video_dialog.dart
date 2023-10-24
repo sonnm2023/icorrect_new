@@ -13,11 +13,11 @@ import '../../../../../core/video_compress_service.dart';
 class ResizeVideoDialog extends StatefulWidget {
   File videoFile;
   Function(File fileResize) onResizeCompleted;
-  Function onCancelResizeFile;
+  Function? onCancelResizeFile;
   ResizeVideoDialog(
       {required this.videoFile,
       required this.onResizeCompleted,
-      required this.onCancelResizeFile,
+      this.onCancelResizeFile,
       super.key});
 
   @override
@@ -49,14 +49,13 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
   }
 
   void _compressVideoSubmit() async {
-    _mediaInfo  = await VideoCompressService.compressVideo(widget.videoFile);
+    _mediaInfo = await VideoCompressService.compressVideo(widget.videoFile);
     _subscription = VideoCompress.compressProgress$.subscribe((progress) async {
       _authProvider!.setProgressResize(progress / 100);
       if (kDebugMode) {
         print(
             "DEBUG : progress resize file : ${_authProvider!.progressResize}");
       }
-
       if (progress == 100) {
         if (kDebugMode) {
           print(
@@ -97,29 +96,40 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                       const Text('Please wait for preparing submit....',
                           style: CustomTextStyle.textBoldBlack_16),
                       const SizedBox(height: 10),
-                      LinearProgressIndicator(
-                        minHeight: 10,
-                        borderRadius: BorderRadius.circular(100),
-                        value: provider.progressResize,
+                      // LinearProgressIndicator(
+                      //   minHeight: 10,
+                      //   borderRadius: BorderRadius.circular(100),
+                      //   value: provider.progressResize,
+                      //   backgroundColor: AppColor.defaultLightGrayColor,
+                      //   valueColor: const AlwaysStoppedAnimation<Color>(
+                      //       AppColor.defaultPurpleColor),
+                      // ),
+                      const CircularProgressIndicator(
+                        strokeWidth: 4,
                         backgroundColor: AppColor.defaultLightGrayColor,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColor.defaultPurpleColor),
-                      ),
-                      const SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: () async {
-                          VideoCompress.cancelCompression();
-                          if (_subscription != null) {
-                            _subscription!.unsubscribe();
-                          }
-                          Navigator.of(context).pop();
-                          widget.onCancelResizeFile();
-                        },
-                        child: const Text(
-                          "Cancel and Later",
-                          style: CustomTextStyle.textBoldPurple_15,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColor.defaultPurpleColor,
                         ),
-                      )
+                      ),
+                      (widget.onCancelResizeFile != null)
+                          ? Container(
+                              margin: const EdgeInsets.symmetric(vertical: 20),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  VideoCompress.cancelCompression();
+                                  if (_subscription != null) {
+                                    _subscription!.unsubscribe();
+                                  }
+                                  Navigator.of(context).pop();
+                                  widget.onCancelResizeFile!();
+                                },
+                                child: const Text(
+                                  "Cancel and Later",
+                                  style: CustomTextStyle.textBoldPurple_15,
+                                ),
+                              ),
+                            )
+                          : Container()
                     ],
                   ),
                 );

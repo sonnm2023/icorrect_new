@@ -13,11 +13,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
 import 'package:icorrect/core/connectivity_service.dart';
+import 'package:icorrect/core/video_compress_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
@@ -32,6 +34,7 @@ import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
@@ -114,15 +117,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _cameraService!.initialize(() {
         setState(() {});
       });
-      Future.delayed(Duration.zero, () {
-        TopicModel randomTopic = _testRoomPresenter!.getTopicModelRandom(
-            topicsList: _simulatorTestProvider!.topicsList);
-        if (kDebugMode) {
-          print(
-              "DEBUG :Question list of random topic:  ${randomTopic.questionList.length.toString()}");
-        }
-        _simulatorTestProvider!.setTopicRandom(randomTopic);
-      });
     }
   }
 
@@ -173,10 +167,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      if (provider.startDoingTest && _isExam) {
-        _recordingUserDoesTestListener();
+      if (provider.visibleRecord) {
+        _startVideoRecord();
       }
-
       bool showSaveTheExamButton =
           _simulatorTestProvider!.activityType == "homework" ||
               _simulatorTestProvider!.submitStatus == SubmitStatus.fail;
@@ -310,7 +303,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                       height: 50,
                       child: InkWell(
                         onTap: () {
-                          simulatorTestProvider.setStartDoingTest(true);
                           _simulatorTestProvider!
                               .updateDoingStatus(DoingStatus.doing);
                           simulatorTestProvider
@@ -461,40 +453,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  Future _recordingUserDoesTestListener() async {
-    if (_simulatorTestProvider!.topicsQueue.isNotEmpty &&
-        _simulatorTestProvider!.topicRandom != TopicModel()) {
-      _testRoomPresenter!.recodingUserDoesTestListener(
-          randomTopic: _simulatorTestProvider!.topicRandom,
-          currentTopic: _simulatorTestProvider!.topicsQueue.first,
-          currentQuestion: _simulatorTestProvider!.currentQuestion,
-          startRecordingVideo: () {
-            if (!_cameraIsRecording) {
-              if (kDebugMode) {
-                print("RECORDING_VIDEO: Start Recording Video");
-              }
-
-              _countRecording =
-                  _testRoomPresenter!.startCountRecording(countFrom: 30);
-              _cameraService!.startCameraRecording();
-              _cameraIsRecording = true;
-            }
-          },
-          stopRecordingVideo: () {
-            // if (!_stopRecording) {
-            //   if (null != _countRecording) {
-            //     _countRecording!.cancel();
-            //   }
-            //   if (kDebugMode) {
-            //     print("RECORDING_VIDEO: Stop Recording Video By End A Topic");
-            //   }
-            //   _cameraService!.saveVideoDoingTest();
-            //   _stopRecording = true;
-            // }
-          });
-    }
-  }
-
   @override
   void onCountRecordingVideo(int currentCount) {
     if (kDebugMode) {
@@ -503,22 +461,42 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setCurrentCountRecordingVideo(currentCount);
   }
 
-  @override
-  void onLimitedRecordingVideo() {
-    _saveVideoRecording();
-
-    if (null != _countRecording) {
-      _countRecording!.cancel();
+  void _startVideoRecord() {
+    if (_canRecordingCamera()) {
+      if (_countRecording != null) {
+        _countRecording!.cancel();
+      }
+      if (kDebugMode) {
+        print("RECORDING_VIDEO: Start Recording Video");
+      }
+      _countRecording = _testRoomPresenter!.startCountRecording();
+      _cameraService!.startCameraRecording();
+      _cameraIsRecording = true;
     }
   }
 
+  bool _canRecordingCamera() {
+    return _cameraService != null &&
+        _cameraService!.cameraController!.value.isInitialized &&
+        !_cameraIsRecording;
+  }
+
   void _saveVideoRecording() {
+    if (null != _countRecording) {
+      _countRecording!.cancel();
+    }
     if (_cameraService!.cameraController!.value.isRecordingVideo) {
       _cameraService!.saveVideoDoingTest((savedFile) {
-        _simulatorTestProvider!.setVideoFile(savedFile);
+        VideoExamRecordInfo examRecordInfo = VideoExamRecordInfo(
+            questionId: _simulatorTestProvider!.currentQuestion.id,
+            filePath: savedFile.path,
+            duration: _simulatorTestProvider!.currentCountRecordingVideo);
+        _simulatorTestProvider!.addVideoRecorded(examRecordInfo);
+        _simulatorTestProvider!.setCurrentCountRecordingVideo(0);
+        _cameraIsRecording = true;
       });
       if (kDebugMode) {
-        print("RECORDING_VIDEO :Stop Recoring And Save Video By Limited Time");
+        print("RECORDING_VIDEO :Stop Recoring");
       }
     }
   }
@@ -536,10 +514,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     CameraController? cameraController = _cameraService!.cameraController;
     if (cameraController != null) {
       _saveVideoRecording();
-
-      if (cameraController.value.isInitialized) {
-        cameraController.dispose();
-      }
+      // if (cameraController.value.isInitialized) {
+      //   cameraController.dispose();
+      // }
     }
   }
 
@@ -1684,6 +1661,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     _simulatorTestProvider!.setVisibleRecord(visible);
+    _cameraIsRecording = !visible;
   }
 
   Future<void> _recordAnswer(String fileName) async {
@@ -1779,9 +1757,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Stop old record
     await _stopRecord();
 
-    //Stop camera record
-    _simulatorTestProvider!.setStartDoingTest(false);
-
     // if (null != _cameraService) {
     //   _cameraService!.dispose();
     // }
@@ -1803,22 +1778,40 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Auto submit test for activity type = test or type = exam
     if (_isExam) {
-      _startSubmitTest();
+      _showResizeVideoDialog();
     } else {
       //Activity Type = "homework"
       _setVisibleSaveTest(true);
     }
   }
 
-  void _startSubmitTest() {
+  Future<void> _showResizeVideoDialog() async {
+    String savedVideoPath = _testRoomPresenter!
+        .getVideoLongestDuration(_simulatorTestProvider!.videosSaved);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (builderContext) {
+        return WillPopScope(
+            child: ResizeVideoDialog(
+                videoFile: File(savedVideoPath),
+                onResizeCompleted: (resizedFile) {
+                  _startSubmitTest(videoConfirmFile: resizedFile);
+                  _simulatorTestProvider!.setVideoFile(resizedFile);
+                }),
+            onWillPop: () async {
+              return false;
+            });
+      },
+    );
+  }
+
+  void _startSubmitTest({File? videoConfirmFile}) {
     _createLog(action: LogEvent.actionSubmitTest, data: null);
 
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
-
-    File? videoConfirmFile =
-        _isExam ? _simulatorTestProvider!.savedVideoFile : null;
 
     _testRoomPresenter!.submitTest(
       context: context,
@@ -1963,7 +1956,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
     int timeRecord = Utils.getRecordTime(queue.first.numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
-
     //Record the answer
     _timerProvider!.setCountDown(timeString);
 
@@ -2126,6 +2118,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countDown!.cancel();
     }
 
+    //Finish and Save video file to videos saved
+    _saveVideoRecording();
+
     //Stop record
     _setVisibleRecord(false, null, null);
 
@@ -2260,10 +2255,33 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
 
+    //Delete file video record exam
+    _deleteFileVideoExam();
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
     );
+  }
+
+  Future<void> _deleteFileVideoExam() async {
+    File videoResizePath = _simulatorTestProvider!.savedVideoFile;
+    if (videoResizePath.existsSync()) {
+      if (kDebugMode) {
+        print("RECORDING_VIDEO : Delete Saved Resize File Recording");
+      }
+      await videoResizePath.delete();
+    }
+
+    List<VideoExamRecordInfo> videosSaved = _simulatorTestProvider!.videosSaved;
+    for (int i = 0; i < videosSaved.length; i++) {
+      File videoRecordFile = File(videosSaved[i].filePath ?? "");
+      if (videoRecordFile.existsSync()) {
+        if (kDebugMode) {
+          print("RECORDING_VIDEO : Delete Saved File Recording index : $i");
+        }
+        await videoRecordFile.delete();
+      }
+    }
   }
 
   @override

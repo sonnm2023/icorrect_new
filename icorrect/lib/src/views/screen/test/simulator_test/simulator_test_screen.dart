@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
@@ -327,8 +328,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 //Update reanswer
                 _loading!.show(context: context, isViewAIResponse: false);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
-                File? videoConfirmFile =
-                _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+                String savedVideoPath = _simulatorTestPresenter!
+                    .randomVideoRecordExam(
+                        _simulatorTestProvider!.videosSaved);
+                File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
                 _simulatorTestPresenter!.submitTest(
                   context: context,
@@ -467,8 +470,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       //Reset question image
       _resetQuestionImage();
 
-      File? videoConfirmFile =
-      _isExam ? _simulatorTestProvider!.savedVideoFile : null;
+      String savedVideoPath = _simulatorTestPresenter!
+          .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
+      File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
       //Submit
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
@@ -499,12 +503,23 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Future<void> _deleteAllAnswer() async {
-    File videoRecordFile = _simulatorTestProvider!.savedVideoFile;
-    if (videoRecordFile.existsSync()) {
+    File videoResizePath = _simulatorTestProvider!.savedVideoFile;
+    if (videoResizePath.existsSync()) {
       if (kDebugMode) {
-        print("RECORDING_VIDEO : Delete Saved File Recording");
+        print("RECORDING_VIDEO : Delete Saved Resize File Recording");
       }
-      await videoRecordFile.delete();
+      await videoResizePath.delete();
+    }
+
+    List<VideoExamRecordInfo> videosSaved = _simulatorTestProvider!.videosSaved;
+    for (int i = 0; i < videosSaved.length; i++) {
+      File videoRecordFile = File(videosSaved[i].filePath ?? "");
+      if (videoRecordFile.existsSync()) {
+        if (kDebugMode) {
+          print("RECORDING_VIDEO : Delete Saved File Recording index : $i");
+        }
+        await videoRecordFile.delete();
+      }
     }
 
     List<String> answers = _simulatorTestProvider!.answerList;

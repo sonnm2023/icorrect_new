@@ -430,17 +430,21 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       context: context,
       barrierDismissible: false,
       builder: (builderContext) {
-        return ResizeVideoDialog(
-            videoFile: savedFile,
-            onResizeCompleted: (resizedFile) {
-              _videoAuthProvider!.setSavedFile(resizedFile);
+        return WillPopScope(
+            child: ResizeVideoDialog(
+                videoFile: savedFile,
+                onResizeCompleted: (resizedFile) {
+                  _videoAuthProvider!.setSavedFile(resizedFile);
 
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _showSubmitVideoAuthen(resizedFile);
-              });
-            },
-            onCancelResizeFile: () {
-              _continuePreviewVideo();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _showSubmitVideoAuthen(resizedFile);
+                  });
+                },
+                onCancelResizeFile: () {
+                  _continuePreviewVideo();
+                }),
+            onWillPop: () async {
+              return false;
             });
       },
     );

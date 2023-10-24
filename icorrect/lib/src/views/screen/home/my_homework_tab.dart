@@ -348,7 +348,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
-    if (Platform.isAndroid) {
+     if (Platform.isAndroid) {
       AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
       int sdk = android.version.sdkInt;
 

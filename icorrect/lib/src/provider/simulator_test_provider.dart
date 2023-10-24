@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;
@@ -69,6 +71,34 @@ class SimulatorTestProvider with ChangeNotifier {
   File get savedVideoFile => _savedVideoFile;
   void setVideoFile(File file) {
     _savedVideoFile = file;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  List<VideoExamRecordInfo> _videosSaved = [];
+  List<VideoExamRecordInfo> get videosSaved => _videosSaved;
+  void setVideosSaved(List<VideoExamRecordInfo> videos) {
+    if (_videosSaved.isNotEmpty) {
+      _videosSaved.clear();
+    }
+    _videosSaved.addAll(videos);
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void addVideoRecorded(VideoExamRecordInfo video) {
+    _videosSaved.add(video);
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void clearVideosSaved() {
+    if (_videosSaved.isNotEmpty) {
+      _videosSaved.clear();
+    }
     if (!isDisposed) {
       notifyListeners();
     }
@@ -478,24 +508,6 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  bool _startDoingTest = false;
-  bool get startDoingTest => _startDoingTest;
-  void setStartDoingTest(bool isStart) {
-    _startDoingTest = isStart;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  TopicModel _topicRandom = TopicModel();
-  TopicModel get topicRandom => _topicRandom;
-  void setTopicRandom(TopicModel random) {
-    _topicRandom = random;
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
   bool _isReviewingPlayAnswer = false;
   bool get isReviewingPlayAnswer => _isReviewingPlayAnswer;
   void setIsReviewingPlayAnswer(bool isReviewingPlayAnswer) {
@@ -613,6 +625,7 @@ class SimulatorTestProvider with ChangeNotifier {
 
   void resetAll() {
     resetLogActions();
+    _videosSaved = [];
     _timeRecordCounting = 0;
     _playingIndexWhenReDownload = 0;
     _isReDownload = false;
@@ -649,8 +662,6 @@ class SimulatorTestProvider with ChangeNotifier {
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
-    _topicRandom = TopicModel();
-    _startDoingTest = false;
     resetTopicsQueue();
     clearQuestionList();
     resetTopicsList();
