@@ -23,8 +23,8 @@ class AlertsDialog {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         width: 450,
-        height: 300,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        height: 250,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Stack(
           children: [
             Container(
@@ -47,8 +47,8 @@ class AlertsDialog {
                 children: [
                   Image(
                     image: AssetImage(alertTypeMap[Alert.icon].toString()),
-                    width: 100,
-                    height: 100,
+                    width: 50,
+                    height: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -72,7 +72,7 @@ class AlertsDialog {
                     children: [
                       Expanded(
                           child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pop();
@@ -83,12 +83,12 @@ class AlertsDialog {
                                 AppColor.defaultGrayColor),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(5),
                               ),
                             ),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Text(
                               alertTypeMap[Alert.cancelTitle].toString(),
                             ),
@@ -97,7 +97,7 @@ class AlertsDialog {
                       )),
                       Expanded(
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -108,12 +108,12 @@ class AlertsDialog {
                                   AppColor.defaultPurpleColor),
                               shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 alertTypeMap[Alert.actionTitle].toString(),
                               ),
