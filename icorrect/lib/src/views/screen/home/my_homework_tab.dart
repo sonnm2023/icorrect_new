@@ -317,11 +317,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       } else {
         _selectedHomeWorkModel = homeWorkModel;
 
-        if (_storagePermission == null) {
-          await _initializePermission();
+        await _initializePermission();
+        if (_storagePermission != null) {
+          _requestPermission(_storagePermission!);
+        }else{
+          _gotoHomeworkDetail();
         }
-
-        _requestPermission(_storagePermission!);
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -348,15 +349,15 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   Future<void> _initializePermission() async {
+    _storagePermission = Permission.storage;
+
     if (Platform.isAndroid) {
       AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
       int sdk = android.version.sdkInt;
 
-      sdk >= 33
-          ? _storagePermission = Permission.manageExternalStorage
-          : _storagePermission = Permission.storage;
-    } else {
-      _storagePermission = Permission.storage;
+      if (sdk >= 33) {
+        _storagePermission = null;
+      }
     }
   }
 
@@ -374,13 +375,17 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       } else {
         _gotoHomeworkDetail();
       }
+    } else {
+      _gotoHomeworkDetail();
     }
   }
 
-  Future<void> _requestPermission(Permission permission) async {
+  Future<void> _requestPermission(Permission? permission) async {
     // ignore: unused_local_variable
-    final status = await permission.request();
-    widget.homeWorkProvider.setPermissionDeniedTime();
+    if (permission != null) {
+      final status = await permission.request();
+      widget.homeWorkProvider.setPermissionDeniedTime();
+    }
     _listenForPermissionStatus();
   }
 
