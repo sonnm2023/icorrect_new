@@ -60,12 +60,12 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _checkPermission() async {
-    if (_writeFilePermission == null) {
-      await _initializePermission();
-    }
+    await _initializePermission();
 
-    if (mounted) {
+    if (mounted && _writeFilePermission != null) {
       _requestPermission(_writeFilePermission!, context);
+    } else {
+      _getAppConfigInfo();
     }
   }
 
@@ -78,15 +78,14 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _initializePermission() async {
-     if (Platform.isAndroid) {
+    _writeFilePermission = Permission.storage;
+    if (Platform.isAndroid) {
       AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
       int sdk = android.version.sdkInt;
 
-      sdk >= 33
-          ? _writeFilePermission = Permission.manageExternalStorage
-          : _writeFilePermission = Permission.storage;
-    } else {
-      _writeFilePermission = Permission.storage;
+      if (sdk >= 33) {
+        _writeFilePermission = null;
+      }
     }
   }
 

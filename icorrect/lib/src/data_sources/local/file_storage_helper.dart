@@ -10,17 +10,17 @@ class FileStorageHelper {
   static Future<String> getExternalDocumentPath() async {
     var status = await Permission.storage.status;
     var permission = Permission.storage;
+    bool granted = status.isGranted;
     if (Platform.isAndroid) {
       AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
       int sdk = android.version.sdkInt;
 
       if (sdk >= 33) {
-        status = await Permission.manageExternalStorage.status;
-        permission = Permission.manageExternalStorage;
+        granted = true;
       }
     }
 
-    if (!status.isGranted) {
+    if (!granted) {
       await permission.request();
     }
 
