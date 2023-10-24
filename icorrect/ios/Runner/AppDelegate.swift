@@ -24,7 +24,7 @@ import Foundation
                  let filePath = args["file_path"] as? String {
                   print("DEBUG: Native - send log: url = \(apiUrl) secretkey = \(secretkey)")
                   print("DEBUG: Native - send log: file path = \(filePath)")
-                  self.sendLog(apiUrl: apiUrl, secretkey: secretkey, filePath: filePath)
+//                  self.sendLog(apiUrl: apiUrl, secretkey: secretkey, filePath: filePath)
                   result(nil)
               } else {
                   result(FlutterError.init(code: "error", message: "data or format error", details: nil))
