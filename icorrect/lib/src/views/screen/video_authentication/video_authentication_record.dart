@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/video_compress_service.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
@@ -433,11 +434,14 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         return WillPopScope(
             child: ResizeVideoDialog(
                 videoFile: savedFile,
-                onResizeCompleted: (resizedFile) {
-                  _videoAuthProvider!.setSavedFile(resizedFile);
+                onResizeCompleted: (resizedFile) async {
+                  String newPath =
+                      'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
+                  File newFile = Utils.changeFileNameSync(resizedFile, newPath);
+                  _videoAuthProvider!.setSavedFile(newFile);
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _showSubmitVideoAuthen(resizedFile);
+                    _showSubmitVideoAuthen(newFile);
                   });
                 },
                 onCancelResizeFile: () {

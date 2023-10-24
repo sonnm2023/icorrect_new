@@ -377,6 +377,13 @@ class Utils {
     return nameFile;
   }
 
+  static File changeFileNameSync(File file, String newFileName) {
+    var path = file.path;
+    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
+    var newPath = path.substring(0, lastSeparator + 1) + newFileName;
+    return file.renameSync(newPath);
+  }
+
   static String fileType(String filePath) {
     String fileExtension = filePath.split('.').last.toLowerCase();
     if (fileExtension == 'mp4' ||

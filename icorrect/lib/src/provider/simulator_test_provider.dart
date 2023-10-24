@@ -76,6 +76,15 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _canRecordVideo = false;
+  bool get canRecordVideo => _canRecordVideo;
+  void setRecordVideo(bool canRecord) {
+    _canRecordVideo = canRecord;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   List<VideoExamRecordInfo> _videosSaved = [];
   List<VideoExamRecordInfo> get videosSaved => _videosSaved;
   void setVideosSaved(List<VideoExamRecordInfo> videos) {
