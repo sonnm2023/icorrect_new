@@ -52,6 +52,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
   final connectivityService = ConnectivityService();
+  SimulatorTestProvider? _simulatorTestProvider;
 
   @override
   void initState() {
@@ -59,6 +60,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkPresenter = HomeWorkPresenter(this);
 
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
+    _simulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     _getListHomeWork();
@@ -127,26 +130,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        SimulatorTestProvider simulatorTestProvider =
-            Provider.of<SimulatorTestProvider>(context, listen: false);
-        if (_authProvider.isShowDialog) {
-          GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
-          _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
-
-          Navigator.of(key.currentState!.context).pop();
-        } else if (simulatorTestProvider.doingStatus == DoingStatus.doing) {
-          _showQuitTheTestConfirmDialog();
-        } else if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
-          simulatorTestProvider.setShowConfirmSaveTest(true);
-        } else {
-          GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
-          if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
-            _showQuitAppConfirmDialog();
-          } else {
-            Navigator.of(key.currentState!.context).pop();
-            _authProvider.scaffoldKeys.removeFirst();
-          }
-        }
+        _onBackPress();
         return false;
       },
       child: MaterialApp(
@@ -237,6 +221,39 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         ),
       ),
     );
+  }
+
+  Future _onBackPress() async {
+    if (_authProvider.isShowDialog) {
+      GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
+      _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
+
+      Navigator.of(key.currentState!.context).pop();
+    } else if (_isShowConfirmDuringTest()) {
+      _showQuitTheTestConfirmDialog();
+    } else if (_isShowConfirmSaveTest()) {
+      _simulatorTestProvider!.setShowConfirmSaveTest(true);
+      setState(() {});
+    } else {
+      GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
+      if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
+        _showQuitAppConfirmDialog();
+      } else {
+        Navigator.of(key.currentState!.context).pop();
+        _authProvider.scaffoldKeys.removeFirst();
+      }
+    }
+  }
+
+  bool _isShowConfirmDuringTest() {
+    return _simulatorTestProvider!.doingStatus == DoingStatus.doing &&
+        _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
+  }
+
+  bool _isShowConfirmSaveTest() {
+    return _simulatorTestProvider!.doingStatus == DoingStatus.finish &&
+            _simulatorTestProvider!.submitStatus != SubmitStatus.success ||
+        _simulatorTestProvider!.isVisibleSaveTheTest;
   }
 
   Future<void> _pullToRefresh() async {

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -329,8 +330,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 _loading!.show(context: context, isViewAIResponse: false);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
                 String savedVideoPath = _simulatorTestPresenter!
-                    .randomVideoRecordExam(
-                        _simulatorTestProvider!.videosSaved);
+                    .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
                 _simulatorTestPresenter!.submitTest(
@@ -432,10 +432,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  Future _showConfirmSaveTestBeforeExit() async {
+  void _showConfirmSaveTestBeforeExit() {
     bool cancelButtonTapped = false;
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
@@ -457,10 +457,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         );
       },
     );
-
     if (cancelButtonTapped) {
       Navigator.of(context).pop();
     }
+    _simulatorTestProvider!.setShowConfirmSaveTest(false);
   }
 
   void _startSubmitTest() async {

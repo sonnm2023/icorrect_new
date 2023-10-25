@@ -485,7 +485,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _countRecording) {
       _countRecording!.cancel();
     }
-    if (_cameraService!.cameraController!.value.isRecordingVideo) {
+    if (_cameraService != null &&
+        _cameraService!.cameraController!.value.isRecordingVideo) {
       _cameraService!.saveVideoDoingTest((savedFile) {
         VideoExamRecordInfo examRecordInfo = VideoExamRecordInfo(
             questionId: _simulatorTestProvider!.currentQuestion.id,

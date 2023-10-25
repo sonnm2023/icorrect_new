@@ -98,9 +98,12 @@ class SimulatorTestPresenter {
   }
 
   String _getMaxDurationVideo(List<VideoExamRecordInfo> videosSaved) {
-    videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
-    VideoExamRecordInfo maxValue = videosSaved.last;
-    return maxValue.filePath ?? '';
+    if (videosSaved.isNotEmpty) {
+      videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
+      VideoExamRecordInfo maxValue = videosSaved.last;
+      return maxValue.filePath ?? '';
+    }
+    return '';
   }
 
   TestDetailModel? testDetail;

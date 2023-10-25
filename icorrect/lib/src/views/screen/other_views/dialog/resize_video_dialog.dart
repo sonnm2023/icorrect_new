@@ -88,12 +88,13 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                   Consumer<AuthProvider>(builder: (context, provider, child) {
                 return Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                      const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('Please wait for preparing submit....',
+                      const Text('Please wait for preparing submit...',
+                          textAlign: TextAlign.center,
                           style: CustomTextStyle.textBoldBlack_16),
                       const SizedBox(height: 10),
                       // LinearProgressIndicator(

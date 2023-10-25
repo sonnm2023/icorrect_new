@@ -203,7 +203,7 @@ class TestRoomPresenter {
     required bool isExam,
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
-  }) async {
+  }) async { 
     assert(_view != null && _testRepository != null);
 
     //Add log
