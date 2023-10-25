@@ -106,12 +106,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 backgroundColor: AppColor.defaultGraySlightColor,
                 elevation: 0.0,
               ),
+              onPressed: _showFilterView,
               child: Image.asset(
                 'assets/images/ic_filter.png',
                 height: CustomSize.size_25,
                 width: CustomSize.size_25,
               ),
-              onPressed: _showFilterView,
             ),
           ),
         ],
