@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,8 +39,8 @@ class MyHomeWorkTab extends StatefulWidget {
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
-  Permission? _storagePermission;
-  PermissionStatus _storagePermissionStatus = PermissionStatus.denied;
+  // Permission? _storagePermission;
+  // PermissionStatus _storagePermissionStatus = PermissionStatus.denied;
 
   ActivitiesModel? _selectedHomeWorkModel;
 
@@ -291,39 +288,94 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     widget.homeWorkPresenter
         .clickOnHomeworkItem(context: context, homework: homeWorkModel);
 
-    _requestMicroAndCameraPermissions(homeWorkModel);
+    if (homeWorkModel.activityType == "homework") {
+      _requestMicroPermission(homeWorkModel);
+    } else {
+      _requestMicroAndCameraPermissions(homeWorkModel);
+    }
+  }
+
+  Future _requestMicroPermission(ActivitiesModel homeWorkModel) async {
+    try {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.microphone,
+      ].request();
+
+      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
+          (statuses[Permission.microphone]! ==
+              PermissionStatus.permanentlyDenied)) {
+        if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
+          _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        } else {
+          widget.homeWorkProvider.setPermissionDeniedTime();
+        }
+      } else {
+        _selectedHomeWorkModel = homeWorkModel;
+        widget.homeWorkProvider.resetPermissionDeniedTime();
+        _gotoHomeworkDetail();
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: Permission error ${e.toString()}");
+      }
+    }
   }
 
   Future _requestMicroAndCameraPermissions(
       ActivitiesModel homeWorkModel) async {
     try {
       Map<Permission, PermissionStatus> statuses = await [
-        Permission.camera,
         Permission.microphone,
       ].request();
 
-      if (statuses[Permission.camera]! == PermissionStatus.denied ||
-          statuses[Permission.microphone]! == PermissionStatus.denied) {
+      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
+          (statuses[Permission.microphone]! ==
+              PermissionStatus.permanentlyDenied)) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
-          _showConfirmDeniedDialog(AlertClass.microCameraPermissionAlert);
+          _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
           widget.homeWorkProvider.setPermissionDeniedTime();
         }
-      } else if (statuses[Permission.camera]! ==
-              PermissionStatus.permanentlyDenied ||
-          statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied) {
-        openAppSettings();
       } else {
-        _selectedHomeWorkModel = homeWorkModel;
+        try {
+          Map<Permission, PermissionStatus> otherStatuses = await [Permission.camera].request();
 
-        await _initializePermission();
-        if (_storagePermission != null) {
-          _requestPermission(_storagePermission!);
-        }else{
-          _gotoHomeworkDetail();
+          if ((otherStatuses[Permission.camera]! == PermissionStatus.denied) ||
+              (otherStatuses[Permission.camera]! ==
+                  PermissionStatus.permanentlyDenied)) {
+            if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
+              _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
+            } else {
+              widget.homeWorkProvider.setPermissionDeniedTime();
+            }
+          } else {
+            _selectedHomeWorkModel = homeWorkModel;
+            widget.homeWorkProvider.resetPermissionDeniedTime();
+            _gotoHomeworkDetail();
+          }
+        } on PlatformException catch (e) {
+          if (kDebugMode) {
+            print("DEBUG: Permission error ${e.toString()}");
+          }
         }
       }
+
+      // if (statuses[Permission.camera]! == PermissionStatus.denied ||
+      //     statuses[Permission.microphone]! == PermissionStatus.denied) {
+      //   if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
+      //     _showConfirmDeniedDialog(AlertClass.microCameraPermissionAlert);
+      //   } else {
+      //     widget.homeWorkProvider.setPermissionDeniedTime();
+      //   }
+      // } else if (statuses[Permission.camera]! ==
+      //         PermissionStatus.permanentlyDenied ||
+      //     statuses[Permission.microphone]! ==
+      //         PermissionStatus.permanentlyDenied) {
+      //   openAppSettings();
+      // } else {
+      //   _selectedHomeWorkModel = homeWorkModel;
+      //   _gotoHomeworkDetail();
+      // }
     } on PlatformException catch (e) {
       if (kDebugMode) {
         print("DEBUG: Permission error ${e.toString()}");
@@ -348,46 +400,46 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     }
   }
 
-  Future<void> _initializePermission() async {
-    _storagePermission = Permission.storage;
+  // Future<void> _initializePermission() async {
+  //   _storagePermission = Permission.storage;
+  //
+  //   if (Platform.isAndroid) {
+  //     AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+  //     int sdk = android.version.sdkInt;
+  //
+  //     if (sdk >= 33) {
+  //       _storagePermission = null;
+  //     }
+  //   }
+  // }
 
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
-      int sdk = android.version.sdkInt;
+  // void _listenForPermissionStatus() async {
+  //   if (_storagePermission != null) {
+  //     _storagePermissionStatus = await _storagePermission!.status;
+  //
+  //     if (_storagePermissionStatus == PermissionStatus.denied) {
+  //       if (widget.homeWorkProvider.permissionDeniedTime > 2) {
+  //         _showConfirmDialog();
+  //       }
+  //     } else if (_storagePermissionStatus ==
+  //         PermissionStatus.permanentlyDenied) {
+  //       openAppSettings();
+  //     } else {
+  //       _gotoHomeworkDetail();
+  //     }
+  //   } else {
+  //     _gotoHomeworkDetail();
+  //   }
+  // }
 
-      if (sdk >= 33) {
-        _storagePermission = null;
-      }
-    }
-  }
-
-  void _listenForPermissionStatus() async {
-    if (_storagePermission != null) {
-      _storagePermissionStatus = await _storagePermission!.status;
-
-      if (_storagePermissionStatus == PermissionStatus.denied) {
-        if (widget.homeWorkProvider.permissionDeniedTime > 2) {
-          _showConfirmDialog();
-        }
-      } else if (_storagePermissionStatus ==
-          PermissionStatus.permanentlyDenied) {
-        openAppSettings();
-      } else {
-        _gotoHomeworkDetail();
-      }
-    } else {
-      _gotoHomeworkDetail();
-    }
-  }
-
-  Future<void> _requestPermission(Permission? permission) async {
-    // ignore: unused_local_variable
-    if (permission != null) {
-      final status = await permission.request();
-      widget.homeWorkProvider.setPermissionDeniedTime();
-    }
-    _listenForPermissionStatus();
-  }
+  // Future<void> _requestPermission(Permission? permission) async {
+  //   // ignore: unused_local_variable
+  //   if (permission != null) {
+  //     final status = await permission.request();
+  //     widget.homeWorkProvider.setPermissionDeniedTime();
+  //   }
+  //   _listenForPermissionStatus();
+  // }
 
   void _showConfirmDialog() {
     if (false == widget.homeWorkProvider.dialogShowing) {

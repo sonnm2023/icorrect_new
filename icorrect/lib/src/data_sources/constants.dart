@@ -194,13 +194,19 @@ class AlertClass {
 
   static AlertInfo microPermissionAlert = AlertInfo(
     'Warning',
-    "You must allow micro permission to continue.",
+    "This app needs to access microphone to do the homeworks or the exam.",
+    Alert.permissionDenied.type,
+  );
+
+  static AlertInfo cameraPermissionAlert = AlertInfo(
+    'Warning',
+    "This app needs to access camera to do the homeworks or the exam.",
     Alert.permissionDenied.type,
   );
 
   static AlertInfo microCameraPermissionAlert = AlertInfo(
-    'Permisson Warning',
-    "This app needs recording, camera permission to start doing your homeworks",
+    'Permission Warning',
+    "This app needs to access microphone and camera to do the homeworks or the exam.",
     Alert.permissionDenied.type,
   );
 

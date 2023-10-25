@@ -512,12 +512,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       return;
     }
 
-    CameraController? cameraController = _cameraService!.cameraController;
-    if (cameraController != null) {
+    if (_isExam) {
       _saveVideoRecording();
-      // if (cameraController.value.isInitialized) {
-      //   cameraController.dispose();
-      // }
     }
   }
 
@@ -2123,7 +2119,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     //Finish and Save video file to videos saved
-    _saveVideoRecording();
+    if (_isExam) {
+      _saveVideoRecording();
+    }
 
     //Stop record
     _setVisibleRecord(false, null, null);
