@@ -127,7 +127,9 @@ class TopicModel {
     if (json['files'] != null) {
       _files = <FileTopicModel>[];
       json['files'].forEach((v) {
-        _files!.add(FileTopicModel.fromJson(v));
+        if (_files!.isEmpty) {
+          _files!.add(FileTopicModel.fromJson(v));
+        }
       });
     }
 
