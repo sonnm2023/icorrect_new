@@ -328,8 +328,10 @@ class HomeWorkProvider with ChangeNotifier {
   int get permissionDeniedTime => _permissionDeniedTime;
   void setPermissionDeniedTime() {
     _permissionDeniedTime++;
-    
-    notifyListeners();
+  }
+
+  void resetPermissionDeniedTime() {
+    _permissionDeniedTime = 0;
   }
 
   SimulatorTestPresenter? _simulatorTestPresenter;
