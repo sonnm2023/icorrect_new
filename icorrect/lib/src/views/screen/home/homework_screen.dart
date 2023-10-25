@@ -239,7 +239,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
         _showQuitAppConfirmDialog();
       } else {
-        Navigator.of(key.currentState!.context).pop();
+        if (_isBackFromTestRoom(key)) {
+          Navigator.pop(key.currentState!.context, 'refresh');
+        } else {
+          Navigator.of(key.currentState!.context).pop();
+        }
         _authProvider.scaffoldKeys.removeFirst();
       }
     }
@@ -254,6 +258,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     return _simulatorTestProvider!.doingStatus == DoingStatus.finish &&
             _simulatorTestProvider!.submitStatus != SubmitStatus.success ||
         _simulatorTestProvider!.isVisibleSaveTheTest;
+  }
+
+  bool _isBackFromTestRoom(GlobalKey<ScaffoldState> key) {
+    return key == GlobalScaffoldKey.simulatorTestScaffoldKey &&
+        _simulatorTestProvider!.submitStatus == SubmitStatus.success;
   }
 
   Future<void> _pullToRefresh() async {
