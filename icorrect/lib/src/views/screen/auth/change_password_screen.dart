@@ -149,6 +149,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                 print("DEBUG: Connect error here!");
               }
               Utils.showConnectionErrorDialog(context);
+
+              Utils.addConnectionErrorLog(context);
             }
           }
         }

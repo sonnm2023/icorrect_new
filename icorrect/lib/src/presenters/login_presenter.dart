@@ -70,7 +70,7 @@ class LoginPresenter {
           _view!.onLoginError(StringConstants.network_error_message);
           message = StringConstants.network_error_message;
         } else {
-          _view!.onLoginError(StringConstants.common_error_messge);
+          _view!.onLoginError(StringConstants.common_error_message);
           message = '${authModel.errorCode}: ${authModel.status}';
         }
         //Add log
@@ -87,8 +87,8 @@ class LoginPresenter {
         _view!.onLoginError(StringConstants.network_error_message);
         message = StringConstants.network_error_message;
       } else {
-        _view!.onLoginError(StringConstants.common_error_messge);
-        message = StringConstants.common_error_messge;
+        _view!.onLoginError(StringConstants.common_error_message);
+        message = StringConstants.common_error_message;
       }
       //Add log
       Utils.prepareLogData(
@@ -147,7 +147,7 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_messge);
+        _view!.onLoginError(StringConstants.common_error_message);
       }
     }).catchError((onError) {
       String message = '';
@@ -156,9 +156,9 @@ class LoginPresenter {
 
         _view!.onGetAppConfigInfoFail(StringConstants.network_error_message);
       } else {
-        message = StringConstants.common_error_messge;
+        message = StringConstants.common_error_message;
 
-        _view!.onGetAppConfigInfoFail(StringConstants.common_error_messge);
+        _view!.onGetAppConfigInfoFail(StringConstants.common_error_message);
       }
       //Add log
       Utils.prepareLogData(
@@ -213,7 +213,7 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_messge);
+        _view!.onLoginError(StringConstants.common_error_message);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -226,7 +226,7 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_messge);
+        _view!.onLoginError(StringConstants.common_error_message);
       },
     );
   }

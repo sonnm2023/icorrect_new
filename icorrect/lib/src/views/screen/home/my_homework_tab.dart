@@ -440,6 +440,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
   }
 

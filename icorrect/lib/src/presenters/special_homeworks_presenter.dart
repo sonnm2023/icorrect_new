@@ -98,7 +98,7 @@ class SpecialHomeworksPresenter {
       if (onError is SocketException) {
         message = StringConstants.network_error_message;
       } else {
-        message = StringConstants.common_error_messge;
+        message = StringConstants.common_error_message;
       }
       _view!.getSpecialHomeWorksFail(message);
 

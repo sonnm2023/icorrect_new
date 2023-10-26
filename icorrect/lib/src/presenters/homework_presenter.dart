@@ -93,7 +93,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(StringConstants.common_error_messge);
+        _view!.onGetListHomeworkError(StringConstants.common_error_message);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -106,7 +106,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(StringConstants.common_error_messge);
+        _view!.onGetListHomeworkError(StringConstants.common_error_message);
       },
     );
   }
@@ -172,7 +172,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLogoutError(StringConstants.common_error_messge);
+        _view!.onLogoutError(StringConstants.common_error_message);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -185,7 +185,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLogoutError(StringConstants.common_error_messge);
+        _view!.onLogoutError(StringConstants.common_error_message);
       },
     );
   }

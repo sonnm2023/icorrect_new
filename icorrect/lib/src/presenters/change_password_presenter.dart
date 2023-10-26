@@ -69,7 +69,7 @@ class ChangePasswordPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onChangePasswordError(StringConstants.common_error_messge);
+        _view!.onChangePasswordError(StringConstants.common_error_message);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -82,7 +82,7 @@ class ChangePasswordPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onChangePasswordError(StringConstants.common_error_messge);
+        _view!.onChangePasswordError(StringConstants.common_error_message);
       },
     );
   }

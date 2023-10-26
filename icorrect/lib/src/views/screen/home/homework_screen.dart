@@ -113,6 +113,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
 
     Future.delayed(Duration.zero, () {

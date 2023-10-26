@@ -486,6 +486,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
   }
 
@@ -614,6 +616,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
   }
 

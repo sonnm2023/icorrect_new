@@ -98,6 +98,8 @@ class _TestDetailScreenState extends State<TestDetailScreen>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
   }
 

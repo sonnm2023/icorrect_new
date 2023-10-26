@@ -706,6 +706,8 @@ class Utils {
                   print("DEBUG: Connect error here!");
                 }
                 Utils.showConnectionErrorDialog(context);
+
+                Utils.addConnectionErrorLog(context);
               }
             } else {
               Navigator.of(context).pop();
@@ -986,5 +988,21 @@ class Utils {
   static int getBeingOutTimeInSeconds(DateTime startTime, DateTime endTime) {
     Duration diff = endTime.difference(startTime);
     return diff.inSeconds;
+  }
+
+  static void addConnectionErrorLog(BuildContext context) async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await prepareToCreateLog(context,
+          action: LogEvent.checkConnection);
+    }
+
+    //Add log
+    prepareLogData(
+      log: log,
+      data: null,
+      message: StringConstants.log_connection_error_message,
+      status: LogEvent.failed,
+    );
   }
 }

@@ -187,7 +187,7 @@ class SimulatorTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetTestDetailError(StringConstants.common_error_messge);
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -200,7 +200,7 @@ class SimulatorTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetTestDetailError(StringConstants.common_error_messge);
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
       },
     );
   }

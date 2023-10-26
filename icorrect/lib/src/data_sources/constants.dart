@@ -488,6 +488,7 @@ class LogEvent {
   static const String actionSubmitTest = 'action_submit_test';
   static const String actionUpdateAnswer = 'action_update_answer';
   static const String compressVideoFile = 'compress_video_file';
+  static const String checkConnection = 'check_connection';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";
@@ -699,14 +700,16 @@ class StringConstants {
       "A part of data has not downloaded properly. Please check your internet connection and try again.";
   static const String network_error_message =
       "An error occur. Please check your connection!";
-  static const String submit_test_error_messge =
+  static const String submit_test_error_message =
       "An error occur, please try again later!";
-  static const String common_error_messge =
+  static const String common_error_message =
       "An error occur, please try again later!";
   static const String error_when_resize_file =
       'An error occurred while resizing the video file!';
   static const String error_when_delete_file =
       'An error occurred while deleting the video file!';
+  static const String log_connection_error_message =
+      'Your internet is not connect!';
 }
 
 const int timeout = 60;

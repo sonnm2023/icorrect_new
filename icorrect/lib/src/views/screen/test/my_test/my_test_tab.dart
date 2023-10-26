@@ -15,6 +15,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
@@ -115,6 +116,8 @@ class _MyTestTabState extends State<MyTestTab>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
   }
 
@@ -243,7 +246,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {  
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
     switch (state) {

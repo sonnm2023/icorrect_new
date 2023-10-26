@@ -144,6 +144,8 @@ class _LoginScreenState extends State<LoginScreen>
         print("DEBUG: Connect error here!");
       }
       Utils.showConnectionErrorDialog(context);
+
+      Utils.addConnectionErrorLog(context);
     }
   }
 
@@ -259,6 +261,8 @@ class _LoginScreenState extends State<LoginScreen>
               print("DEBUG: Connect error here!");
             }
             Utils.showConnectionErrorDialog(context);
+
+            Utils.addConnectionErrorLog(context);
           }
         }
       },
