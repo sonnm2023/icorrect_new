@@ -149,11 +149,10 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
         Navigator.of(context).pop();
       });
     } else if (response is OnFailure) {
-      if (kDebugMode) {
-        print("RECORDING_VIDEO : fail ${response.message}");
-      }
       if (widget.onErrorResizeFile != null) {
         widget.onErrorResizeFile!(StringConstants.error_when_resize_file);
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pop();
       }
     } else if (response is OnCancelled) {}
   }
