@@ -41,7 +41,7 @@ class CameraService {
               "RECORDING_VIDEO : Video Recording saved to ${value.path}, size : ${length / 1024}kb, size ${(length / 1024) / 1024}mb");
         }
       });
-    } catch (e) {
+    } on CameraException catch (e) {
       if (kDebugMode) {
         print(
             "RECORDING_VIDEO : ERROR WHEN SAVE RECORDING VIDEO : ${e.toString()}");

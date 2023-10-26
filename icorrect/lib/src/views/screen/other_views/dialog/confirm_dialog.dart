@@ -48,7 +48,7 @@ class ConfirmDialogWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(top: 15, right: 10, left: 10),
                   margin: const EdgeInsets.only(top: 10),
                   child: Column(
                     children: [
@@ -71,7 +71,6 @@ class ConfirmDialogWidget extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

@@ -478,7 +478,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _canRecordingCamera() {
     return _cameraService != null &&
         _cameraService!.cameraController!.value.isInitialized &&
-        !_cameraIsRecording && !_cameraService!.cameraController!.value.isRecordingVideo;
+        !_cameraIsRecording &&
+        !_cameraService!.cameraController!.value.isRecordingVideo;
   }
 
   void _saveVideoRecording() {
@@ -2126,7 +2127,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Finish and Save video file to videos saved
     if (_isExam) {
-      _saveVideoRecording();
+      Future.delayed(Duration.zero, () {
+        _saveVideoRecording();
+      });
     }
 
     //Stop record

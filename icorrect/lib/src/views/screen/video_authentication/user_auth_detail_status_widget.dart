@@ -145,7 +145,6 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                 ),
               ),
             ),
-            const SizedBox(height: 10),
             _headerRequireVideo()
           ],
         ),
@@ -155,45 +154,40 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   Widget _headerRequireVideo() {
-    return Column(
-      children: [
-        Container(
-          width: w,
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(109, 255, 255, 255)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const Image(
-                image: AssetImage(AppAsset.imgSecurity),
-                width: 50,
-              ),
-              SizedBox(
-                width: (w - 20) / 1.6,
-                child: const Text(
-                  StringConstants.require_user_authentication_title,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white),
-                ),
-              )
-            ],
+    return Container(
+      width: w,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: const Color.fromARGB(109, 255, 255, 255)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          const Image(
+            image: AssetImage(AppAsset.imgSecurity),
+            width: 50,
           ),
-        ),
-        Container()
-      ],
+          SizedBox(
+            width: (w - 20) / 1.6,
+            child: const Text(
+              StringConstants.require_user_authentication_title,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white),
+            ),
+          )
+        ],
+      ),
     );
   }
 
   Widget _videoAndStatus() {
     return Container(
       width: w,
-      height: h / 1.3,
+      height: h / 1.2,
       decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(

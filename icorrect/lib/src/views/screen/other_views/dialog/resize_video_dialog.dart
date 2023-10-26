@@ -35,7 +35,9 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
   void initState() {
     super.initState();
     _lightCompressor = LightCompressor();
-    _compressVideo();
+    if (widget.videoFile.existsSync()) {
+      _compressVideo();
+    }
   }
 
   @override
@@ -95,22 +97,21 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                           return const SizedBox.shrink();
                         },
                       ),
-                      (widget.onCancelResizeFile != null)
-                          ? Container(
-                              margin: const EdgeInsets.symmetric(vertical: 20),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  _lightCompressor!.cancelCompression();
-                                  Navigator.of(context).pop();
-                                  widget.onCancelResizeFile!();
-                                },
-                                child: const Text(
-                                  "Cancel and Later",
-                                  style: CustomTextStyle.textBoldPurple_15,
-                                ),
-                              ),
-                            )
-                          : Container()
+                      if (widget.onCancelResizeFile != null)
+                        Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          child: GestureDetector(
+                            onTap: () async {
+                              _lightCompressor!.cancelCompression();
+                              Navigator.of(context).pop();
+                              widget.onCancelResizeFile!();
+                            },
+                            child: const Text(
+                              "Cancel and Later",
+                              style: CustomTextStyle.textBoldPurple_15,
+                            ),
+                          ),
+                        )
                     ],
                   ),
                 );
@@ -154,6 +155,10 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
         // ignore: use_build_context_synchronously
         Navigator.of(context).pop();
       }
-    } else if (response is OnCancelled) {}
+    } else if (response is OnCancelled) {
+      if (kDebugMode) {
+        print("RECORDING_VIDEO : The Resizing Video is canceled! ");
+      }
+    }
   }
 }

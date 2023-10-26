@@ -232,7 +232,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                 ],
                               ),
                             ),
-                            height: h / 7,
+                            height: h / 5,
                             padding: const EdgeInsets.only(
                                 right: 10, left: 10, top: 5),
                             child: const SingleChildScrollView(
@@ -294,13 +294,13 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                           }
                         },
                         child: Container(
-                          width: 70,
+                          width: w / 6,
                           height: 70,
                           padding: const EdgeInsets.all(8),
                           alignment: Alignment.bottomCenter,
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(100)),
+                              borderRadius: BorderRadius.circular(200)),
                           child: provider.isRecordingVideo
                               ? _recordingSymbol()
                               : _unRecordingSymbol(),
@@ -550,7 +550,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
 
   Widget _recordingSymbol() {
     return Container(
-      width: 70,
+      width: w / 6,
       height: 70,
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -562,7 +562,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
 
   Widget _unRecordingSymbol() {
     return Container(
-      width: 70,
+      width: w / 6,
       height: 70,
       decoration: BoxDecoration(
         color: Colors.red,
