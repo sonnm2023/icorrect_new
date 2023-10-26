@@ -702,6 +702,10 @@ class StringConstants {
       "An error occur, please try again later!";
   static const String common_error_messge =
       "An error occur, please try again later!";
+  static const String error_when_resize_file =
+      'An error occurred while resizing the video file!';
+  static const String error_when_delete_file =
+      'An error occurred while deleting the video file!';
 }
 
 const int timeout = 60;

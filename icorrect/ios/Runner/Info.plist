@@ -1,70 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Icorrectvn</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>icorrectvn</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Play using while you are doing the exam</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app require permission to access to the camera to record video file for answering the question</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app require permission to access to the microphone to record audio file for answering the question</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>processing</string>
-	</array>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>Play using while you are doing the exam</string>
-    <key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>com.csupporter.sendlogtask</string>
-    </array>
-    <key>FLTEnableImpeller</key>
-    <false />
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
-</dict>
+	<dict>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true />
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>Icorrectvn</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>icorrectvn</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true />
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<true />
+		<key>NSAppleMusicUsageDescription</key>
+		<string>Play using while you are doing the exam</string>
+		<key>NSCameraUsageDescription</key>
+		<string>This app require permission to access to the camera to record video file for answering
+			the question</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>This app require permission to access to the microphone to record audio file for
+			answering the question</string>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true />
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>processing</string>
+		</array>
+		<key>UIFileSharingEnabled</key>
+		<true />
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>${PRODUCT_NAME} library Usage</string>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		</array>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<false />
+		<key>NSAppleMusicUsageDescription</key>
+		<string>Play using while you are doing the exam</string>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>com.csupporter.sendlogtask</string>
+		</array>
+		<key>FLTEnableImpeller</key>
+		<false />
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true />
+		</dict>
+	</dict>
 </plist>

@@ -435,13 +435,13 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
             child: ResizeVideoDialog(
                 videoFile: savedFile,
                 onResizeCompleted: (resizedFile) async {
-                  String newPath =
-                      'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
-                  File newFile = Utils.changeFileNameSync(resizedFile, newPath);
-                  _videoAuthProvider!.setSavedFile(newFile);
+                  // String newPath =
+                  //     'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
+                  // File newFile = Utils.changeFileNameSync(resizedFile, newPath);
+                  _videoAuthProvider!.setSavedFile(resizedFile);
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _showSubmitVideoAuthen(newFile);
+                    _showSubmitVideoAuthen(resizedFile);
                   });
                 },
                 onCancelResizeFile: () {
