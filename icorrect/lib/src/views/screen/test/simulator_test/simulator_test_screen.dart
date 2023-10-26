@@ -456,11 +456,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           },
         );
       },
-    );
-    if (cancelButtonTapped) {
-      Navigator.of(context).pop();
-    }
-    _simulatorTestProvider!.setShowConfirmSaveTest(false);
+    ).then((_) {
+      if (cancelButtonTapped) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   void _startSubmitTest() async {
