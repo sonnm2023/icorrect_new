@@ -122,8 +122,8 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
 
   Future _compressVideo() async {
     final String videoName = widget.onCancelResizeFile != null
-        ? 'VIDEO_AUTH_${DateTime.now().millisecond}.mp4'
-        : 'VIDEO_EXAM_${DateTime.now().millisecond}.mp4';
+        ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
+        : 'VIDEO_EXAM_${DateTime.now().microsecondsSinceEpoch}';
     // final Stopwatch stopwatch = Stopwatch()..start();
     final Result response = await _lightCompressor!.compressVideo(
       path: widget.videoFile.path,
