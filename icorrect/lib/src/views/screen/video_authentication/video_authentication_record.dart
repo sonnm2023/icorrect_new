@@ -438,11 +438,10 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                   // String newPath =
                   //     'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
                   // File newFile = Utils.changeFileNameSync(resizedFile, newPath);
-                  _videoAuthProvider!.setSavedFile(resizedFile);
-
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _showSubmitVideoAuthen(resizedFile);
-                  });
+                  _prepareForSubmitVideo(resizedFile);
+                },
+                onErrorResizeFile: (_) {
+                  _prepareForSubmitVideo(savedFile);
                 },
                 onCancelResizeFile: () {
                   _continuePreviewVideo();
@@ -452,6 +451,14 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
             });
       },
     );
+  }
+
+  void _prepareForSubmitVideo(File savedFile) {
+    _videoAuthProvider!.setSavedFile(savedFile);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showSubmitVideoAuthen(savedFile);
+    });
   }
 
   void _continuePreviewVideo() {

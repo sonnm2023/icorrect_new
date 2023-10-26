@@ -1798,11 +1798,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             child: ResizeVideoDialog(
                 videoFile: File(savedVideoPath),
                 onResizeCompleted: (resizedFile) {
-                  String newPath =
-                      'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
-                  File newFile = Utils.changeFileNameSync(resizedFile, newPath);
-                  _startSubmitTest(videoConfirmFile: newFile);
-                  _simulatorTestProvider!.setVideoFile(newFile);
+                  _startSubmitTest(videoConfirmFile: resizedFile);
+                  _simulatorTestProvider!.setVideoFile(resizedFile);
+                },
+                onErrorResizeFile: (_) {
+                  _startSubmitTest(videoConfirmFile: File(savedVideoPath));
+                  _simulatorTestProvider!.setVideoFile(File(savedVideoPath));
                 }),
             onWillPop: () async {
               return false;
