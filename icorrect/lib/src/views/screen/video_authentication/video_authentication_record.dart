@@ -6,10 +6,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:icorrect/core/video_compress_service.dart';
-import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
@@ -344,30 +341,31 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       barrierDismissible: false,
       builder: (builderContext) {
         return WillPopScope(
-            child: ConfirmDialogWidget(
-              title: StringConstants.confirm_exit_screen_title,
-              message: StringConstants.confirm_exit_content,
-              cancelButtonTitle: StringConstants.exit_button_title,
-              okButtonTitle: StringConstants.later_button_title,
-              dimissButtonTapped: () {
-                _continueRecodingVideo();
-              },
-              cancelButtonTapped: () {
-                _cameraService!.cameraController!.stopVideoRecording().then(
-                  (value) {
-                    _deleteFile(File(value.path));
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-              okButtonTapped: () {
-                _continueRecodingVideo();
-              },
-            ),
-            onWillPop: () async {
+          child: ConfirmDialogWidget(
+            title: StringConstants.confirm_exit_screen_title,
+            message: StringConstants.confirm_exit_content,
+            cancelButtonTitle: StringConstants.exit_button_title,
+            okButtonTitle: StringConstants.later_button_title,
+            dimissButtonTapped: () {
               _continueRecodingVideo();
-              return true;
-            });
+            },
+            cancelButtonTapped: () {
+              _cameraService!.cameraController!.stopVideoRecording().then(
+                (value) {
+                  _deleteFile(File(value.path));
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+            okButtonTapped: () {
+              _continueRecodingVideo();
+            },
+          ),
+          onWillPop: () async {
+            _continueRecodingVideo();
+            return true;
+          },
+        );
       },
     );
   }
@@ -432,23 +430,24 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       barrierDismissible: false,
       builder: (builderContext) {
         return WillPopScope(
-            child: ResizeVideoDialog(
-                videoFile: savedFile,
-                onResizeCompleted: (resizedFile) async {
-                  // String newPath =
-                  //     'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
-                  // File newFile = Utils.changeFileNameSync(resizedFile, newPath);
-                  _prepareForSubmitVideo(resizedFile);
-                },
-                onErrorResizeFile: (_) {
-                  _prepareForSubmitVideo(savedFile);
-                },
-                onCancelResizeFile: () {
-                  _continuePreviewVideo();
-                }),
-            onWillPop: () async {
-              return false;
-            });
+          child: ResizeVideoDialog(
+              videoFile: savedFile,
+              onResizeCompleted: (resizedFile) async {
+                // String newPath =
+                //     'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
+                // File newFile = Utils.changeFileNameSync(resizedFile, newPath);
+                _prepareForSubmitVideo(resizedFile);
+              },
+              onErrorResizeFile: (_) {
+                _prepareForSubmitVideo(savedFile);
+              },
+              onCancelResizeFile: () {
+                _continuePreviewVideo();
+              }),
+          onWillPop: () async {
+            return false;
+          },
+        );
       },
     );
   }
