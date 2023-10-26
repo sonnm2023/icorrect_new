@@ -478,7 +478,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _canRecordingCamera() {
     return _cameraService != null &&
         _cameraService!.cameraController!.value.isInitialized &&
-        !_cameraIsRecording;
+        !_cameraIsRecording && !_cameraService!.cameraController!.value.isRecordingVideo;
   }
 
   void _saveVideoRecording() {
@@ -624,6 +624,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Future _onAppInBackground() async {
     _isBackgroundMode = true;
 
+    //Create start time to save log
+    _logStartTime = DateTime.now();
+    if (kDebugMode) {
+      print("DEBUG: action log starttime: $_logStartTime");
+    }
+
     if (null != _videoPlayerController) {
       bool isPlaying = await _videoPlayerController!.isPlaying();
       if (isPlaying) {
@@ -665,22 +671,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countRecording!.cancel();
     }
 
-    if (null == _cameraService) return;
+    if (_isExam) {
+      if (null == _cameraService) return;
 
-    if (null == _cameraService!.cameraController) return;
+      if (null == _cameraService!.cameraController) return;
 
-    CameraController? cameraController = _cameraService!.cameraController;
+      CameraController? cameraController = _cameraService!.cameraController;
 
-    if (cameraController != null && cameraController.value.isInitialized) {
-      cameraController.pausePreview();
-      if (cameraController.value.isRecordingVideo) {
-        cameraController.pauseVideoRecording();
+      if (cameraController != null && cameraController.value.isInitialized) {
+        cameraController.pausePreview();
+        if (cameraController.value.isRecordingVideo) {
+          cameraController.pauseVideoRecording();
+        }
       }
-    }
-
-    _logStartTime = DateTime.now();
-    if (kDebugMode) {
-      print("DEBUG: action log starttime: $_logStartTime");
     }
   }
 
@@ -692,7 +695,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Future _onAppActive() async {
     _isBackgroundMode = false;
 
-    //Caculation time of being out and save into a action log
+    //Calculation time of being out and save into a action log
     if (null != _logStartTime && null != _currentQuestion) {
       _logEndTime = DateTime.now();
       if (kDebugMode) {
@@ -752,25 +755,27 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
 
-    if (null == _cameraService) return;
+    if (_isExam) {
+      if (null == _cameraService) return;
 
-    if (null == _cameraService!.cameraController) return;
+      if (null == _cameraService!.cameraController) return;
 
-    CameraController cameraController = _cameraService!.cameraController!;
+      CameraController cameraController = _cameraService!.cameraController!;
 
-    if (cameraController.value.isInitialized) {
-      if (cameraController.value.isPreviewPaused) {
-        cameraController.resumePreview();
-      }
-
-      if (cameraController.value.isRecordingPaused) {
-        if (null != _countRecording) {
-          _countRecording!.cancel();
+      if (cameraController.value.isInitialized) {
+        if (cameraController.value.isPreviewPaused) {
+          cameraController.resumePreview();
         }
-        int countFrom = _simulatorTestProvider!.currentCountRecordingVideo;
-        _countRecording =
-            _testRoomPresenter!.startCountRecording(countFrom: countFrom);
-        cameraController.resumeVideoRecording();
+
+        if (cameraController.value.isRecordingPaused) {
+          cameraController.resumeVideoRecording();
+          if (null != _countRecording) {
+            _countRecording!.cancel();
+          }
+          int countFrom = _simulatorTestProvider!.currentCountRecordingVideo;
+          _countRecording =
+              _testRoomPresenter!.startCountRecording(countFrom: countFrom);
+        }
       }
     }
   }
