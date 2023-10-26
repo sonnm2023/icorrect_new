@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -39,9 +42,7 @@ class MyHomeWorkTab extends StatefulWidget {
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
-  // Permission? _storagePermission;
-  // PermissionStatus _storagePermissionStatus = PermissionStatus.denied;
-
+  final connectivityService = ConnectivityService();
   ActivitiesModel? _selectedHomeWorkModel;
 
   @override
@@ -359,23 +360,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           }
         }
       }
-
-      // if (statuses[Permission.camera]! == PermissionStatus.denied ||
-      //     statuses[Permission.microphone]! == PermissionStatus.denied) {
-      //   if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
-      //     _showConfirmDeniedDialog(AlertClass.microCameraPermissionAlert);
-      //   } else {
-      //     widget.homeWorkProvider.setPermissionDeniedTime();
-      //   }
-      // } else if (statuses[Permission.camera]! ==
-      //         PermissionStatus.permanentlyDenied ||
-      //     statuses[Permission.microphone]! ==
-      //         PermissionStatus.permanentlyDenied) {
-      //   openAppSettings();
-      // } else {
-      //   _selectedHomeWorkModel = homeWorkModel;
-      //   _gotoHomeworkDetail();
-      // }
     } on PlatformException catch (e) {
       if (kDebugMode) {
         print("DEBUG: Permission error ${e.toString()}");
@@ -400,47 +384,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     }
   }
 
-  // Future<void> _initializePermission() async {
-  //   _storagePermission = Permission.storage;
-  //
-  //   if (Platform.isAndroid) {
-  //     AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
-  //     int sdk = android.version.sdkInt;
-  //
-  //     if (sdk >= 33) {
-  //       _storagePermission = null;
-  //     }
-  //   }
-  // }
-
-  // void _listenForPermissionStatus() async {
-  //   if (_storagePermission != null) {
-  //     _storagePermissionStatus = await _storagePermission!.status;
-  //
-  //     if (_storagePermissionStatus == PermissionStatus.denied) {
-  //       if (widget.homeWorkProvider.permissionDeniedTime > 2) {
-  //         _showConfirmDialog();
-  //       }
-  //     } else if (_storagePermissionStatus ==
-  //         PermissionStatus.permanentlyDenied) {
-  //       openAppSettings();
-  //     } else {
-  //       _gotoHomeworkDetail();
-  //     }
-  //   } else {
-  //     _gotoHomeworkDetail();
-  //   }
-  // }
-
-  // Future<void> _requestPermission(Permission? permission) async {
-  //   // ignore: unused_local_variable
-  //   if (permission != null) {
-  //     final status = await permission.request();
-  //     widget.homeWorkProvider.setPermissionDeniedTime();
-  //   }
-  //   _listenForPermissionStatus();
-  // }
-
   void _showConfirmDialog() {
     if (false == widget.homeWorkProvider.dialogShowing) {
       showDialog(
@@ -459,35 +402,44 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() async {
-    Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
-        _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
+    var connectivity = await connectivityService.checkConnectivity();
+    if (connectivity.name != "none") {
+      Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
+          _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
 
-    if (statusMap['title'] == 'Out of date' ||
-        statusMap['title'] == 'Not Completed') {
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => SimulatorTestScreen(
-            homeWorkModel: _selectedHomeWorkModel!,
+      if (statusMap['title'] == 'Out of date' ||
+          statusMap['title'] == 'Not Completed') {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SimulatorTestScreen(
+              homeWorkModel: _selectedHomeWorkModel!,
+            ),
           ),
-        ),
-      );
+        );
 
-      if (!mounted) return;
-      // After the SimulatorTest returns a result
-      // and refresh list of homework if needed
-      if (result == 'refresh') {
-        widget.homeWorkPresenter.refreshListHomework();
+        if (!mounted) return;
+        // After the SimulatorTest returns a result
+        // and refresh list of homework if needed
+        if (result == 'refresh') {
+          widget.homeWorkPresenter.refreshListHomework();
+        }
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MyTestScreen(
+              homeWorkModel: _selectedHomeWorkModel!,
+              isFromSimulatorTest: false,
+            ),
+          ),
+        );
       }
     } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MyTestScreen(
-            homeWorkModel: _selectedHomeWorkModel!,
-            isFromSimulatorTest: false,
-          ),
-        ),
-      );
+      //Show connect error here
+      if (kDebugMode) {
+        print("DEBUG: Connect error here!");
+      }
+      Utils.showConnectionErrorDialog(context);
     }
   }
 
