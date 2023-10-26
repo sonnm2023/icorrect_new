@@ -100,23 +100,24 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                 );
               },
               child: SingleChildScrollView(
-                  child: Container(
-                width: w,
-                height: h,
-                padding: const EdgeInsets.only(top: 10),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColor.defaultPurpleColor,
-                      AppColor.defaultPurpleColor,
-                      AppColor.defaultBlueColor
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                child: Container(
+                  width: w,
+                  height: h,
+                  padding: const EdgeInsets.only(top: 10),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColor.defaultPurpleColor,
+                        AppColor.defaultPurpleColor,
+                        AppColor.defaultBlueColor
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
+                  child: _buildMainScreen(),
                 ),
-                child: _buildMainScreen(),
-              )),
+              ),
             );
           },
         ),

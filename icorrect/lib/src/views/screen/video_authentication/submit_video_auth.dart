@@ -1,6 +1,9 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -54,66 +57,72 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
 
-    return Consumer<VideoAuthProvider>(builder: (context, provider, child) {
-      print(
-          'video width: ${_playerController!.value.size.width}, video height : ${_playerController!.value.size.height}');
-      return Container(
-        width: w,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: h / 2,
-              width: w,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                border: Border.all(color: Colors.white, width: 2.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3), // Shadow color
-                    spreadRadius: 5,
-                    blurRadius: 5,
-                    offset: const Offset(0, 7), // Shadow offset
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(12.0),
+    return Consumer<VideoAuthProvider>(
+      builder: (context, provider, child) {
+        if (kDebugMode) {
+          print(
+              'video width: ${_playerController!.value.size.width}, video height : ${_playerController!.value.size.height}');
+        }
+        return Container(
+          width: w,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: h / 2,
+                width: w,
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  border: Border.all(color: Colors.white, width: 2.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3), // Shadow color
+                      spreadRadius: 5,
+                      blurRadius: 5,
+                      offset: const Offset(0, 7), // Shadow offset
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.all(5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Chewie(controller: _chewieController!),
+                ),
               ),
-              padding: const EdgeInsets.all(5),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Chewie(controller: _chewieController!),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(StringConstants.confirm_submit_video_auth_title,
-                    style: TextStyle(
-                        color: AppColor.defaultPurpleColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                const Text(StringConstants.confirm_submit_video_auth_content,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(StringConstants.confirm_submit_video_auth_title,
+                      style: TextStyle(
+                          color: AppColor.defaultPurpleColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  const Text(
+                    StringConstants.confirm_submit_video_auth_content,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: AppColor.defaultPurpleColor,
                         fontSize: 16,
-                        fontWeight: FontWeight.w400)),
-                const SizedBox(height: 20),
-                Stack(
-                  children: [
-                    Visibility(
-                        visible: !provider.isSubmitLoading,
-                        child: Column(
-                          children: [
-                            _submitVideoButton(),
-                            _deniedSubmitVideoButton()
-                          ],
-                        )),
-                    Visibility(
+                        fontWeight: FontWeight.w400),
+                  ),
+                  const SizedBox(height: 20),
+                  Stack(
+                    children: [
+                      Visibility(
+                          visible: !provider.isSubmitLoading,
+                          child: Column(
+                            children: [
+                              _submitVideoButton(),
+                              _deniedSubmitVideoButton()
+                            ],
+                          )),
+                      Visibility(
                         visible: provider.isSubmitLoading,
                         child: const Center(
                           child: CircularProgressIndicator(
@@ -122,15 +131,17 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
                               AppColor.defaultPurpleColor,
                             ),
                           ),
-                        ))
-                  ],
-                )
-              ],
-            ),
-          ],
-        ),
-      );
-    });
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _submitVideoButton() {
@@ -145,13 +156,14 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-            color: AppColor.defaultPurpleColor,
-            borderRadius: BorderRadius.circular(100)),
-        child: const Text(StringConstants.submit_now_title,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w400)),
+          color: AppColor.defaultPurpleColor,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: const Text(
+          StringConstants.submit_now_title,
+          style: TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400),
+        ),
       ),
     );
   }
@@ -173,13 +185,17 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-            border: Border.all(color: AppColor.defaultPurpleColor, width: 1.5),
-            borderRadius: BorderRadius.circular(100)),
-        child: const Text(StringConstants.record_new_video_title,
-            style: TextStyle(
-                color: AppColor.defaultPurpleColor,
-                fontSize: 18,
-                fontWeight: FontWeight.w400)),
+          border: Border.all(color: AppColor.defaultPurpleColor, width: 1.5),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: const Text(
+          StringConstants.record_new_video_title,
+          style: TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
       ),
     );
   }

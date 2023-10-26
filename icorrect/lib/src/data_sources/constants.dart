@@ -487,6 +487,7 @@ class LogEvent {
   static const String actionRepeatQuestion = 'action_repeat_question';
   static const String actionSubmitTest = 'action_submit_test';
   static const String actionUpdateAnswer = 'action_update_answer';
+  static const String compressVideoFile = 'compress_video_file';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";

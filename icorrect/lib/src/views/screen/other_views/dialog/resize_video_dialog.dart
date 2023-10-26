@@ -1,16 +1,16 @@
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:light_compressor/light_compressor.dart';
 import 'package:provider/provider.dart';
-// import 'package:video_compress/video_compress.dart';
-
-import '../../../../../core/video_compress_service.dart';
 
 class ResizeVideoDialog extends StatefulWidget {
   File videoFile;
@@ -124,7 +124,19 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
     final String videoName = widget.onCancelResizeFile != null
         ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
         : 'VIDEO_EXAM_${DateTime.now().microsecondsSinceEpoch}';
-    // final Stopwatch stopwatch = Stopwatch()..start();
+    final Stopwatch stopwatch = Stopwatch()..start();
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.compressVideoFile);
+    }
+
+    Map<String, dynamic> data = {
+      "video_name": videoName,
+      "start_time": '${DateTime.now().microsecondsSinceEpoch}',
+      "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
+    };
+
     final Result response = await _lightCompressor!.compressVideo(
       path: widget.videoFile.path,
       videoQuality: VideoQuality.very_high,
@@ -134,6 +146,12 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       ios: IOSConfig(saveInGallery: false),
     );
 
+    stopwatch.stop();
+
+    //Add duration into log
+    data.addEntries(
+        [MapEntry("duration", '${stopwatch.elapsed.inSeconds} seconds')]);
+
     if (response is OnSuccess) {
       if (kDebugMode) {
         print(
@@ -141,17 +159,40 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       }
       await widget.videoFile.delete().then((value) {
         widget.onResizeCompleted(File(response.destinationPath));
+        int length = File(response.destinationPath).lengthSync();
         if (kDebugMode) {
-          int length = File(response.destinationPath).lengthSync();
           print(
               "RECORDING_VIDEO : Video After Resize: ${response.destinationPath},size ${(length / 1024) / 1024}mb");
         }
+
+        //Add log
+        data.addEntries(
+            [MapEntry("compress_size", "${(length / 1024) / 1024} Mb")]);
+        data.addEntries(
+            [MapEntry("end_time", '${DateTime.now().microsecondsSinceEpoch}')]);
+        Utils.prepareLogData(
+          log: log,
+          data: data,
+          message: "Compress video file",
+          status: LogEvent.success,
+        );
+
         Navigator.of(context).pop();
       });
     } else if (response is OnFailure) {
       if (widget.onErrorResizeFile != null) {
         widget.onErrorResizeFile!(StringConstants.error_when_resize_file);
-        // ignore: use_build_context_synchronously
+
+        //Add log
+        data.addEntries(
+            [MapEntry("end_time", '${DateTime.now().microsecondsSinceEpoch}')]);
+        Utils.prepareLogData(
+          log: log,
+          data: data,
+          message: "Compress video file",
+          status: LogEvent.failed,
+        );
+
         Navigator.of(context).pop();
       }
     } else if (response is OnCancelled) {}
