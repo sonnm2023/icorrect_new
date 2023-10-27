@@ -1,7 +1,6 @@
 import UIKit
 import BackgroundTasks
 import Flutter
-import workmanager
 import Foundation
 
 @UIApplicationMain
@@ -10,7 +9,7 @@ import Foundation
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
+      GeneratedPluginRegistrant.register(with: self)
     
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let nativeChannel = FlutterMethodChannel(name: "nativeChannel",
@@ -22,9 +21,15 @@ import Foundation
                  let apiUrl = args["api_url"] as? String,
                  let secretkey = args["secretkey"] as? String,
                  let filePath = args["file_path"] as? String {
-                  print("DEBUG: Native - send log: url = \(apiUrl) secretkey = \(secretkey)")
-                  print("DEBUG: Native - send log: file path = \(filePath)")
-//                  self.sendLog(apiUrl: apiUrl, secretkey: secretkey, filePath: filePath)
+                  debugPrint("DEBUG: Native - send log: url = \(apiUrl) secretkey = \(secretkey)")
+                  debugPrint("DEBUG: Native - send log: file path = \(filePath)")
+                  self.sendLog(apiUrl: apiUrl, filePath: filePath, secretkey: secretkey) { _ in
+                      debugPrint("DEBUG: Send log success!")
+                      self.deleteFile(filePath: filePath)
+                  } failure: {
+                      debugPrint("DEBUG: Send log error!")
+                  }
+                  
                   result(nil)
               } else {
                   result(FlutterError.init(code: "error", message: "data or format error", details: nil))
@@ -34,53 +39,49 @@ import Foundation
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     
-
-    private func sendLog(apiUrl: String, secretkey: String, filePath: String) {
-        DispatchQueue.background(background: {
-            // do something in background
-            print("DEBUG: SEND LOG")
-            let uploadURL = URL(string: apiUrl)!
-            var request = URLRequest(url: uploadURL)
-            request.httpMethod = "POST"
-            request.addValue(secretkey, forHTTPHeaderField: "secretkey")
-            request.addValue("flutter_logs.txt", forHTTPHeaderField: "file")
-
+    private func sendLog (
+        apiUrl: String,
+        filePath: String,
+        secretkey: String,
+        success: @escaping (Bool) -> Void,
+        failure: @escaping () -> Void) {
             if let fileURL: URL? = URL(fileURLWithPath: filePath) {
                 if (fileURL == nil) { return }
-                
                 do {
-                    let content = try String(contentsOf: fileURL!, encoding: .utf8)
-                    print("DEBUG: send log content: \(content)")
-                } catch (_) {
-                    print("DEBUG: send log check file error")
-                }
-                
-                    
-                let task = URLSession.shared.uploadTask(with: request, fromFile: fileURL!) { data, response, error in
-                    if let error = error {
-                        print("DEBUG: send log Lỗi khi tải lên: \(error)")
-                        return
-                    }
-                    
-                    if let httpResponse = response as? HTTPURLResponse {
-                        if httpResponse.statusCode == 200 {
-                            // Tải lên thành công
-                            print("DEBUG: send log Tải lên thành công")
+                    let content = try? String(contentsOf: fileURL!, encoding: .utf8)
+                    let param: [String : Any] = ["secretkey": secretkey, "file": content]
+                    NetworkManager.shared.callingHttpPostMethodWithFile(params: param, apiname: apiUrl, filePath: filePath, success: { [weak self](data) in
+                        guard self != nil else {return}
+                        if data == nil {
+                            success(true)
                         } else {
-                            print("DEBUG: send log Lỗi HTTP: \(httpResponse.statusCode)")
+                            success(false)
                         }
-                    }
+                    }, failure: { (error) in
+                        debugPrint("DEBUG: sendLog api error \(error?.localizedDescription ?? "sendLog api error")")
+                        failure()
+                    })
                 }
-                
-                task.resume()
-            } else {
-                print("DEBUG: send log: Không có file log")
-                return
             }
-        }, completion:{
-            // when background job finished, do something in main thread
-            print("DEBUG: send log: when background job finished, do something in main thread")
-        })
+        }
+    
+    private func deleteFile(filePath: String) {
+        do {
+             let fileManager = FileManager.default
+            
+            // Check if file exists
+            if fileManager.fileExists(atPath: filePath) {
+                debugPrint("DEBUG: DELETE log file")
+                // Delete file
+                try fileManager.removeItem(atPath: filePath)
+            } else {
+                debugPrint("DEBUG: File does not exist")
+            }
+         
+        }
+        catch let error as NSError {
+            debugPrint("DEBUG: An error took place: \(error)")
+        }
     }
 }
 
