@@ -174,6 +174,7 @@ class FilterJsonData {
 class StringClass {
   static const video = "videos";
   static const audio = "audios";
+  static const images = "images";
 
   static const String errorRequestTest = 'ERROR_REQUEST_TEST';
   static const String failDownloadVideo = 'FAIL_DOWNLOAD_VIDEO';
@@ -183,7 +184,7 @@ class StringClass {
   static const String permissionDenied = 'PERMISSION_DENIED';
 }
 
-enum MediaType { video, audio, none }
+enum MediaType { video, audio, image, none }
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
@@ -489,6 +490,7 @@ class LogEvent {
   static const String actionUpdateAnswer = 'action_update_answer';
   static const String compressVideoFile = 'compress_video_file';
   static const String checkConnection = 'check_connection';
+  static const String imageDownload = 'image_download';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";

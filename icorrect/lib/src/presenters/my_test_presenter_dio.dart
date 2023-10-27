@@ -283,7 +283,7 @@ class MyTestPresenterDio {
       }
     } else {
       if (kDebugMode) {
-        print("DEBUG: client is closed!");
+        print("DEBUG: Dio is closed!");
       }
     }
   }

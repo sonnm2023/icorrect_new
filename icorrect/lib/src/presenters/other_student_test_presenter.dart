@@ -220,7 +220,9 @@ class OtherStudentTestPresenter {
               }
 
               if (response.statusCode == 200) {
-                print('save Path: $savePath');
+                if (kDebugMode) {
+                  print('save Path: $savePath');
+                }
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
@@ -251,7 +253,7 @@ class OtherStudentTestPresenter {
       }
     } else {
       if (kDebugMode) {
-        print("DEBUG: client is closed!");
+        print("DEBUG: Dio is closed!");
       }
     }
   }

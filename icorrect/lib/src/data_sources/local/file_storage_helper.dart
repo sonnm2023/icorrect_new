@@ -52,6 +52,8 @@ class FileStorageHelper {
       folder = StringClass.video;
     } else if (mediaType == MediaType.audio) {
       folder = StringClass.audio;
+    } else if (mediaType == MediaType.image) {
+      folder = StringClass.images;
     }
 
     String filePath = '';

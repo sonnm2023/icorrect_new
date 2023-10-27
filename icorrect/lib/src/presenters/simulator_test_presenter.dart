@@ -108,6 +108,7 @@ class SimulatorTestPresenter {
 
   TestDetailModel? testDetail;
   List<FileTopicModel>? filesTopic;
+  List<FileTopicModel> imageFiles = [];
 
   void getTestDetail({
     required BuildContext context,
@@ -168,12 +169,23 @@ class SimulatorTestPresenter {
         List<FileTopicModel> tempFilesTopic =
             _prepareFileTopicListForDownload(tempTestDetailModel);
 
-        downloadFiles(
-          context: context,
-          testDetail: tempTestDetailModel,
-          activityId: homeworkId,
-          filesTopic: tempFilesTopic,
-        );
+        if (imageFiles.isNotEmpty) {
+          //Download images
+          _prepareDownloadImages(
+            context: context,
+            testDetail: tempTestDetailModel,
+            activityId: homeworkId,
+            filesTopic: tempFilesTopic,
+          );
+        } else {
+          //Download video
+          downloadFiles(
+            context: context,
+            testDetail: tempTestDetailModel,
+            activityId: homeworkId,
+            filesTopic: tempFilesTopic,
+          );
+        }
 
         _view!.onGetTestDetailComplete(
             tempTestDetailModel, tempFilesTopic.length);
@@ -288,9 +300,16 @@ class SimulatorTestPresenter {
     //Add question files
     for (QuestionTopicModel q in topic.questionList) {
       if (q.files.isNotEmpty) {
+        //Add video url
         q.files.first.fileTopicType = FileTopicType.question;
         q.files.first.numPart = topic.numPart;
         allFiles.add(q.files.first);
+
+        //Add image url
+        //For question has an image
+        if (q.files.length > 1) {
+          imageFiles.add(q.files.elementAt(1));
+        }
       }
 
       for (FileTopicModel a in q.answers) {
@@ -317,6 +336,128 @@ class SimulatorTestPresenter {
 
   void downloadFailure(AlertInfo alertInfo) {
     _view!.onDownloadFailure(alertInfo);
+  }
+
+  Future<bool> _downloadAndSaveImage(
+    BuildContext context,
+    String activityId,
+    String testId,
+    String imageUrl,
+  ) async {
+    //Add log
+    LogModel log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.imageDownload);
+    //Add more information into log
+    Map<String, dynamic> imageFileDownloadInfo = {
+      "activity_id": activityId,
+      "test_id": testId,
+      "image_url": imageUrl,
+    };
+    log.addData(
+        key: "image_file_download_info",
+        value: json.encode(imageFileDownloadInfo));
+
+    try {
+      String savePath =
+          await FileStorageHelper.getFolderPath(MediaType.image, null);
+
+      final directory = Directory(savePath);
+      final isExistFolder = await directory.exists();
+      if (!isExistFolder) {
+        await directory.create(recursive: true);
+      }
+
+      final fileName = imageUrl.split('=').last;
+      final filePath = '$savePath/$fileName';
+      File file = File(filePath);
+
+      if (await file.exists()) {
+        if (kDebugMode) {
+          print('Hình ảnh $fileName đã có tại: $filePath');
+        }
+        return true; // Trả về true khi tải thành công
+      } else {
+        if (kDebugMode) {
+          print('Tải và lưu hình ảnh $fileName');
+        }
+
+        final Response response = await dio!
+            .get(imageUrl, options: Options(responseType: ResponseType.bytes));
+        await file.writeAsBytes(response.data);
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: null,
+          status: LogEvent.success,
+        );
+
+        return true; // Trả về false khi có lỗi
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Download image file error: $e');
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: null,
+        message: 'Download image file error: $e',
+        status: LogEvent.failed,
+      );
+
+      return false; // Trả về false khi có lỗi
+    }
+  }
+
+  Future _prepareDownloadImages({
+    required BuildContext context,
+    required String activityId,
+    required TestDetailModel testDetail,
+    required List<FileTopicModel> filesTopic,
+  }) async {
+    if (null != dio) {
+      int imagesDownloaded = 0;
+      List<String> imageUrls = [];
+
+      for (FileTopicModel fileTopicModel in imageFiles) {
+        String url = downloadFileEP(fileTopicModel.url);
+        if (!imageUrls.contains(url)) {
+          imageUrls.add(url);
+        }
+      }
+
+      for (String imageUrl in imageUrls) {
+        await _downloadAndSaveImage(
+          context,
+          activityId,
+          testDetail.testId.toString(),
+          imageUrl,
+        ).then((isDownloaded) {
+          if (isDownloaded) {
+            imagesDownloaded++;
+            if (imagesDownloaded == imageUrls.length) {
+              if (kDebugMode) {
+                print('Đã tải hết ${imageUrls.length} hình ảnh');
+              }
+              //Start to download files (video)
+              downloadFiles(
+                context: context,
+                activityId: activityId,
+                testDetail: testDetail,
+                filesTopic: filesTopic,
+              );
+            }
+          }
+        });
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: Dio is closed!");
+      }
+    }
   }
 
   Future downloadFiles({
@@ -378,11 +519,6 @@ class SimulatorTestPresenter {
               Response response = await dio!.download(url, savePath);
 
               if (response.statusCode == 200) {
-                //Save file using file_storage
-                // String contentString =
-                //     await Utils.convertVideoToBase64(response);
-                // await FileStorageHelper.writeVideo(
-                //     contentString, fileTopic, MediaType.video);
                 if (kDebugMode) {
                   print('DEBUG : save Path : $savePath');
                 }
@@ -436,35 +572,6 @@ class SimulatorTestPresenter {
                   testDetail: testDetail,
                   filesTopic: filesTopic);
               break loop;
-
-              /*
-              switch (e.type) {
-                case DioExceptionType.badResponse: {
-                  break loop;
-                }
-                case DioExceptionType.connectionTimeout: {
-                  break loop;
-                }
-                case DioExceptionType.sendTimeout: {
-                  break loop;
-                }
-                case DioExceptionType.receiveTimeout: {
-                  break loop;
-                }
-                case DioExceptionType.badCertificate: {
-                  break loop;
-                }
-                case DioExceptionType.cancel: {
-                  break loop;
-                }
-                case DioExceptionType.connectionError: {
-                  break loop;
-                }
-                case DioExceptionType.unknown: {
-                  break loop;
-                }
-              }
-              */
             } on TimeoutException {
               //Add log
               Utils.prepareLogData(
@@ -525,7 +632,7 @@ class SimulatorTestPresenter {
       }
     } else {
       if (kDebugMode) {
-        print("DEBUG: client is closed!");
+        print("DEBUG: Dio is closed!");
       }
     }
   }
