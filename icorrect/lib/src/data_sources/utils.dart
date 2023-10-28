@@ -1005,4 +1005,25 @@ class Utils {
       status: LogEvent.failed,
     );
   }
+
+  static Future<String> getLocalImagePath(String fileName) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/$fileName';
+    if (kDebugMode) {
+      print("DEBUG: load image from local: $filePath");
+    }
+    bool isExist = await checkImageFileExist(fileName);
+    if (isExist) {
+      return filePath;
+    }
+
+    return "";
+  }
+
+  static Future<bool> checkImageFileExist(String fileName) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/$fileName';
+    bool result = await File(filePath).exists();
+    return result;
+  }
 }

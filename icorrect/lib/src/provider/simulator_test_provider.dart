@@ -562,6 +562,20 @@ class SimulatorTestProvider with ChangeNotifier {
     _questionImageUrl = '';
   }
 
+  String _questionImageUrlFromLocal = '';
+  String get questionImageUrlFromLocal => _questionImageUrlFromLocal;
+  void setQuestionImageUrlFromLocal(String url) {
+    _questionImageUrlFromLocal = url;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void resetQuestionImageUrlFromLocal() {
+    _questionImageUrlFromLocal = '';
+  }
+
   List<StudentResultModel> _highLightHomeWorks = [];
   List<StudentResultModel> get highLightHomeworks => _highLightHomeWorks;
   void setHighLightHomeworks(List<StudentResultModel> homeworks) {
@@ -678,5 +692,6 @@ class SimulatorTestProvider with ChangeNotifier {
     resetNeedUpdateReanswerStatus();
     resetSelectedQuestionImageUrl();
     resetQuestionImageUrl();
+    resetQuestionImageUrlFromLocal();
   }
 }

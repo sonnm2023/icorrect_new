@@ -24,6 +24,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
@@ -358,17 +359,15 @@ class SimulatorTestPresenter {
         value: json.encode(imageFileDownloadInfo));
 
     try {
-      String savePath =
-          await FileStorageHelper.getFolderPath(MediaType.image, null);
+      final directory = await getApplicationDocumentsDirectory();
 
-      final directory = Directory(savePath);
       final isExistFolder = await directory.exists();
       if (!isExistFolder) {
         await directory.create(recursive: true);
       }
 
       final fileName = imageUrl.split('=').last;
-      final filePath = '$savePath/$fileName';
+      final filePath = '${directory.path}/$fileName';
       File file = File(filePath);
 
       if (await file.exists()) {
@@ -378,12 +377,16 @@ class SimulatorTestPresenter {
         return true; // Trả về true khi tải thành công
       } else {
         if (kDebugMode) {
-          print('Tải và lưu hình ảnh $fileName');
+          print('Tải và lưu hình ảnh tại $filePath');
         }
 
         final Response response = await dio!
             .get(imageUrl, options: Options(responseType: ResponseType.bytes));
         await file.writeAsBytes(response.data);
+
+        log.addData(
+            key: "local_image_file_path",
+            value: filePath);
 
         //Add log
         Utils.prepareLogData(
