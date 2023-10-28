@@ -37,7 +37,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cached_network_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
-import 'package:icorrect/src/views/widget/simulator_test_widget/load_image_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/load_local_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/save_test_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
@@ -231,7 +231,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                                       child: simulatorTestProvider
                                               .questionImageUrlFromLocal
                                               .isNotEmpty
-                                          ? LoadImageWidget(
+                                          ? LoadLocalImageWidget(
                                         imageUrl:
                                                   simulatorTestProvider
                                                       .questionImageUrlFromLocal,

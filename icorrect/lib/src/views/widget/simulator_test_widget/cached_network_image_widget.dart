@@ -42,7 +42,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.error,
+                Icons.error_outline_sharp,
                 size: 80,
               ),
               Text('Lỗi tải hình ảnh'),

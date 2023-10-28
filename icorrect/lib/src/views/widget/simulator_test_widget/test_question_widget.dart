@@ -1,37 +1,45 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
-import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/load_local_image_widget.dart';
 import 'package:provider/provider.dart';
 
-class TestQuestionWidget extends StatelessWidget {
+class TestQuestionWidget extends StatefulWidget {
   const TestQuestionWidget({
     super.key,
     required this.testRoomPresenter,
     required this.playAnswerCallBack,
     required this.reAnswerCallBack,
-    required this.showTipCallBack, 
+    required this.showTipCallBack,
     required this.simulatorTestProvider,
     required this.isExam,
   });
 
   final TestRoomPresenter testRoomPresenter;
   final SimulatorTestProvider simulatorTestProvider;
-  
+
   final Function(
-          QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
-      playAnswerCallBack;
+      QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
+  playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
   final bool isExam;
+
+  @override
+  State<TestQuestionWidget> createState() => _TestQuestionWidgetState();
+}
+
+class _TestQuestionWidgetState extends State<TestQuestionWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +211,6 @@ class TestQuestionWidget extends StatelessWidget {
 
     bool hasImage = Utils.checkHasImage(question: question);
     String fileName = question.files.last.url;
-    String imageUrl = downloadFileEP(fileName);
 
     return Card(
       child: Column(
@@ -251,7 +258,7 @@ class TestQuestionWidget extends StatelessWidget {
 
                 return InkWell(
                   onTap: () {
-                    playAnswerCallBack(question, index);
+                    widget.playAnswerCallBack(question, index);
                   },
                   child: Image(
                     image: AssetImage(iconPath),
@@ -279,10 +286,10 @@ class TestQuestionWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (hasReAnswer && !isExam)
+                        if (hasReAnswer && !widget.isExam)
                           InkWell(
                             onTap: () {
-                              reAnswerCallBack(question);
+                              widget.reAnswerCallBack(question);
                             },
                             child: const Text(
                               StringConstants.re_answer_button_title,
@@ -302,7 +309,7 @@ class TestQuestionWidget extends StatelessWidget {
                               const SizedBox(width: 20),
                               InkWell(
                                 onTap: () {
-                                  showTipCallBack(question);
+                                  widget.showTipCallBack(question);
                                 },
                                 child: const Text(
                                   StringConstants.view_tips_button_title,
@@ -324,21 +331,22 @@ class TestQuestionWidget extends StatelessWidget {
             trailing: hasImage
                 ? InkWell(
                     onTap: () {
-                      _showFullImage(imageUrl: imageUrl);
+                      _showFullImage(fileName: fileName);
                     },
-                    child: CachedNetworkImage(
-                      width: 50,
-                      height: 50,
-                      imageUrl: imageUrl,
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => const Image(
-                        image: AssetImage("assets/default_photo.png"),
-                        width: 50,
-                        height: 50,
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error_outline_sharp, weight: 60,),
-                    ),
+                child: LoadLocalImageWidget(
+                  imageUrl: fileName,
+                  isInRow: true,
+                )
+                  //   child: widget.simulatorTestProvider
+                  //           .questionImageUrlFromLocal.isNotEmpty
+                  //       ? LoadLocalImageWidget(
+                  //     imageUrl: fileName,
+                  //     isInRow: true,
+                  //         )
+                  //       : CachedNetworkImageWidget(
+                  //     imageUrl: widget.simulatorTestProvider.questionImageUrl,
+                  //           isInRow: true,
+                  //         ),
                   )
                 : const SizedBox(),
           ),
@@ -347,19 +355,19 @@ class TestQuestionWidget extends StatelessWidget {
     );
   }
 
-  void _showFullImage({required String imageUrl}) {
+  void _showFullImage({required String fileName}) {
     if (kDebugMode) {
       print("DEBUG: _showFullImage");
     }
 
-    if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
-      simulatorTestProvider.setSelectedQuestionImageUrl(imageUrl);
-      simulatorTestProvider.setShowFullImage(true);
-    } else {
-      showToastMsg(
-        msg: StringConstants.wait_until_the_exam_finished_message,
-        toastState: ToastStatesType.warning,
-      );
-    }
+    // if (widget.simulatorTestProvider.doingStatus == DoingStatus.finish) {
+    //   widget.simulatorTestProvider.setSelectedQuestionImageUrl(imageUrl);
+    //   widget.simulatorTestProvider.setShowFullImage(true);
+    // } else {
+    //   showToastMsg(
+    //     msg: StringConstants.wait_until_the_exam_finished_message,
+    //     toastState: ToastStatesType.warning,
+    //   );
+    // }
   }
 }
