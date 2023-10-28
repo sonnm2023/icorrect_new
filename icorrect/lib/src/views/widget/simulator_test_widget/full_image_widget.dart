@@ -1,13 +1,50 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 
-class FullImageWidget extends StatelessWidget {
+class FullImageWidget extends StatefulWidget {
   final String imageUrl;
   final SimulatorTestProvider provider;
 
   const FullImageWidget(
       {super.key, required this.imageUrl, required this.provider});
+
+  @override
+  State<FullImageWidget> createState() => _FullImageWidgetState();
+}
+
+class _FullImageWidgetState extends State<FullImageWidget> {
+  Future<void> _getLocalImagePath() async {
+    localImagePath = await Utils.getLocalImagePath(widget.imageUrl);
+  }
+
+  String? localImagePath;
+
+  @override
+  void initState() {
+    _getLocalImagePath();
+    super.initState();
+  }
+
+  Widget _buildChildWidget() {
+    if (localImagePath == null) {
+      return const SizedBox(
+          child: Text(StringConstants.load_image_error_message));
+    }
+
+    if (localImagePath!.isEmpty) {
+      return const SizedBox(
+          child: Text(StringConstants.load_image_error_message));
+    }
+
+    return Image.file(
+      File(localImagePath!),
+      fit: BoxFit.fill,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +56,17 @@ class FullImageWidget extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Center(
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.fitWidth,
-                  placeholder: (context, url) => const Image(
-                    image: AssetImage("assets/default_photo.png"),
-                    width: 50,
-                    height: 50,
-                  ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
+                // child: CachedNetworkImage(
+                //   imageUrl: widget.imageUrl,
+                //   fit: BoxFit.fitWidth,
+                //   placeholder: (context, url) => const Image(
+                //     image: AssetImage("assets/default_photo.png"),
+                //     width: 50,
+                //     height: 50,
+                //   ),
+                //   errorWidget: (context, url, error) => const Icon(Icons.error),
+                // ),
+                child: _buildChildWidget(),
               ),
             ),
             Positioned(
@@ -39,8 +77,8 @@ class FullImageWidget extends StatelessWidget {
                 height: 50,
                 child: InkWell(
                   onTap: () {
-                      provider.resetSelectedQuestionImageUrl();
-                      provider.setShowFullImage(false);
+                    widget.provider.resetSelectedQuestionImageUrl();
+                    widget.provider.setShowFullImage(false);
                   },
                   child: const Icon(
                     Icons.close,

@@ -712,6 +712,7 @@ class StringConstants {
       'An error occurred while deleting the video file!';
   static const String log_connection_error_message =
       'Your internet is not connect!';
+  static const String load_image_error_message = "Can not load image!";
 }
 
 const int timeout = 60;

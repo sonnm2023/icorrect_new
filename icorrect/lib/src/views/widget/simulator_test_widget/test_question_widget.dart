@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -25,8 +26,8 @@ class TestQuestionWidget extends StatefulWidget {
   final SimulatorTestProvider simulatorTestProvider;
 
   final Function(
-      QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
-  playAnswerCallBack;
+          QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
+      playAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
   final bool isExam;
@@ -333,20 +334,10 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                     onTap: () {
                       _showFullImage(fileName: fileName);
                     },
-                child: LoadLocalImageWidget(
-                  imageUrl: fileName,
-                  isInRow: true,
-                )
-                  //   child: widget.simulatorTestProvider
-                  //           .questionImageUrlFromLocal.isNotEmpty
-                  //       ? LoadLocalImageWidget(
-                  //     imageUrl: fileName,
-                  //     isInRow: true,
-                  //         )
-                  //       : CachedNetworkImageWidget(
-                  //     imageUrl: widget.simulatorTestProvider.questionImageUrl,
-                  //           isInRow: true,
-                  //         ),
+                    child: LoadLocalImageWidget(
+                      imageUrl: fileName,
+                      isInRow: true,
+                    ),
                   )
                 : const SizedBox(),
           ),
@@ -360,14 +351,14 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
       print("DEBUG: _showFullImage");
     }
 
-    // if (widget.simulatorTestProvider.doingStatus == DoingStatus.finish) {
-    //   widget.simulatorTestProvider.setSelectedQuestionImageUrl(imageUrl);
-    //   widget.simulatorTestProvider.setShowFullImage(true);
-    // } else {
-    //   showToastMsg(
-    //     msg: StringConstants.wait_until_the_exam_finished_message,
-    //     toastState: ToastStatesType.warning,
-    //   );
-    // }
+    if (widget.simulatorTestProvider.doingStatus == DoingStatus.finish) {
+      widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
+      widget.simulatorTestProvider.setShowFullImage(true);
+    } else {
+      showToastMsg(
+        msg: StringConstants.wait_until_the_exam_finished_message,
+        toastState: ToastStatesType.warning,
+      );
+    }
   }
 }
