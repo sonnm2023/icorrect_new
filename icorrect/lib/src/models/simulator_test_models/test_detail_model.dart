@@ -22,6 +22,9 @@ class TestDetailModel {
   String? _status;
   String? _updateAt;
   String? _hasOrder;
+  double? _normalSpeed;
+  double? _firstRepeatSpeed;
+  double? _secondRepeatSpeed;
 
   TestDetailModel(
       {String? activityType,
@@ -35,6 +38,9 @@ class TestDetailModel {
       String? status,
       String? updateAt,
       String? hasOrder,
+      double? normalSpeed,
+      double? firstRepeatSpeed,
+      double? secondRepeatSpeed,
       TopicModel? part2,
       TopicModel? part3}) {
     _activityType = activityType;
@@ -48,6 +54,9 @@ class TestDetailModel {
     _status = status;
     _updateAt = updateAt;
     _hasOrder = hasOrder;
+    _normalSpeed = normalSpeed;
+    _firstRepeatSpeed = firstRepeatSpeed;
+    _secondRepeatSpeed = secondRepeatSpeed;
     _part2 = part2;
     _part3 = part3;
   }
@@ -74,6 +83,12 @@ class TestDetailModel {
   set updateAt(String updateAt) => _updateAt = updateAt;
   String get hasOrder => _hasOrder ?? "";
   set hasOrder(String hasOrder) => _hasOrder = hasOrder;
+  double get normalSpeed => _normalSpeed ?? 1.0;
+  set normalSpeed(double normalSpeed) => _normalSpeed = normalSpeed;
+  double get firstRepeatSpeed => _firstRepeatSpeed ?? 0.9;
+  set firstRepeatSpeed(double firstRepeatSpeed) => _firstRepeatSpeed = firstRepeatSpeed;
+  double get secondRepeatSpeed => _secondRepeatSpeed ?? 1;
+  set secondRepeatSpeed(double secondRepeatSpeed) => _secondRepeatSpeed = secondRepeatSpeed;
   TopicModel get part2 => _part2 ?? TopicModel();
   set part2(TopicModel part2) => _part2 = part2;
   TopicModel get part3 => _part3 ?? TopicModel();
@@ -98,6 +113,9 @@ class TestDetailModel {
     _status = json['status'];
     _updateAt = json['updated_at'];
     _hasOrder = json['has_order'];
+    _normalSpeed = json['normal_speed'].toDouble();
+    _firstRepeatSpeed = json['first_repeat_speed'].toDouble();
+    _secondRepeatSpeed = json['second_repeat_speed'].toDouble();
     _part2 = json['part2'] != null ? TopicModel.fromJson(json['part2']) : null;
     if (_part2 != null) {
       _part2!.numPart = PartOfTest.part2.get;
@@ -125,6 +143,9 @@ class TestDetailModel {
     data['status'] = _status;
     data['updated_at'] = _updateAt;
     data['has_order'] = _hasOrder;
+    data['normal_speed'] = _normalSpeed;
+    data['first_repeat_speed'] = _firstRepeatSpeed;
+    data['second_repeat_speed'] = _secondRepeatSpeed;
     if (_part2 != null) {
       data['part2'] = _part2!.toJson();
     }

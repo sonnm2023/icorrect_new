@@ -1587,10 +1587,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_playingIndex == 0) {
       _videoPlayerController!.play();
     } else {
-      if (_countRepeat != 0) {
-        _videoPlayerController!.setPlaybackSpeed(0.95);
-      } else {
-        _videoPlayerController!.setPlaybackSpeed(1.0);
+      switch (_countRepeat) {
+        case 0: {
+          _videoPlayerController!.setPlaybackSpeed(_simulatorTestProvider!.currentTestDetail.normalSpeed);
+          break;
+        }
+        case 1: {
+          _videoPlayerController!.setPlaybackSpeed(_simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
+          break;
+        }
+        case 2: {
+          _videoPlayerController!.setPlaybackSpeed(_simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
+          break;
+        }
       }
 
       _createVideoSource(currentPlayingFile.url).then((value) async {
