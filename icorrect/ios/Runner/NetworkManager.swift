@@ -38,7 +38,7 @@ class NetworkManager: NSObject {
                 var paramsOS = params
                 paramsOS?.updateValue("ios_flutter", forKey: "os")
                 
-                manager.post(urlString, parameters: paramsOS) { formData in
+                manager.post(urlString, parameters: paramsOS, headers: nil) { formData in
                     formData.appendPart(withFileData: data, name: "file", fileName: "flutter_logs.txt", mimeType: "text/plain")
                 } progress: { Progress in
                 

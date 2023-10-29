@@ -35,7 +35,7 @@ target 'Runner' do
   target 'RunnerTests' do
     inherit! :search_paths
   end
-  pod 'AFNetworking', '~> 3.2'
+  pod 'AFNetworking', '~> 4.0'
 end
 
 post_install do |installer|
