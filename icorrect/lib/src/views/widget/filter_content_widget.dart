@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -56,7 +55,8 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   Widget _buildListClass() {
     return ListView.separated(
       itemCount: widget.homeWorkProvider.listClassForFilter.length,
-      itemBuilder: (_, index) => _buildClassFilterRow(widget.homeWorkProvider.listClassForFilter[index]),
+      itemBuilder: (_, index) => _buildClassFilterRow(
+          widget.homeWorkProvider.listClassForFilter[index]),
       separatorBuilder: (_, index) => const Divider(),
     );
   }
@@ -64,7 +64,8 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   Widget _buildListStatus() {
     return ListView.separated(
       itemCount: widget.homeWorkProvider.listStatusForFilter.length,
-      itemBuilder: (_, index) => _buildStatusFilterRow(widget.homeWorkProvider.listStatusForFilter[index]),
+      itemBuilder: (_, index) => _buildStatusFilterRow(
+          widget.homeWorkProvider.listStatusForFilter[index]),
       separatorBuilder: (_, index) => const Divider(),
     );
   }
@@ -72,11 +73,14 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   // Widget _buildClassFilterRow(ClassModel subject) {
   Widget _buildClassFilterRow(NewClassModel subject) {
     bool isSelected = _checkSelectedClass(subject);
-    IconData icon = isSelected ? Icons.check_box_outlined : Icons.square_outlined;
+    IconData icon =
+        isSelected ? Icons.check_box_outlined : Icons.square_outlined;
 
     return ListTile(
       leading: Icon(icon, color: AppColor.defaultPurpleColor),
-      title: Text(subject.name, style: const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
+      title: Text(subject.name,
+          style:
+              const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
       onTap: () {
         if (subject == widget.homeWorkProvider.listClassForFilter.first) {
           if (isSelected) {
@@ -97,10 +101,13 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
   Widget _buildStatusFilterRow(HomeWorkStatusModel subject) {
     bool isSelected = _checkSelectedStatus(subject);
-    IconData icon = isSelected ? Icons.check_box_outlined : Icons.square_outlined;
+    IconData icon =
+        isSelected ? Icons.check_box_outlined : Icons.square_outlined;
     return ListTile(
       leading: Icon(icon, color: AppColor.defaultPurpleColor),
-      title: Text(subject.name, style: const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
+      title: Text(subject.name,
+          style:
+              const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
       onTap: () {
         if (subject == widget.homeWorkProvider.listStatusForFilter.first) {
           if (isSelected) {
@@ -121,9 +128,12 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
   void _removeSelectedClass(NewClassModel subject) {
     //Remove select all
-    bool hasSelectAll = _listSelectedClass.map((e) => e.id).contains(widget.homeWorkProvider.listClassForFilter.first.id);
+    bool hasSelectAll = _listSelectedClass
+        .map((e) => e.id)
+        .contains(widget.homeWorkProvider.listClassForFilter.first.id);
     if (hasSelectAll) {
-      _listSelectedClass.removeWhere((element) => element.id == widget.homeWorkProvider.listClassForFilter.first.id);
+      _listSelectedClass.removeWhere((element) =>
+          element.id == widget.homeWorkProvider.listClassForFilter.first.id);
     }
 
     _listSelectedClass.removeWhere((element) => element.id == subject.id);
@@ -133,9 +143,12 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
 
   void _removeSelectedStatus(HomeWorkStatusModel subject) {
     //Remove select all
-    bool hasSelectAll = _listSelectedStatus.map((e) => e.id).contains(widget.homeWorkProvider.listStatusForFilter.first.id);
+    bool hasSelectAll = _listSelectedStatus
+        .map((e) => e.id)
+        .contains(widget.homeWorkProvider.listStatusForFilter.first.id);
     if (hasSelectAll) {
-      _listSelectedStatus.removeWhere((element) => element.id == widget.homeWorkProvider.listStatusForFilter.first.id);
+      _listSelectedStatus.removeWhere((element) =>
+          element.id == widget.homeWorkProvider.listStatusForFilter.first.id);
     }
 
     _listSelectedStatus.removeWhere((element) => element.id == subject.id);
@@ -169,13 +182,15 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
       _listSelectedClass.addAll(widget.homeWorkProvider.listClassForFilter);
 
       widget.homeWorkProvider.listSelectedClassFilter.clear();
-      widget.homeWorkProvider.listSelectedClassFilter.addAll(widget.homeWorkProvider.listClassForFilter);
+      widget.homeWorkProvider.listSelectedClassFilter
+          .addAll(widget.homeWorkProvider.listClassForFilter);
     } else {
       _listSelectedStatus.clear();
       _listSelectedStatus.addAll(widget.homeWorkProvider.listStatusForFilter);
 
       widget.homeWorkProvider.listSelectedStatusFilter.clear();
-      widget.homeWorkProvider.listSelectedStatusFilter.addAll(widget.homeWorkProvider.listStatusForFilter);
+      widget.homeWorkProvider.listSelectedStatusFilter
+          .addAll(widget.homeWorkProvider.listStatusForFilter);
     }
     setState(() {});
   }
@@ -183,7 +198,9 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   bool _checkSelectedClass(NewClassModel subject) {
     if (_listSelectedClass.isEmpty) return false;
 
-    bool hasSelectAll = _listSelectedClass.map((e) => e.id).contains(widget.homeWorkProvider.listClassForFilter.first.id);
+    bool hasSelectAll = _listSelectedClass
+        .map((e) => e.id)
+        .contains(widget.homeWorkProvider.listClassForFilter.first.id);
     bool hasContain = _listSelectedClass.map((e) => e.id).contains(subject.id);
     if (hasSelectAll || hasContain) {
       return true;
@@ -195,7 +212,9 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   bool _checkSelectedStatus(HomeWorkStatusModel subject) {
     if (_listSelectedStatus.isEmpty) return false;
 
-    bool hasSelectAll = _listSelectedStatus.map((e) => e.id).contains(widget.homeWorkProvider.listStatusForFilter.first.id);
+    bool hasSelectAll = _listSelectedStatus
+        .map((e) => e.id)
+        .contains(widget.homeWorkProvider.listStatusForFilter.first.id);
     bool hasContain = _listSelectedStatus.map((e) => e.id).contains(subject.id);
     if (hasSelectAll || hasContain) {
       return true;

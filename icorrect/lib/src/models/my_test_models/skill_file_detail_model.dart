@@ -26,53 +26,53 @@ class SkillFileDetail {
       this._staffId,
       this._distributeCode]);
 
-  int? get id => this._id ?? 0;
+  int? get id => _id ?? 0;
 
-  set id(int? value) => this._id = value;
+  set id(int? value) => _id = value;
 
-  get url => this._url ?? '';
+  get url => _url ?? '';
 
-  set url(value) => this._url = value;
+  set url(value) => _url = value;
 
-  get fileName => this._fileName ?? '';
+  get fileName => _fileName ?? '';
 
-  set fileName(value) => this._fileName = value;
+  set fileName(value) => _fileName = value;
 
-  get description => this._description ?? '';
+  get description => _description ?? '';
 
-  set description(value) => this._description = value;
+  set description(value) => _description = value;
 
-  get type => this._type ?? 0;
+  get type => _type ?? 0;
 
-  set type(value) => this._type = value;
+  set type(value) => _type = value;
 
-  get createdBy => this._createdBy ?? 0;
+  get createdBy => _createdBy ?? 0;
 
-  set createdBy(value) => this._createdBy = value;
+  set createdBy(value) => _createdBy = value;
 
-  get updatedBy => this._updatedBy ?? 0;
+  get updatedBy => _updatedBy ?? 0;
 
-  set updatedBy(value) => this._updatedBy = value;
+  set updatedBy(value) => _updatedBy = value;
 
-  get updatedAt => this._updatedAt ?? '';
+  get updatedAt => _updatedAt ?? '';
 
-  set updatedAt(value) => this._updatedAt = value;
+  set updatedAt(value) => _updatedAt = value;
 
-  get createdAt => this._createdAt ?? '';
+  get createdAt => _createdAt ?? '';
 
-  set createdAt(value) => this._createdAt = value;
+  set createdAt(value) => _createdAt = value;
 
-  get deletedAt => this._deletedAt ?? '';
+  get deletedAt => _deletedAt ?? '';
 
-  set deletedAt(value) => this._deletedAt = value;
+  set deletedAt(value) => _deletedAt = value;
 
-  get staffId => this._staffId ?? 0;
+  get staffId => _staffId ?? 0;
 
-  set staffId(value) => this._staffId = value;
+  set staffId(value) => _staffId = value;
 
-  get distributeCode => this._distributeCode ?? '';
+  get distributeCode => _distributeCode ?? '';
 
-  set distributeCode(value) => this._distributeCode = value;
+  set distributeCode(value) => _distributeCode = value;
 
   SkillFileDetail.fromJson(Map<String, dynamic> json) {
     _id = json['id'] ?? 0;

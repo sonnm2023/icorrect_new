@@ -42,81 +42,81 @@ class ResultResponseModel {
       this._pronunciationProblem,
       this._orderType]);
 
-  int? get id => this._id ?? 0;
+  int? get id => _id ?? 0;
 
-  set id(int? value) => this._id = value;
+  set id(int? value) => _id = value;
 
-  get orderId => this._orderId ?? 0;
+  get orderId => _orderId ?? 0;
 
-  set orderId(value) => this._orderId = value;
+  set orderId(value) => _orderId = value;
 
-  get overallScore => this._overallScore ?? '0.0';
+  get overallScore => _overallScore ?? '0.0';
 
-  set overallScore(value) => this._overallScore = value;
+  set overallScore(value) => _overallScore = value;
 
-  get fluency => this._fluency ?? '0.0';
+  get fluency => _fluency ?? '0.0';
 
-  set fluency(value) => this._fluency = value;
+  set fluency(value) => _fluency = value;
 
-  get lexicalResource => this._lexicalResource ?? '0.0';
+  get lexicalResource => _lexicalResource ?? '0.0';
 
-  set lexicalResource(value) => this._lexicalResource = value;
+  set lexicalResource(value) => _lexicalResource = value;
 
-  get grammatical => this._grammatical ?? '0.0';
+  get grammatical => _grammatical ?? '0.0';
 
-  set grammatical(value) => this._grammatical = value;
+  set grammatical(value) => _grammatical = value;
 
-  get pronunciation => this._pronunciation ?? '0.0';
+  get pronunciation => _pronunciation ?? '0.0';
 
-  set pronunciation(value) => this._pronunciation = value;
+  set pronunciation(value) => _pronunciation = value;
 
-  get overallComment => this._overallComment ?? '';
+  get overallComment => _overallComment ?? '';
 
-  set overallComment(value) => this._overallComment = value;
+  set overallComment(value) => _overallComment = value;
 
-  get staffCreate => this._staffCreate ?? 0;
+  get staffCreate => _staffCreate ?? 0;
 
-  set staffCreate(value) => this._staffCreate = value;
+  set staffCreate(value) => _staffCreate = value;
 
-  get staffUpdate => this._staffUpdate ?? 0;
+  get staffUpdate => _staffUpdate ?? 0;
 
-  set staffUpdate(value) => this._staffUpdate = value;
+  set staffUpdate(value) => _staffUpdate = value;
 
-  get updatedAt => this._updatedAt ?? '';
+  get updatedAt => _updatedAt ?? '';
 
-  set updatedAt(value) => this._updatedAt = value;
+  set updatedAt(value) => _updatedAt = value;
 
-  get createdAt => this._createdAt ?? '';
+  get createdAt => _createdAt ?? '';
 
-  set createdAt(value) => this._createdAt = value;
+  set createdAt(value) => _createdAt = value;
 
-  get deletedAt => this._deletedAt ?? '';
+  get deletedAt => _deletedAt ?? '';
 
-  set deletedAt(value) => this._deletedAt = value;
+  set deletedAt(value) => _deletedAt = value;
 
-  get status => this._status ?? 0;
+  get status => _status ?? 0;
 
-  set status(value) => this._status = value;
+  set status(value) => _status = value;
 
-  get fluencyProblem => this._fluencyProblem ?? [];
+  get fluencyProblem => _fluencyProblem ?? [];
 
-  set fluencyProblem(value) => this._fluencyProblem = value;
+  set fluencyProblem(value) => _fluencyProblem = value;
 
-  get lexicalResourceProblem => this._lexicalResourceProblem ?? [];
+  get lexicalResourceProblem => _lexicalResourceProblem ?? [];
 
-  set lexicalResourceProblem(value) => this._lexicalResourceProblem = value;
+  set lexicalResourceProblem(value) => _lexicalResourceProblem = value;
 
-  get grammaticalProblem => this._grammaticalProblem ?? [];
+  get grammaticalProblem => _grammaticalProblem ?? [];
 
-  set grammaticalProblem(value) => this._grammaticalProblem = value;
+  set grammaticalProblem(value) => _grammaticalProblem = value;
 
-  get pronunciationProblem => this._pronunciationProblem ?? [];
+  get pronunciationProblem => _pronunciationProblem ?? [];
 
-  set pronunciationProblem(value) => this._pronunciationProblem = value;
+  set pronunciationProblem(value) => _pronunciationProblem = value;
 
-  get orderType => this._orderType ?? 0;
+  get orderType => _orderType ?? 0;
 
-  set orderType(value) => this._orderType = value;
+  set orderType(value) => _orderType = value;
 
   bool isTooLong() {
     if (_overallComment != null && _overallComment!.isNotEmpty) {

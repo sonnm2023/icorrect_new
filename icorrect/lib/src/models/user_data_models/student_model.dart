@@ -41,81 +41,81 @@ class StudentModel {
     this._province,
   ]);
 
-  get id => this._id;
+  get id => _id;
 
-  set id(value) => this._id = value;
+  set id(value) => _id = value;
 
-  get name => this._name ?? '';
+  get name => _name ?? '';
 
-  set name(value) => this._name = value;
+  set name(value) => _name = value;
 
-  get email => this._email ?? '';
+  get email => _email ?? '';
 
-  set email(value) => this._email = value;
+  set email(value) => _email = value;
 
-  get emailVerifyAt => this._emailVerifyAt ?? '';
+  get emailVerifyAt => _emailVerifyAt ?? '';
 
-  set emailVerifyAt(value) => this._emailVerifyAt = value;
+  set emailVerifyAt(value) => _emailVerifyAt = value;
 
-  get createdAt => this._createdAt ?? '';
+  get createdAt => _createdAt ?? '';
 
-  set createdAt(value) => this._createdAt = value;
+  set createdAt(value) => _createdAt = value;
 
-  get updatedAt => this._updatedAt ?? '';
+  get updatedAt => _updatedAt ?? '';
 
-  set updatedAt(value) => this._updatedAt = value;
+  set updatedAt(value) => _updatedAt = value;
 
-  get inviteCode => this._inviteCode ?? '';
+  get inviteCode => _inviteCode ?? '';
 
-  set inviteCode(value) => this._inviteCode = value;
+  set inviteCode(value) => _inviteCode = value;
 
-  get phone => this._phone ?? '';
+  get phone => _phone ?? '';
 
-  set phone(value) => this._phone = value;
+  set phone(value) => _phone = value;
 
-  get rule => this._rule ?? '';
+  get rule => _rule ?? '';
 
-  set rule(value) => this._rule = value;
+  set rule(value) => _rule = value;
 
-  get age => this._age ?? '';
+  get age => _age ?? '';
 
-  set age(value) => this._age = value;
+  set age(value) => _age = value;
 
-  get address => this._address ?? '';
+  get address => _address ?? '';
 
-  set address(value) => this._address = value;
+  set address(value) => _address = value;
 
-  get deletedAt => this._deletedAt ?? '';
+  get deletedAt => _deletedAt ?? '';
 
-  set deletedAt(value) => this._deletedAt = value;
+  set deletedAt(value) => _deletedAt = value;
 
-  get centerId => this._centerId ?? '';
+  get centerId => _centerId ?? '';
 
-  set centerId(value) => this._centerId = value;
+  set centerId(value) => _centerId = value;
 
-  get apiId => this._apiId ?? '';
+  get apiId => _apiId ?? '';
 
-  set apiId(value) => this._apiId = value;
+  set apiId(value) => _apiId = value;
 
-  get classId => this._classId ?? '';
+  get classId => _classId ?? '';
 
-  set classId(value) => this._classId = value;
+  set classId(value) => _classId = value;
 
-  get uuid => this._uuid ?? '';
+  get uuid => _uuid ?? '';
 
-  set uuid(value) => this._uuid = value;
+  set uuid(value) => _uuid = value;
 
-  get canCreateMyBank => this._canCreateMyBank ?? '';
+  get canCreateMyBank => _canCreateMyBank ?? '';
 
-  set canCreateMyBank(value) => this._canCreateMyBank = value;
+  set canCreateMyBank(value) => _canCreateMyBank = value;
 
-  get studentClassName => this._studentClassName ?? '';
+  get studentClassName => _studentClassName ?? '';
 
-  set studentClassName(value) => this._studentClassName = value;
+  set studentClassName(value) => _studentClassName = value;
 
-  get province => this._province ?? '';
+  get province => _province ?? '';
 
-  set province(value) => this._province = value;
+  set province(value) => _province = value;
 
   StudentModel.fromJson(Map<String, dynamic> itemData) {
     _id = itemData['id'] ?? 0;

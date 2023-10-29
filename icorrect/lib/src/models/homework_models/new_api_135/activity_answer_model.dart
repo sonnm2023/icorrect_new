@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-import 'package:icorrect/src/data_sources/utils.dart';
 
 ActivityAnswer activityAnswerFromJson(String str) =>
     ActivityAnswer.fromJson(json.decode(str));

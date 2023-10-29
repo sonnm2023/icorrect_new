@@ -232,15 +232,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                                               .questionImageUrlFromLocal
                                               .isNotEmpty
                                           ? LoadLocalImageWidget(
-                                        imageUrl:
-                                                  simulatorTestProvider
-                                                      .questionImageUrlFromLocal,
-                                        isInRow: false,
+                                              imageUrl: simulatorTestProvider
+                                                  .questionImageUrlFromLocal,
+                                              isInRow: false,
                                             )
                                           : CachedNetworkImageWidget(
                                               imageUrl: simulatorTestProvider
                                                   .questionImageUrl,
-                                        isInRow: false,
+                                              isInRow: false,
                                             ),
                                     ),
                                   )
@@ -511,16 +510,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _hideCameraLive() {
-    if (null != _countRecording) {
-      _countRecording!.cancel();
-    }
-    _simulatorTestProvider!.setVisibleCameraLive(false);
-
-    if (null == _cameraService) {
-      return;
-    }
-
     if (_isExam) {
+      if (null != _countRecording) {
+        _countRecording!.cancel();
+      }
+      _simulatorTestProvider!.setVisibleCameraLive(false);
+
+      if (null == _cameraService) {
+        return;
+      }
+
       _saveVideoRecording();
     }
   }
@@ -1190,16 +1189,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //     handleWhenFinishType: HandleWhenFinish.reviewingPlayTheQuestionType);
   }
 
-  void _playTheAnswerOfQuestion(QuestionTopicModel question) async {
-    _simulatorTestProvider!.setIsReviewingPlayAnswer(true);
-
-    String path = await Utils.getReviewingAudioPathToPlay(
-      question,
-      _simulatorTestProvider!.currentTestDetail.testId.toString(),
-    );
-    _playAnswerAudio(path, question);
-  }
-
   void _continueReviewing() {
     int index = _simulatorTestProvider!.reviewingCurrentIndex + 1;
     _simulatorTestProvider!.updateReviewingCurrentIndex(index);
@@ -1588,18 +1577,24 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _videoPlayerController!.play();
     } else {
       switch (_countRepeat) {
-        case 0: {
-          _videoPlayerController!.setPlaybackSpeed(_simulatorTestProvider!.currentTestDetail.normalSpeed);
-          break;
-        }
-        case 1: {
-          _videoPlayerController!.setPlaybackSpeed(_simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
-          break;
-        }
-        case 2: {
-          _videoPlayerController!.setPlaybackSpeed(_simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
-          break;
-        }
+        case 0:
+          {
+            _videoPlayerController!.setPlaybackSpeed(
+                _simulatorTestProvider!.currentTestDetail.normalSpeed);
+            break;
+          }
+        case 1:
+          {
+            _videoPlayerController!.setPlaybackSpeed(
+                _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
+            break;
+          }
+        case 2:
+          {
+            _videoPlayerController!.setPlaybackSpeed(
+                _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
+            break;
+          }
       }
 
       _createVideoSource(currentPlayingFile.url).then((value) async {
@@ -1608,7 +1603,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               "DEBUG: _createVideoSource: ${currentPlayingFile.url} - $value");
         }
         if (null == value) {
-          //TODO: ReDownload here
           if (kDebugMode) {
             print("DEBUG: ReDownload here");
           }
@@ -2072,12 +2066,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
   }
 
-  void _reRecordReanswer() {
-    if (kDebugMode) {
-      print("DEBUG: _reRecordReanswer");
-    }
-  }
-
   bool _isLastAnswer(QuestionTopicModel question) {
     return question.answers[question.repeatIndex].url ==
         question.answers.last.url;
@@ -2439,6 +2427,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _loading) {
       _loading!.hide();
     }
+    //Just for test
+    // _simulatorTestProvider!.setVisibleSaveTheTest(false);
 
     Fluttertoast.showToast(
         msg: msg,

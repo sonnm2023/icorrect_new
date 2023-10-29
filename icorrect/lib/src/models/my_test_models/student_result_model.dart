@@ -44,81 +44,81 @@ class StudentResultModel {
     this._teacherName,
   ]);
 
-  int? get id => this._id;
+  int? get id => _id;
 
-  set id(int? value) => this._id = value;
+  set id(int? value) => _id = value;
 
-  get activityId => this._activityId;
+  get activityId => _activityId;
 
-  set activityId(value) => this._activityId = value;
+  set activityId(value) => _activityId = value;
 
-  get testId => this._testId;
+  get testId => _testId;
 
-  set testId(value) => this._testId = value;
+  set testId(value) => _testId = value;
 
-  get email => this._email;
+  get email => _email;
 
-  set email(value) => this._email = value;
+  set email(value) => _email = value;
 
-  get createdAt => this._createdAt;
+  get createdAt => _createdAt;
 
-  set createdAt(value) => this._createdAt = value;
+  set createdAt(value) => _createdAt = value;
 
-  get updateAt => this._updateAt;
+  get updateAt => _updateAt;
 
-  set updateAt(value) => this._updateAt = value;
+  set updateAt(value) => _updateAt = value;
 
-  get orderId => this._orderId;
+  get orderId => _orderId;
 
-  set orderId(value) => this._orderId = value;
+  set orderId(value) => _orderId = value;
 
-  get publishResponse => this._publishResponse;
+  get publishResponse => _publishResponse;
 
-  set publishResponse(value) => this._publishResponse = value;
+  set publishResponse(value) => _publishResponse = value;
 
-  get overallScore => this._overallScore ?? "";
+  get overallScore => _overallScore ?? "";
 
-  set overallScore(value) => this._overallScore = value;
+  set overallScore(value) => _overallScore = value;
 
-  get publish => this._publish;
+  get publish => _publish;
 
-  set publish(value) => this._publish = value;
+  set publish(value) => _publish = value;
 
-  get realActivityId => this._realActivityId;
+  get realActivityId => _realActivityId;
 
-  set realActivityId(value) => this._realActivityId = value;
+  set realActivityId(value) => _realActivityId = value;
 
-  get example => this._example;
+  get example => _example;
 
-  set example(value) => this._example = value;
+  set example(value) => _example = value;
 
-  get teacherId => this._teacherId;
+  get teacherId => _teacherId;
 
-  set teacherId(value) => this._teacherId = value;
+  set teacherId(value) => _teacherId = value;
 
-  get aiOrder => this._aiOrder;
+  get aiOrder => _aiOrder;
 
-  set aiOrder(value) => this._aiOrder = value;
+  set aiOrder(value) => _aiOrder = value;
 
-  get aiScore => this._aiScore ?? "";
+  get aiScore => _aiScore ?? "";
 
-  set aiScore(value) => this._aiScore = value;
+  set aiScore(value) => _aiScore = value;
 
-  get students => this._students;
+  get students => _students;
 
-  set students(value) => this._students = value;
+  set students(value) => _students = value;
 
-  get activityResult => this._activityResult;
+  get activityResult => _activityResult;
 
-  set activityResult(value) => this._activityResult = value;
+  set activityResult(value) => _activityResult = value;
 
-  get status => this._status;
+  get status => _status;
 
-  set status(value) => this._status = value;
+  set status(value) => _status = value;
 
-  get teacherName => this._teacherName;
+  get teacherName => _teacherName;
 
-  set teacherName(value) => this._teacherName = value;
+  set teacherName(value) => _teacherName = value;
 
   bool haveResponse() {
     return _orderId != null &&

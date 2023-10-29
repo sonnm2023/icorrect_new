@@ -47,7 +47,7 @@ class SimulatorTestScreen extends StatefulWidget {
 
 class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
-    implements SimulatorTestViewContract, ActionAlertListener {
+    implements SimulatorTestViewContract {
   SimulatorTestPresenter? _simulatorTestPresenter;
 
   SimulatorTestProvider? _simulatorTestProvider;
@@ -722,16 +722,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     Queue<TopicModel> queue = Queue<TopicModel>();
     queue.addAll(list);
     _simulatorTestProvider!.setTopicsQueue(queue);
-  }
-
-  @override
-  void onAlertExit(String keyInfo) {
-    // TODO: implement onAlertExit
-  }
-
-  @override
-  void onAlertNextStep(String keyInfo) {
-    // TODO: implement onAlertNextStep
   }
 
   @override

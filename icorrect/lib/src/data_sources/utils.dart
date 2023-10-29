@@ -272,13 +272,7 @@ class Utils {
   }
 
   static bool isNumeric(String str) {
-    try {
-      var value = double.parse(str);
-    } on FormatException {
-      return false;
-    } finally {
-      return true;
-    }
+    return int.tryParse(str) != null || double.tryParse(str) != null;
   }
 
   static UserAuthenStatusUI getUserAuthenStatus(int status) {
@@ -993,8 +987,7 @@ class Utils {
   static void addConnectionErrorLog(BuildContext context) async {
     LogModel? log;
     if (context.mounted) {
-      log = await prepareToCreateLog(context,
-          action: LogEvent.checkConnection);
+      log = await prepareToCreateLog(context, action: LogEvent.checkConnection);
     }
 
     //Add log

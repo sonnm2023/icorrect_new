@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class FocusUserFaceWidget extends StatefulWidget {
   const FocusUserFaceWidget({super.key});
@@ -19,7 +16,7 @@ class _FocusUserFaceWidgetState extends State<FocusUserFaceWidget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
     _animation = Tween<double>(begin: 2, end: 1.3).animate(_controller!);
     _controller!.forward();
@@ -40,7 +37,7 @@ class _FocusUserFaceWidgetState extends State<FocusUserFaceWidget>
         return Center(
           child: Transform.scale(
             scale: _animation!.value,
-            child: Container(
+            child: SizedBox(
               width: 200,
               height: 200,
               child: CustomPaint(
@@ -62,15 +59,15 @@ class CornerBorderPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
-    final cornerSize = 30.0;
-    final halfCornerSize = cornerSize / 2;
+    const cornerSize = 30.0;
+    const halfCornerSize = cornerSize / 2;
 
     // Draw perpendicular lines in each corner
     // Top-left corner
-    canvas.drawLine(Offset(0, halfCornerSize),
-        Offset(halfCornerSize, halfCornerSize), paint);
-    canvas.drawLine(Offset(halfCornerSize, 0),
-        Offset(halfCornerSize, halfCornerSize), paint);
+    canvas.drawLine(const Offset(0, halfCornerSize),
+        const Offset(halfCornerSize, halfCornerSize), paint);
+    canvas.drawLine(const Offset(halfCornerSize, 0),
+        const Offset(halfCornerSize, halfCornerSize), paint);
 
     // Top-right corner
     canvas.drawLine(Offset(size.width, halfCornerSize),
