@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters
+
 import 'dart:convert';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 
@@ -27,7 +29,7 @@ class ActivitiesModel {
       String? activityReleaseTime,
       String? activityType,
       int? activityStatus,
-        String? activityTestOption,
+      String? activityTestOption,
       ActivityAnswer? activityAnswer}) {
     _classId = classId;
     _syllabusId = syllabusId;

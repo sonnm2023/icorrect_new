@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
-import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
-import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
-import 'package:icorrect/src/views/screen/video_authentication/video_authentication_record.dart';
 import 'package:provider/provider.dart';
 import '../../data_sources/constants.dart';
 import '../../data_sources/utils.dart';

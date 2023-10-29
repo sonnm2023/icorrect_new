@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -203,7 +202,7 @@ class TestRoomPresenter {
     required bool isExam,
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
-  }) async { 
+  }) async {
     assert(_view != null && _testRepository != null);
 
     //Add log
@@ -459,7 +458,7 @@ class TestRoomPresenter {
       logAction: null,
     );
     if (kDebugMode) {
-      print("DEBUG: submitTest");
+      print("DEBUG: update reanswer");
       print("DEBUG: testId = $testId");
       print("DEBUG: activityId = $activityId");
     }

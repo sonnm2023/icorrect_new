@@ -32,60 +32,60 @@ class SkillProblem {
       this._fileName,
       this._fileDetail]);
 
-  int? get id => this._id ?? 0;
+  int? get id => _id ?? 0;
 
-  set id(int? value) => this._id = value;
+  set id(int? value) => _id = value;
 
-  get problem => this._problem ?? '';
+  get problem => _problem ?? '';
 
-  set problem(value) => this._problem = value;
+  set problem(value) => _problem = value;
 
-  get solution => this._solution ?? '';
+  get solution => _solution ?? '';
 
-  set solution(value) => this._solution = value;
+  set solution(value) => _solution = value;
 
-  get type => this._type ?? 0;
-  set type(value) => this._type = value;
+  get type => _type ?? 0;
+  set type(value) => _type = value;
 
-  get orderId => this._orderId ?? 0;
+  get orderId => _orderId ?? 0;
 
-  set orderId(value) => this._orderId = value;
+  set orderId(value) => _orderId = value;
 
-  get component => this._component ?? '';
+  get component => _component ?? '';
 
-  set component(value) => this._component = value;
+  set component(value) => _component = value;
 
-  get fileId => this._fileId ?? 0;
+  get fileId => _fileId ?? 0;
 
-  set fileId(value) => this._fileId = value;
+  set fileId(value) => _fileId = value;
 
-  get exampleText => this._exampleText ?? '';
+  get exampleText => _exampleText ?? '';
 
-  set exampleText(value) => this._exampleText = value;
+  set exampleText(value) => _exampleText = value;
 
-  get updatedAt => this._updatedAt ?? '';
+  get updatedAt => _updatedAt ?? '';
 
-  set updatedAt(value) => this._updatedAt = value;
+  set updatedAt(value) => _updatedAt = value;
 
-  get createdAt => this._createdAt ?? '';
+  get createdAt => _createdAt ?? '';
 
-  set createdAt(value) => this._createdAt = value;
+  set createdAt(value) => _createdAt = value;
 
-  get deletedAt => this._deletedAt ?? '';
+  get deletedAt => _deletedAt ?? '';
 
-  set deletedAt(value) => this._deletedAt = value;
+  set deletedAt(value) => _deletedAt = value;
 
-  get typeName => this._typeName ?? '';
+  get typeName => _typeName ?? '';
 
-  set typeName(value) => this._typeName = value;
+  set typeName(value) => _typeName = value;
 
-  get fileName => this._fileName ?? '';
+  get fileName => _fileName ?? '';
 
-  set fileName(value) => this._fileName = value;
+  set fileName(value) => _fileName = value;
 
-  SkillFileDetail? get fileDetail => this._fileDetail;
+  SkillFileDetail? get fileDetail => _fileDetail;
 
-  set fileDetail(value) => this._fileDetail = value;
+  set fileDetail(value) => _fileDetail = value;
 
   SkillProblem.fromJson(Map<String, dynamic> json) {
     _id = json['id'] ?? 0;

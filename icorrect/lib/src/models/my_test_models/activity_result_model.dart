@@ -59,117 +59,117 @@ class ActivityResult {
     this._questionIndex,
   ]);
 
-  get id => this._id ?? 0;
+  get id => _id ?? 0;
 
-  set id(value) => this._id = value;
+  set id(value) => _id = value;
 
-  get name => this._name ?? '';
+  get name => _name ?? '';
 
-  set name(value) => this._name = value;
+  set name(value) => _name = value;
 
-  get type => this._type ?? '';
+  get type => _type ?? '';
 
-  set type(value) => this._type = value;
+  set type(value) => _type = value;
 
-  get test => this._test;
+  get test => _test;
 
-  set test(value) => this._test = value;
+  set test(value) => _test = value;
 
-  get startDate => this._startDate;
+  get startDate => _startDate;
 
-  set startDate(value) => this._startDate = value;
+  set startDate(value) => _startDate = value;
 
-  get startTime => this._startTime;
+  get startTime => _startTime;
 
-  set startTime(value) => this._startTime = value;
+  set startTime(value) => _startTime = value;
 
-  get endTime => this._endTime;
+  get endTime => _endTime;
 
-  set endTime(value) => this._endTime = value;
+  set endTime(value) => _endTime = value;
 
-  get endDate => this._endDate;
+  get endDate => _endDate;
 
-  set endDate(value) => this._endDate = value;
+  set endDate(value) => _endDate = value;
 
-  get syllabusId => this._syllabusId;
+  get syllabusId => _syllabusId;
 
-  set syllabusId(value) => this._syllabusId = value;
+  set syllabusId(value) => _syllabusId = value;
 
-  get status => this._status;
+  get status => _status;
 
-  set status(value) => this._status = value;
+  set status(value) => _status = value;
 
-  get createdAt => this._createdAt;
+  get createdAt => _createdAt;
 
-  set createdAt(value) => this._createdAt = value;
+  set createdAt(value) => _createdAt = value;
 
-  get updatedAt => this._updatedAt;
+  get updatedAt => _updatedAt;
 
-  set updatedAt(value) => this._updatedAt = value;
+  set updatedAt(value) => _updatedAt = value;
 
-  get activityId => this._activityId;
+  get activityId => _activityId;
 
-  set activityId(value) => this._activityId = value;
+  set activityId(value) => _activityId = value;
 
-  get tips => this._tips;
+  get tips => _tips;
 
-  set tips(value) => this._tips = value;
+  set tips(value) => _tips = value;
 
-  get cost => this._cost;
+  get cost => _cost;
 
-  set cost(value) => this._cost = value;
+  set cost(value) => _cost = value;
 
-  get bankClone => this._bankClone;
+  get bankClone => _bankClone;
 
-  set bankClone(value) => this._bankClone = value;
+  set bankClone(value) => _bankClone = value;
 
-  get sendEmail => this._sendEmail;
+  get sendEmail => _sendEmail;
 
-  set sendEmail(value) => this._sendEmail = value;
+  set sendEmail(value) => _sendEmail = value;
 
-  get uuid => this._uuid;
+  get uuid => _uuid;
 
-  set uuid(value) => this._uuid = value;
+  set uuid(value) => _uuid = value;
 
-  get activityBankMyBank => this._activityBankMyBank;
+  get activityBankMyBank => _activityBankMyBank;
 
-  set activityBankMyBank(value) => this._activityBankMyBank = value;
+  set activityBankMyBank(value) => _activityBankMyBank = value;
 
-  get packageId => this._packageId;
+  get packageId => _packageId;
 
-  set packageId(value) => this._packageId = value;
+  set packageId(value) => _packageId = value;
 
-  get bank => this._bank;
+  get bank => _bank;
 
-  set bank(value) => this._bank = value;
+  set bank(value) => _bank = value;
 
-  get bankName => this._bankName;
+  get bankName => _bankName;
 
-  set bankName(value) => this._bankName = value;
+  set bankName(value) => _bankName = value;
 
-  get question => this._question;
+  get question => _question;
 
-  set question(value) => this._question = value;
+  set question(value) => _question = value;
 
-  get bankType => this._bankType;
+  get bankType => _bankType;
 
-  set bankType(value) => this._bankType = value;
+  set bankType(value) => _bankType = value;
 
-  get bankDistributeCode => this._bankDistributeCode;
+  get bankDistributeCode => _bankDistributeCode;
 
-  set bankDistributeCode(value) => this._bankDistributeCode = value;
+  set bankDistributeCode(value) => _bankDistributeCode = value;
 
-  get isTested => this._isTested;
+  get isTested => _isTested;
 
-  set isTested(value) => this._isTested = value;
+  set isTested(value) => _isTested = value;
 
-  get activityType => this._activityType;
+  get activityType => _activityType;
 
-  set activityType(value) => this._activityType = value;
+  set activityType(value) => _activityType = value;
 
-  get questionIndex => this._questionIndex;
+  get questionIndex => _questionIndex;
 
-  set questionIndex(value) => this._questionIndex = value;
+  set questionIndex(value) => _questionIndex = value;
 
   ActivityResult.fromJson(Map<String, dynamic> itemData) {
     _id = itemData['id'] ?? 0;

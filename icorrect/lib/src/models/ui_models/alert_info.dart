@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters, prefer_typing_uninitialized_variables
+
 class AlertInfo {
   var _title;
   var _description;
@@ -5,15 +7,15 @@ class AlertInfo {
 
   AlertInfo([this._title, this._description, this._typeAlert]);
 
-  get title => this._title;
+  get title => _title;
 
-  set title(var value) => this._title = value;
+  set title(var value) => _title = value;
 
-  get description => this._description;
+  get description => _description;
 
-  set description(value) => this._description = value;
+  set description(value) => _description = value;
 
-  get typeAlert => this._typeAlert;
+  get typeAlert => _typeAlert;
 
-  set typeAlert(value) => this._typeAlert = value;
+  set typeAlert(value) => _typeAlert = value;
 }

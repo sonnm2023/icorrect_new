@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'dart:core';
-import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,8 +25,6 @@ import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:workmanager/workmanager.dart';
-
-import '../video_authentication/submit_video_auth.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;

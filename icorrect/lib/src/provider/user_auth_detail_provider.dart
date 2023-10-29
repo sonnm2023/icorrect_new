@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/models/user_authentication/user_authentication_detail.dart';
