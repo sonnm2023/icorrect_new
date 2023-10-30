@@ -308,7 +308,8 @@ class SimulatorTestPresenter {
 
         //Add image url
         //For question has an image
-        if (q.files.length > 1) {
+        bool hasImage = Utils.checkHasImage(question: q);
+        if (hasImage) {
           imageFiles.add(q.files.elementAt(1));
         }
       }
@@ -346,8 +347,8 @@ class SimulatorTestPresenter {
     String imageUrl,
   ) async {
     //Add log
-    LogModel log = await Utils.prepareToCreateLog(context,
-          action: LogEvent.imageDownload);
+    LogModel log =
+        await Utils.prepareToCreateLog(context, action: LogEvent.imageDownload);
     //Add more information into log
     Map<String, dynamic> imageFileDownloadInfo = {
       "activity_id": activityId,
@@ -384,9 +385,7 @@ class SimulatorTestPresenter {
             .get(imageUrl, options: Options(responseType: ResponseType.bytes));
         await file.writeAsBytes(response.data);
 
-        log.addData(
-            key: "local_image_file_path",
-            value: filePath);
+        log.addData(key: "local_image_file_path", value: filePath);
 
         //Add log
         Utils.prepareLogData(
