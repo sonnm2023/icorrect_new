@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {
   final String imageUrl;
@@ -45,7 +46,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
                 Icons.error_outline_sharp,
                 size: 80,
               ),
-              Text('Lỗi tải hình ảnh'),
+              Text(StringConstants.loading_image_error_message),
             ],
           );
         },

@@ -59,7 +59,7 @@ class SimulatorTestPresenter {
   // http.Client? client;
   Dio? dio;
   final Map<String, String> headers = {
-    'Accept': 'application/json',
+    StringConstants.k_accept: 'application/json',
   };
 
   Future<void> initializeData() async {
@@ -117,7 +117,8 @@ class SimulatorTestPresenter {
   }) async {
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser == null) {
-      _view!.onGetTestDetailError("Loading homework detail error!");
+      _view!.onGetTestDetailError(
+          StringConstants.load_detail_homework_error_message);
       return;
     }
 
@@ -146,8 +147,8 @@ class SimulatorTestPresenter {
         print(
             'DEBUG activity id : ${homeworkId.toString()}, create test : ${map.toString()}');
       }
-      if (map['error_code'] == 200) {
-        Map<String, dynamic> dataMap = map['data'];
+      if (map[StringConstants.k_error_code] == 200) {
+        Map<String, dynamic> dataMap = map[StringConstants.k_data];
         TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
         tempTestDetailModel = TestDetailModel.fromJson(dataMap);
         testDetail = TestDetailModel.fromJson(dataMap);
@@ -196,7 +197,7 @@ class SimulatorTestPresenter {
           log: log,
           data: null,
           message:
-              "Loading homework detail error: ${map['error_code']}${map['status']}",
+              "Loading homework detail error: ${map[StringConstants.k_error_code]}${map[StringConstants.k_status]}",
           status: LogEvent.failed,
         );
 
@@ -351,9 +352,9 @@ class SimulatorTestPresenter {
         await Utils.prepareToCreateLog(context, action: LogEvent.imageDownload);
     //Add more information into log
     Map<String, dynamic> imageFileDownloadInfo = {
-      "activity_id": activityId,
-      "test_id": testId,
-      "image_url": imageUrl,
+      StringConstants.k_activity_id: activityId,
+      StringConstants.k_test_id: testId,
+      StringConstants.k_image_url: imageUrl,
     };
     log.addData(
         key: "image_file_download_info",
@@ -486,10 +487,11 @@ class SimulatorTestPresenter {
               log = await Utils.prepareToCreateLog(context,
                   action: LogEvent.callApiDownloadFile);
               Map<String, dynamic> fileDownloadInfo = {
-                "activity_id": activityId,
-                "test_id": testDetail.testId.toString(),
-                "file_name": fileTopic,
-                "file_path": downloadFileEP(fileNameForDownload),
+                StringConstants.k_activity_id: activityId,
+                StringConstants.k_test_id: testDetail.testId.toString(),
+                StringConstants.k_file_name: fileTopic,
+                StringConstants.k_file_path:
+                    downloadFileEP(fileNameForDownload),
               };
               log.addData(
                   key: "file_download_info",
@@ -725,9 +727,9 @@ class SimulatorTestPresenter {
         }
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        dataLog['response'] = json;
+        dataLog[StringConstants.k_response] = json;
 
-        if (json['error_code'] == 200) {
+        if (json[StringConstants.k_error_code] == 200) {
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -736,7 +738,8 @@ class SimulatorTestPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onSubmitTestSuccess('Save your answers successfully!');
+          _view!
+              .onSubmitTestSuccess(StringConstants.save_answer_success_message);
         } else {
           //Add log
           Utils.prepareLogData(
@@ -746,7 +749,7 @@ class SimulatorTestPresenter {
             status: LogEvent.failed,
           );
 
-          _view!.onSubmitTestFail("Has an error when submit this test!");
+          _view!.onSubmitTestFail(StringConstants.submit_test_error_message);
         }
       }).catchError((onError) {
         //Add log
@@ -759,41 +762,38 @@ class SimulatorTestPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onSubmitTestFail(
-            "invalid_return_type_for_catch_error: Has an error when submit this test!");
+            StringConstants.submit_test_error_invalid_return_type_message);
       });
     } on TimeoutException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "TimeoutException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_timeout,
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
-          "TimeoutException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(StringConstants.submit_test_error_timeout);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "SocketException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_socket,
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
-          "SocketException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(StringConstants.submit_test_error_socket);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "ClientException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
-          "ClientException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(StringConstants.submit_test_error_client);
     }
   }
 
@@ -829,29 +829,31 @@ class SimulatorTestPresenter {
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+      StringConstants.k_content_type: 'multipart/form-data',
+      StringConstants.k_authorization: 'Bearer ${await Utils.getAccessToken()}'
     });
 
     Map<String, String> formData = {};
 
-    formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries([MapEntry('activity_id', activityId)]);
+    formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
+    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
     formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
 
     if (Platform.isAndroid) {
-      formData.addEntries([const MapEntry('os', "android")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
     } else {
-      formData.addEntries([const MapEntry('os', "ios")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "ios")]);
     }
     String appVersion = await Utils.getAppVersion();
-    formData.addEntries([MapEntry('app_version', appVersion)]);
+    formData.addEntries([MapEntry(StringConstants.k_app_version, appVersion)]);
 
     if (null != logAction) {
       if (logAction.isNotEmpty) {
-        formData.addEntries([MapEntry('log_action', jsonEncode(logAction))]);
+        formData.addEntries(
+            [MapEntry(StringConstants.k_log_action, jsonEncode(logAction))]);
       } else {
-        formData.addEntries([const MapEntry('log_action', '[]')]);
+        formData
+            .addEntries([const MapEntry(StringConstants.k_log_action, '[]')]);
       }
     }
 
@@ -904,15 +906,16 @@ class SimulatorTestPresenter {
 
     if (null != videoConfirmFile) {
       String fileName = videoConfirmFile.path.split('/').last;
-      formData.addEntries([MapEntry('video_confirm', fileName)]);
+      formData
+          .addEntries([MapEntry(StringConstants.k_video_confirm, fileName)]);
       request.files.add(await http.MultipartFile.fromPath(
-          'video_confirm', videoConfirmFile.path));
+          StringConstants.k_video_confirm, videoConfirmFile.path));
     }
 
     request.fields.addAll(formData);
 
     if (null != dataLog) {
-      dataLog['request_data'] = formData.toString();
+      dataLog[StringConstants.k_request_data] = formData.toString();
     }
 
     return request;

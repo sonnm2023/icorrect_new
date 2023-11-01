@@ -4,20 +4,19 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
-
-import '../data_sources/api_urls.dart';
-import '../data_sources/constants.dart';
-import '../data_sources/local/file_storage_helper.dart';
-import '../data_sources/utils.dart';
-import '../models/simulator_test_models/file_topic_model.dart';
-import '../models/simulator_test_models/question_topic_model.dart';
-import '../models/simulator_test_models/test_detail_model.dart';
-import '../models/simulator_test_models/topic_model.dart';
-import '../models/ui_models/alert_info.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class OtherStudentTestContract {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
@@ -39,7 +38,7 @@ class OtherStudentTestPresenter {
 
   Dio? dio;
   final Map<String, String> headers = {
-    'Accept': 'application/json',
+    StringConstants.k_accept: 'application/json',
   };
 
   int _autoRequestDownloadTimes = 0;
@@ -80,8 +79,8 @@ class OtherStudentTestPresenter {
         print('DEBUG : test of other student : ${json.toString()}');
       }
       if (json.isNotEmpty) {
-        if (json['error_code'] == 200) {
-          Map<String, dynamic> dataMap = json['data'];
+        if (json[StringConstants.k_error_code] == 200) {
+          Map<String, dynamic> dataMap = json[StringConstants.k_data];
           TestDetailModel testDetailModel =
               TestDetailModel.fromMyTestJson(dataMap);
           testDetail = TestDetailModel.fromMyTestJson(dataMap);
@@ -216,12 +215,12 @@ class OtherStudentTestPresenter {
                   '${await FileStorageHelper.getFolderPath(MediaType.audio, testDetail.testId.toString())}\\$fileTopic';
               Response response = await dio!.download(url, savePath);
               if (kDebugMode) {
-                print('DEBUG save path: $savePath');
+                print('DEBUG: Save path: $savePath');
               }
 
               if (response.statusCode == 200) {
                 if (kDebugMode) {
-                  print('save Path: $savePath');
+                  print('DEBUG: Save Path: $savePath');
                 }
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.downloadFilesSuccess(testDetail, fileTopic, percent,

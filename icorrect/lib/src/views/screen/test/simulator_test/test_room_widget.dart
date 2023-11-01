@@ -611,7 +611,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           await Utils.prepareToCreateLog(context, action: action);
       if (null != data) {
         if (data.isNotEmpty) {
-          actionLog.addData(key: "data", value: jsonEncode(data));
+          actionLog.addData(
+              key: StringConstants.k_data, value: jsonEncode(data));
         }
       }
       Utils.addLog(actionLog, LogEvent.none);
@@ -620,8 +621,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _startToDoTest() {
     Map<String, dynamic> info = {
-      "activity_id": widget.homeWorkModel.activityId.toString(),
-      "test_id": _simulatorTestProvider!.currentTestDetail.testId.toString(),
+      StringConstants.k_activity_id: widget.homeWorkModel.activityId.toString(),
+      StringConstants.k_test_id:
+          _simulatorTestProvider!.currentTestDetail.testId.toString(),
     };
     _createLog(action: LogEvent.actionStartToDoTest, data: info);
 
@@ -712,10 +714,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       int second = Utils.getBeingOutTimeInSeconds(_logStartTime!, _logEndTime!);
 
       var jsonData = {
-        "question_id": _currentQuestion!.id.toString(),
-        "question_text": _currentQuestion!.content,
-        "type": _typeOfActionLog,
-        "time": second
+        StringConstants.k_question_id: _currentQuestion!.id.toString(),
+        StringConstants.k_question_text: _currentQuestion!.content,
+        StringConstants.k_type: _typeOfActionLog,
+        StringConstants.k_time: second
       };
 
       _resetActionLogTimes();
@@ -1039,8 +1041,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _finishAnswerCallBack(QuestionTopicModel questionTopicModel) {
     Map<String, dynamic> info = {
-      "question_id": questionTopicModel.id.toString(),
-      "question_content": questionTopicModel.content,
+      StringConstants.k_question_id: questionTopicModel.id.toString(),
+      StringConstants.k_question_content: questionTopicModel.content,
     };
 
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
@@ -1109,8 +1111,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     Map<String, dynamic> info = {
-      "question_id": questionTopicModel.id.toString(),
-      "question_content": questionTopicModel.content,
+      StringConstants.k_question_id: questionTopicModel.id.toString(),
+      StringConstants.k_question_content: questionTopicModel.content,
     };
     _createLog(action: LogEvent.actionRepeatQuestion, data: info);
 
@@ -1557,8 +1559,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     Map<String, dynamic> info = {
-      "file_id": currentPlayingFile.id.toString(),
-      "file_url": currentPlayingFile.url,
+      StringConstants.k_file_id: currentPlayingFile.id.toString(),
+      StringConstants.k_file_url: currentPlayingFile.url,
     };
     _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
 
@@ -1694,7 +1696,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     Map<String, dynamic> info = {
-      "file_path": path,
+      StringConstants.k_file_path: path,
     };
     _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
@@ -2308,7 +2310,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onClickSaveTheTest() async {
     //Check connection
     var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
           SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
         await showDialog(

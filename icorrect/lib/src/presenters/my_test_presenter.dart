@@ -6,22 +6,21 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-
-import '../data_sources/api_urls.dart';
-import '../data_sources/constants.dart';
-import '../data_sources/local/file_storage_helper.dart';
-import '../data_sources/utils.dart';
-import '../models/simulator_test_models/topic_model.dart';
-import '../models/ui_models/alert_info.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class MyTestContract {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
@@ -47,7 +46,7 @@ class MyTestPresenter {
 
   Dio? dio;
   final Map<String, String> headers = {
-    'Accept': 'application/json',
+    StringConstants.k_accept: 'application/json',
   };
 
   int _autoRequestDownloadTimes = 0;
@@ -95,7 +94,7 @@ class MyTestPresenter {
     _repository!.getMyTestDetail(testId).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
       if (json.isNotEmpty) {
-        if (json['error_code'] == 200) {
+        if (json[StringConstants.k_error_code] == 200) {
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -104,7 +103,7 @@ class MyTestPresenter {
             status: LogEvent.success,
           );
 
-          Map<String, dynamic> dataMap = json['data'];
+          Map<String, dynamic> dataMap = json[StringConstants.k_data];
           TestDetailModel testDetailModel =
               TestDetailModel.fromMyTestJson(dataMap);
           testDetail = TestDetailModel.fromMyTestJson(dataMap);
@@ -128,7 +127,7 @@ class MyTestPresenter {
             log: log,
             data: null,
             message:
-                "Loading my test detail error: ${json['error_code']}${json['status']}",
+                "Loading my test detail error: ${json[StringConstants.k_error_code]}${json[StringConstants.k_status]}",
             status: LogEvent.failed,
           );
 
@@ -197,7 +196,7 @@ class MyTestPresenter {
       QuestionTopicModel question, int index) {
     return question.copyWith(
         id: question.id,
-        content: "Ask for repeat question",
+        content: StringConstants.repeat_question,
         type: question.type,
         topicId: question.topicId,
         tips: question.tips,
@@ -285,13 +284,13 @@ class MyTestPresenter {
             log = await Utils.prepareToCreateLog(context,
                 action: LogEvent.callApiDownloadFile);
             Map<String, dynamic> fileDownloadInfo = {
-              "activity_id": activityId,
-              "test_id": testDetail.testId.toString(),
-              "file_name": fileTopic,
-              "file_path": downloadFileEP(fileNameForDownload),
+              StringConstants.k_activity_id: activityId,
+              StringConstants.k_test_id: testDetail.testId.toString(),
+              StringConstants.k_file_name: fileTopic,
+              StringConstants.k_file_path: downloadFileEP(fileNameForDownload),
             };
             log.addData(
-                key: "file_download_info",
+                key: StringConstants.k_file_download_info,
                 value: json.encode(fileDownloadInfo));
           }
 
@@ -304,7 +303,6 @@ class MyTestPresenter {
 
           if (fileType.isNotEmpty &&
               !await Utils.isExist(fileTopic, _mediaType(fileType))) {
-                
             String url = downloadFileEP(fileNameForDownload);
 
             try {
@@ -528,12 +526,13 @@ class MyTestPresenter {
     try {
       _repository!.updateAnswers(multiRequest).then((value) {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        dataLog['response'] = json;
+        dataLog[StringConstants.k_response] = json;
 
         if (kDebugMode) {
           print("DEBUG: error form: ${json.toString()}");
         }
-        if (json['error_code'] == 200 && json['status'] == 'success') {
+        if (json[StringConstants.k_error_code] == 200 &&
+            json[StringConstants.k_status] == 'success') {
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -542,7 +541,8 @@ class MyTestPresenter {
             status: LogEvent.success,
           );
 
-          _view!.updateAnswersSuccess('Save your answers successfully!');
+          _view!.updateAnswersSuccess(
+              StringConstants.save_answer_success_message);
         } else {
           //Add log
           Utils.prepareLogData(
@@ -608,22 +608,25 @@ class MyTestPresenter {
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+      StringConstants.k_content_type: 'multipart/form-data',
+      StringConstants.k_authorization: 'Bearer ${await Utils.getAccessToken()}'
     });
 
     Map<String, String> formData = {};
 
-    formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries(const [MapEntry('is_update', '1')]);
-    formData.addEntries([MapEntry('activity_id', activityId)]);
+    formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
+    formData.addEntries(const [MapEntry(StringConstants.k_is_update, '1')]);
+    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
 
     if (Platform.isAndroid) {
-      formData.addEntries([const MapEntry('os', "android")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
     } else {
-      formData.addEntries([const MapEntry('os', "ios")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "ios")]);
     }
-    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+
+    String appVersion = await Utils.getAppVersion();
+    formData.addEntries([MapEntry(StringConstants.k_app_version, appVersion)]);
+
     String format = '';
     String reanswerFormat = '';
     String endFormat = '';
@@ -681,7 +684,7 @@ class MyTestPresenter {
     request.fields.addAll(formData);
 
     if (null != dataLog) {
-      dataLog['request_data'] = formData.toString();
+      dataLog[StringConstants.k_request_data] = formData.toString();
     }
 
     return request;

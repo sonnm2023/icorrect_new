@@ -44,7 +44,8 @@ class HomeWorkPresenter {
 
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser == null) {
-      _view!.onGetListHomeworkError("Loading list homework error");
+      _view!.onGetListHomeworkError(
+          StringConstants.load_list_homework_error_message);
       return;
     }
 
@@ -61,9 +62,9 @@ class HomeWorkPresenter {
 
     _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
-      if (dataMap['error_code'] == 200) {
+      if (dataMap[StringConstants.k_error_code] == 200) {
         List<NewClassModel> classes =
-            await _generateListNewClass(dataMap['data']);
+            await _generateListNewClass(dataMap[StringConstants.k_data]);
 
         List<ActivitiesModel> homeworks = await _generateListHomeWork(classes);
 
@@ -82,7 +83,7 @@ class HomeWorkPresenter {
         );
 
         _view!.onGetListHomeworkComplete(
-            homeworks, classes, dataMap['current_time']);
+            homeworks, classes, dataMap[StringConstants.k_current_time]);
       } else {
         //Add log
         Utils.prepareLogData(
@@ -147,7 +148,7 @@ class HomeWorkPresenter {
 
     _authRepository!.logout().then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
-      if (dataMap['error_code'] == 200) {
+      if (dataMap[StringConstants.k_error_code] == 200) {
         //Delete access token
         Utils.setAccessToken('');
 
@@ -201,7 +202,8 @@ class HomeWorkPresenter {
     LogModel actionLog = await Utils.prepareToCreateLog(context,
         action: LogEvent.actionClickOnHomeworkItem);
     actionLog.addData(
-        key: "activity_id", value: homework.activityId.toString());
+        key: StringConstants.k_activity_id,
+        value: homework.activityId.toString());
     Utils.addLog(actionLog, LogEvent.none);
   }
 }

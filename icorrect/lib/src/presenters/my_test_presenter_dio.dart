@@ -4,21 +4,20 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-
-import '../data_sources/api_urls.dart';
-import '../data_sources/constants.dart';
-import '../data_sources/local/file_storage_helper.dart';
-import '../data_sources/utils.dart';
-import '../models/simulator_test_models/topic_model.dart';
-import '../models/ui_models/alert_info.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class MyTestContractDio {
   void getMyTestSuccess(List<QuestionTopicModel> questions);
@@ -83,8 +82,8 @@ class MyTestPresenterDio {
     _repository!.getMyTestDetail(testId).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
       if (json.isNotEmpty) {
-        if (json['error_code'] == 200) {
-          Map<String, dynamic> dataMap = json['data'];
+        if (json[StringConstants.k_error_code] == 200) {
+          Map<String, dynamic> dataMap = json[StringConstants.k_data];
           TestDetailModel testDetailModel =
               TestDetailModel.fromMyTestJson(dataMap);
           testDetail = TestDetailModel.fromMyTestJson(dataMap);
@@ -343,13 +342,17 @@ class MyTestPresenterDio {
         if (kDebugMode) {
           print("DEBUG: error form: ${json.toString()}");
         }
-        if (json['error_code'] == 200 && json['status'] == 'success') {
-          _view!.updateAnswersSuccess('Save your answers successfully!');
+        if (json[StringConstants.k_error_code] == 200 &&
+            json[StringConstants.k_status] == 'success') {
+          _view!.updateAnswersSuccess(
+              StringConstants.save_answer_success_message);
         } else {
           _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
         }
       }).catchError((onError) {
-        print('catchError updateAnswerFail ${onError.toString()}');
+        if (kDebugMode) {
+          print('catchError updateAnswerFail ${onError.toString()}');
+        }
         _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
       });
     } on TimeoutException {
@@ -369,22 +372,25 @@ class MyTestPresenterDio {
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+      StringConstants.k_content_type: 'multipart/form-data',
+      StringConstants.k_authorization: 'Bearer ${await Utils.getAccessToken()}'
     });
 
     Map<String, String> formData = {};
 
-    formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries(const [MapEntry('is_update', '1')]);
-    formData.addEntries([MapEntry('activity_id', activityId)]);
+    formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
+    formData.addEntries(const [MapEntry(StringConstants.k_is_update, '1')]);
+    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
 
     if (Platform.isAndroid) {
-      formData.addEntries([const MapEntry('os', "android")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
     } else {
-      formData.addEntries([const MapEntry('os', "ios")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "ios")]);
     }
-    formData.addEntries([const MapEntry('app_version', '2.0.2')]);
+
+    String appVersion = await Utils.getAppVersion();
+    formData.addEntries([MapEntry(StringConstants.k_app_version, appVersion)]);
+
     String format = '';
     String reanswerFormat = '';
     String endFormat = '';

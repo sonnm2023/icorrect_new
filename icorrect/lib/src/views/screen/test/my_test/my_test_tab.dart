@@ -98,7 +98,7 @@ class _MyTestTabState extends State<MyTestTab>
     await _presenter!.initializeData();
     var connectivity = await connectivityService.checkConnectivity();
 
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       _presenter!.getMyTest(
         context: context,
         activityId: widget.homeWorkModel.activityId.toString(),

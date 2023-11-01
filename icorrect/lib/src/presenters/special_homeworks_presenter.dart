@@ -48,9 +48,9 @@ class SpecialHomeworksPresenter {
       }
 
       if (dataMap.isNotEmpty) {
-        if (dataMap['error_code'] == 200) {
+        if (dataMap[StringConstants.k_error_code] == 200) {
           List<StudentResultModel> results =
-              _getStudentResultsModel(dataMap['data'] ?? []);
+              _getStudentResultsModel(dataMap[StringConstants.k_data] ?? []);
 
           //Add log
           Utils.prepareLogData(
@@ -66,24 +66,24 @@ class SpecialHomeworksPresenter {
           Utils.prepareLogData(
             log: log,
             data: null,
-            message: 'GetSpecialHomeWorks: result fail!',
+            message: StringConstants.get_special_homework_error_message,
             status: LogEvent.failed,
           );
 
-          _view!.getSpecialHomeWorksFail('GetSpecialHomeWorks: result fail!');
+          _view!.getSpecialHomeWorksFail(
+              StringConstants.get_special_homework_error_message);
         }
       } else {
         //Add log
         Utils.prepareLogData(
           log: log,
           data: null,
-          message:
-              'GetSpecialHomeWorks fail.Please check your internet and try again!',
+          message: StringConstants.get_special_homework_error_message,
           status: LogEvent.failed,
         );
 
         _view!.getSpecialHomeWorksFail(
-            'GetSpecialHomeWorks fail.Please check your internet and try again!');
+            StringConstants.get_special_homework_error_message);
       }
     }).catchError((onError) {
       String message = '';

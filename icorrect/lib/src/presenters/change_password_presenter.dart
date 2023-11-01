@@ -3,12 +3,11 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
-
-import '../data_sources/constants.dart';
 
 abstract class ChangePasswordViewContract {
   void onChangePasswordComplete();
@@ -45,16 +44,16 @@ class ChangePasswordPresenter {
         .changePassword(oldPassword, newPassword, confirmNewPassword)
         .then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
-      if (dataMap['error_code'] == 200) {
-        Map<String, dynamic> map = dataMap['data'];
-        String token = map['access_token'];
+      if (dataMap[StringConstants.k_error_code] == 200) {
+        Map<String, dynamic> map = dataMap[StringConstants.k_data];
+        String token = map[StringConstants.k_access_token];
         Utils.setAccessToken(token);
 
         //Add log
         Utils.prepareLogData(
           log: log,
           data: jsonDecode(value),
-          message: dataMap['message'],
+          message: dataMap[StringConstants.k_message],
           status: LogEvent.success,
         );
 

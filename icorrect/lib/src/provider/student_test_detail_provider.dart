@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-
-import '../models/my_test_models/result_response_model.dart';
-import '../models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 
 class StudentTestProvider extends ChangeNotifier {
   bool isDisposed = false;
@@ -129,8 +127,8 @@ class StudentTestProvider extends ChangeNotifier {
   }
 
   ///////////////////CORRECTION SCREEN /////////////////////////////////////////
-  
-   bool _needDownloadAgain = false;
+
+  bool _needDownloadAgain = false;
   bool get needDownloadAgain => _needDownloadAgain;
   void setNeedDownloadAgain(bool need) {
     _needDownloadAgain = need;

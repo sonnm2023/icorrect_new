@@ -35,10 +35,11 @@ class UserAuthDetailPresenter {
       Map<String, dynamic> map = jsonDecode(value);
 
       if (kDebugMode) {
-        print('dada: ${map.toString()}');
+        print('data: ${map.toString()}');
       }
 
-      if (map['error_code'] == 200 && map['status'] == 'success') {
+      if (map[StringConstants.k_error_code] == 200 &&
+          map[StringConstants.k_status] == 'success') {
         //Add log
         Utils.prepareLogData(
           log: log,
@@ -47,7 +48,7 @@ class UserAuthDetailPresenter {
           status: LogEvent.success,
         );
 
-        Map<String, dynamic> data = map['data'] ?? {};
+        Map<String, dynamic> data = map[StringConstants.k_data] ?? {};
         if (data.isNotEmpty) {
           UserAuthenDetailModel userAuthenDetailModel =
               UserAuthenDetailModel.fromJson(data);
@@ -57,34 +58,34 @@ class UserAuthDetailPresenter {
           Utils.prepareLogData(
             log: log,
             data: null,
-            message:
-                "You have not been added to the testing system, please contact admin for better understanding!",
+            message: StringConstants.not_authen_user_message,
             status: LogEvent.failed,
           );
 
           _view!.userNotFoundWhenLoadAuth(
-              "You have not been added to the testing system, please contact admin for better understanding!");
+              StringConstants.not_authen_user_message);
         }
       } else {
         //Add log
         Utils.prepareLogData(
           log: log,
           data: null,
-          message: "Something went wrong when load your authentication!",
+          message: StringConstants.get_authen_user_fail_message,
           status: LogEvent.failed,
         );
         _view!.getUserAuthDetailFail(
-            "Something went wrong when load your authentication!");
+            StringConstants.get_authen_user_fail_message);
       }
     }).catchError((e) {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: null,
-        message: "Something went wrong when load your authentication!",
+        message: "An Error : ${e.toString()}!",
         status: LogEvent.failed,
       );
-      _view!.getUserAuthDetailFail("An Error : ${e.toString()}!");
+      _view!
+          .getUserAuthDetailFail(StringConstants.get_authen_user_fail_message);
     });
   }
 }

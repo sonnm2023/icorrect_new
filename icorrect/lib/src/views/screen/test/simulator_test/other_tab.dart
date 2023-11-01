@@ -173,11 +173,11 @@ class _OtherTabState extends State<OtherTab>
             ],
           ),
           Text(
-            Utils.scoreReponse(resultModel)['score'],
+            Utils.scoreReponse(resultModel)[StringConstants.k_score],
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-                color: Utils.scoreReponse(resultModel)['color'],
+                color: Utils.scoreReponse(resultModel)[StringConstants.k_color],
                 fontSize: 15,
                 fontWeight: FontWeight.bold),
           ),

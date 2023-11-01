@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _getAppConfigInfo() async {
     var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       String appConfigInfo = await AppSharedPref.instance()
           .getString(key: AppSharedKeys.secretkey);
       if (appConfigInfo.isEmpty) {
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen>
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
           var connectivity = await connectivityService.checkConnectivity();
-          if (connectivity.name != "none") {
+          if (connectivity.name != StringConstants.connectivity_name_none) {
             _authProvider.updateProcessingStatus(isProcessing: true);
 
             _loginPresenter!.login(

@@ -12,7 +12,10 @@ abstract class HomeWorkRepository {
 class HomeWorkRepositoryImpl implements HomeWorkRepository {
   @override
   Future<String> getListHomeWork(String email, String status) {
-    Map<String, String> queryParameters = {'email': email, 'status': status};
+    Map<String, String> queryParameters = {
+      StringConstants.email: email,
+      StringConstants.k_status: status
+    };
     String url = getActivitiesList(queryParameters);
 
     if (kDebugMode) {
