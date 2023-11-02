@@ -37,6 +37,15 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   ///////////////My Test Screen/////////////////////////////////////////////////
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
+
+  void setDownloadingFile(bool downloading) {
+    _isDownloading = downloading;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 
   int _total = 0;
   int get total => _total;
