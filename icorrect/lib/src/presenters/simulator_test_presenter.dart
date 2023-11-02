@@ -890,6 +890,7 @@ class SimulatorTestPresenter {
         formData.addEntries(temp);
       }
 
+      // For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
         String path = await FileStorageHelper.getFilePath(
             q.answers.elementAt(i).url.toString(), MediaType.audio, testId);
