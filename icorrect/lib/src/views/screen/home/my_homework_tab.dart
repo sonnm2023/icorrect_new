@@ -91,7 +91,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 builder: (context, homeworkProvider, child) {
                   return Text(
                     homeworkProvider.filterString,
-                    style: CustomTextStyle.textBoldBlack_14,
+                    style: CustomTextStyle.textBoldBlack_14(context),
+                    // style: TextStyle(
+                    //   fontSize: adjustedFontSize,
+                    //   color: AppColor.defaultBlackColor,
+                    //   fontWeight: FontWeight.w600,
+                    // ),
                   );
                 },
               ),
@@ -339,7 +344,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         }
       } else {
         try {
-          Map<Permission, PermissionStatus> otherStatuses = await [Permission.camera].request();
+          Map<Permission, PermissionStatus> otherStatuses =
+              await [Permission.camera].request();
 
           if ((otherStatuses[Permission.camera]! == PermissionStatus.denied) ||
               (otherStatuses[Permission.camera]! ==

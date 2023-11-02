@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 enum ToastStatesType {
@@ -410,17 +411,25 @@ class CustomTextStyle {
     fontSize: FontsSize.fontSize_14,
   );
 
-  static const TextStyle textBlack_14 = TextStyle(
-    color: AppColor.defaultBlackColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textBlack_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultBlackColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldBlack_14 = TextStyle(
-    color: AppColor.defaultBlackColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textBoldBlack_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultBlackColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
   static const TextStyle textBoldPurple_14 = TextStyle(
     color: AppColor.defaultPurpleColor,

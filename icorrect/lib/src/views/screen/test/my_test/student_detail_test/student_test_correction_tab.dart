@@ -162,7 +162,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         (appState.visibleOverviewComment)
                             ? StringConstants.show_less
                             : StringConstants.show_more,
-                        style: CustomTextStyle.textBoldBlack_14,
+                        style: CustomTextStyle.textBoldBlack_14(context),
                         textAlign: TextAlign.justify,
                         maxLines: 4,
                       ),
@@ -349,17 +349,17 @@ class _StudentCorrectionState extends State<StudentCorrection>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.warning_amber_outlined,
                           color: Colors.orangeAccent,
                           size: CustomSize.size_20,
                         ),
-                        SizedBox(width: CustomSize.size_10),
+                        const SizedBox(width: CustomSize.size_10),
                         Text(
                           StringConstants.problem,
-                          style: CustomTextStyle.textBoldBlack_14,
+                          style: CustomTextStyle.textBoldBlack_14(context),
                         )
                       ],
                     ),
@@ -377,9 +377,9 @@ class _StudentCorrectionState extends State<StudentCorrection>
                           size: CustomSize.size_20,
                         ),
                         const SizedBox(width: CustomSize.size_10),
-                        const Text(
+                        Text(
                           StringConstants.solution,
-                          style: CustomTextStyle.textBoldBlack_14,
+                          style: CustomTextStyle.textBoldBlack_14(context),
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         (problemModel.fileName.toString().isNotEmpty)

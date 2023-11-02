@@ -163,7 +163,7 @@ class _HighLightTabState extends State<HighLightTab>
                       resultModel.students!.name.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: CustomTextStyle.textBoldBlack_14,
+                      style: CustomTextStyle.textBoldBlack_14(context),
                     ),
                     const SizedBox(height: CustomSize.size_5),
                     Text(

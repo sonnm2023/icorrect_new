@@ -1019,4 +1019,15 @@ class Utils {
     bool result = await File(filePath).exists();
     return result;
   }
+
+  static double fixSizeOfText({
+    required BuildContext context,
+    required double fontSize,
+  }) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    double customFontSize = fontSize;
+    double textScaleFactor = queryData.textScaleFactor;
+    double adjustedFontSize = customFontSize / textScaleFactor;
+    return adjustedFontSize;
+  }
 }

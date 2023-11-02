@@ -44,7 +44,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
               _authProvider.scaffoldKeys;
           GlobalKey<ScaffoldState> key = scaffoldKeys.first;
           if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
-            Utils.showLogoutConfirmDialog(context: context, homeWorkPresenter: null);
+            Utils.showLogoutConfirmDialog(
+                context: context, homeWorkPresenter: null);
           } else {
             Navigator.of(key.currentState!.context).pop();
             scaffoldKeys.removeFirst();
@@ -59,7 +60,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
           key: GlobalScaffoldKey.practiceScreenScaffoldKey,
           appBar: AppBar(
             title: const Text(
-             StringConstants.practice_screen_title,
+              StringConstants.practice_screen_title,
               style: CustomTextStyle.appbarTitle,
             ),
             centerTitle: true,
@@ -156,7 +157,7 @@ Widget _buildInPracticeCard(
             children: [
               Text(
                 title,
-                style: CustomTextStyle.textBoldBlack_14,
+                style: CustomTextStyle.textBoldBlack_14(context),
               ),
               Text(
                 des,
