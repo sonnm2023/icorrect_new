@@ -200,9 +200,12 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                       const SizedBox(width: 5),
                                       Text(
                                         provider.strCount,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
+                                        style:
+                                            CustomTextStyle.textWithCustomInfo(
+                                          context: context,
+                                          color: AppColor.defaultWhiteColor,
+                                          fontsSize: FontsSize.fontSize_15,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       )
                                     ],
@@ -230,24 +233,26 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                             height: h / 5,
                             padding: const EdgeInsets.only(
                                 right: 10, left: 10, top: 5),
-                            child: const SingleChildScrollView(
+                            child: SingleChildScrollView(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     StringConstants.sampleTextTitle,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 17,
+                                    style: CustomTextStyle.textWithCustomInfo(
+                                      context: context,
+                                      color: AppColor.defaultAppColor,
+                                      fontsSize: FontsSize.fontSize_17,
+                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   Text(
                                     StringConstants.sampleTextContent,
-                                    style: TextStyle(
-                                      color: Colors.white,
+                                    style: CustomTextStyle.textWithCustomInfo(
+                                      context: context,
+                                      color: AppColor.defaultAppColor,
+                                      fontsSize: FontsSize.fontSize_16,
                                       fontWeight: FontWeight.w400,
-                                      fontSize: 16,
                                     ),
                                   )
                                 ],

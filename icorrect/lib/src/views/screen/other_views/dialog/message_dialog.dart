@@ -15,12 +15,13 @@ class MessageDialog {
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
-                child: const Text(
+                child: Text(
                   StringConstants.dialog_title,
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_17,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -32,7 +33,12 @@ class MessageDialog {
                     child: Text(
                       textAlign: TextAlign.center,
                       message,
-                      style: const TextStyle(color: Colors.black, fontSize: 15),
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_15,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                   const Divider(
@@ -49,12 +55,13 @@ class MessageDialog {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         alignment: Alignment.center,
                       ),
-                      child: const Text(
+                      child: Text(
                         StringConstants.ok_button_title,
-                        style: TextStyle(
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
                           color: AppColor.defaultPurpleColor,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
+                          fontsSize: FontsSize.fontSize_16,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),

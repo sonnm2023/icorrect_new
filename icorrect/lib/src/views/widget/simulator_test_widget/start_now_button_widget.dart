@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 
 class StartNowButtonWidget extends StatelessWidget {
@@ -12,11 +13,16 @@ class StartNowButtonWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: Text(
             StringConstants.start_now_description,
-            style: TextStyle(fontSize: 15),
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultBlackColor,
+              fontsSize: FontsSize.fontSize_15,
+              fontWeight: FontWeight.w400,
+            ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -30,12 +36,14 @@ class StartNowButtonWidget extends StatelessWidget {
             width: 100,
             height: 60,
             alignment: Alignment.center,
-            child: const Center(
+            child: Center(
               child: Text(
                 StringConstants.start_now_button_title,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

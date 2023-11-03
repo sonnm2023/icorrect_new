@@ -32,14 +32,19 @@ class DownloadAgainWidget extends StatelessWidget {
               height: 100,
             ),
             //Message
-            const Padding(
-              padding:
-                  EdgeInsets.only(left: 40, top: 10, right: 40, bottom: 10),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 40, top: 10, right: 40, bottom: 10),
               child: Center(
                 child: Text(
                   StringConstants.data_downloaded_error_message,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15),
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),
@@ -52,16 +57,17 @@ class DownloadAgainWidget extends StatelessWidget {
                   myTestPresenter!.tryAgainToDownload();
                 }
               },
-              child: const SizedBox(
+              child: SizedBox(
                 width: 100,
                 height: 60,
                 child: Center(
                   child: Text(
                     StringConstants.try_again_button_title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
                       color: AppColor.defaultPurpleColor,
-                      fontSize: 15,
+                      fontsSize: FontsSize.fontSize_15,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

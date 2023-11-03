@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 class DefaultMaterialButton extends StatelessWidget {
   final bool isUpperCase;
@@ -55,7 +56,9 @@ class DefaultMaterialButton extends StatelessWidget {
         color: background ?? AppColor.defaultWhiteColor.withOpacity(0.3),
         shape: RoundedRectangleBorder(
           side: BorderSide(
-            color: hasBorder ? AppColor.defaultPurpleColor : AppColor.defaultWhiteColor,
+            color: hasBorder
+                ? AppColor.defaultPurpleColor
+                : AppColor.defaultWhiteColor,
             width: 1,
             style: BorderStyle.solid,
           ),
@@ -70,11 +73,12 @@ class DefaultMaterialButton extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               textScaleFactor: textScaleFactor,
-              // ignore: deprecated_member_use
-              style: Theme.of(context).textTheme.button!.copyWith(
-                    color: textColor,
-                    fontSize: fontSize,
-                  ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: textColor,
+                fontsSize: fontSize!,
+                fontWeight: FontWeight.w400,
+              ),
             ),
       ),
     );

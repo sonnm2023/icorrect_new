@@ -118,7 +118,12 @@ class AuthFormField extends StatelessWidget {
             onChanged: onChanged,
             onTap: onTap,
             obscureText: obscureText,
-            style: CustomTextStyle.textBlack_14,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultBlackColor,
+              fontsSize: FontsSize.fontSize_14,
+              fontWeight: FontWeight.w400,
+            ),
             decoration: InputDecoration(
               counterText: '',
               suffixStyle: suffixTextStyle,
@@ -148,7 +153,12 @@ class AuthFormField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(13.0),
               ),
               hintText: hintText,
-              hintStyle: CustomTextStyle.textGrey_14,
+              hintStyle: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_14,
+                fontWeight: FontWeight.w400,
+              ),
               hintTextDirection: TextDirection.ltr,
               prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,

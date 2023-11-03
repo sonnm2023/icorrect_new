@@ -96,19 +96,25 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(StringConstants.confirm_submit_video_auth_title,
-                      style: TextStyle(
-                          color: AppColor.defaultPurpleColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    StringConstants.confirm_submit_video_auth_title,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     StringConstants.confirm_submit_video_auth_content,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: AppColor.defaultPurpleColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400),
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Stack(
@@ -158,10 +164,14 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
           color: AppColor.defaultPurpleColor,
           borderRadius: BorderRadius.circular(100),
         ),
-        child: const Text(
+        child: Text(
           StringConstants.submit_now_title,
-          style: TextStyle(
-              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400),
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultAppColor,
+            fontsSize: FontsSize.fontSize_18,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ),
     );
@@ -187,11 +197,12 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
           border: Border.all(color: AppColor.defaultPurpleColor, width: 1.5),
           borderRadius: BorderRadius.circular(100),
         ),
-        child: const Text(
+        child: Text(
           StringConstants.record_new_video_title,
-          style: TextStyle(
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
             color: AppColor.defaultPurpleColor,
-            fontSize: 18,
+            fontsSize: FontsSize.fontSize_18,
             fontWeight: FontWeight.w400,
           ),
         ),

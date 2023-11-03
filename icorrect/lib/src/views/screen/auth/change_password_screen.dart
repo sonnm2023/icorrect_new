@@ -70,9 +70,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           StringConstants.change_password_screen_title,
-          style: CustomTextStyle.appbarTitle,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultPurpleColor,
+            fontsSize: FontsSize.fontSize_18,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         centerTitle: true,
         leading: const BackButton(color: AppColor.defaultPurpleColor),

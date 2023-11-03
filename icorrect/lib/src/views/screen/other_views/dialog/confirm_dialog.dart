@@ -55,9 +55,10 @@ class ConfirmDialogWidget extends StatelessWidget {
                       Text(
                         title,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: FontsSize.fontSize_16,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -65,9 +66,10 @@ class ConfirmDialogWidget extends StatelessWidget {
                       Text(
                         message,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: FontsSize.fontSize_15,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_15,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -81,9 +83,10 @@ class ConfirmDialogWidget extends StatelessWidget {
                             },
                             child: Text(
                               cancelButtonTitle,
-                              style: const TextStyle(
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
                                 color: AppColor.defaultGrayColor,
-                                fontSize: FontsSize.fontSize_15,
+                                fontsSize: FontsSize.fontSize_15,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -95,9 +98,10 @@ class ConfirmDialogWidget extends StatelessWidget {
                             },
                             child: Text(
                               okButtonTitle,
-                              style: const TextStyle(
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
                                 color: AppColor.defaultPurpleColor,
-                                fontSize: FontsSize.fontSize_15,
+                                fontsSize: FontsSize.fontSize_15,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

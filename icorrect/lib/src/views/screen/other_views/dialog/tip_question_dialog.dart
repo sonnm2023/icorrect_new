@@ -25,12 +25,13 @@ class TipQuestionDialog {
                       width: double.infinity,
                       alignment: Alignment.center,
                       margin: const EdgeInsets.only(top: 20, right: 10),
-                      child: const Text(
+                      child: Text(
                         StringConstants.tips_screen_title,
-                        style: TextStyle(
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
                           color: Colors.orange,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontsSize: FontsSize.fontSize_20,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -55,9 +56,10 @@ class TipQuestionDialog {
                 Text(
                   question.content.toString(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -77,19 +79,22 @@ class TipQuestionDialog {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 StringConstants.cue_card,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
+                                  color: AppColor.defaultBlackColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               Text(
                                 question.cueCard.trim(),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
+                                  color: AppColor.defaultBlackColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               )
                             ],
@@ -100,24 +105,28 @@ class TipQuestionDialog {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         question.numPart == PartOfTest.part2.get
-                            ? const Text(
+                            ? Text(
                                 StringConstants.another_tips,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
+                                  color: AppColor.defaultBlackColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               )
                             : Container(),
                         (question.tips.toString().isNotEmpty)
                             ? Text(
                                 question.tips.toString(),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
+                                  color: AppColor.defaultBlackColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               )
                             : EmptyWidget.init().buildNothingWidget(
+                                context,
                                 StringConstants.nothing_tips,
                                 widthSize: 100,
                                 heightSize: 100,

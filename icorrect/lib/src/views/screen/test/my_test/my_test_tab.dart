@@ -139,8 +139,8 @@ class _MyTestTabState extends State<MyTestTab>
   Widget _buildMyTest() {
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
-        if(provider.isDownloading){
-          return const DownloadProgressingWidget(); 
+        if (provider.isDownloading) {
+          return const DownloadProgressingWidget();
         }
         return Stack(
           alignment: Alignment.bottomCenter,
@@ -175,10 +175,15 @@ class _MyTestTabState extends State<MyTestTab>
                           ),
                           color: Colors.green,
                           width: constraint.maxWidth,
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               StringConstants.view_ai_response_button_title,
-                              style: CustomTextStyle.textWhiteBold_16,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultAppColor,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -208,10 +213,15 @@ class _MyTestTabState extends State<MyTestTab>
                           ),
                           color: AppColor.defaultPurpleColor,
                           width: constraint.maxWidth,
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               StringConstants.update_answer_button_title,
-                              style: CustomTextStyle.textWhiteBold_16,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultAppColor,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -430,16 +440,23 @@ class _MyTestTabState extends State<MyTestTab>
                           children: [
                             Text(
                               question.content.toString(),
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15),
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultBlackColor,
+                                fontsSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                             const SizedBox(height: 3),
                             (question.cueCard.isNotEmpty)
                                 ? Text(
                                     question.cueCard.toString(),
-                                    style: CustomTextStyle.textBlack_15,
+                                    style: CustomTextStyle.textWithCustomInfo(
+                                      context: context,
+                                      color: AppColor.defaultBlackColor,
+                                      fontsSize: FontsSize.fontSize_15,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   )
                                 : Container(),
                             const SizedBox(
@@ -453,11 +470,16 @@ class _MyTestTabState extends State<MyTestTab>
                                         onTap: () async {
                                           _onClickReanswer(provider, question);
                                         },
-                                        child: const Text(
+                                        child: Text(
                                           StringConstants
                                               .re_answer_button_title,
-                                          style:
-                                              CustomTextStyle.textBoldPurple_14,
+                                          style: CustomTextStyle
+                                              .textWithCustomInfo(
+                                            context: context,
+                                            color: AppColor.defaultPurpleColor,
+                                            fontsSize: FontsSize.fontSize_14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       )
                                     : Container(),
@@ -469,11 +491,16 @@ class _MyTestTabState extends State<MyTestTab>
                                     _showTips(question);
                                   },
                                   child: (question.tips.isNotEmpty)
-                                      ? const Text(
+                                      ? Text(
                                           StringConstants
                                               .view_tips_button_title,
-                                          style:
-                                              CustomTextStyle.textBoldPurple_14,
+                                          style: CustomTextStyle
+                                              .textWithCustomInfo(
+                                            context: context,
+                                            color: AppColor.defaultPurpleColor,
+                                            fontsSize: FontsSize.fontSize_14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         )
                                       : Container(),
                                 ),

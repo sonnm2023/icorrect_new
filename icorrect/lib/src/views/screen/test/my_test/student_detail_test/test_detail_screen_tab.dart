@@ -252,7 +252,12 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                         children: [
                           Text(
                             question.content.toString(),
-                            style: CustomTextStyle.textBlack_14,
+                            style: CustomTextStyle.textWithCustomInfo(
+                              context: context,
+                              color: AppColor.defaultBlackColor,
+                              fontsSize: FontsSize.fontSize_14,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                           const SizedBox(height: CustomSize.size_10),
                           InkWell(
@@ -260,9 +265,14 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                               _showTips(question);
                             },
                             child: (question.tips.isNotEmpty)
-                                ? const Text(
+                                ? Text(
                                     StringConstants.view_tips_button_title,
-                                    style: CustomTextStyle.textBoldPurple_14,
+                                    style: CustomTextStyle.textWithCustomInfo(
+                                      context: context,
+                                      color: AppColor.defaultPurpleColor,
+                                      fontsSize: FontsSize.fontSize_14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   )
                                 : Container(),
                           ),

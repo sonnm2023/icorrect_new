@@ -37,9 +37,14 @@ class DownloadProgressingWidget extends StatelessWidget {
             return Text("${provider.downloadingIndex}/${provider.total}");
           }),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             StringConstants.downloading,
-            style: TextStyle(fontSize: 15),
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultBlackColor,
+              fontsSize: FontsSize.fontSize_15,
+              fontWeight: FontWeight.w400,
+            ),
           ),
           const SizedBox(height: 50),
         ],

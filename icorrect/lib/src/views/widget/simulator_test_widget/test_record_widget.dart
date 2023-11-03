@@ -54,9 +54,10 @@ class TestRecordWidget extends StatelessWidget {
                         builder: (context, timerProvider, _) {
                       return Text(
                         timerProvider.strCount,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_20,
                           fontWeight: FontWeight.w600,
                         ),
                       );
@@ -70,8 +71,10 @@ class TestRecordWidget extends StatelessWidget {
                           question: currentQuestion,
                         ),
                         _buildFinishButton(
+                            context: context,
                             question: currentQuestion,
-                            isLess2Second: simulatorTestProvider.isLessThan2Second),
+                            isLess2Second:
+                                simulatorTestProvider.isLessThan2Second),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -97,7 +100,7 @@ class TestRecordWidget extends StatelessWidget {
         if (simulatorTestProvider.doingStatus == DoingStatus.finish) {
           return Row(
             children: [
-              _buildCancelButton(),
+              _buildCancelButton(context),
               const SizedBox(width: 20),
             ],
           );
@@ -116,7 +119,7 @@ class TestRecordWidget extends StatelessWidget {
           visible: isRepeat,
           child: Row(
             children: [
-              _buildRepeatButton(question),
+              _buildRepeatButton(context, question),
               const SizedBox(width: 20),
             ],
           ),
@@ -126,7 +129,9 @@ class TestRecordWidget extends StatelessWidget {
   }
 
   Widget _buildFinishButton(
-      {required QuestionTopicModel question, required bool isLess2Second}) {
+      {required BuildContext context,
+      required QuestionTopicModel question,
+      required bool isLess2Second}) {
     return InkWell(
       onTap: () {
         finishAnswer(question);
@@ -136,22 +141,26 @@ class TestRecordWidget extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          color:isLess2Second?const Color.fromARGB(255, 153, 201, 154): Colors.green,
+          color: isLess2Second
+              ? const Color.fromARGB(255, 153, 201, 154)
+              : Colors.green,
         ),
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           StringConstants.finish_button_title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultAppColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildRepeatButton(QuestionTopicModel questionTopicModel) {
+  Widget _buildRepeatButton(
+      BuildContext context, QuestionTopicModel questionTopicModel) {
     return InkWell(
       onTap: () {
         repeatQuestion(questionTopicModel);
@@ -165,19 +174,20 @@ class TestRecordWidget extends StatelessWidget {
           border: Border.all(width: 1, color: Colors.grey),
         ),
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           StringConstants.repeat_button_title,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultBlackColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCancelButton() {
+  Widget _buildCancelButton(BuildContext context) {
     return InkWell(
       onTap: () {
         cancelReAnswer();
@@ -191,12 +201,13 @@ class TestRecordWidget extends StatelessWidget {
           border: Border.all(width: 1, color: Colors.grey),
         ),
         alignment: Alignment.center,
-        child: const Text(
+        child: Text(
           StringConstants.cancel_button_title,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultBlackColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

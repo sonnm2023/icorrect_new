@@ -21,9 +21,14 @@ class _TopicsScreenState extends State<TopicsScreen> {
             preferredSize: Size.fromHeight(1),
             child: CustomDivider(),
           ),
-          title: const Text(
+          title: Text(
             StringConstants.topics_screen_title,
-            style: CustomTextStyle.appbarTitle,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultPurpleColor,
+              fontsSize: FontsSize.fontSize_18,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           centerTitle: true,
           elevation: 0.0,
@@ -60,11 +65,16 @@ class _TopicsScreenState extends State<TopicsScreen> {
                             onPressed: null,
                           ),
                         ),
-                        const Expanded(
+                        Expanded(
                           flex: 4,
                           child: Text(
                             StringConstants.selected_topics,
-                            style: CustomTextStyle.textBlack_14,
+                            style: CustomTextStyle.textWithCustomInfo(
+                              context: context,
+                              color: AppColor.defaultBlackColor,
+                              fontsSize: FontsSize.fontSize_14,
+                              fontWeight: FontWeight.w400,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -72,9 +82,14 @@ class _TopicsScreenState extends State<TopicsScreen> {
                           flex: 1,
                           child: TextButton(
                             onPressed: () {},
-                            child: const Text(
+                            child: Text(
                               StringConstants.clear_button_title,
-                              style: CustomTextStyle.textBoldPurple_14,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_14,
+                                fontWeight: FontWeight.w600,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -132,7 +147,12 @@ Widget _buildInTopicCard(BuildContext context, {required String topic}) {
               flex: 4,
               child: Text(
                 topic,
-                style: CustomTextStyle.textBlack_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
+                ),
                 textAlign: TextAlign.start,
               ),
             ),

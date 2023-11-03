@@ -90,12 +90,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 builder: (context, homeworkProvider, child) {
                   return Text(
                     homeworkProvider.filterString,
-                    style: CustomTextStyle.textBoldBlack_14(context),
-                    // style: TextStyle(
-                    //   fontSize: adjustedFontSize,
-                    //   color: AppColor.defaultBlackColor,
-                    //   fontWeight: FontWeight.w600,
-                    // ),
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultBlackColor,
+                      fontsSize: FontsSize.fontSize_14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   );
                 },
               ),
@@ -178,12 +178,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             onTap: () {
               Navigator.pop(context);
             },
-            child: const Center(
+            child: Center(
               child: Text(
                 StringConstants.close_button_title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
                   color: AppColor.defaultGrayColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -217,10 +219,15 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                 );
               }
             },
-            child: const Center(
+            child: Center(
               child: Text(
                 StringConstants.done_button_title,
-                style: CustomTextStyle.textBoldPurple_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultPurpleColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -263,7 +270,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                       child: Text(
                         className,
                         textAlign: TextAlign.left,
-                        style: CustomTextStyle.textBoldBlack_16,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     );
                   },

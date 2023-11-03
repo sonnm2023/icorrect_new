@@ -28,13 +28,14 @@ class SaveTheTestWidget extends StatelessWidget {
                   onTap: () {
                     testRoomPresenter.clickSaveTheTest();
                   },
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       StringConstants.save_the_exam_button_title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultAppColor,
+                        fontsSize: FontsSize.fontSize_16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

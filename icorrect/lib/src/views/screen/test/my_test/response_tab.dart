@@ -104,9 +104,14 @@ class _ResponseTabState extends State<ResponseTab>
           children: [
             Container(
               alignment: Alignment.centerLeft,
-              child: const Text(
+              child: Text(
                 StringConstants.overview,
-                style: CustomTextStyle.textBoldBlack_15,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             const SizedBox(height: CustomSize.size_10),
@@ -115,11 +120,21 @@ class _ResponseTabState extends State<ResponseTab>
                   ? Text(
                       appState.responseModel.overallComment ?? '',
                       textAlign: TextAlign.justify,
-                      style: CustomTextStyle.textBlack_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     )
                   : Text(
                       appState.responseModel.overallComment ?? '',
-                      style: CustomTextStyle.textBlack_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                       textAlign: TextAlign.justify,
                       maxLines: 4,
                     ),
@@ -142,7 +157,12 @@ class _ResponseTabState extends State<ResponseTab>
                             (appState.visibleOverviewComment)
                                 ? StringConstants.show_less
                                 : StringConstants.show_more,
-                            style: CustomTextStyle.textBoldBlack_14(context),
+                            style: CustomTextStyle.textWithCustomInfo(
+                              context: context,
+                              color: AppColor.defaultBlackColor,
+                              fontsSize: FontsSize.fontSize_14,
+                              fontWeight: FontWeight.w600,
+                            ),
                             textAlign: TextAlign.justify,
                             maxLines: 4,
                           ),
@@ -263,7 +283,12 @@ class _ResponseTabState extends State<ResponseTab>
             children: [
               Text(
                 title,
-                style: CustomTextStyle.textWhiteBold_15,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultAppColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Visibility(
                   visible: (problems != null && problems.isNotEmpty),
@@ -346,14 +371,24 @@ class _ResponseTabState extends State<ResponseTab>
                         const SizedBox(width: CustomSize.size_10),
                         Text(
                           StringConstants.problem,
-                          style: CustomTextStyle.textBoldBlack_14(context),
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultBlackColor,
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         )
                       ],
                     ),
                     const SizedBox(height: CustomSize.size_5),
                     Text(
                       problemModel.problem.toString(),
-                      style: CustomTextStyle.textBlack_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                     const SizedBox(height: CustomSize.size_15),
                     Row(
@@ -366,7 +401,12 @@ class _ResponseTabState extends State<ResponseTab>
                         const SizedBox(width: CustomSize.size_10),
                         Text(
                           StringConstants.solution,
-                          style: CustomTextStyle.textBoldBlack_14(context),
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultBlackColor,
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         (problemModel.fileName.toString().isNotEmpty)
@@ -384,6 +424,7 @@ class _ResponseTabState extends State<ResponseTab>
                 );
               })
           : EmptyWidget.init().buildNothingWidget(
+              context,
               StringConstants.nothing_problem_message,
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
@@ -407,9 +448,14 @@ class _ResponseTabState extends State<ResponseTab>
           ),
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
-        child: const Text(
+        child: Text(
           StringConstants.view_sample_button_title,
-          style: CustomTextStyle.textBoldPurple_14,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultPurpleColor,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

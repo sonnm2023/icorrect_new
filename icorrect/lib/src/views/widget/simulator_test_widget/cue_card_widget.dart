@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,8 @@ class _CueCardWidgetState extends State<CueCardWidget> {
 
     return Consumer<SimulatorTestProvider>(
       builder: (context, simulatorTestProvider, child) {
-        if (simulatorTestProvider.visibleCueCard && simulatorTestProvider.currentQuestion.cueCard.isNotEmpty) {
+        if (simulatorTestProvider.visibleCueCard &&
+            simulatorTestProvider.currentQuestion.cueCard.isNotEmpty) {
           return Container(
             width: w,
             height: h,
@@ -29,13 +31,14 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
-                  const Center(
+                  Center(
                     child: Text(
                       StringConstants.cue_card,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_22,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -43,20 +46,22 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                   Center(
                     child: Text(
                       simulatorTestProvider.strCountCueCard,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
                         color: Colors.red,
+                        fontsSize: FontsSize.fontSize_22,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     simulatorTestProvider.currentQuestion.content,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultBlackColor,
+                      fontsSize: FontsSize.fontSize_18,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -67,10 +72,11 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                       child: Text(
                         simulatorTestProvider.currentQuestion.cueCard.trim(),
                         textAlign: TextAlign.left,
-                        style: const TextStyle(
-                          fontSize: 16,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.black,
                         ),
                       ),
                     ),

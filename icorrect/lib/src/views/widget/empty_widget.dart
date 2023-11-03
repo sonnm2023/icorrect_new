@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 class EmptyWidget {
   EmptyWidget._();
   static final EmptyWidget _widget = EmptyWidget._();
   factory EmptyWidget.init() => _widget;
 
-  Widget buildNothingWidget(String message,
-      {required double? widthSize, required double? heightSize}) {
+  Widget buildNothingWidget(
+    BuildContext context,
+    String message, {
+    required double? widthSize,
+    required double? heightSize,
+  }) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,9 +29,10 @@ class EmptyWidget {
           const SizedBox(height: 10),
           Text(
             message,
-            style: const TextStyle(
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
               color: AppColor.defaultGrayColor,
-              fontSize: 16,
+              fontsSize: FontsSize.fontSize_16,
               fontWeight: FontWeight.w500,
             ),
           )

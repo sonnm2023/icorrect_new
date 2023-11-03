@@ -63,9 +63,16 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('Please wait for preparing submit...',
-                          textAlign: TextAlign.center,
-                          style: CustomTextStyle.textBoldBlack_16),
+                      Text(
+                        'Please wait for preparing submit...',
+                        textAlign: TextAlign.center,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       StreamBuilder<double>(
                         stream: _lightCompressor!.onProgressUpdated,
@@ -87,9 +94,12 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                                 const SizedBox(height: 10),
                                 Text(
                                   '${snapshot.data.toStringAsFixed(0)}%',
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
+                                    color: AppColor.defaultBlackColor,
+                                    fontsSize: FontsSize.fontSize_18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 )
                               ],
                             );
@@ -106,9 +116,14 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                               Navigator.of(context).pop();
                               widget.onCancelResizeFile!();
                             },
-                            child: const Text(
-                              "Cancel and Later",
-                              style: CustomTextStyle.textBoldPurple_15,
+                            child: Text(
+                              StringConstants.cancel_and_text,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         )

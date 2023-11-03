@@ -82,10 +82,15 @@ class _StudentCorrectionState extends State<StudentCorrection>
           : Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Text(
+                child: Text(
                   StringConstants.test_correction_wait_response_message,
                   textAlign: TextAlign.center,
-                  style: CustomTextStyle.textBlack_15,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),
@@ -126,9 +131,14 @@ class _StudentCorrectionState extends State<StudentCorrection>
           children: [
             Container(
               alignment: Alignment.centerLeft,
-              child: const Text(
+              child: Text(
                 StringConstants.overview,
-                style: CustomTextStyle.textBoldBlack_15,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             const SizedBox(height: CustomSize.size_10),
@@ -136,11 +146,21 @@ class _StudentCorrectionState extends State<StudentCorrection>
               child: (appState.visibleOverviewComment)
                   ? Text(
                       appState.responseModel.overallComment ?? '',
-                      style: CustomTextStyle.textBlack_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     )
                   : Text(
                       appState.responseModel.overallComment ?? '',
-                      style: CustomTextStyle.textBlack_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                       maxLines: 4,
                     ),
             ),
@@ -162,7 +182,12 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         (appState.visibleOverviewComment)
                             ? StringConstants.show_less
                             : StringConstants.show_more,
-                        style: CustomTextStyle.textBoldBlack_14(context),
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_14,
+                          fontWeight: FontWeight.w600,
+                        ),
                         textAlign: TextAlign.justify,
                         maxLines: 4,
                       ),
@@ -273,7 +298,12 @@ class _StudentCorrectionState extends State<StudentCorrection>
             children: [
               Text(
                 title,
-                style: CustomTextStyle.textWhiteBold_15,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultAppColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Visibility(
                 visible: (problems != null && problems.isNotEmpty),
@@ -359,7 +389,12 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         const SizedBox(width: CustomSize.size_10),
                         Text(
                           StringConstants.problem,
-                          style: CustomTextStyle.textBoldBlack_14(context),
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultBlackColor,
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         )
                       ],
                     ),
@@ -379,7 +414,12 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         const SizedBox(width: CustomSize.size_10),
                         Text(
                           StringConstants.solution,
-                          style: CustomTextStyle.textBoldBlack_14(context),
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultBlackColor,
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         (problemModel.fileName.toString().isNotEmpty)
@@ -391,13 +431,19 @@ class _StudentCorrectionState extends State<StudentCorrection>
                     const SizedBox(height: CustomSize.size_5),
                     Text(
                       problemModel.solution.toString(),
-                      style: CustomTextStyle.textBlack_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     )
                   ],
                 );
               },
             )
           : EmptyWidget.init().buildNothingWidget(
+              context,
               StringConstants.nothing_problem_message,
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
@@ -421,9 +467,14 @@ class _StudentCorrectionState extends State<StudentCorrection>
           ),
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
-        child: const Text(
+        child: Text(
           StringConstants.view_sample_button_title,
-          style: CustomTextStyle.textBoldPurple_14,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultPurpleColor,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

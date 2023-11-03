@@ -17,13 +17,18 @@ Widget navbarItems({
     children: [
       Consumer<HomeWorkProvider>(
         builder: (context, homeWorkProvider, child) {
-          return Utils.drawHeader(homeWorkProvider.currentUser);
+          return Utils.drawHeader(context, homeWorkProvider.currentUser);
         },
       ),
       ListTile(
-        title: const Text(
+        title: Text(
           StringConstants.home_menu_item_title,
-          style: CustomTextStyle.textGrey_15,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultGrayColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         leading: const Icon(
           Icons.home_outlined,
@@ -60,9 +65,14 @@ Widget navbarItems({
         },
       ),*/
       ListTile(
-        title: const Text(
+        title: Text(
           StringConstants.change_password_menu_item_title,
-          style: CustomTextStyle.textGrey_15,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultGrayColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         leading: const Icon(
           Icons.password_outlined,
@@ -79,9 +89,14 @@ Widget navbarItems({
         },
       ),
       ListTile(
-        title: const Text(
+        title: Text(
           StringConstants.video_authen_menu_item_title,
-          style: CustomTextStyle.textGrey_15,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultGrayColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         leading: const Icon(
           Icons.video_camera_front_outlined,
@@ -98,9 +113,14 @@ Widget navbarItems({
         },
       ),
       ListTile(
-        title: const Text(
+        title: Text(
           StringConstants.logout_menu_item_title,
-          style: CustomTextStyle.textGrey_15,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultGrayColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         leading: const Icon(
           Icons.logout_outlined,

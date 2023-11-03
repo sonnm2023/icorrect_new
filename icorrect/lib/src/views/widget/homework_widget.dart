@@ -58,19 +58,25 @@ class HomeWorkWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     StringConstants.part,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
                       color: AppColor.defaultPurpleColor,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 8,
+                      fontsSize: FontsSize.fontSize_14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     Utils.getPartOfTestWithString(
                         homeWorkModel.activityTestOption),
-                    style: CustomTextStyle.textBoldPurple_14,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -91,7 +97,12 @@ class HomeWorkWidget extends StatelessWidget {
                         (homeWorkModel.activityEndTime.isNotEmpty)
                             ? homeWorkModel.activityEndTime
                             : '0000-00-00 00:00',
-                        style: CustomTextStyle.textGrey_14,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultGrayColor,
+                          fontsSize: FontsSize.fontSize_14,
+                          fontWeight: FontWeight.w400,
+                        ),
                         overflow: TextOverflow.clip,
                       ),
                     ),
@@ -103,10 +114,11 @@ class HomeWorkWidget extends StatelessWidget {
                         child: Text(
                           _statusOfActivity(),
                           textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: FontsSize.fontSize_14,
-                            fontWeight: FontWeight.w400,
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
                             color: _getColor(),
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w400,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.clip,
@@ -128,10 +140,15 @@ class HomeWorkWidget extends StatelessWidget {
         ? Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "TEST: ",
                 maxLines: 2,
-                style: CustomTextStyle.textBoldBlack_15,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width / 1.7,
@@ -139,7 +156,12 @@ class HomeWorkWidget extends StatelessWidget {
                   homeWorkModel.activityName,
                   maxLines: 2,
                   overflow: TextOverflow.clip,
-                  style: CustomTextStyle.textBlack_15,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               )
             ],
@@ -147,7 +169,12 @@ class HomeWorkWidget extends StatelessWidget {
         : Text(
             homeWorkModel.activityName,
             maxLines: 2,
-            style: CustomTextStyle.textBlack_15,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultBlackColor,
+              fontsSize: FontsSize.fontSize_15,
+              fontWeight: FontWeight.w400,
+            ),
           );
   }
 

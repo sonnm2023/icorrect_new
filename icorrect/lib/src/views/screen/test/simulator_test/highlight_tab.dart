@@ -111,6 +111,7 @@ class _HighLightTabState extends State<HighLightTab>
           );
         } else {
           return EmptyWidget.init().buildNothingWidget(
+            context,
             StringConstants.no_data_message,
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
@@ -163,14 +164,24 @@ class _HighLightTabState extends State<HighLightTab>
                       resultModel.students!.name.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: CustomTextStyle.textBoldBlack_14(context),
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultBlackColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: CustomSize.size_5),
                     Text(
                       resultModel.createdAt.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: CustomTextStyle.textGrey_14,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultGrayColor,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     )
                   ],
                 ),
@@ -181,10 +192,12 @@ class _HighLightTabState extends State<HighLightTab>
             Utils.scoreReponse(resultModel)[StringConstants.k_score],
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-                color: Utils.scoreReponse(resultModel)[StringConstants.k_color],
-                fontSize: 15,
-                fontWeight: FontWeight.bold),
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: Utils.scoreReponse(resultModel)[StringConstants.k_color],
+              fontsSize: FontsSize.fontSize_15,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

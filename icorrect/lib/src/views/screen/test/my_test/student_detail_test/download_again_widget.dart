@@ -5,7 +5,10 @@ import 'package:icorrect/src/presenters/other_student_test_presenter.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
 class DownloadAgainWidget extends StatelessWidget {
-  const DownloadAgainWidget({super.key, required this.simulatorTestPresenter, required this.otherStudentTestPresenter});
+  const DownloadAgainWidget(
+      {super.key,
+      required this.simulatorTestPresenter,
+      required this.otherStudentTestPresenter});
 
   final SimulatorTestPresenter? simulatorTestPresenter;
   final OtherStudentTestPresenter? otherStudentTestPresenter;
@@ -28,14 +31,19 @@ class DownloadAgainWidget extends StatelessWidget {
               height: 100,
             ),
             //Message
-            const Padding(
-              padding:
-                  EdgeInsets.only(left: 40, top: 10, right: 40, bottom: 10),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 40, top: 10, right: 40, bottom: 10),
               child: Center(
                 child: Text(
                   StringConstants.data_downloaded_error_message,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15),
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),
@@ -48,16 +56,17 @@ class DownloadAgainWidget extends StatelessWidget {
                   otherStudentTestPresenter!.tryAgainToDownload();
                 }
               },
-              child: const SizedBox(
+              child: SizedBox(
                 width: 100,
                 height: 60,
                 child: Center(
                   child: Text(
                     StringConstants.try_again_button_title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
                       color: AppColor.defaultPurpleColor,
-                      fontSize: 15,
+                      fontsSize: FontsSize.fontSize_15,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

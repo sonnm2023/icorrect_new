@@ -550,7 +550,7 @@ class Utils {
     );
   }
 
-  static Widget drawHeader(UserDataModel user) {
+  static Widget drawHeader(BuildContext context, UserDataModel user) {
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: CustomSize.size_30,
@@ -608,7 +608,12 @@ class Utils {
               children: [
                 Text(
                   user.profileModel.displayName.toString(),
-                  style: CustomTextStyle.textWhiteBold_15,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultAppColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

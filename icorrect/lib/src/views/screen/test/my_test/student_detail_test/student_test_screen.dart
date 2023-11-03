@@ -70,8 +70,11 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
             ),
             title: Text(
               widget.studentResultModel.students.name.toString(),
-              style: const TextStyle(
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
                 color: AppColor.defaultPurpleColor,
+                fontsSize: FontsSize.fontSize_18,
+                fontWeight: FontWeight.w800,
               ),
             ),
             bottom: PreferredSize(
@@ -108,21 +111,30 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
     );
   }
 
-  List<Widget> _tabsLabel() { 
-    return const [
+  List<Widget> _tabsLabel() {
+    return [
       Tab(
         child: Text(
           StringConstants.test_detail_tab_title,
-          style: TextStyle(fontSize: FontsSize.fontSize_14,color: AppColor.defaultPurpleColor),
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultPurpleColor,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ),
       Tab(
         child: Text(
           StringConstants.correction_tab_title,
-          style: TextStyle(fontSize: FontsSize.fontSize_14,color: AppColor.defaultPurpleColor),
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultPurpleColor,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ),
     ];
   }
 }
-  

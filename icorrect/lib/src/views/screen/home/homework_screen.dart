@@ -161,9 +161,14 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           child: Scaffold(
             key: widget.scaffoldKey,
             appBar: AppBar(
-              title: const Text(
+              title: Text(
                 StringConstants.my_homework_screen_title,
-                style: CustomTextStyle.appbarTitle,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultPurpleColor,
+                  fontsSize: FontsSize.fontSize_18,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               centerTitle: true,
               elevation: 0.0,

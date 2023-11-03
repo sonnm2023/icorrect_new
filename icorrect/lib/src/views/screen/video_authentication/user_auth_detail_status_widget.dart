@@ -170,13 +170,15 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
           ),
           SizedBox(
             width: (w - 20) / 1.6,
-            child: const Text(
+            child: Text(
               StringConstants.require_user_authentication_title,
               textAlign: TextAlign.start,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultAppColor,
+                fontsSize: FontsSize.fontSize_16,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           )
         ],
@@ -248,18 +250,22 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                       ),
                     );
                   },
-                  child: const AspectRatio(
+                  child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.video_camera_front_outlined,
+                        const Icon(Icons.video_camera_front_outlined,
                             size: 100, color: AppColor.defaultPurpleSightColor),
-                        Text(StringConstants.start_record_video_title,
-                            style: TextStyle(
-                                color: AppColor.defaultGrayColor,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500))
+                        Text(
+                          StringConstants.start_record_video_title,
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultGrayColor,
+                            fontsSize: FontsSize.fontSize_17,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -304,19 +310,23 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                   children: [
                     Text(
                       statusUI.title,
-                      style: TextStyle(
-                          color: statusUI.titleColor,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500),
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: statusUI.titleColor,
+                        fontsSize: FontsSize.fontSize_17,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                     SizedBox(
                       width: w / 1.4,
                       child: Text(
                         note.isNotEmpty ? note : statusUI.description,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_15,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     )
                   ],
@@ -384,15 +394,17 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                     Align(
                       alignment: Alignment.center,
                       child: Text(
-                          provider.userAuthenDetailModel.videosAuthDetail
-                                  .isNotEmpty
-                              ? StringConstants.record_video_again_title
-                              : StringConstants
-                                  .record_video_authentication_title,
-                          style: const TextStyle(
-                              color: AppColor.defaultWhiteColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400)),
+                        provider.userAuthenDetailModel.videosAuthDetail
+                                .isNotEmpty
+                            ? StringConstants.record_video_again_title
+                            : StringConstants.record_video_authentication_title,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultWhiteColor,
+                          fontsSize: FontsSize.fontSize_18,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                     )
                   ],
                 ),

@@ -59,9 +59,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
         child: Scaffold(
           key: GlobalScaffoldKey.practiceScreenScaffoldKey,
           appBar: AppBar(
-            title: const Text(
+            title: Text(
               StringConstants.practice_screen_title,
-              style: CustomTextStyle.appbarTitle,
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultPurpleColor,
+                fontsSize: FontsSize.fontSize_18,
+                fontWeight: FontWeight.w800,
+              ),
             ),
             centerTitle: true,
             elevation: 0.0,
@@ -133,7 +138,9 @@ Widget _buildInPracticeCard(
     ),
     child: Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: CustomSize.size_10, vertical: CustomSize.size_5),
+        horizontal: CustomSize.size_10,
+        vertical: CustomSize.size_5,
+      ),
       child: Card(
         elevation: 0,
         child: Container(
@@ -157,11 +164,21 @@ Widget _buildInPracticeCard(
             children: [
               Text(
                 title,
-                style: CustomTextStyle.textBoldBlack_14(context),
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Text(
                 des,
-                style: CustomTextStyle.textGrey_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultGrayColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
+                ),
               )
             ],
           ),

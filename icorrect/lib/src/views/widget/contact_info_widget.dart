@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -44,18 +45,33 @@ class _ContactInfoWidgetState extends State<ContactInfoWidget> {
         children: [
           Text(
             '${_packageInfo.appName} version ${_packageInfo.version}',
-            style: CustomTextStyle.textGrey_14,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultGrayColor,
+              fontsSize: FontsSize.fontSize_14,
+              fontWeight: FontWeight.w400,
+            ),
           ),
-          const Text(
+          Text(
             StringConstants.contact,
-            style: CustomTextStyle.textGrey_14,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultGrayColor,
+              fontsSize: FontsSize.fontSize_14,
+              fontWeight: FontWeight.w400,
+            ),
           ),
           const SizedBox(
             height: 8,
           ),
-          const Text(
+          Text(
             StringConstants.csupporter,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultBlackColor,
+              fontsSize: FontsSize.fontSize_13,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

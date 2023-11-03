@@ -69,7 +69,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
           GlobalScaffoldKey.myTestScaffoldKey,
         );
       },
-    ); 
+    );
   }
 
   @override
@@ -114,9 +114,14 @@ class _MyTestScreenState extends State<MyTestScreen> {
               );
             },
           ),
-          title: const Text(
+          title: Text(
             StringConstants.icorrect_title,
-            style: CustomTextStyle.appbarTitle,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultPurpleColor,
+              fontsSize: FontsSize.fontSize_18,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(CustomSize.size_50),
@@ -144,62 +149,83 @@ class _MyTestScreenState extends State<MyTestScreen> {
 
   List<Widget> _tabsLabel() {
     return widget.homeWorkModel.activityAnswer!.hasTeacherResponse()
-        ? const [
+        ? [
             Tab(
               child: Text(
                 StringConstants.my_exam_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             Tab(
               child: Text(
                 StringConstants.response_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             Tab(
               child: Text(
                 StringConstants.highlight_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             Tab(
               child: Text(
                 StringConstants.others_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
           ]
-        : const [
+        : [
             Tab(
               child: Text(
                 StringConstants.my_exam_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             Tab(
               child: Text(
                 StringConstants.highlight_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             Tab(
               child: Text(
                 StringConstants.others_tab_title,
-                style: TextStyle(
-                  fontSize: FontsSize.fontSize_14,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultBlackColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),

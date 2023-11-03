@@ -73,34 +73,37 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   List<Widget> _tabsLabel() {
-    return const [
+    return [
       Tab(
         child: Text(
           StringConstants.my_exam_tab_title,
-          style: TextStyle(
-            fontSize: FontsSize.fontSize_14,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
             color: AppColor.defaultPurpleColor,
-            fontWeight: FontWeight.bold,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
       Tab(
         child: Text(
           StringConstants.highlight_tab_title,
-          style: TextStyle(
-            fontSize: FontsSize.fontSize_14,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
             color: AppColor.defaultPurpleColor,
-            fontWeight: FontWeight.bold,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
       Tab(
         child: Text(
           StringConstants.others_tab_title,
-          style: TextStyle(
-            fontSize: FontsSize.fontSize_14,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
             color: AppColor.defaultPurpleColor,
-            fontWeight: FontWeight.bold,
+            fontsSize: FontsSize.fontSize_14,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -193,7 +196,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     ),
                     title: Text(
                       widget.homeWorkModel.activityName,
-                      style: CustomTextStyle.appbarTitle,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultPurpleColor,
+                        fontsSize: FontsSize.fontSize_18,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     bottom: PreferredSize(
                       preferredSize: const Size.fromHeight(CustomSize.size_40),

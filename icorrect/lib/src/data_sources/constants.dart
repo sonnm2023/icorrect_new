@@ -267,8 +267,10 @@ class FontsSize {
   static const double fontSize_14 = 14.0;
   static const double fontSize_15 = 15.0;
   static const double fontSize_16 = 16.0;
+  static const double fontSize_17 = 17.0;
   static const double fontSize_18 = 18.0;
   static const double fontSize_20 = 20.0;
+  static const double fontSize_22 = 22.0;
 }
 
 class CustomPadding {
@@ -303,232 +305,17 @@ class CustomSize {
 }
 
 class CustomTextStyle {
-  static TextStyle appbarTitle(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_18);
-    return TextStyle(
-      color: AppColor.defaultPurpleColor,
-      fontWeight: FontWeight.w800,
-      fontSize: size,
-    );
-  }
+  static TextStyle textWithCustomInfo({
+    required BuildContext context,
+    required Color color,
+    required double fontsSize,
+    required FontWeight fontWeight,
+  }) {
+    double size = Utils.fixSizeOfText(context: context, fontSize: fontsSize);
 
-  static TextStyle textBoldGreen_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
     return TextStyle(
-      color: Colors.green,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textGrey_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
-    return TextStyle(
-      color: Colors.grey.withOpacity(0.6),
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldGrey_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
-    return TextStyle(
-      color: AppColor.defaultGrayColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBlack_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
-    return TextStyle(
-      color: AppColor.defaultBlackColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldBlack_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
-    return TextStyle(
-      color: AppColor.defaultBlackColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldPurple_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
-    return TextStyle(
-      color: AppColor.defaultPurpleColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textGrey_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultGrayColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldGrey_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultGrayColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBlack_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultBlackColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldBlack_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultBlackColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldPurple_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultPurpleColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textWhite_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultWhiteColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textWhiteBold_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: AppColor.defaultWhiteColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textWhiteBold_16(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
-    return TextStyle(
-      color: AppColor.defaultWhiteColor,
-      fontWeight: FontWeight.w500,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldGreen_15(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
-    return TextStyle(
-      color: Colors.green,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textGrey_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultGrayColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldGrey_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultGrayColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBlack_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultBlackColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldBlack_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultBlackColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textBoldPurple_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultPurpleColor,
-      fontWeight: FontWeight.w600,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textWhite_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultWhiteColor,
-      fontWeight: FontWeight.w400,
-      fontSize: size,
-    );
-  }
-
-  static TextStyle textWhiteBold_14(BuildContext context) {
-    double size =
-        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
-    return TextStyle(
-      color: AppColor.defaultWhiteColor,
-      fontWeight: FontWeight.w600,
+      color: color,
+      fontWeight: fontWeight,
       fontSize: size,
     );
   }
@@ -768,6 +555,7 @@ class StringConstants {
       "Submit file to authentication fail: TimeoutException!";
   static const String submit_authen_fail_client_message =
       "Submit file to authentication fail: TimeoutException!";
+  static const String cancel_and_text = "Cancel and Later";
 
   //Warning Message
   static const String choose_filter_message =

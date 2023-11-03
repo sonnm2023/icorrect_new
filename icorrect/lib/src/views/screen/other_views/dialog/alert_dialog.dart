@@ -53,19 +53,23 @@ class AlertsDialog {
                   const SizedBox(height: 10),
                   Text(
                     info.title.toString(),
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultBlackColor,
+                      fontsSize: FontsSize.fontSize_18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     info.description.toString(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 98, 97, 97),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400),
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: const Color.fromARGB(255, 98, 97, 97),
+                      fontsSize: FontsSize.fontSize_16,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(

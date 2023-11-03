@@ -7,12 +7,14 @@ class LogoTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Text(
         StringConstants.logo_text,
-        style: TextStyle(
+        style: CustomTextStyle.textWithCustomInfo(
+          context: context,
           color: AppColor.defaultPurpleColor,
-          fontSize: 13,
+          fontsSize: FontsSize.fontSize_13,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );

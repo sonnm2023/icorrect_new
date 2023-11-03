@@ -51,12 +51,13 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
             alignment: Alignment.center,
             margin: const EdgeInsets.all(20),
             height: 300,
-            child: const Text(
+            child: Text(
               StringConstants.no_answer_please_start_your_test_message,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultBlackColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w600,
               ),
             ),
           );
@@ -75,15 +76,16 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                         Container(
                           color: AppColor.defaultLightGrayColor,
                           height: 44,
-                          child: const ListTile(
+                          child: ListTile(
                             title: Center(
                               child: Text(
                                 StringConstants.part_1_header,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
                                   color: AppColor.defaultPurpleColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -111,15 +113,16 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                         Container(
                           color: AppColor.defaultLightGrayColor,
                           height: 44,
-                          child: const ListTile(
+                          child: ListTile(
                             title: Center(
                               child: Text(
                                 StringConstants.part_2_header,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
                                   color: AppColor.defaultPurpleColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -147,15 +150,16 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                         Container(
                           color: AppColor.defaultLightGrayColor,
                           height: 44,
-                          child: const ListTile(
+                          child: ListTile(
                             title: Center(
                               child: Text(
                                 StringConstants.part_3_header,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
                                   color: AppColor.defaultPurpleColor,
+                                  fontsSize: FontsSize.fontSize_16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -227,7 +231,10 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                 children: [
                   Text(
                     question.content,
-                    style: const TextStyle(
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultBlackColor,
+                      fontsSize: FontsSize.fontSize_14,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -235,8 +242,11 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                   Text(
                     question.cueCard.trim(),
                     textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontSize: 15,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultBlackColor,
+                      fontsSize: FontsSize.fontSize_15,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -274,9 +284,11 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
               children: [
                 Text(
                   questionStr,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -292,12 +304,13 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                             onTap: () {
                               widget.reAnswerCallBack(question);
                             },
-                            child: const Text(
+                            child: Text(
                               StringConstants.re_answer_button_title,
-                              style: TextStyle(
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
                                 color: AppColor.defaultPurpleColor,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           )
@@ -312,11 +325,13 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                                 onTap: () {
                                   widget.showTipCallBack(question);
                                 },
-                                child: const Text(
+                                child: Text(
                                   StringConstants.view_tips_button_title,
-                                  style: TextStyle(
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
                                     color: AppColor.defaultPurpleColor,
-                                    fontSize: 14,
+                                    fontsSize: FontsSize.fontSize_14,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ),

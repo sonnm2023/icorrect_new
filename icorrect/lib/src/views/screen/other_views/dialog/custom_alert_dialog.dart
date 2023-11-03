@@ -32,8 +32,6 @@ class CustomAlertDialog extends StatefulWidget {
 class _CustomAlertDialogState extends State<CustomAlertDialog> {
   @override
   Widget build(BuildContext context) {
-    const double fontSize_15 = 15.0;
-
     return Dialog(
       elevation: 0,
       backgroundColor: const Color(0xffffffff),
@@ -49,10 +47,11 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
               const SizedBox(height: 15),
               Text(
                 widget.title,
-                style: const TextStyle(
-                  fontSize: fontSize_15,
-                  fontWeight: FontWeight.bold,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
                   color: AppColor.defaultPurpleColor,
+                  fontsSize: FontsSize.fontSize_15,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 10),
@@ -61,7 +60,12 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                 child: Text(
                   widget.description,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: fontSize_15),
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_15,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
               const SizedBox(height: 5),
@@ -89,10 +93,11 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                                 child: Text(
                                   widget.cancelButtonTitle ??
                                       StringConstants.cancel_button_title,
-                                  style: const TextStyle(
-                                    fontSize: fontSize_15,
-                                    fontWeight: FontWeight.bold,
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
                                     color: AppColor.defaultGrayColor,
+                                    fontsSize: FontsSize.fontSize_15,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -113,10 +118,11 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                                 child: Text(
                                   widget.okButtonTitle ??
                                       StringConstants.ok_button_title,
-                                  style: const TextStyle(
-                                    fontSize: fontSize_15,
-                                    fontWeight: FontWeight.bold,
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
                                     color: AppColor.defaultPurpleColor,
+                                    fontsSize: FontsSize.fontSize_15,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -139,10 +145,11 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                             child: Text(
                               widget.okButtonTitle ??
                                   StringConstants.ok_button_title,
-                              style: const TextStyle(
-                                fontSize: fontSize_15,
-                                fontWeight: FontWeight.bold,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
                                 color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
