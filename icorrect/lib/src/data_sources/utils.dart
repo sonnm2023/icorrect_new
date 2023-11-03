@@ -175,33 +175,33 @@ class Utils {
           isExpired(homeWorkModel.activityEndTime, serverCurrentTime);
       if (timeCheck) {
         return {
-          'title': 'Out of date',
-          'color': Colors.red,
+          StringConstants.k_title: StringConstants.activity_status_out_of_date,
+          StringConstants.k_color: Colors.red,
         };
       }
 
       return {
-        'title': 'Not Completed',
-        'color': const Color.fromARGB(255, 237, 179, 3)
+        StringConstants.k_title: StringConstants.activity_status_not_completed,
+        StringConstants.k_color: const Color.fromARGB(255, 237, 179, 3)
       };
     } else {
       if (homeWorkModel.activityAnswer!.orderId != 0) {
         return {
-          'title': 'Corrected',
-          'color': const Color.fromARGB(255, 12, 201, 110)
+          StringConstants.k_title: StringConstants.activity_status_corrected,
+          StringConstants.k_color: const Color.fromARGB(255, 12, 201, 110)
         };
       } else {
         if (homeWorkModel.activityAnswer!.late == 0) {
           return {
-            'title': 'Submitted',
-            'color': const Color.fromARGB(255, 45, 117, 243)
+            StringConstants.k_title: StringConstants.activity_status_submitted,
+            StringConstants.k_color: const Color.fromARGB(255, 45, 117, 243)
           };
         }
 
         if (homeWorkModel.activityAnswer!.late == 1) {
           return {
-            'title': 'Late',
-            'color': Colors.orange,
+            StringConstants.k_title: StringConstants.activity_status_late,
+            StringConstants.k_color: Colors.orange,
           };
         }
 
@@ -211,8 +211,9 @@ class Utils {
               DateTime.parse(homeWorkModel.activityAnswer!.createdAt);
           if (endTime.compareTo(createTime) < 0) {
             return {
-              'title': 'Out of date',
-              'color': Colors.red,
+              StringConstants.k_title:
+                  StringConstants.activity_status_out_of_date,
+              StringConstants.k_color: Colors.red,
             };
           }
         }
@@ -228,7 +229,7 @@ class Utils {
           isNumeric(homeWorkModel.activityAnswer!.aiScore)) {
         double score = double.parse(homeWorkModel.activityAnswer!.aiScore);
         if (score != -1 && score != -2) {
-          return " AI Scored";
+          return StringConstants.activity_status_ai_scored;
         }
       }
     }
@@ -237,15 +238,15 @@ class Utils {
 
   static int getFilterStatus(String status) {
     switch (status) {
-      case 'Submitted':
+      case StringConstants.activity_status_submitted:
         return 1;
-      case 'Corrected':
+      case StringConstants.activity_status_corrected:
         return 2;
-      case 'Not Completed':
+      case StringConstants.activity_status_not_completed:
         return 0;
-      case 'Late':
+      case StringConstants.activity_status_late:
         return -1;
-      case 'Out of date':
+      case StringConstants.activity_status_out_of_date:
         return -2;
       default:
         return -10;
@@ -255,18 +256,32 @@ class Utils {
   static Map<String, dynamic> scoreReponse(StudentResultModel resultModel) {
     if (resultModel.overallScore.isNotEmpty &&
         resultModel.overallScore != "0.0") {
-      return {'color': Colors.green, 'score': resultModel.overallScore};
+      return {
+        StringConstants.k_color: Colors.green,
+        StringConstants.k_score: resultModel.overallScore
+      };
     } else {
       String aiScore = resultModel.aiScore;
       if (aiScore.isNotEmpty) {
         if (isNumeric(aiScore) &&
             (double.parse(aiScore) == -1.0 || double.parse(aiScore) == -2.0)) {
-          return {'color': Colors.red, 'score': 'Not Evaluated'};
+          return {
+            StringConstants.k_color: Colors.red,
+            StringConstants.k_score:
+                StringConstants.ai_score_response_not_evaluated
+          };
         } else {
-          return {'color': Colors.blue, 'score': aiScore};
+          return {
+            StringConstants.k_color: Colors.blue,
+            StringConstants.k_score: aiScore
+          };
         }
       } else {
-        return {'color': Colors.red, 'score': 'Not Evaluated'};
+        return {
+          StringConstants.k_color: Colors.red,
+          StringConstants.k_score:
+              StringConstants.ai_score_response_not_evaluated
+        };
       }
     }
   }
@@ -406,22 +421,6 @@ class Utils {
     String filePath =
         await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
     return File(filePath);
-
-    // File decodedVideoFile;
-    // String bs4str =
-    //     await FileStorageHelper.readVideoFromFile(fileName, MediaType.video);
-    // Uint8List decodedBytes = base64.decode(bs4str);
-    // String filePath =
-    //     await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
-    //
-    // if (decodedBytes.isEmpty) {
-    //   //From second time and before
-    //   decodedVideoFile = File(filePath);
-    // } else {
-    //   //Convert for first time
-    //   decodedVideoFile = await File(filePath).writeAsBytes(decodedBytes);
-    // }
-    // return decodedVideoFile;
   }
 
   static Future<File> prepareAudioFile(String fileName, String? testId) async {
@@ -539,8 +538,6 @@ class Utils {
 
     return "";
   }
-
-  //huy copied functions
 
   static Widget navbar({
     required BuildContext context,
@@ -682,17 +679,17 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: "Notification",
-          description: "Do you want to logout?",
-          okButtonTitle: "OK",
-          cancelButtonTitle: "Cancel",
+          title: StringConstants.dialog_title,
+          description: StringConstants.confirm_to_log_out,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: StringConstants.cancel_button_title,
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () async {
             if (null != homeWorkPresenter) {
               var connectivity =
                   await ConnectivityService().checkConnectivity();
-              if (connectivity.name != "none") {
+              if (connectivity.name != StringConstants.connectivity_name_none) {
                 homeWorkPresenter.logout(context);
               } else {
                 //Show connect error here
@@ -828,7 +825,7 @@ class Utils {
     if (null == log) return;
 
     if (null != data) {
-      log.addData(key: "data", value: jsonEncode(data));
+      log.addData(key: StringConstants.k_data, value: jsonEncode(data));
     }
 
     if (null != message) {
@@ -839,7 +836,7 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != "none") {
+    if (status != StringConstants.connectivity_name_none) {
       //NOT Action log
       DateTime createdTime =
           DateTime.fromMillisecondsSinceEpoch(log.createdTime);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 
 class CustomAlertDialog extends StatefulWidget {
   const CustomAlertDialog({
@@ -86,7 +87,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               width: 100,
                               child: Center(
                                 child: Text(
-                                  widget.cancelButtonTitle ?? "Cancel",
+                                  widget.cancelButtonTitle ??
+                                      StringConstants.cancel_button_title,
                                   style: const TextStyle(
                                     fontSize: fontSize_15,
                                     fontWeight: FontWeight.bold,
@@ -109,7 +111,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               width: 100,
                               child: Center(
                                 child: Text(
-                                  widget.okButtonTitle ?? "OK",
+                                  widget.okButtonTitle ??
+                                      StringConstants.ok_button_title,
                                   style: const TextStyle(
                                     fontSize: fontSize_15,
                                     fontWeight: FontWeight.bold,
@@ -134,7 +137,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                           width: 150,
                           child: Center(
                             child: Text(
-                              widget.okButtonTitle ?? "OK",
+                              widget.okButtonTitle ??
+                                  StringConstants.ok_button_title,
                               style: const TextStyle(
                                 fontSize: fontSize_15,
                                 fontWeight: FontWeight.bold,

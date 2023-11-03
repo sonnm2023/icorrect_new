@@ -174,11 +174,11 @@ class _HighLightTabState extends State<HighLightTab>
             ],
           ),
           Text(
-            Utils.scoreReponse(resultModel)['score'],
+            Utils.scoreReponse(resultModel)[StringConstants.k_score],
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-                color: Utils.scoreReponse(resultModel)['color'],
+                color: Utils.scoreReponse(resultModel)[StringConstants.k_color],
                 fontSize: 15,
                 fontWeight: FontWeight.bold),
           ),
@@ -200,8 +200,9 @@ class _HighLightTabState extends State<HighLightTab>
   void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
     Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black);
+      msg: message,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: Colors.black,
+    );
   }
 }

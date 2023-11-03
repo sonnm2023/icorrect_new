@@ -238,9 +238,9 @@ class TestRoomPresenter {
         }
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        dataLog['response'] = json;
+        dataLog[StringConstants.k_response] = json;
 
-        if (json['error_code'] == 200) {
+        if (json[StringConstants.k_error_code] == 200) {
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -249,17 +249,18 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onSubmitTestSuccess('Save your answers successfully!');
+          _view!
+              .onSubmitTestSuccess(StringConstants.save_answer_success_message);
         } else {
           //Add log
           Utils.prepareLogData(
             log: log,
             data: dataLog,
-            message: "Has an error when submit this test!",
+            message: StringConstants.submit_test_error_message,
             status: LogEvent.failed,
           );
 
-          _view!.onSubmitTestFail("Has an error when submit this test!");
+          _view!.onSubmitTestFail(StringConstants.submit_test_error_message);
         }
       }).catchError((onError) {
         //Add log
@@ -272,41 +273,38 @@ class TestRoomPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onSubmitTestFail(
-            "invalid_return_type_for_catch_error: Has an error when submit this test!");
+            StringConstants.submit_test_error_invalid_return_type_message);
       });
     } on TimeoutException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "TimeoutException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_timeout,
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
-          "TimeoutException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(StringConstants.submit_test_error_timeout);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "SocketException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_socket,
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
-          "SocketException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(StringConstants.submit_test_error_socket);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "ClientException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
-          "ClientException: Has an error when submit this test!");
+      _view!.onSubmitTestFail(StringConstants.submit_test_error_client);
     }
   }
 
@@ -342,29 +340,32 @@ class TestRoomPresenter {
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+      StringConstants.k_content_type: 'multipart/form-data',
+      StringConstants.k_authorization: 'Bearer ${await Utils.getAccessToken()}'
     });
 
     Map<String, String> formData = {};
 
-    formData.addEntries([MapEntry('test_id', testId)]);
-    formData.addEntries([MapEntry('activity_id', activityId)]);
-    formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
+    formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
+    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    formData.addEntries(
+        [MapEntry(StringConstants.k_is_update, isUpdate ? '1' : '0')]);
 
     if (Platform.isAndroid) {
-      formData.addEntries([const MapEntry('os', "android")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
     } else {
-      formData.addEntries([const MapEntry('os', "ios")]);
+      formData.addEntries([const MapEntry(StringConstants.k_os, "ios")]);
     }
     String appVersion = await Utils.getAppVersion();
-    formData.addEntries([MapEntry('app_version', appVersion)]);
+    formData.addEntries([MapEntry(StringConstants.k_app_version, appVersion)]);
 
     if (null != logAction) {
       if (logAction.isNotEmpty) {
-        formData.addEntries([MapEntry('log_action', jsonEncode(logAction))]);
+        formData.addEntries(
+            [MapEntry(StringConstants.k_log_action, jsonEncode(logAction))]);
       } else {
-        formData.addEntries([const MapEntry('log_action', '[]')]);
+        formData
+            .addEntries([const MapEntry(StringConstants.k_log_action, '[]')]);
       }
     }
 
@@ -418,15 +419,16 @@ class TestRoomPresenter {
 
     if (null != videoConfirmFile) {
       String fileName = videoConfirmFile.path.split('/').last;
-      formData.addEntries([MapEntry('video_confirm', fileName)]);
+      formData
+          .addEntries([MapEntry(StringConstants.k_video_confirm, fileName)]);
       request.files.add(await http.MultipartFile.fromPath(
-          'video_confirm', videoConfirmFile.path));
+          StringConstants.k_video_confirm, videoConfirmFile.path));
     }
 
     request.fields.addAll(formData);
 
     if (null != dataLog) {
-      dataLog['request_data'] = formData.toString();
+      dataLog[StringConstants.k_request_data] = formData.toString();
     }
 
     return request;
@@ -471,9 +473,9 @@ class TestRoomPresenter {
         }
 
         Map<String, dynamic> json = jsonDecode(value) ?? {};
-        dataLog['response'] = json;
+        dataLog[StringConstants.k_response] = json;
 
-        if (json['error_code'] == 200) {
+        if (json[StringConstants.k_error_code] == 200) {
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -482,17 +484,19 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onUpdateReAnswersSuccess('Save your answers successfully!');
+          _view!.onUpdateReAnswersSuccess(
+              StringConstants.save_answer_success_message);
         } else {
           //Add log
           Utils.prepareLogData(
             log: log,
             data: dataLog,
-            message: "Has an error when submit this test!",
+            message: StringConstants.submit_test_error_message,
             status: LogEvent.failed,
           );
 
-          _view!.onUpdateReAnswersFail("Has an error when submit this test!");
+          _view!
+              .onUpdateReAnswersFail(StringConstants.submit_test_error_message);
         }
       }).catchError((onError) {
         //Add log
@@ -505,40 +509,37 @@ class TestRoomPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onUpdateReAnswersFail(
-            "invalid_return_type_for_catch_error: Has an error when submit this test!");
+            StringConstants.submit_test_error_invalid_return_type_message);
       });
     } on TimeoutException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "TimeoutException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_timeout,
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(
-          "TimeoutException: Has an error when submit this test!");
+      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_timeout);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "SocketException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_socket,
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(
-          "SocketException: Has an error when submit this test!");
+      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_socket);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: dataLog,
-        message: "ClientException: Has an error when submit this test!",
+        message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
-      _view!.onUpdateReAnswersFail(
-          "ClientException: Has an error when submit this test!");
+      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_client);
     }
   }
 }

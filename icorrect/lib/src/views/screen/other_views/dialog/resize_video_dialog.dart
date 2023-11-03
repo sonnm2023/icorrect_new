@@ -190,7 +190,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
         Utils.prepareLogData(
           log: log,
           data: data,
-          message: "Compress video file",
+          message: StringConstants.compress_video_error_message,
           status: LogEvent.failed,
         );
 

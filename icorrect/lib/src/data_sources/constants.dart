@@ -556,6 +556,9 @@ class StringConstants {
       "Your sample is waiting for review";
   static const String confirm_record_new_video =
       "Are you sure to create new sample and sent to review ?";
+  static const String confirm_to_log_out = "Do you want to logout?";
+  static const String default_filter_title = 'Add your filter!';
+  static const String repeat_question = "Ask for repeating the question!";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
@@ -660,6 +663,18 @@ class StringConstants {
   static const String error_auth_title = "Error Authentication";
   static const String error_auth_content =
       "An error occurs during verification,please contact ICorrect support";
+  static const String save_answer_success_message =
+      "Save your answers successfully!";
+  static const String submit_authen_success_message =
+      "Submit file to authentication successfully. Waiting for confirmation!";
+  static const String submit_authen_fail_message =
+      "Submit file to authentication fail!";
+  static const String submit_authen_fail_timeout_message =
+      "Submit file to authentication fail: TimeoutException!";
+  static const String submit_authen_fail_socket_message =
+      "Submit file to authentication fail: TimeoutException!";
+  static const String submit_authen_fail_client_message =
+      "Submit file to authentication fail: TimeoutException!";
 
   //Warning Message
   static const String choose_filter_message =
@@ -692,6 +707,10 @@ class StringConstants {
       "Your password must be shorter than 32 characters.";
   static const String video_record_duration_less_than_15s =
       "This video record must be greater than 15s";
+  static const String not_authen_user_message =
+      "You have not been added to the testing system, please contact admin for better understanding!";
+  static const String get_authen_user_fail_message =
+      "Something went wrong when load your authentication!";
 
   //Error message
   static const String getting_app_config_information_error_message =
@@ -702,8 +721,6 @@ class StringConstants {
       "A part of data has not downloaded properly. Please check your internet connection and try again.";
   static const String network_error_message =
       "An error occur. Please check your connection!";
-  static const String submit_test_error_message =
-      "An error occur, please try again later!";
   static const String common_error_message =
       "An error occur, please try again later!";
   static const String error_when_resize_file =
@@ -713,6 +730,82 @@ class StringConstants {
   static const String log_connection_error_message =
       'Your internet is not connect!';
   static const String load_image_error_message = "Can not load image!";
+  static const String load_list_homework_error_message =
+      "Loading list homework error!";
+  static const String load_result_response_error_message =
+      "Loading result response fail!";
+  static const String can_not_load_response_message = "Can't load response";
+  static const String load_detail_homework_error_message =
+      "Loading detail homework error!";
+  static const String submit_test_error_message =
+      "Has an error when submit this test. Please try again later!";
+  static const String submit_test_error_invalid_return_type_message =
+      "invalid_return_type_for_catch_error: Has an error when submit this test!";
+  static const String submit_test_error_timeout =
+      "TimeoutException: Has an error when submit this test!";
+  static const String submit_test_error_socket =
+      "SocketException: Has an error when submit this test!";
+  static const String submit_test_error_client =
+      "ClientException: Has an error when submit this test!";
+  static const String get_special_homework_error_message =
+      "GetSpecialHomeWorks: result fail!";
+  static const String compress_video_error_message = "Compress video file fail";
+  static const String loading_image_error_message = "Can not load this image!";
+
+  //Activity status
+  static const String activity_status_out_of_date = "Out of date";
+  static const String activity_status_not_completed = "Not Completed";
+  static const String activity_status_corrected = "Corrected";
+  static const String activity_status_submitted = "Submitted";
+  static const String activity_status_late = "Late";
+  static const String activity_status_ai_scored = " AI Scored";
+  static const String ai_score_response_not_evaluated = "Not Evaluated";
+
+  //keywords
+  static const String k_email = "email";
+  static const String k_password = "password";
+  static const String k_device_id = "device_id";
+  static const String k_app_version = "app_version";
+  static const String k_os = "os";
+  static const String k_old_password = "password_old";
+  static const String k_confirmation_password = "password_confirmation";
+  static const String k_status = "status";
+  static const String k_activity_id = "activity_id";
+  static const String k_distribute_code = "distribute_code";
+  static const String k_platform = "platform";
+  static const String k_title = "title";
+  static const String k_color = "color";
+  static const String k_score = "score";
+  static const String k_data = "data";
+  static const String k_error_code = "error_code";
+  static const String k_access_token = "access_token";
+  static const String k_message = "message";
+  static const String k_current_time = "current_time";
+  static const String k_content_type = "Content-Type";
+  static const String k_authorization = "Authorization";
+  static const String k_test_id = "test_id";
+  static const String k_is_update = "is_update";
+  static const String k_accept = "'Accept'";
+  static const String k_file_name = "file_name";
+  static const String k_file_path = "file_path";
+  static const String k_file_download_info = "file_download_info";
+  static const String k_response = "response";
+  static const String k_request_data = "request_data";
+  static const String k_image_url = "image_url";
+  static const String k_log_action = "log_action";
+  static const String k_video_confirm = "video_confirm";
+  static const String k_question_id = "question_id";
+  static const String k_question_text = "question_text";
+  static const String k_type = "type";
+  static const String k_time = "time";
+  static const String k_question_content = "question_content";
+  static const String k_file_id = "file_id";
+  static const String k_file_url = "file_url";
+  static const String k_api_url = "api_url";
+  static const String k_secretkey = "secretkey";
+  static const String k_refresh = "refresh";
+
+  static const String connectivity_name_none = "none";
 }
 
 const int timeout = 60;

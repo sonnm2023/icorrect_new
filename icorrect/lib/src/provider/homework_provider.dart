@@ -22,11 +22,11 @@ class HomeWorkProvider with ChangeNotifier {
   bool get isProcessing => _isProcessing;
   void setProcessingStatus({required bool isProcessing}) {
     _isProcessing = isProcessing;
-    
+
     notifyListeners();
   }
 
-  String _filterString = 'Add your filter!';
+  String _filterString = StringConstants.default_filter_title;
   String get filterString => _filterString;
   void updateFilterString(String newValue) {
     _filterString = newValue;
@@ -86,7 +86,7 @@ class HomeWorkProvider with ChangeNotifier {
   void setListSelectedClassFilter(List<NewClassModel> list) {
     _listSelectedClassFilter.clear();
     _listSelectedClassFilter.addAll(list);
-    
+
     notifyListeners();
   }
 
@@ -101,7 +101,7 @@ class HomeWorkProvider with ChangeNotifier {
   void setListSelectedStatusFilter(List<HomeWorkStatusModel> list) {
     _listSelectedStatusFilter.clear();
     _listSelectedStatusFilter.addAll(list);
-    
+
     notifyListeners();
   }
 
@@ -114,21 +114,21 @@ class HomeWorkProvider with ChangeNotifier {
   UserDataModel get currentUser => _currentUser;
   void setCurrentUser(UserDataModel user) {
     _currentUser = user;
-    
+
     notifyListeners();
   }
 
   void addSelectedClass(NewClassModel c) {
     if (!_checkClassExits(c)) {
       _listSelectedClassFilter.add(c);
-      
+
       notifyListeners();
     }
   }
 
   void removeSelectedClass(NewClassModel c) {
     _listSelectedClassFilter.remove(c);
-    
+
     notifyListeners();
   }
 
@@ -149,14 +149,14 @@ class HomeWorkProvider with ChangeNotifier {
   void addSelectedStatus(HomeWorkStatusModel s) {
     if (!_checkStatusExits(s)) {
       _listSelectedStatusFilter.add(s);
-      
+
       notifyListeners();
     }
   }
 
   void removeSelectedStatus(HomeWorkStatusModel s) {
     _listSelectedStatusFilter.remove(s);
-    
+
     notifyListeners();
   }
 
@@ -182,7 +182,7 @@ class HomeWorkProvider with ChangeNotifier {
       _listSelectedStatusFilter.clear();
       _listSelectedStatusFilter.addAll(listStatusForFilter);
     }
-    
+
     notifyListeners();
   }
 
@@ -192,7 +192,7 @@ class HomeWorkProvider with ChangeNotifier {
     } else {
       _listSelectedStatusFilter.clear();
     }
-    
+
     notifyListeners();
   }
 
@@ -258,9 +258,9 @@ class HomeWorkProvider with ChangeNotifier {
 
   Future<void> resetListSelectedFilterIntoLocal() async {
     AppSharedPref.instance()
-          .putString(key: AppSharedKeys.listClassFilter, value: null);
-      AppSharedPref.instance()
-          .putString(key: AppSharedKeys.listStatusFilter, value: null);
+        .putString(key: AppSharedKeys.listClassFilter, value: null);
+    AppSharedPref.instance()
+        .putString(key: AppSharedKeys.listStatusFilter, value: null);
   }
 
   void filterHomeWork() {
@@ -292,7 +292,8 @@ class HomeWorkProvider with ChangeNotifier {
       // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
       //     .contains(e1.activityStatus)).toList();
       List<ActivitiesModel> temp2 = temp1.where((e1) {
-        Map<String, dynamic> activityStatusMap = Utils.getHomeWorkStatus(e1, serverCurrentTime);
+        Map<String, dynamic> activityStatusMap =
+            Utils.getHomeWorkStatus(e1, serverCurrentTime);
         return listSelectedStatusFilter
             .map((e2) => e2.name)
             .contains(activityStatusMap['title']);
@@ -320,7 +321,7 @@ class HomeWorkProvider with ChangeNotifier {
   bool get dialogShowing => _dialogShowing;
   void setDialogShowing(bool isShowing) {
     _dialogShowing = isShowing;
-    
+
     notifyListeners();
   }
 

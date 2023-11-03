@@ -7,21 +7,19 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/camera_service.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/presenters/video_authentication_persenter.dart';
+import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
+import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
 import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../core/app_color.dart';
-import '../../../../core/camera_service.dart';
-import '../../../data_sources/constants.dart';
-import '../../../presenters/video_authentication_persenter.dart';
-import '../../../provider/user_auth_detail_provider.dart';
-import '../../../provider/video_authentication_provider.dart';
-
-import '../other_views/dialog/message_dialog.dart';
 
 class VideoAuthenticationRecord extends StatefulWidget {
   UserAuthDetailProvider userAuthDetailProvider;

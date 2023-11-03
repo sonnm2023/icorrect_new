@@ -56,16 +56,6 @@ class _FullImageWidgetState extends State<FullImageWidget> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Center(
-                // child: CachedNetworkImage(
-                //   imageUrl: widget.imageUrl,
-                //   fit: BoxFit.fitWidth,
-                //   placeholder: (context, url) => const Image(
-                //     image: AssetImage("assets/default_photo.png"),
-                //     width: 50,
-                //     height: 50,
-                //   ),
-                //   errorWidget: (context, url, error) => const Icon(Icons.error),
-                // ),
                 child: _buildChildWidget(),
               ),
             ),
