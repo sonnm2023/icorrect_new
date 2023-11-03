@@ -27,6 +27,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -98,7 +99,7 @@ class _MyTestTabState extends State<MyTestTab>
     await _presenter!.initializeData();
     var connectivity = await connectivityService.checkConnectivity();
 
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       _presenter!.getMyTest(
         context: context,
         activityId: widget.homeWorkModel.activityId.toString(),
@@ -107,6 +108,7 @@ class _MyTestTabState extends State<MyTestTab>
 
       Future.delayed(Duration.zero, () {
         widget.provider.setPermissionRecord(status);
+        widget.provider.setDownloadingFile(true);
       });
     } else {
       _loading!.hide();
@@ -137,6 +139,9 @@ class _MyTestTabState extends State<MyTestTab>
   Widget _buildMyTest() {
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
+        if(provider.isDownloading){
+          return const DownloadProgressingWidget(); 
+        }
         return Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -651,6 +656,7 @@ class _MyTestTabState extends State<MyTestTab>
     widget.provider.updateDownloadingPercent(percent);
     widget.provider.updateDownloadingIndex(index);
     if (index == total) {
+      widget.provider.setDownloadingFile(false);
       widget.provider.setTotal(0);
       widget.provider.updateDownloadingPercent(0.0);
       widget.provider.updateDownloadingIndex(0);

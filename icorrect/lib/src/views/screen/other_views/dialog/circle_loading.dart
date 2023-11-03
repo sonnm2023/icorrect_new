@@ -23,8 +23,8 @@ class CircleLoading {
           {required BuildContext context, required bool isViewAIResponse}) =>
       OverlayEntry(
         builder: (BuildContext context) {
-          double h = isViewAIResponse ? 50 : 0;
-          double height = MediaQuery.of(context).size.height - h;
+          //double h = isViewAIResponse ? 50 : 0;
+          double height = MediaQuery.of(context).size.height ;
 
           return Stack(
             children: <Widget>[

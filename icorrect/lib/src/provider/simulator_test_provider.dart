@@ -27,28 +27,6 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  // bool _visibleReanswer = false;
-  // int _indexReanswerQuestion = -1;
-  // QuestionTopicModel _question = QuestionTopicModel();
-  // bool get visibleReanswer => _visibleReanswer;
-  // int get indexReanswerQuestion => _indexReanswerQuestion;
-  // QuestionTopicModel get questionReanswer => _question;
-  // void setReanswerAction(bool visible, int index, QuestionTopicModel question) {
-  //   _visibleReanswer = visible;
-  //   _indexReanswerQuestion = index;
-  //   _question = question;
-  //   if (!isDisposed) {
-  //     notifyListeners();
-  //   }
-  // }
-
-  // void setVisibleReanswerWidget(bool visible) {
-  //   _visibleReanswer = visible;
-  //   if (!isDisposed) {
-  //     notifyListeners();
-  //   }
-  // }
-
   int _timeRecordCounting = 0;
   int get timeRecordCounting => _timeRecordCounting;
   void setTimeRecordCounting(int count) {
@@ -136,10 +114,6 @@ class SimulatorTestProvider with ChangeNotifier {
   bool get isShowConfirmSaveTest => _isShowConfirmSaveTest;
   void setShowConfirmSaveTest(bool isShow) {
     _isShowConfirmSaveTest = isShow;
-    //TODO: ???
-    // if (!isDisposed) {
-    //   notifyListeners();
-    // }
   }
 
   bool _isDownloadProgressing = false;
@@ -212,16 +186,6 @@ class SimulatorTestProvider with ChangeNotifier {
   void resetTopicsList() {
     _topicsList.clear();
   }
-
-  // bool _dialogShowing = false;
-  // bool get dialogShowing => _dialogShowing;
-  // void setDialogShowing(bool isShowing) {
-  //   _dialogShowing = isShowing;
-
-  //   if (!isDisposed) {
-  //     notifyListeners();
-  //   }
-  // }
 
   //Status of doing the test
   DoingStatus _doingStatus = DoingStatus.none;
@@ -345,7 +309,7 @@ class SimulatorTestProvider with ChangeNotifier {
         repeatIndex: questionTopic.repeatIndex,
         files: questionTopic.files);
     if (isRepeat) {
-      temp.content = "Ask for repeating the question!";
+      temp.content = StringConstants.repeat_question;
     }
     temp.repeatIndex = repeatIndex;
     _questionList.add(temp);
@@ -664,7 +628,6 @@ class SimulatorTestProvider with ChangeNotifier {
     _doingStatus = DoingStatus.none;
     _submitStatus = SubmitStatus.none;
     _activityType = '';
-    // _dialogShowing = false;
     _permissionDeniedTime = 0;
     _isGettingTestDetail = true;
     _isDownloadProgressing = false;

@@ -20,7 +20,6 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
@@ -460,7 +459,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _startSubmitTest() async {
     //Check connection
     var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       //Reset question image
       _resetQuestionImage();
 
@@ -606,7 +605,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _getTestDetail() async {
     await _simulatorTestPresenter!.initializeData();
     var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       _simulatorTestPresenter!.getTestDetail(
           context: context,
           homeworkId: widget.homeWorkModel.activityId.toString());

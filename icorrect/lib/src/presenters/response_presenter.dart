@@ -64,7 +64,8 @@ class ResponsePresenter {
           status: LogEvent.failed,
         );
 
-        _view!.getErrorResponse('Loading result response fail!');
+        _view!.getErrorResponse(
+            StringConstants.load_result_response_error_message);
       }
     }).catchError((onError) {
       //Add log
@@ -76,7 +77,7 @@ class ResponsePresenter {
       );
 
       // ignore: invalid_return_type_for_catch_error
-      _view!.getErrorResponse("Can't load response");
+      _view!.getErrorResponse(StringConstants.can_not_load_response_message);
     });
   }
 }

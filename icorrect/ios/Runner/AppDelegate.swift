@@ -49,6 +49,7 @@ import Foundation
                 if (fileURL == nil) { return }
                 do {
                     let content = try? String(contentsOf: fileURL!, encoding: .utf8)
+                    debugPrint("DEBUG: log content: \(String(describing: content))")
                     let param: [String : Any] = ["secretkey": secretkey, "file": content]
                     NetworkManager.shared.callingHttpPostMethodWithFile(params: param, apiname: apiUrl, filePath: filePath, success: { [weak self](data) in
                         guard self != nil else {return}

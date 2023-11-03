@@ -63,8 +63,8 @@ class VideoAuthenticationPresenter {
     http.MultipartRequest multiRequest =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     multiRequest.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ${await Utils.getAccessToken()}'
+      StringConstants.k_content_type: 'multipart/form-data',
+      StringConstants.k_authorization: 'Bearer ${await Utils.getAccessToken()}'
     });
 
     multiRequest.files
@@ -77,30 +77,30 @@ class VideoAuthenticationPresenter {
           print("DEBUG:form response: ${json.toString()}");
         }
 
-        if (json['error_code'] == 200 && json['status'] == 'success') {
+        if (json[StringConstants.k_error_code] == 200 &&
+            json[StringConstants.k_status] == 'success') {
           //Add log
           Utils.prepareLogData(
             log: log,
             data: jsonDecode(value),
-            message:
-                "Submit file to authentication successfully. Waiting for confirmation!",
+            message: StringConstants.submit_authen_success_message,
             status: LogEvent.success,
           );
 
-          _view!.submitAuthSuccess(authFile,
-              "Submit file to authentication successfully. Waiting for confirmation!");
+          _view!.submitAuthSuccess(
+              authFile, StringConstants.submit_authen_success_message);
         } else {
           List<String> categoriesList = List<String>.from(isUploadVideo
               ? json['data']['video'] ?? []
               : json['data']['audio'] ?? []);
 
-          _view!.submitAuthFail(
-              'Error : ${categoriesList.toString().replaceAll(RegExp(r'[\[\]]'), "")}');
+          _view!.submitAuthFail(StringConstants.submit_authen_fail_message);
           //Add log
           Utils.prepareLogData(
             log: log,
             data: jsonDecode(value),
-            message: "Submit file to authentication fail!",
+            message:
+                'Error : ${categoriesList.toString().replaceAll(RegExp(r'[\[\]]'), "")}',
             status: LogEvent.failed,
           );
         }
@@ -110,28 +110,28 @@ class VideoAuthenticationPresenter {
       Utils.prepareLogData(
         log: log,
         data: null,
-        message: "Submit file to authentication fail: TimeoutException!",
+        message: StringConstants.submit_authen_fail_timeout_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail("Please check your internet and try again !");
+      _view!.submitAuthFail(StringConstants.submit_authen_fail_timeout_message);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: null,
-        message: "Submit file to authentication fail: SocketException!",
+        message: StringConstants.submit_authen_fail_socket_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail("Please check your internet and try again !");
+      _view!.submitAuthFail(StringConstants.submit_authen_fail_socket_message);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: null,
-        message: "Submit file to authentication fail: ClientException!",
+        message: StringConstants.submit_authen_fail_client_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail("Please check your internet and try again !");
+      _view!.submitAuthFail(StringConstants.submit_authen_fail_client_message);
     }
   }
 }

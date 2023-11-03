@@ -114,7 +114,7 @@ class LoginPresenter {
         print("DEBUG: getAppConfigInfo $value");
       }
       Map<String, dynamic> dataMap = jsonDecode(value);
-      if (dataMap['error_code'] == 200) {
+      if (dataMap[StringConstants.k_error_code] == 200) {
         AppConfigInfoModel appConfigInfoModel =
             AppConfigInfoModel.fromJson(dataMap);
         String logApiUrl = appConfigInfoModel.data.logUrl.toString();
@@ -133,7 +133,7 @@ class LoginPresenter {
         Utils.prepareLogData(
           log: log,
           data: jsonDecode(value),
-          message: dataMap['message'],
+          message: dataMap[StringConstants.k_message],
           status: LogEvent.success,
         );
 
@@ -143,7 +143,8 @@ class LoginPresenter {
         Utils.prepareLogData(
           log: log,
           data: null,
-          message: "Login error: ${dataMap['error_code']}${dataMap['status']}",
+          message:
+              "Login error: ${dataMap[StringConstants.k_error_code]}${dataMap[StringConstants.k_status]}",
           status: LogEvent.failed,
         );
 
@@ -190,8 +191,9 @@ class LoginPresenter {
 
     _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
-      if (dataMap['error_code'] == 200) {
-        UserDataModel userDataModel = UserDataModel.fromJson(dataMap['data']);
+      if (dataMap[StringConstants.k_error_code] == 200) {
+        UserDataModel userDataModel =
+            UserDataModel.fromJson(dataMap[StringConstants.k_data]);
         Utils.setCurrentUser(userDataModel);
 
         //Add log
@@ -209,7 +211,7 @@ class LoginPresenter {
           log: log,
           data: null,
           message:
-              "GetUserInfo error: ${dataMap['error_code']}${dataMap['status']}",
+              "GetUserInfo error: ${dataMap[StringConstants.k_error_code]}${dataMap[StringConstants.k_status]}",
           status: LogEvent.failed,
         );
 

@@ -81,8 +81,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         return;
       }
 
-      channel.invokeMethod('com.csupporter.sendlogtask',
-          {"api_url": apiUrl, "secretkey": secretkey, "file_path": filePath});
+      channel.invokeMethod('com.csupporter.sendlogtask', {
+        StringConstants.k_api_url: apiUrl,
+        StringConstants.k_secretkey: secretkey,
+        StringConstants.k_file_path: filePath,
+      });
     } else {
       Workmanager().registerOneOffTask(
         sendLogsTask,
@@ -102,7 +105,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.resetListFilteredHomeWorks();
 
     var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       _homeWorkPresenter!.getListHomeWork(context);
     } else {
       //Show connect error here
@@ -239,7 +242,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         _showQuitAppConfirmDialog();
       } else {
         if (_isBackFromTestRoom(key)) {
-          Navigator.pop(key.currentState!.context, 'refresh');
+          Navigator.pop(key.currentState!.context, StringConstants.k_refresh);
         } else {
           Navigator.of(key.currentState!.context).pop();
         }

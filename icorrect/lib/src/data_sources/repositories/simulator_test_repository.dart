@@ -32,11 +32,11 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           url,
           true,
           body: <String, String>{
-            'activity_id': homeworkId,
-            'distribute_code': distributeCode,
-            'platform': platform,
-            'app_version': appVersion,
-            'device_id': deviceId,
+            StringConstants.k_activity_id: homeworkId,
+            StringConstants.k_distribute_code: distributeCode,
+            StringConstants.k_platform: platform,
+            StringConstants.k_app_version: appVersion,
+            StringConstants.k_device_id: deviceId,
           },
         )
         .timeout(const Duration(seconds: timeout))

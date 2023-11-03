@@ -90,7 +90,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     await _presenter!.initializeData();
     var connectivity = await connectivityService.checkConnectivity();
 
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       _presenter!.getMyTest(widget.studentResultModel.testId.toString());
     } else {
       //Show connect error here

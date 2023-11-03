@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../data_sources/constants.dart';
 
 class MyTestProvider extends ChangeNotifier {
   bool isDisposed = false;
@@ -38,6 +37,15 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   ///////////////My Test Screen/////////////////////////////////////////////////
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
+
+  void setDownloadingFile(bool downloading) {
+    _isDownloading = downloading;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 
   int _total = 0;
   int get total => _total;

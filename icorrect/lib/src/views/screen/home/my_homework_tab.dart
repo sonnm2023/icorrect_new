@@ -10,6 +10,7 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
@@ -21,8 +22,6 @@ import 'package:icorrect/src/views/widget/homework_widget.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
-import '../../../models/ui_models/alert_info.dart';
 
 class MyHomeWorkTab extends StatefulWidget {
   const MyHomeWorkTab(
@@ -409,12 +408,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
   void _gotoHomeworkDetail() async {
     var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != "none") {
+    if (connectivity.name != StringConstants.connectivity_name_none) {
       Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
           _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
 
-      if (statusMap['title'] == 'Out of date' ||
-          statusMap['title'] == 'Not Completed') {
+      if (statusMap[StringConstants.k_title] ==
+              StringConstants.activity_status_out_of_date ||
+          statusMap[StringConstants.k_title] ==
+              StringConstants.activity_status_not_completed) {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
@@ -427,7 +428,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         if (!mounted) return;
         // After the SimulatorTest returns a result
         // and refresh list of homework if needed
-        if (result == 'refresh') {
+        if (result == StringConstants.k_refresh) {
           widget.homeWorkPresenter.refreshListHomework();
         }
       } else {
