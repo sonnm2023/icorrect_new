@@ -303,113 +303,185 @@ class CustomSize {
 }
 
 class CustomTextStyle {
-  static const TextStyle appbarTitle = TextStyle(
-    color: AppColor.defaultPurpleColor,
-    fontWeight: FontWeight.w800,
-    fontSize: FontsSize.fontSize_18,
-  );
+  static TextStyle appbarTitle(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_18);
+    return TextStyle(
+      color: AppColor.defaultPurpleColor,
+      fontWeight: FontWeight.w800,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldGreen_16 = TextStyle(
-    color: Colors.green,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textBoldGreen_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: Colors.green,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static TextStyle textGrey_16 = TextStyle(
-    color: Colors.grey.withOpacity(0.6),
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textGrey_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: Colors.grey.withOpacity(0.6),
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldGrey_16 = TextStyle(
-    color: AppColor.defaultGrayColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textBoldGrey_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: AppColor.defaultGrayColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBlack_16 = TextStyle(
-    color: AppColor.defaultBlackColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textBlack_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: AppColor.defaultBlackColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldBlack_16 = TextStyle(
-    color: AppColor.defaultBlackColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textBoldBlack_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: AppColor.defaultBlackColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldPurple_16 = TextStyle(
-    color: AppColor.defaultPurpleColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textBoldPurple_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: AppColor.defaultPurpleColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textGrey_15 = TextStyle(
-    color: AppColor.defaultGrayColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textGrey_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultGrayColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldGrey_15 = TextStyle(
-    color: AppColor.defaultGrayColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textBoldGrey_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultGrayColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBlack_15 = TextStyle(
-    color: AppColor.defaultBlackColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textBlack_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultBlackColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldBlack_15 = TextStyle(
-    color: AppColor.defaultBlackColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textBoldBlack_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultBlackColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldPurple_15 = TextStyle(
-    color: AppColor.defaultPurpleColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textBoldPurple_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultPurpleColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textWhite_15 = TextStyle(
-    color: AppColor.defaultWhiteColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textWhite_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultWhiteColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textWhiteBold_15 = TextStyle(
-    color: AppColor.defaultWhiteColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textWhiteBold_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: AppColor.defaultWhiteColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textWhiteBold_16 = TextStyle(
-    color: AppColor.defaultWhiteColor,
-    fontWeight: FontWeight.w500,
-    fontSize: FontsSize.fontSize_16,
-  );
+  static TextStyle textWhiteBold_16(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_16);
+    return TextStyle(
+      color: AppColor.defaultWhiteColor,
+      fontWeight: FontWeight.w500,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldGreen_15 = TextStyle(
-    color: Colors.green,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_15,
-  );
+  static TextStyle textBoldGreen_15(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_15);
+    return TextStyle(
+      color: Colors.green,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textGrey_14 = TextStyle(
-    color: AppColor.defaultGrayColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textGrey_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultGrayColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textBoldGrey_14 = TextStyle(
-    color: AppColor.defaultGrayColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textBoldGrey_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultGrayColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
   static TextStyle textBlack_14(BuildContext context) {
     double size =
@@ -431,23 +503,35 @@ class CustomTextStyle {
     );
   }
 
-  static const TextStyle textBoldPurple_14 = TextStyle(
-    color: AppColor.defaultPurpleColor,
-    fontWeight: FontWeight.w600,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textBoldPurple_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultPurpleColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textWhite_14 = TextStyle(
-    color: AppColor.defaultWhiteColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textWhite_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultWhiteColor,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+    );
+  }
 
-  static const TextStyle textWhiteBold_14 = TextStyle(
-    color: AppColor.defaultWhiteColor,
-    fontWeight: FontWeight.w400,
-    fontSize: FontsSize.fontSize_14,
-  );
+  static TextStyle textWhiteBold_14(BuildContext context) {
+    double size =
+        Utils.fixSizeOfText(context: context, fontSize: FontsSize.fontSize_14);
+    return TextStyle(
+      color: AppColor.defaultWhiteColor,
+      fontWeight: FontWeight.w600,
+      fontSize: size,
+    );
+  }
 }
 
 class LogEvent {
