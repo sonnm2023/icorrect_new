@@ -82,6 +82,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+@pragma(
+    'vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
     //Check logs file is exist
@@ -132,12 +134,12 @@ void callbackDispatcher() {
     var res = await request.send();
     if (res.statusCode == 200) {
       if (kDebugMode) {
-        print("DEBUG: send log success");
+        print("DEBUG: send log success kDebugMode");
       }
       Utils.deleteLogFile();
     } else {
       if (kDebugMode) {
-        print("DEBUG: send log failed");
+        print("DEBUG: send log failed  - kDebugMode");
       }
     }
 
