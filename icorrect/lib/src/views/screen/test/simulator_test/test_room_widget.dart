@@ -2255,7 +2255,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       builder: (BuildContext context) {
         return CustomAlertDialog(
           title: StringConstants.dialog_title,
-          description: StringConstants.submit_test_error_message,
+          description: msg,
           okButtonTitle: StringConstants.ok_button_title,
           cancelButtonTitle: null,
           borderRadius: 8,

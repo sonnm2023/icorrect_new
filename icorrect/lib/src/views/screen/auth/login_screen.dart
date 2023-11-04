@@ -355,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen>
     }
     //Show get app config info error
     showToastMsg(
-      msg: StringConstants.getting_app_config_information_error_message,
+      msg: ,
       toastState: ToastStatesType.error,
     );
   }
