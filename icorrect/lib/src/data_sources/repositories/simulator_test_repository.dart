@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
@@ -13,6 +14,13 @@ abstract class SimulatorTestRepository {
     required String deviceId,
   });
   Future<String> submitTest(http.MultipartRequest multiRequest);
+  Future<String> callTestPosition({
+    required String email,
+    required String activityId,
+    required int questionIndex,
+    required String user,
+    required String pass,
+  });
 }
 
 class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
@@ -61,6 +69,40 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         });
       } else {
         return '';
+      }
+    });
+  }
+
+  @override
+  Future<String> callTestPosition({
+    required String email,
+    required String activityId,
+    required int questionIndex,
+    required String user,
+    required String pass
+  }) async {
+    return AppRepository.init()
+        .sendRequest(
+      RequestMethod.post,
+      testPositionApi,
+      false,
+      body: <String, String>{
+        StringConstants.k_email: email,
+        StringConstants.k_activity_id: activityId,
+        "question_index": questionIndex.toString(),
+        "user": user,
+        "pass": pass,
+      },
+    )
+        .timeout(const Duration(seconds: timeout))
+        .then((http.Response response) {
+      final String jsonBody = response.body;
+      return jsonBody;
+    })
+    // ignore: body_might_complete_normally_catch_error
+        .catchError((onError) {
+      if (kDebugMode) {
+        print("DEBUG: error: ${onError.toString()}");
       }
     });
   }

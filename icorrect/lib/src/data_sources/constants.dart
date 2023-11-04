@@ -353,6 +353,7 @@ class LogEvent {
   static const String callApiGetUserAuthDetail =
       'call_api_get_user_auth_detail';
   static const String callApiSubmitAuth = 'call_api_submit_auth';
+  static const String callApiTestPosition = 'call_api_test_position';
 
   //Action log event
   static const String actionLogin = 'action_login';

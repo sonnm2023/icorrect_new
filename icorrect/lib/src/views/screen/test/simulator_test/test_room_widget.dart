@@ -92,6 +92,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
   final connectivityService = ConnectivityService();
+  int _quetionIndex = 0;
 
   @override
   void initState() {
@@ -1051,6 +1052,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Finish re answer
       onFinishForReAnswer();
     } else {
+      //Increase question index
+      _quetionIndex++;
+
       //Finish answer
       bool isPart2 = false;
 
@@ -1063,8 +1067,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
       _createLog(action: LogEvent.actionFinishAnswer, data: info);
 
+      //Call api test-position
+      _callTestPositionApi();
+
       onFinishAnswer(isPart2);
     }
+  }
+
+  void _callTestPositionApi() {
+    String activityId = widget.homeWorkModel.activityId.toString();
+    _testRoomPresenter!.callTestPositionApi(context, activityId: activityId, questionIndex: _quetionIndex);
   }
 
   void _cancelReanswerCallBack() async {
@@ -2249,6 +2261,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
+    //Reset _questionIndex
+    _quetionIndex = 0;
+
     //Send log
     Utils.sendLog();
 
@@ -2279,6 +2294,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
+
+    //Reset _questionIndex
+    _quetionIndex = 0;
 
     //Send log
     Utils.sendLog();

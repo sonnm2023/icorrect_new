@@ -18,6 +18,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class TestRoomViewContract {
   void onPlayIntroduce();
@@ -541,5 +542,86 @@ class TestRoomPresenter {
       );
       _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_client);
     }
+  }
+
+  void callTestPositionApi(
+    BuildContext context, {
+    required String activityId,
+    required int questionIndex,
+  }) async {
+    UserDataModel? currentUser = await Utils.getCurrentUser();
+    if (null == currentUser) return;
+
+    if (kDebugMode) {
+      print("DEBUG: callTestPositionApi: activityId $activityId - questionIndex $questionIndex");
+    }
+
+    assert(_view != null && _testRepository != null);
+
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiTestPosition);
+    }
+
+    String email = currentUser.userInfoModel.email;
+
+    _testRepository!
+        .callTestPosition(
+            email: email,
+            activityId: activityId,
+            questionIndex: questionIndex,
+            user: testPositionUser,
+            pass: testPositionPass)
+        .then((value) async {
+      if (kDebugMode) {
+        print("DEBUG: callTestPosition $value");
+      }
+
+      //Add information into log
+      log!.addData(key: StringConstants.k_email, value: email);
+      log!.addData(key: StringConstants.k_activity_id, value: activityId);
+      log!.addData(key: "question_index", value: questionIndex);
+
+      Map<String, dynamic> dataMap = jsonDecode(value);
+      if (dataMap[StringConstants.k_error_code] == 200) {
+        if (kDebugMode) {
+          print("DEBUG: callTestPosition SUCCESS");
+        }
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: jsonDecode(value),
+          message: dataMap[StringConstants.k_message],
+          status: LogEvent.success,
+        );
+      } else {
+        if (kDebugMode) {
+          print("DEBUG: callTestPosition FAIL");
+        }
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message:
+              "CallTestPositionApi error: ${dataMap[StringConstants.k_error_code]}${dataMap[StringConstants.k_status]}",
+          status: LogEvent.failed,
+        );
+      }
+    }).catchError((onError) {
+      String message = '';
+      if (onError is http.ClientException || onError is SocketException) {
+        message = StringConstants.network_error_message;
+      } else {
+        message = StringConstants.common_error_message;
+      }
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: null,
+        message: message,
+        status: LogEvent.failed,
+      );
+    });
   }
 }

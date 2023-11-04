@@ -11,6 +11,9 @@ const icorrectDomain = "https://ielts-correction.com/";
 const publicDomain = icorrectDomain;
 const toolDomain = icorrectDomain;
 const apiDomain = icorrectDomain;
+const testPositionApi = "http://public.icorrect.vn/api/student/test-position";
+const testPositionUser = "ic_landing";
+const testPositionPass = "5]N;3e:t<3uvgR2L";
 
 ///// api endpoints
 const String registerEP = 'auth/register';
