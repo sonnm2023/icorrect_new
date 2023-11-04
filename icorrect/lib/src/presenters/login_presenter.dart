@@ -144,11 +144,11 @@ class LoginPresenter {
           log: log,
           data: null,
           message:
-              "Login error: ${dataMap[StringConstants.k_error_code]}${dataMap[StringConstants.k_status]}",
+              "GetAppConfigInfo error: ${dataMap[StringConstants.k_error_code]}${dataMap[StringConstants.k_status]}",
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_message);
+        _view!.onGetAppConfigInfoFail(StringConstants.getting_app_config_information_error_message);
       }
     }).catchError((onError) {
       String message = '';
