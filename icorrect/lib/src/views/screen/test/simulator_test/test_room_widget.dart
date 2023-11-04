@@ -824,6 +824,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     QuestionTopicModel question,
     int selectedQuestionIndex,
   ) async {
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+      return;
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
       if (_audioPlayerController!.state == PlayerState.playing) {
