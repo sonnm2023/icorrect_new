@@ -553,7 +553,8 @@ class TestRoomPresenter {
     if (null == currentUser) return;
 
     if (kDebugMode) {
-      print("DEBUG: callTestPositionApi: activityId $activityId - questionIndex $questionIndex");
+      print(
+          "DEBUG: callTestPositionApi: activityId $activityId - questionIndex $questionIndex");
     }
 
     assert(_view != null && _testRepository != null);

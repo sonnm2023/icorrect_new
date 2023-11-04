@@ -92,7 +92,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
   final connectivityService = ConnectivityService();
-  int _quetionIndex = 0;
+  int _questionIndex = 0;
 
   @override
   void initState() {
@@ -1052,9 +1052,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Finish re answer
       onFinishForReAnswer();
     } else {
-      //Increase question index
-      _quetionIndex++;
-
       //Finish answer
       bool isPart2 = false;
 
@@ -1067,8 +1064,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
       _createLog(action: LogEvent.actionFinishAnswer, data: info);
 
-      //Call api test-position
-      _callTestPositionApi();
+      if (_isExam) {
+        //Increase question index
+        _questionIndex++;
+        //Call api test-position
+        _callTestPositionApi();
+      }
 
       onFinishAnswer(isPart2);
     }
@@ -1076,7 +1077,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _callTestPositionApi() {
     String activityId = widget.homeWorkModel.activityId.toString();
-    _testRoomPresenter!.callTestPositionApi(context, activityId: activityId, questionIndex: _quetionIndex);
+    _testRoomPresenter!.callTestPositionApi(
+      context,
+      activityId: activityId,
+      questionIndex: _questionIndex,
+    );
   }
 
   void _cancelReanswerCallBack() async {
@@ -2257,12 +2262,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onSubmitTestFail(String msg) async {
+    if (null != _loading) {
+      _loading!.hide();
+    }
     //Update indicator process status
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
-    //Reset _questionIndex
-    _quetionIndex = 0;
+    if (_isExam) {
+      //Reset _questionIndex
+      _questionIndex = 0;
+    }
 
     //Send log
     Utils.sendLog();
@@ -2295,8 +2305,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
 
-    //Reset _questionIndex
-    _quetionIndex = 0;
+    if (_isExam) {
+      //Reset _questionIndex
+      _questionIndex = 0;
+    }
 
     //Send log
     Utils.sendLog();
@@ -2453,6 +2465,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _loading) {
       _loading!.hide();
     }
+    //Update indicator process status
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+    _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
     //Just for test
     // _simulatorTestProvider!.setVisibleSaveTheTest(false);

@@ -733,13 +733,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestFail(String msg) {
-    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+    if (null != _loading) {
       _loading!.hide();
-    } else {
-      _loading!.hide();
-      _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
-      _simulatorTestProvider!.setVisibleSaveTheTest(true);
     }
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
+    _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
     //Send log
     Utils.sendLog();
