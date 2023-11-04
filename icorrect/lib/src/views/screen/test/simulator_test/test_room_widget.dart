@@ -2249,6 +2249,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
+    //Send log
+    Utils.sendLog();
+
     //Show submit error popup
     await showDialog(
       context: context,
@@ -2276,6 +2279,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
+
+    //Send log
+    Utils.sendLog();
 
     //Delete file video record exam
     _deleteFileVideoExam();
@@ -2429,8 +2435,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (null != _loading) {
       _loading!.hide();
     }
+
     //Just for test
     // _simulatorTestProvider!.setVisibleSaveTheTest(false);
+
+    //Send log
+    Utils.sendLog();
 
     Fluttertoast.showToast(
         msg: msg,
@@ -2449,6 +2459,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
+
+    //Send log
+    Utils.sendLog();
 
     Fluttertoast.showToast(
       msg: msg,

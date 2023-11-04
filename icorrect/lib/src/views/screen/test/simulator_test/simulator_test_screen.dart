@@ -741,6 +741,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       _simulatorTestProvider!.setVisibleSaveTheTest(true);
     }
 
+    //Send log
+    Utils.sendLog();
+
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.error,
@@ -755,6 +758,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       _loading!.hide();
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     }
+
+    //Send log
+    Utils.sendLog();
 
     showToastMsg(
       msg: msg,

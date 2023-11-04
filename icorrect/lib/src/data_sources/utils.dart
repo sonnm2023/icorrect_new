@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -24,6 +25,7 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../core/app_asset.dart';
 import '../../core/app_color.dart';
@@ -1031,5 +1033,32 @@ class Utils {
     double textScaleFactor = queryData.textScaleFactor;
     double adjustedFontSize = customFontSize / textScaleFactor;
     return adjustedFontSize;
+  }
+
+  static void sendLog() async {
+    if (Platform.isIOS) {
+      const MethodChannel channel = MethodChannel('nativeChannel');
+      String apiUrl = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.logApiUrl);
+      String secretkey = await AppSharedPref.instance()
+          .getString(key: AppSharedKeys.secretkey);
+      String folderPath = await FileStorageHelper.getExternalDocumentPath();
+      String filePath = "$folderPath/flutter_logs.txt";
+
+      if (apiUrl.isEmpty || secretkey.isEmpty || filePath.isEmpty) {
+        return;
+      }
+
+      channel.invokeMethod('com.csupporter.sendlogtask', {
+        StringConstants.k_api_url: apiUrl,
+        StringConstants.k_secretkey: secretkey,
+        StringConstants.k_file_path: filePath,
+      });
+    } else {
+      Workmanager().registerOneOffTask(
+        sendLogsTask,
+        sendLogsTask,
+      );
+    }
   }
 }

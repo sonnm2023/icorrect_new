@@ -12,7 +12,6 @@ const publicDomain = icorrectDomain;
 const toolDomain = icorrectDomain;
 const apiDomain = icorrectDomain;
 
-
 ///// api endpoints
 const String registerEP = 'auth/register';
 const String loginEP = 'auth/login';

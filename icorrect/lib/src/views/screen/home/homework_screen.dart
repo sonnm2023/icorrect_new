@@ -4,11 +4,7 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:icorrect/core/connectivity_service.dart';
-import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
-import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -63,35 +59,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     _getListHomeWork();
 
-    //Send log if has
-    _sendLog();
-  }
-
-  void _sendLog() async {
-    if (Platform.isIOS) {
-      const MethodChannel channel = MethodChannel('nativeChannel');
-      String apiUrl = await AppSharedPref.instance()
-          .getString(key: AppSharedKeys.logApiUrl);
-      String secretkey = await AppSharedPref.instance()
-          .getString(key: AppSharedKeys.secretkey);
-      String folderPath = await FileStorageHelper.getExternalDocumentPath();
-      String filePath = "$folderPath/flutter_logs.txt";
-
-      if (apiUrl.isEmpty || secretkey.isEmpty || filePath.isEmpty) {
-        return;
-      }
-
-      channel.invokeMethod('com.csupporter.sendlogtask', {
-        StringConstants.k_api_url: apiUrl,
-        StringConstants.k_secretkey: secretkey,
-        StringConstants.k_file_path: filePath,
-      });
-    } else {
-      Workmanager().registerOneOffTask(
-        sendLogsTask,
-        sendLogsTask,
-      );
-    }
+    //Send log
+    Utils.sendLog();
   }
 
   void _getListHomeWork() async {
@@ -356,7 +325,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   void onLogoutComplete() {
     _homeWorkProvider.setProcessingStatus(isProcessing: false);
 
-    _sendLog();
+    //Send log
+    Utils.sendLog();
 
     Navigator.of(context).pop();
   }
