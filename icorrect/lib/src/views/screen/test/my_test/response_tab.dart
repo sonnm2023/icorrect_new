@@ -487,13 +487,13 @@ class _ResponseTabState extends State<ResponseTab>
   @override
   void getErrorResponse(String message) {
     _loading!.hide();
-    Fluttertoast.showToast(
-      msg: message,
-      backgroundColor: AppColor.defaultGrayColor,
-      textColor: Colors.black,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-    );
+    // Fluttertoast.showToast(
+    //   msg: message,
+    //   backgroundColor: AppColor.defaultGrayColor,
+    //   textColor: Colors.black,
+    //   toastLength: Toast.LENGTH_LONG,
+    //   gravity: ToastGravity.BOTTOM,
+    // );
   }
 
   @override

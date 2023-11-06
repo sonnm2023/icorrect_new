@@ -216,10 +216,10 @@ class _HighLightTabState extends State<HighLightTab>
   @override
   void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
-    Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black);
+    // Fluttertoast.showToast(
+    //     msg: message,
+    //     backgroundColor: AppColor.defaultGrayColor,
+    //     textColor: Colors.black);
   }
 
   @override
