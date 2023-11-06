@@ -30,9 +30,9 @@ class NetworkManager: NSObject {
             if (fileURL == nil) { return }
             
             do {
-                let fileData = try? Data(contentsOf: fileURL!)
+                guard let fileData = try? Data(contentsOf: fileURL!) else { return }
                 var data = Data()
-                data.append(fileData!)
+                data.append(fileData)
                 manager.requestSerializer.setValue(String(data.count), forHTTPHeaderField: "Content-Length")
                 
                 var paramsOS = params
