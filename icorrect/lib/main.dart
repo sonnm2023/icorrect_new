@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +26,8 @@ import 'src/provider/my_test_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
 
   //Init task run on background
   Workmanager().initialize(callbackDispatcher);
@@ -82,8 +85,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-@pragma(
-    'vm:entry-point')
+@pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
     //Check logs file is exist

@@ -67,6 +67,9 @@ dependencies:
   url_launcher: ^6.1.14 
   chewie: ^1.7.1
   light_compressor: ^2.2.0
+  firebase_core: ^2.21.0
+  firebase_analytics: ^10.6.3
+  firebase_crashlytics: ^3.4.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
