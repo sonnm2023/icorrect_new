@@ -21,18 +21,20 @@
 	<key>STORAGE_BUCKET</key>
 	<string>icorrect-193913.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:854161914448:ios:cc05c4fed58c0614a66f55</string>
 	<key>DATABASE_URL</key>
 	<string>https://icorrect-193913.firebaseio.com</string>
+	<key>FIR_Crashlytics_CollectionEnabled</key>
+	<true/>
 </dict>
 </plist>

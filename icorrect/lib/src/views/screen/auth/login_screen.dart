@@ -13,6 +13,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
@@ -153,6 +154,11 @@ class _LoginScreenState extends State<LoginScreen>
 
     if (token.isNotEmpty) {
       _authProvider.updateProcessingStatus(isProcessing: true);
+
+      UserDataModel? currentUser = await Utils.getCurrentUser();
+      if (null == currentUser) { return; }
+
+      _loginPresenter!.setUserInformation(currentUser.userInfoModel.id.toString());
 
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {

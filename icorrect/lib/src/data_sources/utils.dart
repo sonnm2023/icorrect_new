@@ -1061,4 +1061,11 @@ class Utils {
       );
     }
   }
+
+  static void testCrashBug() {
+    int result = 5 ~/ 0;
+    if (kDebugMode) {
+      print(result);
+    }
+  }
 }

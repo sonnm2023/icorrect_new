@@ -152,6 +152,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _isExam = widget.homeWorkModel.activityType == "exam" ||
         widget.homeWorkModel.activityType == "test";
 
+    // Utils.testCrashBug();
+
     _getTestDetail();
   }
 
@@ -695,6 +697,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.updateDownloadingIndex(index);
     _simulatorTestProvider!.updateDownloadingPercent(percent);
     _simulatorTestProvider!.setActivityType(widget.homeWorkModel.activityType);
+
+    // Utils.testCrashBug();
 
     //Enable Start Testing Button
     if (index >= 5 && _simulatorTestProvider!.isReDownload == false) {

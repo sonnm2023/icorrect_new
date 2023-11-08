@@ -61,6 +61,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     //Send log
     Utils.sendLog();
+
+    //Create crash bug for test
+    // Utils.testCrashBug();
   }
 
   void _getListHomeWork() async {
