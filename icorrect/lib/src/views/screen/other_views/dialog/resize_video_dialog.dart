@@ -4,23 +4,28 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:light_compressor/light_compressor.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:light_compressor/light_compressor.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 
 class ResizeVideoDialog extends StatefulWidget {
   File videoFile;
   Function(File fileResize) onResizeCompleted;
-  Function? onCancelResizeFile;
-  Function(String message)? onErrorResizeFile;
+  Function()? onSubmitNow;
+  Function()? onErrorResizeFile;
+  bool isVideoExam;
   ResizeVideoDialog(
       {required this.videoFile,
       required this.onResizeCompleted,
-      this.onCancelResizeFile,
+      required this.isVideoExam,
+      this.onSubmitNow,
       this.onErrorResizeFile,
       super.key});
 
@@ -29,25 +34,89 @@ class ResizeVideoDialog extends StatefulWidget {
 }
 
 class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
-  LightCompressor? _lightCompressor;
+  AuthProvider? _authProvider;
+  Subscription? _subscription;
 
+  double w = 0, h = 0;
   @override
   void initState() {
     super.initState();
-    _lightCompressor = LightCompressor();
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    Future.delayed(Duration.zero, () {
+      _authProvider!.setSkipAction(false);
+    });
     if (widget.videoFile.existsSync()) {
       _compressVideo();
+    }
+  }
+
+  Future _compressVideo() async {
+    if (!VideoCompress.isCompressing) {
+      final String videoName = widget.onSubmitNow != null
+          ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
+          : 'VIDEO_EXAM_${DateTime.now().microsecondsSinceEpoch}';
+      final Stopwatch stopwatch = Stopwatch()..start();
+      LogModel? log;
+      if (context.mounted) {
+        log = await Utils.prepareToCreateLog(context,
+            action: LogEvent.compressVideoFile);
+      }
+
+      Map<String, dynamic> data = {
+        "video_name": videoName,
+        "start_time": '${DateTime.now().microsecondsSinceEpoch}',
+        "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
+      };
+
+      await VideoCompress.setLogLevel(0);
+
+      MediaInfo? mediaInfo = await VideoCompress.compressVideo(
+        widget.videoFile.path,
+        quality: VideoQuality.LowQuality,
+        deleteOrigin: true,
+        includeAudio: true,
+      );
+
+      _subscription = VideoCompress.compressProgress$.subscribe((event) {
+        if (kDebugMode) {
+          print('COMPRESS_VIDEO: progress index : $event');
+        }
+        if (event == 100 && mediaInfo != null) {
+          widget.onResizeCompleted(File(mediaInfo.path!));
+          Navigator.of(context).pop();
+          if (kDebugMode) {
+            print("COMPRESS_VIDEO: file: ${mediaInfo.path!}, "
+                "exist :${File(mediaInfo.path!).existsSync()}");
+          }
+        }
+      });
+
+      stopwatch.stop();
+
+      if (kDebugMode) {
+        print(
+            "DEBUG : process compress second: ${stopwatch.elapsed.inSeconds}");
+      }
+
+      //Add duration into log
+      data.addEntries(
+          [MapEntry("duration", '${stopwatch.elapsed.inSeconds} seconds')]);
+    } else {
+      VideoCompress.cancelCompression();
+      widget.onErrorResizeFile!();
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    _lightCompressor!.cancelCompression();
+    disposeAll();
   }
 
   @override
   Widget build(BuildContext context) {
+    w = MediaQuery.of(context).size.width;
+    h = MediaQuery.of(context).size.height;
     return Center(
       child: Wrap(
         children: [
@@ -74,59 +143,44 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      StreamBuilder<double>(
-                        stream: _lightCompressor!.onProgressUpdated,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.data != null && snapshot.data > 0) {
-                            return Column(
-                              children: <Widget>[
-                                LinearProgressIndicator(
-                                  minHeight: 10,
-                                  value: snapshot.data / 100,
-                                  borderRadius: BorderRadius.circular(100),
-                                  backgroundColor:
-                                      AppColor.defaultLightGrayColor,
-                                  valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                          AppColor.defaultPurpleColor),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  '${snapshot.data.toStringAsFixed(0)}%',
-                                  style: CustomTextStyle.textWithCustomInfo(
-                                    context: context,
-                                    color: AppColor.defaultBlackColor,
-                                    fontsSize: FontsSize.fontSize_18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
+                      LinearProgressIndicator(
+                        minHeight: 10,
+                        borderRadius: BorderRadius.circular(100),
+                        backgroundColor: AppColor.defaultLightGrayColor,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            AppColor.defaultPurpleColor),
                       ),
-                      if (widget.onCancelResizeFile != null)
-                        Container(
-                          margin: const EdgeInsets.only(top: 10),
-                          child: GestureDetector(
-                            onTap: () async {
-                              _lightCompressor!.cancelCompression();
-                              Navigator.of(context).pop();
-                              widget.onCancelResizeFile!();
-                            },
-                            child: Text(
-                              StringConstants.cancel_and_text,
-                              style: CustomTextStyle.textWithCustomInfo(
-                                context: context,
-                                color: AppColor.defaultPurpleColor,
-                                fontsSize: FontsSize.fontSize_15,
-                                fontWeight: FontWeight.w600,
+                      const SizedBox(height: 20),
+                      Visibility(
+                          visible: !provider.skipAction &&
+                              widget.onSubmitNow != null,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: GestureDetector(
+                              onTap: () async {
+                                provider.setSkipAction(widget.isVideoExam);
+                                if (widget.isVideoExam) {
+                                  provider.setSkipAction(true);
+                                } else {
+                                  disposeAll();
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text(
+                                StringConstants.skip_and_text,
+                                style: CustomTextStyle.textWithCustomInfo(
+                                  context: context,
+                                  color: AppColor.defaultPurpleColor,
+                                  fontsSize: FontsSize.fontSize_15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        )
+                          )),
+                      Visibility(
+                          visible:
+                              provider.skipAction && widget.onSubmitNow != null,
+                          child: _warningWhenSkip())
                     ],
                   ),
                 );
@@ -136,85 +190,78 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
     );
   }
 
-  Future _compressVideo() async {
-    final String videoName = widget.onCancelResizeFile != null
-        ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
-        : 'VIDEO_EXAM_${DateTime.now().microsecondsSinceEpoch}';
-    final Stopwatch stopwatch = Stopwatch()..start();
-    LogModel? log;
-    if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context,
-          action: LogEvent.compressVideoFile);
-    }
-
-    Map<String, dynamic> data = {
-      "video_name": videoName,
-      "start_time": '${DateTime.now().microsecondsSinceEpoch}',
-      "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
-    };
-
-    final Result response = await _lightCompressor!.compressVideo(
-      path: widget.videoFile.path,
-      videoQuality: VideoQuality.very_high,
-      isMinBitrateCheckEnabled: false,
-      video: Video(videoName: videoName),
-      android: AndroidConfig(isSharedStorage: true, saveAt: SaveAt.Movies),
-      ios: IOSConfig(saveInGallery: false),
+  Widget _warningWhenSkip() {
+    return Container(
+      width: w,
+      alignment: Alignment.centerLeft,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(Icons.warning_amber, color: Colors.amber, size: 30),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: w / 1.6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(StringConstants.warning_skip_compress_video_text,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                const Text(
+                  StringConstants.warning_skip_compress_video_content,
+                  style: TextStyle(fontSize: 15),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                        child: GestureDetector(
+                      onTap: () async {
+                        _authProvider!.setSkipAction(false);
+                      },
+                      child: Text(
+                        StringConstants.continue_prepare_text,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )),
+                    Expanded(
+                        child: GestureDetector(
+                      onTap: () async {
+                        Navigator.of(context).pop();
+                        if (widget.onSubmitNow != null) {
+                          disposeAll();
+                          widget.onSubmitNow!();
+                        }
+                      },
+                      child: Text(
+                        StringConstants.submit_now_text,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultPurpleColor,
+                          fontsSize: FontsSize.fontSize_15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ))
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
+  }
 
-    stopwatch.stop();
-
-    //Add duration into log
-    data.addEntries(
-        [MapEntry("duration", '${stopwatch.elapsed.inSeconds} seconds')]);
-
-    if (response is OnSuccess) {
-      if (kDebugMode) {
-        print(
-            "RECORDING_VIDEO : Video Before Resize: ${((widget.videoFile.lengthSync()) / 1024) / 1024}");
-      }
-      await widget.videoFile.delete().then((value) {
-        widget.onResizeCompleted(File(response.destinationPath));
-        int length = File(response.destinationPath).lengthSync();
-        if (kDebugMode) {
-          print(
-              "RECORDING_VIDEO : Video After Resize: ${response.destinationPath},size ${(length / 1024) / 1024}mb");
-        }
-
-        //Add log
-        data.addEntries(
-            [MapEntry("compress_size", "${(length / 1024) / 1024} Mb")]);
-        data.addEntries(
-            [MapEntry("end_time", '${DateTime.now().microsecondsSinceEpoch}')]);
-        Utils.prepareLogData(
-          log: log,
-          data: data,
-          message: "Compress video file",
-          status: LogEvent.success,
-        );
-
-        Navigator.of(context).pop();
-      });
-    } else if (response is OnFailure) {
-      if (widget.onErrorResizeFile != null) {
-        widget.onErrorResizeFile!(StringConstants.error_when_resize_file);
-
-        //Add log
-        data.addEntries(
-            [MapEntry("end_time", '${DateTime.now().microsecondsSinceEpoch}')]);
-        Utils.prepareLogData(
-          log: log,
-          data: data,
-          message: StringConstants.compress_video_error_message,
-          status: LogEvent.failed,
-        );
-
-        Navigator.of(context).pop();
-      }
-    } else if (response is OnCancelled) {
-      if (kDebugMode) {
-        print("RECORDING_VIDEO : The Resizing Video is canceled! ");
-      }
+  Future disposeAll() async {
+    VideoCompress.cancelCompression();
+    if (_subscription != null) {
+      _subscription!.unsubscribe();
     }
   }
 }

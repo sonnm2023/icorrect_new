@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:video_compress/video_compress.dart';
 // import 'package:video_compress/video_compress.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -21,14 +22,14 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // MediaInfo? _mediaInfo;
-  // MediaInfo? get mediaInfo => _mediaInfo!;
-  // void setMediaInfo(MediaInfo info) {
-  //   _mediaInfo = info;
-  //   if (!isDisposed) {
-  //     notifyListeners();
-  //   }
-  // }
+  MediaInfo? _mediaInfo;
+  MediaInfo? get mediaInfo => _mediaInfo!;
+  void setMediaInfo(MediaInfo? info) {
+    _mediaInfo = info;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 
   double _progressResize = 0.0;
   double get progressResize => _progressResize;
@@ -41,6 +42,15 @@ class AuthProvider with ChangeNotifier {
 
   void resetProgressResize() {
     _progressResize = 0.0;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _skipAction = false;
+  bool get skipAction => _skipAction;
+  void setSkipAction(bool skip) {
+    _skipAction = skip;
     if (!isDisposed) {
       notifyListeners();
     }
