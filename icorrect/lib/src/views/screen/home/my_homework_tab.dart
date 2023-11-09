@@ -15,6 +15,7 @@ import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
@@ -418,49 +419,73 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     }
   }
 
-  void _gotoHomeworkDetail() async {
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
-          _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
-
-      if (statusMap[StringConstants.k_title] ==
-              StringConstants.activity_status_out_of_date ||
-          statusMap[StringConstants.k_title] ==
-              StringConstants.activity_status_not_completed) {
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => SimulatorTestScreen(
-              homeWorkModel: _selectedHomeWorkModel!,
-            ),
-          ),
+  void _showActivityIsLoadedDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: StringConstants.dialog_title,
+          description: StringConstants.activity_is_loaded_message,
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
         );
+      },
+    );
+  }
 
-        if (!mounted) return;
-        // After the SimulatorTest returns a result
-        // and refresh list of homework if needed
-        if (result == StringConstants.k_refresh) {
-          widget.homeWorkPresenter.refreshListHomework();
+  void _gotoHomeworkDetail() async {
+    if (_selectedHomeWorkModel!.activityStatus == 99) {
+      _showActivityIsLoadedDialog(context);
+    } else {
+      var connectivity = await connectivityService.checkConnectivity();
+      if (connectivity.name != StringConstants.connectivity_name_none) {
+        Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
+            _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
+
+        if (statusMap[StringConstants.k_title] ==
+                StringConstants.activity_status_out_of_date ||
+            statusMap[StringConstants.k_title] ==
+                StringConstants.activity_status_not_completed) {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => SimulatorTestScreen(
+                homeWorkModel: _selectedHomeWorkModel!,
+              ),
+            ),
+          );
+
+          if (!mounted) return;
+          // After the SimulatorTest returns a result
+          // and refresh list of homework if needed
+          if (result == StringConstants.k_refresh) {
+            widget.homeWorkPresenter.refreshListHomework();
+          }
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => MyTestScreen(
+                homeWorkModel: _selectedHomeWorkModel!,
+                isFromSimulatorTest: false,
+              ),
+            ),
+          );
         }
       } else {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MyTestScreen(
-              homeWorkModel: _selectedHomeWorkModel!,
-              isFromSimulatorTest: false,
-            ),
-          ),
-        );
-      }
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
+        //Show connect error here
+        if (kDebugMode) {
+          print("DEBUG: Connect error here!");
+        }
+        Utils.showConnectionErrorDialog(context);
 
-      Utils.addConnectionErrorLog(context);
+        Utils.addConnectionErrorLog(context);
+      }
     }
   }
 

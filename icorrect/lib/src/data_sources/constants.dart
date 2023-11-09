@@ -633,6 +633,8 @@ class StringConstants {
       "GetSpecialHomeWorks: result fail!";
   static const String compress_video_error_message = "Compress video file fail";
   static const String loading_image_error_message = "Can not load this image!";
+  static const String activity_is_loaded_message =
+      "This test is loaded but not completed. Please contact admin to reset it!";
 
   //Activity status
   static const String activity_status_out_of_date = "Out of date";
