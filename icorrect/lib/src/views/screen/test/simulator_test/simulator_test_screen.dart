@@ -32,6 +32,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/download_progres
 import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 
 import '../../../../provider/auth_provider.dart';
 
@@ -508,6 +509,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Future<void> _deleteAllAnswer() async {
+    await VideoCompress.deleteAllCache();
     File videoResizePath = _simulatorTestProvider!.savedVideoFile;
     if (videoResizePath.existsSync()) {
       if (kDebugMode) {

@@ -143,7 +143,7 @@ void callbackDispatcher() {
         print("DEBUG: send log success kDebugMode");
       }
       Utils.deleteLogFile();
-    } else {
+    } else {  
       if (kDebugMode) {
         print("DEBUG: send log failed  - kDebugMode");
       }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -114,6 +115,21 @@ class TestRoomPresenter {
   }
 
   String getVideoLongestDuration(List<VideoExamRecordInfo> videosSaved) {
+    List<VideoExamRecordInfo> videosMore7s = [];
+    for (int i = 0; i < videosSaved.length; i++) {
+      File videoFile = File(videosSaved.elementAt(i).filePath!);
+      if (videoFile.existsSync() &&
+          (videoFile.lengthSync() / (1024 * 1024)) >= 40) {
+        videosMore7s.add(videosSaved.elementAt(i));
+      }
+    }
+    if (videosMore7s.isNotEmpty) {
+      Random random = Random();
+      int positionRandom = random.nextInt(videosMore7s.length);
+      VideoExamRecordInfo randomVideo = videosMore7s.elementAt(positionRandom);
+      return randomVideo.filePath ?? '';
+    }
+
     videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
     VideoExamRecordInfo maxValue = videosSaved.last;
     return maxValue.filePath ?? '';

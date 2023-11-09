@@ -556,7 +556,17 @@ class StringConstants {
       "Submit file to authentication fail: TimeoutException!";
   static const String submit_authen_fail_client_message =
       "Submit file to authentication fail: TimeoutException!";
+
+  //Compress video message
   static const String cancel_and_text = "Cancel and Later";
+  static const String skip_and_text = "Skip and Later";
+  static const String submit_now_text = "Submit Now";
+  static const String continue_prepare_text = "Continue";
+  static const String warning_skip_compress_video_text =
+      "Do you want to submit now?";
+  static const String warning_skip_compress_video_content =
+      'Your test video will not be sent'
+      ' and you will have to verify again at Video Authentication.';
 
   //Warning Message
   static const String choose_filter_message =

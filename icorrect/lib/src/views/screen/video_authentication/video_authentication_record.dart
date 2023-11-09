@@ -435,16 +435,18 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         return WillPopScope(
           child: ResizeVideoDialog(
               videoFile: savedFile,
+              isVideoExam: false,
               onResizeCompleted: (resizedFile) async {
                 // String newPath =
                 //     'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
                 // File newFile = Utils.changeFileNameSync(resizedFile, newPath);
                 _prepareForSubmitVideo(resizedFile);
               },
-              onErrorResizeFile: (_) {
+              onErrorResizeFile: () {
                 _prepareForSubmitVideo(savedFile);
               },
-              onCancelResizeFile: () {
+              onSubmitNow: () {
+                Navigator.pop(context);
                 _continuePreviewVideo();
               }),
           onWillPop: () async {

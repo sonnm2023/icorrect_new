@@ -555,13 +555,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _initController(NativeVideoPlayerController controller) async {
-    _videoPlayerController = controller;
-    _videoPlayerController!.setVolume(1.0);
-    await _loadVideoSource(
-            _simulatorTestProvider!.listVideoSource[_playingIndex].url)
-        .then((_) {
-      _videoPlayerController!.stop();
-    });
+    if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
+      _videoPlayerController = controller;
+      _videoPlayerController!.setVolume(1.0);
+      await _loadVideoSource(
+              _simulatorTestProvider!.listVideoSource[_playingIndex].url)
+          .then((_) {
+        _videoPlayerController!.stop();
+      });
+    }
   }
 
   Future<void> _loadVideoSource(String fileName) async {
@@ -1815,7 +1817,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setAnswerList(temp);
 
     //Hide cameraLive
-    _hideCameraLive();
+    if (_isExam) {
+      if (null != _countRecording) {
+        _countRecording!.cancel();
+      }
+      _simulatorTestProvider!.setVisibleCameraLive(false);
+
+      if (null == _cameraService) {
+        return;
+      }
+      //_cameraService!.dispose();
+    }
 
     //Auto submit test for activity type = test or type = exam
     if (_isExam) {
@@ -1829,6 +1841,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Future<void> _showResizeVideoDialog() async {
     String savedVideoPath = _testRoomPresenter!
         .getVideoLongestDuration(_simulatorTestProvider!.videosSaved);
+
+    double sizeFile = File(savedVideoPath).lengthSync() / (1024 * 1024);
+    if (kDebugMode) {
+      print("RECORDING_VIDEO : Video Random saved to $savedVideoPath,"
+          " size : ${File(savedVideoPath).lengthSync() / 1024}kb, "
+          "size ${(File(savedVideoPath).lengthSync() / 1024) / 1024}mb");
+    }
+    if (sizeFile > 40) {
+      _startResizeVideo(savedVideoPath);
+    } else {
+      _startSubmitTest(videoConfirmFile: File(savedVideoPath));
+      _simulatorTestProvider!.setVideoFile(File(savedVideoPath));
+    }
+  }
+
+  void _startResizeVideo(String savedVideoPath) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1836,13 +1864,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         return WillPopScope(
             child: ResizeVideoDialog(
                 videoFile: File(savedVideoPath),
+                isVideoExam: true,
                 onResizeCompleted: (resizedFile) {
                   _startSubmitTest(videoConfirmFile: resizedFile);
                   _simulatorTestProvider!.setVideoFile(resizedFile);
                 },
-                onErrorResizeFile: (_) {
-                  _startSubmitTest(videoConfirmFile: File(savedVideoPath));
-                  _simulatorTestProvider!.setVideoFile(File(savedVideoPath));
+                onSubmitNow: () {
+                  _startSubmitTest();
+                },
+                onErrorResizeFile: () {
+                  if (kDebugMode) {
+                    print('DEBUG: Error when compress video');
+                  }
+                  _startSubmitTest();
                 }),
             onWillPop: () async {
               return false;
