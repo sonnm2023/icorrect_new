@@ -310,128 +310,135 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _backButtonTapped() async {
-    if (_simulatorTestProvider!.submitStatus == SubmitStatus.success) {
-      if (_simulatorTestProvider!.isVisibleSaveTheTest) {
-        //Update answer after submitted
-        if (kDebugMode) {
-          print("DEBUG: Update answer after submitted");
-        }
-        bool cancelButtonTapped = false;
+    if (_isExam) {
+      //Go back List homework screen
+      Navigator.pop(context, StringConstants.k_refresh);
+    } else {
+      if (_simulatorTestProvider!.submitStatus == SubmitStatus.success) {
+        if (_simulatorTestProvider!.isVisibleSaveTheTest) {
+          //Update answer after submitted
+          if (kDebugMode) {
+            print("DEBUG: Update answer after submitted");
+          }
+          bool cancelButtonTapped = false;
 
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              title: StringConstants.dialog_title,
-              description:
-                  StringConstants.confirm_save_change_answers_message_1,
-              okButtonTitle: StringConstants.save_button_title,
-              cancelButtonTitle: StringConstants.dont_save_button_title,
-              borderRadius: 8,
-              hasCloseButton: true,
-              okButtonTapped: () {
-                //Update reanswer
-                _loading!.show(context: context, isViewAIResponse: false);
-                _simulatorTestProvider!.setVisibleSaveTheTest(false);
-                String savedVideoPath = _simulatorTestPresenter!
-                    .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
-                File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomAlertDialog(
+                title: StringConstants.dialog_title,
+                description:
+                    StringConstants.confirm_save_change_answers_message_1,
+                okButtonTitle: StringConstants.save_button_title,
+                cancelButtonTitle: StringConstants.dont_save_button_title,
+                borderRadius: 8,
+                hasCloseButton: true,
+                okButtonTapped: () {
+                  //Update reanswer
+                  _loading!.show(context: context, isViewAIResponse: false);
+                  _simulatorTestProvider!.setVisibleSaveTheTest(false);
+                  String savedVideoPath = _simulatorTestPresenter!
+                      .randomVideoRecordExam(
+                          _simulatorTestProvider!.videosSaved);
+                  File? videoConfirmFile =
+                      _isExam ? File(savedVideoPath) : null;
 
-                _simulatorTestPresenter!.submitTest(
-                  context: context,
-                  testId: _simulatorTestProvider!.currentTestDetail.testId
-                      .toString(),
-                  activityId: widget.homeWorkModel.activityId.toString(),
-                  questions: _simulatorTestProvider!.questionList,
-                  isExam: _isExam,
-                  videoConfirmFile: videoConfirmFile,
-                  logAction: _simulatorTestProvider!.logActions,
-                );
-              },
-              cancelButtonTapped: () {
-                cancelButtonTapped = true;
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        );
+                  _simulatorTestPresenter!.submitTest(
+                    context: context,
+                    testId: _simulatorTestProvider!.currentTestDetail.testId
+                        .toString(),
+                    activityId: widget.homeWorkModel.activityId.toString(),
+                    questions: _simulatorTestProvider!.questionList,
+                    isExam: _isExam,
+                    videoConfirmFile: videoConfirmFile,
+                    logAction: _simulatorTestProvider!.logActions,
+                  );
+                },
+                cancelButtonTapped: () {
+                  cancelButtonTapped = true;
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          );
 
-        if (cancelButtonTapped) {
-          Navigator.of(context).pop();
+          if (cancelButtonTapped) {
+            Navigator.of(context).pop();
+          }
+        } else {
+          //Go back List homework screen
+          Navigator.pop(context, 'refresh');
         }
       } else {
-        //Go back List homework screen
-        Navigator.pop(context, 'refresh');
-      }
-    } else {
-      //Disable back button when submitting test
-      if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
-        if (kDebugMode) {
-          print("DEBUG: Status is submitting!");
+        //Disable back button when submitting test
+        if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+          if (kDebugMode) {
+            print("DEBUG: Status is submitting!");
+          }
+          return;
         }
-        return;
-      }
 
-      switch (_simulatorTestProvider!.doingStatus.get) {
-        case -1:
-          {
-            //None
-            if (kDebugMode) {
-              print("DEBUG: Status is not start to do the exam!");
-            }
-            Navigator.of(context).pop();
-            break;
-          }
-        case 0:
-          {
-            //Doing
-            if (kDebugMode) {
-              print("DEBUG: Status is doing the exam!");
-            }
-
-            bool okButtonTapped = false;
-
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CustomAlertDialog(
-                  title: StringConstants.dialog_title,
-                  description: StringConstants.quit_the_test_message,
-                  okButtonTitle: StringConstants.ok_button_title,
-                  cancelButtonTitle: StringConstants.cancel_button_title,
-                  borderRadius: 8,
-                  hasCloseButton: false,
-                  okButtonTapped: () {
-                    //Reset question image
-                    _resetQuestionImage();
-
-                    okButtonTapped = true;
-                    _deleteAllAnswer();
-                  },
-                  cancelButtonTapped: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            );
-
-            if (okButtonTapped) {
+        switch (_simulatorTestProvider!.doingStatus.get) {
+          case -1:
+            {
+              //None
+              if (kDebugMode) {
+                print("DEBUG: Status is not start to do the exam!");
+              }
               Navigator.of(context).pop();
+              break;
             }
+          case 0:
+            {
+              //Doing
+              if (kDebugMode) {
+                print("DEBUG: Status is doing the exam!");
+              }
 
-            break;
-          }
-        case 1:
-          {
-            //Finish
-            if (kDebugMode) {
-              print("DEBUG: Status is finish doing the exam!");
+              bool okButtonTapped = false;
+
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return CustomAlertDialog(
+                    title: StringConstants.dialog_title,
+                    description: StringConstants.quit_the_test_message,
+                    okButtonTitle: StringConstants.ok_button_title,
+                    cancelButtonTitle: StringConstants.cancel_button_title,
+                    borderRadius: 8,
+                    hasCloseButton: false,
+                    okButtonTapped: () {
+                      //Reset question image
+                      _resetQuestionImage();
+
+                      okButtonTapped = true;
+                      _deleteAllAnswer();
+                    },
+                    cancelButtonTapped: () {
+                      Navigator.of(context).pop();
+                    },
+                  );
+                },
+              );
+
+              if (okButtonTapped) {
+                Navigator.of(context).pop();
+              }
+
+              break;
             }
+          case 1:
+            {
+              //Finish
+              if (kDebugMode) {
+                print("DEBUG: Status is finish doing the exam!");
+              }
 
-            _showConfirmSaveTestBeforeExit();
+              _showConfirmSaveTestBeforeExit();
 
-            break;
-          }
+              break;
+            }
+        }
       }
     }
   }
