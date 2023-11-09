@@ -197,7 +197,7 @@ class SimulatorTestPresenter {
           log: log,
           data: null,
           message:
-              "Loading homework detail error: ${map[StringConstants.k_error_code]}${map[StringConstants.k_status]}",
+              "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
           status: LogEvent.failed,
         );
 

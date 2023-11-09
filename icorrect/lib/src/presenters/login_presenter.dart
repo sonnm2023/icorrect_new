@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -148,7 +149,8 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetAppConfigInfoFail(StringConstants.getting_app_config_information_error_message);
+        _view!.onGetAppConfigInfoFail(
+            StringConstants.getting_app_config_information_error_message);
       }
     }).catchError((onError) {
       String message = '';
@@ -204,6 +206,9 @@ class LoginPresenter {
           status: LogEvent.success,
         );
 
+        //Set userid for firebase
+        setUserInformation(userDataModel.userInfoModel.id.toString());
+
         _view!.onLoginComplete();
       } else {
         //Add log
@@ -231,5 +236,19 @@ class LoginPresenter {
         _view!.onLoginError(StringConstants.common_error_message);
       },
     );
+  }
+
+  Future<void> setUserInformation(String userId) async {
+    try {
+      if (kDebugMode) {
+        print("DEBUG: _setUserInformation with user_id: $userId");
+      }
+      await FirebaseCrashlytics.instance.setUserIdentifier(userId);
+    } on Exception catch (e, stack) {
+      if (kDebugMode) {
+        print("DEBUG: _setUserInformation error: $e: $stack");
+      }
+      FirebaseCrashlytics.instance.log('$e: $stack');
+    }
   }
 }

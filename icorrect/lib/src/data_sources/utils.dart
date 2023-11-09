@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,8 @@ import 'api_urls.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Utils {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   static Future<String> getDeviceIdentifier() async {
     String deviceIdentifier = "unknown";
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -1060,5 +1063,20 @@ class Utils {
         sendLogsTask,
       );
     }
+  }
+
+  static void testCrashBug() {
+    int result = 5 ~/ 0;
+    if (kDebugMode) {
+      print(result);
+    }
+  }
+
+  //Firebase log
+  static void addFirebaseLog({
+    required String eventName,
+    required Map<String, Object> parameters,
+  }) {
+    analytics.logEvent(name: eventName, parameters: parameters);
   }
 }
