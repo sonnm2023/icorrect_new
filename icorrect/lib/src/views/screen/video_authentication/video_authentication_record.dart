@@ -412,13 +412,12 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       _loading!.show(context: context, isViewAIResponse: false);
       _cameraService!.saveVideoDoingTest(
         (savedFile) {
+          _cameraService!.cameraController!.pausePreview();
+          _loading!.hide();
           if (savedFile.existsSync() &&
               (savedFile.lengthSync() / (1024 * 1024)) > 40) {
-            _cameraService!.cameraController!.pausePreview();
-            _videoAuthProvider!.setSavedFile(savedFile);
             _showResizeFileDialog(savedFile);
-            _loading!.hide();
-          }else{
+          } else {
             _prepareForSubmitVideo(savedFile);
           }
         },
