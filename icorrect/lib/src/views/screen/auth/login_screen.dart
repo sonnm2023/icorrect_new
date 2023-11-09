@@ -156,9 +156,12 @@ class _LoginScreenState extends State<LoginScreen>
       _authProvider.updateProcessingStatus(isProcessing: true);
 
       UserDataModel? currentUser = await Utils.getCurrentUser();
-      if (null == currentUser) { return; }
+      if (null == currentUser) {
+        return;
+      }
 
-      _loginPresenter!.setUserInformation(currentUser.userInfoModel.id.toString());
+      _loginPresenter!
+          .setUserInformation(currentUser.userInfoModel.id.toString());
 
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
@@ -254,6 +257,14 @@ class _LoginScreenState extends State<LoginScreen>
           var connectivity = await connectivityService.checkConnectivity();
           if (connectivity.name != StringConstants.connectivity_name_none) {
             _authProvider.updateProcessingStatus(isProcessing: true);
+
+            //Add firebase log
+            Utils.addFirebaseLog(
+              eventName: "button_click",
+              parameters: {
+                "button_name": "login",
+              },
+            );
 
             _loginPresenter!.login(
               emailController.text.trim(),
