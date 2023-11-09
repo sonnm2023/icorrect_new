@@ -19,6 +19,7 @@ class ResizeVideoDialog extends StatefulWidget {
   File videoFile;
   Function(File fileResize) onResizeCompleted;
   Function()? onSubmitNow;
+  Function()? skipAndLater;
   Function()? onErrorResizeFile;
   bool isVideoExam;
   ResizeVideoDialog(
@@ -26,6 +27,7 @@ class ResizeVideoDialog extends StatefulWidget {
       required this.onResizeCompleted,
       required this.isVideoExam,
       this.onSubmitNow,
+      this.skipAndLater,
       this.onErrorResizeFile,
       super.key});
 
@@ -152,8 +154,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                       ),
                       const SizedBox(height: 20),
                       Visibility(
-                          visible: !provider.skipAction &&
-                              widget.onSubmitNow != null,
+                          visible: !provider.skipAction,
                           child: Container(
                             margin: const EdgeInsets.only(top: 10),
                             child: GestureDetector(
@@ -164,6 +165,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                                 } else {
                                   disposeAll();
                                   Navigator.of(context).pop();
+                                  widget.skipAndLater!();
                                 }
                               },
                               child: Text(
