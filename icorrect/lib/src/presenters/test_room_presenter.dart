@@ -428,6 +428,9 @@ class TestRoomPresenter {
         File audioFile = File(path);
 
         if (await audioFile.exists()) {
+          String audioSize = "${audioFile.lengthSync() / (1024 * 1024)} Mb";
+          dataLog!.addEntries([MapEntry(q.answers[i].url, audioSize)]);
+
           request.files.add(
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
         }
