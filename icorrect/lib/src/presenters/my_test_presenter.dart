@@ -548,11 +548,12 @@ class MyTestPresenter {
           Utils.prepareLogData(
             log: log,
             data: dataLog,
-            message: "Has an error when update my answer!",
+            message: StringConstants.update_answer_error_message,
             status: LogEvent.failed,
           );
 
-          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+              StringConstants.update_answer_error_message));
         }
       }).catchError((onError) {
         //Add log
@@ -563,7 +564,8 @@ class MyTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+            StringConstants.update_answer_error_message));
       });
     } on TimeoutException {
       //Add log
@@ -584,7 +586,8 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          "SocketException: Has an error when update my answer!"));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -594,7 +597,8 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          "ClientException: Has an error when update my answer!"));
     }
   }
 

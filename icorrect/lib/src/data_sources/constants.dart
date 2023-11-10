@@ -238,8 +238,8 @@ class AlertClass {
   static AlertInfo timeOutUpdateAnswer = AlertInfo(
       'Warning', 'Timeout to update your changes. Please try again !');
 
-  static AlertInfo errorWhenUpdateAnswer = AlertInfo(
-      'Warning', 'An error when update your answers. Please try again !');
+  static AlertInfo errorWhenUpdateAnswer(String message) =>
+      AlertInfo('Warning', message);
 }
 
 class GlobalScaffoldKey {
@@ -645,6 +645,8 @@ class StringConstants {
   static const String loading_image_error_message = "Can not load this image!";
   static const String activity_is_loaded_message =
       "This test is loaded but not completed. Please contact admin to reset it!";
+  static const String update_answer_error_message =
+      "An error when update your answers. Please try again !";
 
   //Activity status
   static const String activity_status_out_of_date = "Out of date";

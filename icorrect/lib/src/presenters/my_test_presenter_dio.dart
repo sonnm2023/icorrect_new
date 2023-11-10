@@ -347,20 +347,29 @@ class MyTestPresenterDio {
           _view!.updateAnswersSuccess(
               StringConstants.save_answer_success_message);
         } else {
-          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+          String errorCode = "";
+          if (json[StringConstants.k_error_code] != null) {
+            errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
+          }
+
+          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+              "${StringConstants.update_answer_error_message}$errorCode"));
         }
       }).catchError((onError) {
         if (kDebugMode) {
           print('catchError updateAnswerFail ${onError.toString()}');
         }
-        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+            StringConstants.update_answer_error_message));
       });
     } on TimeoutException {
       _view!.updateAnswerFail(AlertClass.timeOutUpdateAnswer);
     } on SocketException {
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          "SocketException: Has an error when update my answer!"));
     } on http.ClientException {
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          "ClientException: Has an error when update my answer!"));
     }
   }
 
