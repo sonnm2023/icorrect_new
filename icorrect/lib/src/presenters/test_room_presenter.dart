@@ -277,7 +277,13 @@ class TestRoomPresenter {
             status: LogEvent.failed,
           );
 
-          _view!.onSubmitTestFail(StringConstants.submit_test_error_message);
+          String errorCode = "";
+          if (json[StringConstants.k_error_code] != null) {
+            errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
+          }
+
+          _view!.onSubmitTestFail(
+              "${StringConstants.submit_test_error_message}$errorCode");
         }
       }).catchError((onError) {
         //Add log
