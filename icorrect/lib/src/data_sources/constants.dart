@@ -372,6 +372,7 @@ class LogEvent {
   static const String compressVideoFile = 'compress_video_file';
   static const String checkConnection = 'check_connection';
   static const String imageDownload = 'image_download';
+  static const String createVideoSource = 'create_video_source';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";

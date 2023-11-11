@@ -579,8 +579,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<VideoSource?> _createVideoSource(String fileName) async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.createVideoSource);
+    }
+    Map<String, dynamic> dataLog = {};
+
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
+
+    dataLog["video_path"] = path;
 
     VideoSource? result;
 
@@ -594,13 +603,38 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (kDebugMode) {
           print("DEBUG: init video controller: $result");
         }
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: dataLog,
+          message: "",
+          status: LogEvent.success,
+        );
       } catch (e) {
         if (kDebugMode) {
           print("DEBUG: init video controller fail");
         }
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: dataLog,
+          message: "Can not init video controller!",
+          status: LogEvent.failed,
+        );
+
         result = null;
       }
     } else {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: "This video is NOT exist!",
+        status: LogEvent.failed,
+      );
+
       result = null;
     }
     return result;
