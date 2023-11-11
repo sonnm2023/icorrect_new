@@ -1669,15 +1669,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
           _redownload();
         } else {
-          _videoPlayerController!.loadVideoSource(value).then((_) {
-            _videoPlayerController!.play();
-
-            if (!isIntroduceVideo) {
-              Future.delayed(const Duration(milliseconds: 500), () {
-                _showQuestionImage();
-              });
+          try {
+            if (kDebugMode) {
+              print("DEBUG: _videoPlayerController!.loadVideoSource");
             }
-          });
+
+            _videoPlayerController!.loadVideoSource(value).then((_) {
+              _videoPlayerController!.play();
+
+              if (!isIntroduceVideo) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  _showQuestionImage();
+                });
+              }
+            });
+          } catch (e) {
+            //Add log
+            LogModel? log;
+            Map<String, dynamic> dataLog = {"error": e.toString()};
+
+            if (context.mounted) {
+              log = await Utils.prepareToCreateLog(context,
+                  action: LogEvent.callApiSubmitTest);
+            }
+            //Add log
+            Utils.prepareLogData(
+              log: log,
+              data: dataLog,
+              message: "_videoPlayerController!.loadVideoSource",
+              status: LogEvent.failed,
+            );
+          }
         }
       });
 
