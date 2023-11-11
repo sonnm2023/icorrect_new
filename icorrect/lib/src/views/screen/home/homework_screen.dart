@@ -76,18 +76,19 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.resetListClassForFilter();
     _homeWorkProvider.resetListFilteredHomeWorks();
 
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      _homeWorkPresenter!.getListHomeWork(context);
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
+    _homeWorkPresenter!.getListHomeWork(context);
+    // var connectivity = await connectivityService.checkConnectivity();
+    // if (connectivity.name != StringConstants.connectivity_name_none) {
+    //   _homeWorkPresenter!.getListHomeWork(context);
+    // } else {
+    //   //Show connect error here
+    //   if (kDebugMode) {
+    //     print("DEBUG: Connect error here!");
+    //   }
+    //   Utils.showConnectionErrorDialog(context);
 
-      Utils.addConnectionErrorLog(context);
-    }
+    //   Utils.addConnectionErrorLog(context);
+    // }
 
     Future.delayed(Duration.zero, () {
       _authProvider

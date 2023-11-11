@@ -129,24 +129,31 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _getAppConfigInfo() async {
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      String appConfigInfo = await AppSharedPref.instance()
-          .getString(key: AppSharedKeys.secretkey);
-      if (appConfigInfo.isEmpty) {
-        _loginPresenter!.getAppConfigInfo(context);
-      } else {
-        _autoLogin();
-      }
+    String appConfigInfo =
+        await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
+    if (appConfigInfo.isEmpty) {
+      _loginPresenter!.getAppConfigInfo(context);
     } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
+      _autoLogin();
     }
+    // var connectivity = await connectivityService.checkConnectivity();
+    // if (connectivity.name != StringConstants.connectivity_name_none) {
+    //   String appConfigInfo = await AppSharedPref.instance()
+    //       .getString(key: AppSharedKeys.secretkey);
+    //   if (appConfigInfo.isEmpty) {
+    //     _loginPresenter!.getAppConfigInfo(context);
+    //   } else {
+    //     _autoLogin();
+    //   }
+    // } else {
+    //   //Show connect error here
+    //   if (kDebugMode) {
+    //     print("DEBUG: Connect error here!");
+    //   }
+    //   Utils.showConnectionErrorDialog(context);
+
+    //   Utils.addConnectionErrorLog(context);
+    // }
   }
 
   void _autoLogin() async {

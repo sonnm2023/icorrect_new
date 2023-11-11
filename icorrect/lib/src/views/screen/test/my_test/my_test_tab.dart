@@ -98,29 +98,39 @@ class _MyTestTabState extends State<MyTestTab>
   void _prepareDataForMyTestDetail() async {
     final status = await Permission.microphone.status;
     await _presenter!.initializeData();
-    var connectivity = await connectivityService.checkConnectivity();
+    _presenter!.getMyTest(
+      context: context,
+      activityId: widget.homeWorkModel.activityId.toString(),
+      testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
+    );
 
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      _presenter!.getMyTest(
-        context: context,
-        activityId: widget.homeWorkModel.activityId.toString(),
-        testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
-      );
+    Future.delayed(Duration.zero, () {
+      widget.provider.setPermissionRecord(status);
+      widget.provider.setDownloadingFile(true);
+    });
+    // var connectivity = await connectivityService.checkConnectivity();
 
-      Future.delayed(Duration.zero, () {
-        widget.provider.setPermissionRecord(status);
-        widget.provider.setDownloadingFile(true);
-      });
-    } else {
-      _loading!.hide();
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
+    // if (connectivity.name != StringConstants.connectivity_name_none) {
+    //   _presenter!.getMyTest(
+    //     context: context,
+    //     activityId: widget.homeWorkModel.activityId.toString(),
+    //     testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
+    //   );
 
-      Utils.addConnectionErrorLog(context);
-    }
+    //   Future.delayed(Duration.zero, () {
+    //     widget.provider.setPermissionRecord(status);
+    //     widget.provider.setDownloadingFile(true);
+    //   });
+    // } else {
+    //   _loading!.hide();
+    //   //Show connect error here
+    //   if (kDebugMode) {
+    //     print("DEBUG: Connect error here!");
+    //   }
+    //   Utils.showConnectionErrorDialog(context);
+
+    //   Utils.addConnectionErrorLog(context);
+    // }
   }
 
   @override

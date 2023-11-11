@@ -138,25 +138,33 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         } else {
           if (_formKey.currentState!.validate() &&
               _authProvider.isProcessing == false) {
-            var connectivity = await connectivityService.checkConnectivity();
-            if (connectivity.name != StringConstants.connectivity_name_none) {
-              _authProvider.updateProcessingStatus(isProcessing: true);
+            _authProvider.updateProcessingStatus(isProcessing: true);
 
-              _changePasswordPresenter!.changePassword(
-                context,
-                currentPasswordController.text.trim(),
-                newPasswordController.text.trim(),
-                confirmNewPasswordController.text.trim(),
-              );
-            } else {
-              //Show connect error here
-              if (kDebugMode) {
-                print("DEBUG: Connect error here!");
-              }
-              Utils.showConnectionErrorDialog(context);
+            _changePasswordPresenter!.changePassword(
+              context,
+              currentPasswordController.text.trim(),
+              newPasswordController.text.trim(),
+              confirmNewPasswordController.text.trim(),
+            );
+            // var connectivity = await connectivityService.checkConnectivity();
+            // if (connectivity.name != StringConstants.connectivity_name_none) {
+            //   _authProvider.updateProcessingStatus(isProcessing: true);
 
-              Utils.addConnectionErrorLog(context);
-            }
+            //   _changePasswordPresenter!.changePassword(
+            //     context,
+            //     currentPasswordController.text.trim(),
+            //     newPasswordController.text.trim(),
+            //     confirmNewPasswordController.text.trim(),
+            //   );
+            // } else {
+            //   //Show connect error here
+            //   if (kDebugMode) {
+            //     print("DEBUG: Connect error here!");
+            //   }
+            //   Utils.showConnectionErrorDialog(context);
+
+            //   Utils.addConnectionErrorLog(context);
+            // }
           }
         }
       },
