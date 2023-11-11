@@ -1757,7 +1757,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     };
     _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
-    if (await _recordController!.hasPermission()) {
+    try {
       await _recordController!.start(
         path: path,
         encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
@@ -1772,6 +1772,26 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _currentQuestion!.answers = temp;
         _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
       }
+    } catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: init record audio FAIL: ${e.toString()}");
+      }
+      //Add log
+      LogModel? log;
+      Map<String, dynamic>? dataLog = {};
+
+      if (context.mounted) {
+        log = await Utils.prepareToCreateLog(context,
+            action: LogEvent.crash_bug_audio_record);
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: e.toString(),
+        status: LogEvent.failed,
+      );
     }
   }
 
@@ -1786,14 +1806,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: RECORD AS FILE PATH: $path");
     }
 
-    if (await _recordController!.hasPermission()) {
-      await _recordController!.start(
-        path: path,
-        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
-    }
+    await _recordController!.start(
+      path: path,
+      encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+      bitRate: 128000,
+      samplingRate: 44100,
+    );
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
