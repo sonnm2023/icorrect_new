@@ -74,8 +74,9 @@ class _MyTestScreenState extends State<MyTestScreen> {
 
   @override
   void dispose() {
+    _myTestProvider!.clearData();
     super.dispose();
-    _myTestProvider!.dispose();
+    // _myTestProvider!.dispose();
   }
 
   @override

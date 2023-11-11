@@ -18,22 +18,19 @@ class MyTestProvider extends ChangeNotifier {
 
   void clearData() {
     _isLessThan2Second = true;
-    setVisibleOverviewComment(false);
-    setResultResponseModel(ResultResponseModel());
-    setOtherLightHomeWorks([]);
-    setHighLightHomeworks([]);
-    setTotal(0);
-    updateDownloadingIndex(0);
-    updateDownloadingPercent(0);
-    setAnswerOfQuestions([]);
-    setTimerCount('00:00');
+    _visibleOverViewComment = false;
+    _responseModel = ResultResponseModel();
+    _otherLightHomeWorks = [];
+    _highLightHomeWorks = [];
+    _total = 0;
+    _downloadingIndex = 0;
+    _downloadingPercent = 0.0;
+    _questions = [];
+    _timerCount = '00:00';
     _requestions = [];
-    setCountDownTimer(null);
-    setCurrentQuestion(QuestionTopicModel());
-    setVisibleRecord(false);
-    if (!isDisposed) {
-      notifyListeners();
-    }
+    _countDownTimer = null;
+    _currentQuestion = QuestionTopicModel();
+    _visibleRecord = false;
   }
 
   ///////////////My Test Screen/////////////////////////////////////////////////
