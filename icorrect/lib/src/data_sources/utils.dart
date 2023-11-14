@@ -1079,4 +1079,10 @@ class Utils {
   }) {
     analytics.logEvent(name: eventName, parameters: parameters);
   }
+
+  static Future<String> createNewFilePath(String fileName) async {
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String path = "$folderPath/$fileName";
+    return path;
+  }
 }

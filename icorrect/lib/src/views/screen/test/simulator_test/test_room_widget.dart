@@ -916,6 +916,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }) async {
     _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
+    // String newFileName = "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
+    // String path = await Utils.createNewFilePath(newFileName);
     String path = await Utils.getAudioPathToPlay(
         question, _simulatorTestProvider!.currentTestDetail.testId.toString());
     if (kDebugMode) {
@@ -1764,11 +1766,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _recordAnswer(String fileName) async {
-    String newFileName = "${await _createLocalAudioFileName(fileName)}.wav";
-    String path = await FileStorageHelper.getFilePath(
-        newFileName,
-        MediaType.audio,
-        _simulatorTestProvider!.currentTestDetail.testId.toString());
+    String newFileName = "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
+    // String path = await FileStorageHelper.getFilePath(
+    //     newFileName,
+    //     MediaType.audio,
+    //     _simulatorTestProvider!.currentTestDetail.testId.toString());
+    String path = await Utils.createNewFilePath(newFileName);
 
     if (kDebugMode) {
       print("DEBUG: RECORD AS FILE PATH: $path");
@@ -1849,13 +1852,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return false;
   }
 
-  Future<String> _createLocalAudioFileName(String origin) async {
+  Future<String> _createLocalAudioFileName(String testId, String origin) async {
     String fileName = "";
     final split = origin.split('.');
     if (_countRepeat > 0) {
-      fileName = 'repeat_${_countRepeat.toString()}_${split[0]}';
+      fileName = '${testId}_repeat_${_countRepeat.toString()}_${split[0]}';
     } else {
-      fileName = 'answer_${split[0]}';
+      fileName = '${testId}_answer_${split[0]}';
     }
     return fileName;
   }
