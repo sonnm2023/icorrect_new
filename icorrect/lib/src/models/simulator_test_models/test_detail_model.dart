@@ -25,24 +25,33 @@ class TestDetailModel {
   double? _normalSpeed;
   double? _firstRepeatSpeed;
   double? _secondRepeatSpeed;
+  int? _part1Time;
+  int? _part2Time;
+  int? _part3Time;
+  int? _takeNoteTime;
 
-  TestDetailModel(
-      {String? activityType,
-      int? testOption,
-      TopicModel? introduce,
-      List<TopicModel>? part1,
-      String? domainName,
-      int? testId,
-      String? checkSum,
-      String? id,
-      String? status,
-      String? updateAt,
-      String? hasOrder,
-      double? normalSpeed,
-      double? firstRepeatSpeed,
-      double? secondRepeatSpeed,
-      TopicModel? part2,
-      TopicModel? part3}) {
+  TestDetailModel({
+    String? activityType,
+    int? testOption,
+    TopicModel? introduce,
+    List<TopicModel>? part1,
+    String? domainName,
+    int? testId,
+    String? checkSum,
+    String? id,
+    String? status,
+    String? updateAt,
+    String? hasOrder,
+    double? normalSpeed,
+    double? firstRepeatSpeed,
+    double? secondRepeatSpeed,
+    TopicModel? part2,
+    TopicModel? part3,
+    int? part1Time,
+    int? part2Time,
+    int? part3Time,
+    int? takeNoteTime,
+  }) {
     _activityType = activityType;
     _testOption = testOption;
     _introduce = introduce;
@@ -59,6 +68,10 @@ class TestDetailModel {
     _secondRepeatSpeed = secondRepeatSpeed;
     _part2 = part2;
     _part3 = part3;
+    _part1Time = part1Time;
+    _part2Time = part2Time;
+    _part3Time = part3Time;
+    _takeNoteTime = takeNoteTime;
   }
 
   String get activityType => _activityType ?? "";
@@ -86,13 +99,23 @@ class TestDetailModel {
   double get normalSpeed => _normalSpeed ?? 1.0;
   set normalSpeed(double normalSpeed) => _normalSpeed = normalSpeed;
   double get firstRepeatSpeed => _firstRepeatSpeed ?? 0.9;
-  set firstRepeatSpeed(double firstRepeatSpeed) => _firstRepeatSpeed = firstRepeatSpeed;
+  set firstRepeatSpeed(double firstRepeatSpeed) =>
+      _firstRepeatSpeed = firstRepeatSpeed;
   double get secondRepeatSpeed => _secondRepeatSpeed ?? 1;
-  set secondRepeatSpeed(double secondRepeatSpeed) => _secondRepeatSpeed = secondRepeatSpeed;
+  set secondRepeatSpeed(double secondRepeatSpeed) =>
+      _secondRepeatSpeed = secondRepeatSpeed;
   TopicModel get part2 => _part2 ?? TopicModel();
   set part2(TopicModel part2) => _part2 = part2;
   TopicModel get part3 => _part3 ?? TopicModel();
   set part3(TopicModel part3) => _part3 = part3;
+  int get part1Time => _part1Time ?? 30;
+  set part1Time(int part1Time) => _part1Time = part1Time;
+  int get part2Time => _part2Time ?? 120;
+  set part2Time(int part2Time) => _part2Time = part2Time;
+  int get part3Time => _part3Time ?? 45;
+  set part3Time(int part3Time) => _part3Time = part3Time;
+  int get takeNoteTime => _takeNoteTime ?? 60;
+  set takeNoteTime(int takeNoteTime) => _takeNoteTime = takeNoteTime;
 
   TestDetailModel.fromJson(Map<String, dynamic> json) {
     _activityType = json['activity_type'];
@@ -124,6 +147,10 @@ class TestDetailModel {
     if (_part3 != null) {
       _part3!.numPart = PartOfTest.part3.get;
     }
+    _part1Time = json['part1_time'];
+    _part2Time = json['part2_time'];
+    _part3Time = json['part3_time'];
+    _takeNoteTime = json['take_note_time'];
   }
 
   Map<String, dynamic> toJson() {
@@ -152,6 +179,11 @@ class TestDetailModel {
     if (_part3 != null) {
       data['part3'] = _part3!.toJson();
     }
+    data['part1_time'] = _part1Time;
+    data['part2_time'] = _part2Time;
+    data['part3_time'] = _part3Time;
+    data['take_note_time'] = _takeNoteTime;
+
     return data;
   }
 
