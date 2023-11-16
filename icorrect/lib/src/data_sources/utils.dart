@@ -175,6 +175,13 @@ class Utils {
 
   static Map<String, dynamic> getHomeWorkStatus(
       ActivitiesModel homeWorkModel, String serverCurrentTime) {
+    if (homeWorkModel.activityStatus == 99) {
+      return {
+        StringConstants.k_title: StringConstants.activity_status_loaded_test,
+        StringConstants.k_color: Colors.brown,
+      };
+    }
+
     if (null == homeWorkModel.activityAnswer) {
       bool timeCheck =
           isExpired(homeWorkModel.activityEndTime, serverCurrentTime);

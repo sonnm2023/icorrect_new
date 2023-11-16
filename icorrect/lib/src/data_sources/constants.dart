@@ -170,6 +170,7 @@ class FilterJsonData {
   static Map<String, dynamic> notCompleted = {"id": 0, "name": "Not Completed"};
   static Map<String, dynamic> late = {"id": -1, "name": "Late"};
   static Map<String, dynamic> outOfDate = {"id": -2, "name": "Out of date"};
+  static Map<String, dynamic> loadedTest = {"id": 99, "name": "Loaded Test"};
 }
 
 class StringClass {
@@ -658,6 +659,7 @@ class StringConstants {
   static const String activity_status_late = "Late";
   static const String activity_status_ai_scored = " AI Scored";
   static const String ai_score_response_not_evaluated = "Not Evaluated";
+  static const String activity_status_loaded_test = "Loaded Test";
 
   //keywords
   static const String k_email = "email";

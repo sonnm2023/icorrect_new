@@ -77,6 +77,7 @@ class HomeWorkProvider with ChangeNotifier {
     HomeWorkStatusModel.fromJson(FilterJsonData.notCompleted),
     HomeWorkStatusModel.fromJson(FilterJsonData.late),
     HomeWorkStatusModel.fromJson(FilterJsonData.outOfDate),
+    HomeWorkStatusModel.fromJson(FilterJsonData.loadedTest),
   ];
   List<HomeWorkStatusModel> get listStatusForFilter => _listStatusForFilter;
 
