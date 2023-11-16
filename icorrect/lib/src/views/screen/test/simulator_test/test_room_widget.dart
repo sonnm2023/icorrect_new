@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart' as AudioPlayers;
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -68,9 +68,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
   NativeVideoPlayerController? _videoPlayerController;
-  // AudioPlayer? _audioPlayerController;
+  AudioPlayers.AudioPlayer? _audioPlayerController;
   Record? _recordController;
-  late FlutterSoundPlayer _audioPlayerController;
   late FlutterSoundRecorder _recorder;
   CameraService? _cameraService;
 
@@ -101,8 +100,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    //TODO
-    _audioPlayerController = FlutterSoundPlayer(); //AudioPlayer();
+
+    _audioPlayerController = AudioPlayers.AudioPlayer();
 
     if (Platform.isIOS) {
       _recordController = Record();
@@ -725,14 +724,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
 
-      if (_audioPlayerController.isPlaying) {
-        await _audioPlayerController.stopPlayer();
+      if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
+        _audioPlayerController!.stop();
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
-      // if (_audioPlayerController.state == PlayerState.playing) {
-      //   _audioPlayerController.stop();
-      //   _playAnswerProvider!.resetSelectedQuestionIndex();
-      // }
     }
 
     if (null != _countRecording) {
@@ -869,13 +864,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _cameraService!.dispose();
     }
 
-    //TODO
-    if (_audioPlayerController.isPlaying) {
-      await _audioPlayerController.stopPlayer();
+    if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
+      _audioPlayerController!.stop();
     }
-    // if (_audioPlayerController!.state == PlayerState.playing) {
-    //   _audioPlayerController!.stop();
-    // }
 
     if (null != _videoPlayerController) {
       _videoPlayerController = null;
@@ -892,10 +883,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
-
-      //TODO
-      if (_audioPlayerController.isPlaying) {
-        await _audioPlayerController.stopPlayer().then(
+      if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
+        await _audioPlayerController!.stop().then(
           (_) {
             //Check playing answers status
             if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
@@ -914,29 +903,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             }
           },
         );
-      }
-      // if (_audioPlayerController!.state == PlayerState.playing) {
-      //   await _audioPlayerController!.stop().then(
-      //     (_) {
-      //       //Check playing answers status
-      //       if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
-      //         if (selectedQuestionIndex !=
-      //             _playAnswerProvider!.selectedQuestionIndex) {
-      //           _startPlayAudio(
-      //               question: question,
-      //               selectedQuestionIndex: selectedQuestionIndex);
-      //         } else {
-      //           _playAnswerProvider!.resetSelectedQuestionIndex();
-      //         }
-      //       } else {
-      //         _startPlayAudio(
-      //             question: question,
-      //             selectedQuestionIndex: selectedQuestionIndex);
-      //       }
-      //     },
-      //   );
-      // }
-      else {
+      } else {
         //Check playing answers status
         if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
           if (selectedQuestionIndex !=
@@ -966,10 +933,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }) async {
     _playAnswerProvider!.setSelectedQuestionIndex(selectedQuestionIndex);
 
-    // String newFileName = "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
-    // String path = await Utils.createNewFilePath(newFileName);
-    String path = await Utils.getAudioPathToPlay(
-        question, _simulatorTestProvider!.currentTestDetail.testId.toString());
+    String path = await Utils.createNewFilePath(
+        question.answers[question.repeatIndex].url);
     if (kDebugMode) {
       print("Audio update : $path");
     }
@@ -983,20 +948,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           "DEBUG: Reviewing current index = ${_simulatorTestProvider!.reviewingCurrentIndex} -- play answer");
     }
 
-    //TODO
-    await _audioPlayerController.setVolume(2.5);
-    await _audioPlayerController.startPlayer(
-        fromURI: audioPath,
-        codec: Codec.mp3,
-        whenFinished: () {
-          _reviewingProcess();
-        });
-
-    // await _audioPlayerController!.play(DeviceFileSource(audioPath));
-    // await _audioPlayerController!.setVolume(2.5);
-    // _audioPlayerController!.onPlayerComplete.listen((event) {
-    //   _reviewingProcess();
-    // });
+    await _audioPlayerController!
+        .play(AudioPlayers.DeviceFileSource(audioPath));
+    await _audioPlayerController!.setVolume(2.5);
+    _audioPlayerController!.onPlayerComplete.listen((event) {
+      _reviewingProcess();
+    });
   }
 
   Future<void> _playAudio(String audioPath) async {
@@ -1004,18 +961,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: Play audio as FILE PATH $audioPath");
     }
     try {
-      await _audioPlayerController.setVolume(2.5);
-      await _audioPlayerController.startPlayer(
-          fromURI: audioPath,
-          codec: Codec.mp3,
-          whenFinished: () {
-            _playAnswerProvider!.resetSelectedQuestionIndex();
-          });
-      // await _audioPlayerController!.play(DeviceFileSource(audioPath));
-      // await _audioPlayerController!.setVolume(2.5);
-      // _audioPlayerController!.onPlayerComplete.listen((event) {
-      //   _playAnswerProvider!.resetSelectedQuestionIndex();
-      // });
+      await _audioPlayerController!
+          .play(AudioPlayers.DeviceFileSource(audioPath));
+      await _audioPlayerController!.setVolume(2.5);
+      _audioPlayerController!.onPlayerComplete.listen((event) {
+        _playAnswerProvider!.resetSelectedQuestionIndex();
+      });
     } on PlatformException catch (e) {
       if (kDebugMode) {
         print("DEBUG: $e");
@@ -1082,15 +1033,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           },
         );
       } else {
-        //TODO
-        if (_audioPlayerController.isPlaying) {
-          await _audioPlayerController.stopPlayer();
+        if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
+          _audioPlayerController!.stop();
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
-        // if (_audioPlayerController!.state == PlayerState.playing) {
-        //   _audioPlayerController!.stop();
-        //   _playAnswerProvider!.resetSelectedQuestionIndex();
-        // }
 
         bool isPart2 = question.numPart == PartOfTest.part2.get;
 
@@ -1822,15 +1768,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
 
-      //TODO
-      if (_audioPlayerController.isPlaying) {
-        await _audioPlayerController.stopPlayer();
+      if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
+        _audioPlayerController!.stop();
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
-      // if (_audioPlayerController!.state == PlayerState.playing) {
-      //   _audioPlayerController!.stop();
-      //   _playAnswerProvider!.resetSelectedQuestionIndex();
-      // }
     }
   }
 
@@ -1867,7 +1808,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _recordAnswer(String fileName) async {
-    String newFileName = "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
+    String newFileName =
+        "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
     // String path = await FileStorageHelper.getFilePath(
     //     newFileName,
     //     MediaType.audio,
