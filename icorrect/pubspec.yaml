@@ -71,6 +71,8 @@ dependencies:
   firebase_core: ^2.21.0
   firebase_analytics: ^10.6.3
   firebase_crashlytics: ^3.4.3
+  flutter_sound: ^9.2.13
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

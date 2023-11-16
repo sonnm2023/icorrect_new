@@ -8,6 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
@@ -67,8 +68,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
   NativeVideoPlayerController? _videoPlayerController;
-  AudioPlayer? _audioPlayerController;
+  // AudioPlayer? _audioPlayerController;
   Record? _recordController;
+  late FlutterSoundPlayer _audioPlayerController;
+  late FlutterSoundRecorder _recorder;
   CameraService? _cameraService;
 
   Timer? _countDown;
@@ -98,8 +101,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    _audioPlayerController = AudioPlayer();
-    _recordController = Record();
+    //TODO
+    _audioPlayerController = FlutterSoundPlayer(); //AudioPlayer();
+
+    if (Platform.isIOS) {
+      _recordController = Record();
+    } else {
+      _recorder = FlutterSoundRecorder();
+    }
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -687,11 +696,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _typeOfActionLog = 2;
         int numPart = _simulatorTestProvider!.currentQuestion.numPart;
 
-        if (numPart == PartOfTest.part2.get &&
-            await _recordController!.isRecording()) {
-          _recordController!.pause();
+        //TODO
+        if (Platform.isIOS) {
+          if (numPart == PartOfTest.part2.get &&
+              await _recordController!.isRecording()) {
+            _recordController!.pause();
+          } else {
+            _recordController!.stop();
+          }
         } else {
-          _recordController!.stop();
+          if (numPart == PartOfTest.part2.get && _recorder.isRecording) {
+            _recorder.pauseRecorder();
+          } else {
+            _stopRecord();
+          }
         }
 
         if (null != _countDown) {
@@ -707,10 +725,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
 
-      if (_audioPlayerController!.state == PlayerState.playing) {
-        _audioPlayerController!.stop();
+      if (_audioPlayerController.isPlaying) {
+        await _audioPlayerController.stopPlayer();
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
+      // if (_audioPlayerController.state == PlayerState.playing) {
+      //   _audioPlayerController.stop();
+      //   _playAnswerProvider!.resetSelectedQuestionIndex();
+      // }
     }
 
     if (null != _countRecording) {
@@ -841,15 +863,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     await _stopRecord();
-    await _recordController!.dispose();
+    // await _recordController!.dispose();//TODO
 
     if (null != _cameraService) {
       _cameraService!.dispose();
     }
 
-    if (_audioPlayerController!.state == PlayerState.playing) {
-      _audioPlayerController!.stop();
+    //TODO
+    if (_audioPlayerController.isPlaying) {
+      await _audioPlayerController.stopPlayer();
     }
+    // if (_audioPlayerController!.state == PlayerState.playing) {
+    //   _audioPlayerController!.stop();
+    // }
 
     if (null != _videoPlayerController) {
       _videoPlayerController = null;
@@ -866,8 +892,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Stop playing current question
-      if (_audioPlayerController!.state == PlayerState.playing) {
-        await _audioPlayerController!.stop().then(
+
+      //TODO
+      if (_audioPlayerController.isPlaying) {
+        await _audioPlayerController.stopPlayer().then(
           (_) {
             //Check playing answers status
             if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
@@ -886,7 +914,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             }
           },
         );
-      } else {
+      }
+      // if (_audioPlayerController!.state == PlayerState.playing) {
+      //   await _audioPlayerController!.stop().then(
+      //     (_) {
+      //       //Check playing answers status
+      //       if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
+      //         if (selectedQuestionIndex !=
+      //             _playAnswerProvider!.selectedQuestionIndex) {
+      //           _startPlayAudio(
+      //               question: question,
+      //               selectedQuestionIndex: selectedQuestionIndex);
+      //         } else {
+      //           _playAnswerProvider!.resetSelectedQuestionIndex();
+      //         }
+      //       } else {
+      //         _startPlayAudio(
+      //             question: question,
+      //             selectedQuestionIndex: selectedQuestionIndex);
+      //       }
+      //     },
+      //   );
+      // }
+      else {
         //Check playing answers status
         if (-1 != _playAnswerProvider!.selectedQuestionIndex) {
           if (selectedQuestionIndex !=
@@ -931,11 +981,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           "DEBUG: Reviewing current index = ${_simulatorTestProvider!.reviewingCurrentIndex} -- play answer");
     }
 
-    await _audioPlayerController!.play(DeviceFileSource(audioPath));
-    await _audioPlayerController!.setVolume(2.5);
-    _audioPlayerController!.onPlayerComplete.listen((event) {
-      _reviewingProcess();
-    });
+    //TODO
+    await _audioPlayerController.setVolume(2.5);
+    await _audioPlayerController.startPlayer(
+        fromURI: audioPath,
+        codec: Codec.mp3,
+        whenFinished: () {
+          _reviewingProcess();
+        });
+
+    // await _audioPlayerController!.play(DeviceFileSource(audioPath));
+    // await _audioPlayerController!.setVolume(2.5);
+    // _audioPlayerController!.onPlayerComplete.listen((event) {
+    //   _reviewingProcess();
+    // });
   }
 
   Future<void> _playAudio(String audioPath) async {
@@ -943,11 +1002,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: Play audio as FILE PATH $audioPath");
     }
     try {
-      await _audioPlayerController!.play(DeviceFileSource(audioPath));
-      await _audioPlayerController!.setVolume(2.5);
-      _audioPlayerController!.onPlayerComplete.listen((event) {
-        _playAnswerProvider!.resetSelectedQuestionIndex();
-      });
+      await _audioPlayerController.setVolume(2.5);
+      await _audioPlayerController.startPlayer(
+          fromURI: audioPath,
+          codec: Codec.mp3,
+          whenFinished: () {
+            _playAnswerProvider!.resetSelectedQuestionIndex();
+          });
+      // await _audioPlayerController!.play(DeviceFileSource(audioPath));
+      // await _audioPlayerController!.setVolume(2.5);
+      // _audioPlayerController!.onPlayerComplete.listen((event) {
+      //   _playAnswerProvider!.resetSelectedQuestionIndex();
+      // });
     } on PlatformException catch (e) {
       if (kDebugMode) {
         print("DEBUG: $e");
@@ -985,7 +1051,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //   );
   // }
 
-  void _reAnswerCallBack(QuestionTopicModel question) {
+  void _reAnswerCallBack(QuestionTopicModel question) async {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -1014,10 +1080,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           },
         );
       } else {
-        if (_audioPlayerController!.state == PlayerState.playing) {
-          _audioPlayerController!.stop();
+        //TODO
+        if (_audioPlayerController.isPlaying) {
+          await _audioPlayerController.stopPlayer();
           _playAnswerProvider!.resetSelectedQuestionIndex();
         }
+        // if (_audioPlayerController!.state == PlayerState.playing) {
+        //   _audioPlayerController!.stop();
+        //   _playAnswerProvider!.resetSelectedQuestionIndex();
+        // }
 
         bool isPart2 = question.numPart == PartOfTest.part2.get;
 
@@ -1149,7 +1220,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
     _currentQuestion = null;
     _countDown!.cancel();
-    _recordController!.stop();
+    if (Platform.isIOS) {
+      _recordController!.stop();
+    } else {
+      _stopRecord();
+    }
     _simulatorTestProvider!.setVisibleRecord(false);
   }
 
@@ -1484,7 +1559,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setVisibleRecord(false);
       _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
 
-      int time = 60; //3 for test, 60 for product
+      int time = widget.simulatorTestPresenter.testDetail!
+          .takeNoteTime; //60; //3 for test, 60 for product
       String timeString = Utils.getTimeRecordString(time);
       _simulatorTestProvider!.setCountDownCueCard(timeString);
 
@@ -1729,7 +1805,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
-        _recordController!.stop();
+        if (Platform.isIOS) {
+          _recordController!.stop();
+        } else {
+          _stopRecord();
+        }
 
         if (null != _countDown) {
           _countDown!.cancel();
@@ -1740,17 +1820,38 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
 
-      if (_audioPlayerController!.state == PlayerState.playing) {
-        _audioPlayerController!.stop();
+      //TODO
+      if (_audioPlayerController.isPlaying) {
+        await _audioPlayerController.stopPlayer();
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
+      // if (_audioPlayerController!.state == PlayerState.playing) {
+      //   _audioPlayerController!.stop();
+      //   _playAnswerProvider!.resetSelectedQuestionIndex();
+      // }
     }
   }
 
   Future<void> _stopRecord() async {
-    String? path = await _recordController!.stop();
-    if (kDebugMode) {
-      print("DEBUG: RECORD FILE PATH: $path");
+    if (Platform.isIOS) {
+      String? path = await _recordController!.stop(); //TODO
+      if (kDebugMode) {
+        print("DEBUG: RECORD FILE PATH: $path");
+      }
+    } else {
+      if (_recorder.isRecording) {
+        String? recordFilePath = await _recorder.stopRecorder();
+        await _recorder.closeRecorder();
+        if (recordFilePath != null) {
+          if (kDebugMode) {
+            print("DEBUG: recordFilePath: $recordFilePath");
+          }
+        } else {
+          if (kDebugMode) {
+            print("DEBUG: recordFilePath: FAIL");
+          }
+        }
+      }
     }
   }
 
@@ -1780,12 +1881,23 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
     try {
-      await _recordController!.start(
-        path: path,
-        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
+      if (Platform.isIOS) {
+        await _recordController!.start(
+          path: path,
+          encoder:
+              Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+          bitRate: 128000,
+          samplingRate: 44100,
+        );
+      } else {
+        await _recorder.openRecorder();
+        await _recorder.startRecorder(
+          codec: Codec.pcm16WAV,
+          toFile: path,
+          sampleRate: 44100,
+          bitRate: 128000,
+        );
+      }
 
       List<FileTopicModel> temp = _currentQuestion!.answers;
       if (!_checkAnswerFileExist(newFileName, temp)) {
@@ -1828,12 +1940,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: RECORD AS FILE PATH: $path");
     }
 
-    await _recordController!.start(
-      path: path,
-      encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-      bitRate: 128000,
-      samplingRate: 44100,
-    );
+    if (Platform.isIOS) {
+      await _recordController!.start(
+        path: path,
+        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+    } else {
+      await _recorder.openRecorder();
+      await _recorder.startRecorder(
+        codec: Codec.pcm16WAV,
+        toFile: path,
+        sampleRate: 44100,
+        bitRate: 128000,
+      );
+    }
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
@@ -2060,6 +2182,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
+  int _getRecordTime(int type) {
+    switch (type) {
+      case 0: //Answer for question in introduce
+      case 1: //Answer for question in part 1
+        return widget.simulatorTestPresenter.testDetail!.part1Time;
+      case 2: //Answer for question in part 2
+        return widget.simulatorTestPresenter.testDetail!.part2Time;
+      case 3: //Answer for question in part 3
+        return widget.simulatorTestPresenter.testDetail!.part3Time;
+      default:
+        return 0;
+    }
+  }
+
   void _prepareRecordForReanswer({
     required String fileName,
     required int numPart,
@@ -2070,7 +2206,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setVisibleSaveTheTest(false);
     }
 
-    int timeRecord = Utils.getRecordTime(numPart);
+    //TODO
+    int timeRecord = _getRecordTime(numPart);
+    // int timeRecord = Utils.getRecordTime(numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
 
     //Record the answer
@@ -2107,7 +2245,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
-    int timeRecord = Utils.getRecordTime(queue.first.numPart);
+    //TODO
+    int timeRecord = _getRecordTime(queue.first.numPart);
+    // int timeRecord = Utils.getRecordTime(queue.first.numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
     //Record the answer
     _timerProvider!.setCountDown(timeString);
@@ -2163,7 +2303,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     int timeRecordCounting = _simulatorTestProvider!.timeRecordCounting;
 
     String timeString = Utils.getTimeRecordString(timeRecordCounting);
-    int totalTimeRecordPart2 = Utils.getRecordTime(PartOfTest.part2.get);
+    //TODO
+    int totalTimeRecordPart2 = _getRecordTime(PartOfTest.part2.get);
+    // int totalTimeRecordPart2 = Utils.getRecordTime(PartOfTest.part2.get);
 
     if (timeRecordCounting < totalTimeRecordPart2) {
       _timerProvider!.setCountDown(timeString);
@@ -2171,8 +2313,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _countDown!.cancel();
       }
 
-      if (await _recordController!.isPaused()) {
-        _recordController!.resume();
+      if (Platform.isIOS) {
+        if (await _recordController!.isPaused()) {
+          _recordController!.resume();
+        }
+      } else {
+        if (_recorder.isPaused) {
+          _recorder.resumeRecorder();
+        }
       }
 
       _simulatorTestProvider!.setIsLessThan2Second(true);
