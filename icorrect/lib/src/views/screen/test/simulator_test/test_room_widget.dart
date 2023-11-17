@@ -85,6 +85,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _endOfTakeNoteIndex = 0;
   bool _isBackgroundMode = false;
   String _reanswerFilePath = "";
+  String _originalAnswerFilePath = "";
   CircleLoading? _loading;
   bool _isReDownload = false;
   bool _cameraIsRecording = false;
@@ -1044,7 +1045,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _currentQuestion = question;
 
         _prepareRecordForReanswer(
-          fileName: question.files.first.url,
+          fileName: question.answers[question.repeatIndex].url,
           numPart: question.numPart,
           isPart2: isPart2,
         );
@@ -1147,20 +1148,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (kDebugMode) {
       print("DEBUG: _cancelReanswerCallBack");
     }
+    _resetDataAfterReanswer(isCancel: true);
+  }
 
-    String path =
-        '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
-        '\\$_reanswerFilePath';
+  void _resetDataAfterReanswer({required bool isCancel}) async {
+    String path = "";
+    if (isCancel) {
+      //Delete reanswer file
+      path = _reanswerFilePath;
+    } else {
+      //Delete original answer file
+      path = _originalAnswerFilePath;
+    }
+
     if (File(path).existsSync()) {
       await File(path).delete();
       if (kDebugMode) {
         print("DEBUG: File Record is delete: ${File(path).existsSync()}");
       }
     }
-    _resetDataAfterReanswer();
-  }
 
-  void _resetDataAfterReanswer() {
+    _reanswerFilePath = "";
+    _originalAnswerFilePath = "";
+
     //Show SAVE THE TEST when re answer
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _hideCameraLive();
@@ -1810,10 +1820,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Future<void> _recordAnswer(String fileName) async {
     String newFileName =
         "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
-    // String path = await FileStorageHelper.getFilePath(
-    //     newFileName,
-    //     MediaType.audio,
-    //     _simulatorTestProvider!.currentTestDetail.testId.toString());
     String path = await Utils.createNewFilePath(newFileName);
 
     if (kDebugMode) {
@@ -1875,11 +1881,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _recordForReAnswer(String fileName) async {
-    _reanswerFilePath = '${await Utils.generateAudioFileName()}.wav';
-    String path = await FileStorageHelper.getFilePath(
-        _reanswerFilePath,
-        MediaType.audio,
-        _simulatorTestProvider!.currentTestDetail.testId.toString());
+    _reanswerFilePath = '${await Utils.generateAudioFileName()}.$fileName';
+    _originalAnswerFilePath = await Utils.createNewFilePath(fileName);
+
+    String path = await Utils.createNewFilePath(_reanswerFilePath);
 
     if (kDebugMode) {
       print("DEBUG: RECORD AS FILE PATH: $path");
@@ -2151,9 +2156,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setVisibleSaveTheTest(false);
     }
 
-    //TODO
     int timeRecord = _getRecordTime(numPart);
-    // int timeRecord = Utils.getRecordTime(numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
 
     //Record the answer
@@ -2662,7 +2665,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _currentQuestion!.reAnswerCount++;
     }
     _simulatorTestProvider!.questionList[index] = _currentQuestion!;
-    _resetDataAfterReanswer();
+    _resetDataAfterReanswer(isCancel: false);
   }
 
   @override
