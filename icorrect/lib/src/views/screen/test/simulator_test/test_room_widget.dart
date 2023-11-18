@@ -2674,7 +2674,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _loading!.hide();
     }
     //Update indicator process status
-    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
     //Just for test
