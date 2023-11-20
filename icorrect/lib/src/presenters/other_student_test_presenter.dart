@@ -103,10 +103,6 @@ class OtherStudentTestPresenter {
         // ignore: invalid_return_type_for_catch_error
 
         (onError) {
-      if (kDebugMode) {
-        print("DEBUG: fail meomoe");
-      }
-
       _view!.getMyTestFail(AlertClass.getTestDetailAlert);
     });
   }

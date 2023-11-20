@@ -309,7 +309,7 @@ class CustomTextStyle {
     required BuildContext context,
     required Color color,
     required double fontsSize,
-    required FontWeight fontWeight,
+    required FontWeight fontWeight, 
   }) {
     double size = Utils.fixSizeOfText(context: context, fontSize: fontsSize);
 
@@ -378,7 +378,8 @@ class LogEvent {
 
 const sendLogsTask = "com.csupporter.sendlogtask";
 
-class StringConstants {
+class StringConstants { 
+  
   //Button Titles
   static const String sign_in_button_title = "Sign In";
   static const String sign_up_button_title = "Sign Up";
@@ -441,7 +442,7 @@ class StringConstants {
       "Are you sure to create new sample and sent to review ?";
   static const String confirm_to_log_out = "Do you want to logout?";
   static const String default_filter_title = 'Add your filter!';
-  static const String repeat_question = "Ask for repeating the question!";
+  static const String repeat_question = "Ask for repeating the question !";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
@@ -649,6 +650,7 @@ class StringConstants {
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =
       "An error when update your answers. Please try again !";
+
 
   //Activity status
   static const String activity_status_out_of_date = "Out of date";
