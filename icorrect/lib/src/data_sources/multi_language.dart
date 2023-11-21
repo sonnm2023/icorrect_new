@@ -122,7 +122,6 @@ class MultiLanguage {
     StringConstants.answer_of_part_2: "Câu Trả Lời Của Phần 2",
     StringConstants.csupporter: "@Csupporter JSC",
     StringConstants.contact: "Liên Hệ: support@ielts-correction.com",
-
     StringConstants.unknown: "Unknown",
     StringConstants.home_menu_item_title: "Home",
     StringConstants.logout_menu_item_title: "Đăng Xuất",
@@ -169,7 +168,6 @@ class MultiLanguage {
         "Gửi tập tin để xác thực không thành công!",
     StringConstants.submit_authen_fail_timeout_message:
         "Gửi tệp để xác thực không thành công: TimeoutException!",
-
     StringConstants.cancel_and_text: "Hủy Bỏ Và Để Sau",
     StringConstants.skip_and_text: "Bỏ Qua Và Để Sau",
     StringConstants.continue_prepare_text: "Tiếp Tục",
@@ -178,7 +176,6 @@ class MultiLanguage {
     StringConstants.warning_skip_compress_video_content:
         'Video bài làm của bạn sẽ không được gửi'
             ' và bạn sẽ phải xác minh lại tại Video Authentication.',
-
     StringConstants.choose_filter_message:
         "Bạn phải chọn ít nhất một lớp và một trạng thái!",
     StringConstants.no_data_filter_message:
@@ -213,7 +210,6 @@ class MultiLanguage {
         "Bạn chưa được thêm vào hệ thống thử nghiệm, vui lòng liên hệ Admin để hiểu rõ hơn!",
     StringConstants.get_authen_user_fail_message:
         "Đã xảy ra lỗi khi tải xác thực của bạn!",
-
     StringConstants.getting_app_config_information_error_message:
         "Đã xảy ra lỗi khi lấy thông tin cấu hình ứng dụng!",
     StringConstants.confirm_new_password_error_message:
@@ -256,7 +252,6 @@ class MultiLanguage {
         "Bài kiểm tra này đã được tải nhưng chưa hoàn thành.Vui lòng liên hệ với quản trị viên để thiết lập lại nó!",
     StringConstants.update_answer_error_message:
         "Một lỗi khi cập nhật câu trả lời của bạn.Vui lòng thử lại !",
-
     StringConstants.activity_status_out_of_date: "Hết hạn",
     StringConstants.activity_status_not_completed: "Chưa hoàn thành",
     StringConstants.activity_status_corrected: "Đã Nhận Xét",
@@ -264,6 +259,10 @@ class MultiLanguage {
     StringConstants.activity_status_late: "Nộp Muộn",
     StringConstants.activity_status_ai_scored: " Đã Chấm AI",
     StringConstants.ai_score_response_not_evaluated: "Không Đánh Giá",
+    StringConstants.multi_language: "Đa Ngôn Ngữ",
+    StringConstants.filter_string: "Lọc-Lớp:(%a), Trạng Thái: (%a)",
+    StringConstants.ens: "Tiếng Anh",
+    StringConstants.vn: "Tiếng Việt"
   };
 
   static const Map<String, dynamic> EN = {
@@ -327,14 +326,12 @@ class MultiLanguage {
     StringConstants.confirm_to_log_out: "Do you want to logout?",
     StringConstants.default_filter_title: 'Add your filter!',
     StringConstants.repeat_question: "Ask for repeating the question !",
-
     StringConstants.change_password_screen_title: "Change password",
     StringConstants.my_homework_screen_title: "MY HOMEWORK",
     StringConstants.tips_screen_title: "Tips for you",
     StringConstants.practice_screen_title: "PRACTICE",
     StringConstants.topics_screen_title: "Topics",
     StringConstants.icorrect_title: "ICORRECT",
-
     StringConstants.test_detail_tab_title: "Test Detail",
     StringConstants.correction_tab_title: "Correction",
     StringConstants.my_exam_tab_title: "MY EXAM",
@@ -343,7 +340,6 @@ class MultiLanguage {
     StringConstants.others_tab_title: "OTHERS",
     StringConstants.filter_choose_class_tab_title: "CHOOSE CLASS",
     StringConstants.filter_choose_status_tab_title: "CHOOSE STATUS",
-
     StringConstants.cue_card: "Cue Card",
     StringConstants.another_tips: "Another tips",
     StringConstants.nothing_tips: "Nothing tips for you in here",
@@ -433,7 +429,6 @@ class MultiLanguage {
         "Submit file to authentication fail!",
     StringConstants.submit_authen_fail_timeout_message:
         "Submit file to authentication fail: TimeoutException!",
-
     StringConstants.cancel_and_text: "Cancel and Later",
     StringConstants.skip_and_text: "Skip and Later",
     StringConstants.continue_prepare_text: "Continue",
@@ -442,7 +437,6 @@ class MultiLanguage {
     StringConstants.warning_skip_compress_video_content:
         'Your test video will not be sent'
             ' and you will have to verify again at Video Authentication.',
-
     StringConstants.choose_filter_message:
         "You must choose at least one class and one status!",
     StringConstants.no_data_filter_message:
@@ -477,7 +471,6 @@ class MultiLanguage {
         "You have not been added to the testing system, please contact admin for better understanding!",
     StringConstants.get_authen_user_fail_message:
         "Something went wrong when load your authentication!",
-
     StringConstants.getting_app_config_information_error_message:
         "Has an error when getting app config information!",
     StringConstants.confirm_new_password_error_message:
@@ -520,5 +513,16 @@ class MultiLanguage {
         "This test is loaded but not completed. Please contact admin to reset it!",
     StringConstants.update_answer_error_message:
         "An error when update your answers. Please try again !",
+    StringConstants.multi_language: "Multi Language",
+    StringConstants.activity_status_out_of_date: "Out Of Date",
+    StringConstants.activity_status_not_completed: "Not Completed",
+    StringConstants.activity_status_corrected: "Corrected",
+    StringConstants.activity_status_submitted: "Submitted",
+    StringConstants.activity_status_late: "Late",
+    StringConstants.activity_status_ai_scored: " AI Scored",
+    StringConstants.ai_score_response_not_evaluated: "Not Evaluated",
+    StringConstants.filter_string: "Filter-Class:(%a), Status: (%a)",
+    StringConstants.ens: "English",
+    StringConstants.vn: "Vietnamese"
   };
 }

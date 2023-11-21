@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/empty_widget.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../data_sources/utils.dart';
 
 class TipQuestionDialog {
   static Widget tipQuestionDialog(
@@ -26,7 +29,7 @@ class TipQuestionDialog {
                       alignment: Alignment.center,
                       margin: const EdgeInsets.only(top: 20, right: 10),
                       child: Text(
-                        StringConstants.tips_screen_title,
+                        Utils.multiLanguage(StringConstants.tips_screen_title),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: Colors.orange,
@@ -80,7 +83,7 @@ class TipQuestionDialog {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                StringConstants.cue_card,
+                                Utils.multiLanguage(StringConstants.cue_card),
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
                                   color: AppColor.defaultBlackColor,
@@ -106,7 +109,7 @@ class TipQuestionDialog {
                       children: [
                         question.numPart == PartOfTest.part2.get
                             ? Text(
-                                StringConstants.another_tips,
+                                Utils.multiLanguage(StringConstants.another_tips),
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
                                   color: AppColor.defaultBlackColor,
@@ -127,7 +130,7 @@ class TipQuestionDialog {
                               )
                             : EmptyWidget.init().buildNothingWidget(
                                 context,
-                                StringConstants.nothing_tips,
+                                Utils.multiLanguage(StringConstants.no_data_message),
                                 widthSize: 100,
                                 heightSize: 100,
                               )

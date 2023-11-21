@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -10,6 +11,7 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:path/path.dart';
 
 class HomeWorkProvider with ChangeNotifier {
   String _serverCurrentTime = '';
@@ -196,12 +198,12 @@ class HomeWorkProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initializeListFilter() async {
+  Future<void> initializeListFilter(BuildContext context) async {
     getListSelectedFilterFromLocal().then((value) {
       if (listSelectedClassFilter.isEmpty && listSelectedStatusFilter.isEmpty) {
         setListSelectedFilterIntoLocal();
       }
-      filterHomeWork();
+      filterHomeWork(context);
     });
   }
 
@@ -263,7 +265,7 @@ class HomeWorkProvider with ChangeNotifier {
         .putString(key: AppSharedKeys.listStatusFilter, value: null);
   }
 
-  void filterHomeWork() {
+  void filterHomeWork(BuildContext context) {
     bool hasSelectAllClass = listSelectedClassFilter
         .map((e) => e.id)
         .contains(listClassForFilter.first.id);
@@ -301,8 +303,12 @@ class HomeWorkProvider with ChangeNotifier {
       setListFilteredHomeWorks(temp2);
     }
 
-    String str =
-        'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1}) status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
+    String numClass =
+        "$numberOfSelectedClassFilter/${listClassForFilter.length - 1}";
+    String numStatus =
+        "$numberOfSelectedStatusFilter/${listStatusForFilter.length - 1}";
+    String str = context
+        .formatString(StringConstants.filter_string, [numClass, numStatus]);
     updateFilterString(str);
     setProcessingStatus(isProcessing: false);
   }

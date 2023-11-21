@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/multi_language.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:intl/intl.dart';
 
 class FilterContentWidget extends StatefulWidget {
   const FilterContentWidget({super.key, required this.homeWorkProvider});
@@ -15,11 +19,15 @@ class FilterContentWidget extends StatefulWidget {
 }
 
 class _FilterContentWidgetState extends State<FilterContentWidget> {
-  TabBar get _tabBar => const TabBar(
+  TabBar get _tabBar => TabBar(
         indicatorColor: AppColor.defaultPurpleColor,
         tabs: [
-          Tab(text: StringConstants.filter_choose_class_tab_title),
-          Tab(text: StringConstants.filter_choose_status_tab_title),
+          Tab(
+              text: Utils.multiLanguage(
+                  StringConstants.filter_choose_class_tab_title)),
+          Tab(
+              text: Utils.multiLanguage(
+                  StringConstants.filter_choose_status_tab_title)),
         ],
       );
   // late List<ClassModel> _listSelectedClass = [];

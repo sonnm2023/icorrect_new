@@ -5,11 +5,13 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
@@ -44,8 +46,31 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final FlutterLocalization _localization = FlutterLocalization.instance;
+  @override
+  void initState() {
+    _localization.init(
+      mapLocales: [
+        const MapLocale('en', MultiLanguage.EN),
+        const MapLocale('vn', MultiLanguage.VN),
+      ],
+      initLanguageCode: 'en',
+    );
+    _localization.onTranslatedLanguage = _onTranslatedLanguage;
+    super.initState();
+  }
+
+  void _onTranslatedLanguage(Locale? locale) {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +101,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),
       ],
       child: MaterialApp(
+        supportedLocales: _localization.supportedLocales,
+        localizationsDelegates: _localization.localizationsDelegates,
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme:
@@ -143,7 +170,7 @@ void callbackDispatcher() {
         print("DEBUG: send log success kDebugMode");
       }
       Utils.deleteLogFile();
-    } else {  
+    } else {
       if (kDebugMode) {
         print("DEBUG: send log failed  - kDebugMode");
       }

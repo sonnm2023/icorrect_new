@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 
@@ -35,9 +36,12 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (localImagePath == null) return const SizedBox(child: Text(StringConstants.load_image_error_message));
+    String messageLoadImg = Utils.multiLanguage(
+      StringConstants.load_image_error_message,
+    );
+    if (localImagePath == null) return SizedBox(child: Text(messageLoadImg));
 
-    if (localImagePath!.isEmpty) return const SizedBox(child: Text(StringConstants.load_image_error_message));
+    if (localImagePath!.isEmpty) return SizedBox(child: Text(messageLoadImg));
 
     if (kDebugMode) {
       print("DEBUG: LoadImageWidget $localImagePath");

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
@@ -20,6 +21,8 @@ import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
 import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';
 import 'package:provider/provider.dart';
+
+import '../../../data_sources/utils.dart';
 
 class VideoAuthenticationRecord extends StatefulWidget {
   UserAuthDetailProvider userAuthDetailProvider;
@@ -238,7 +241,9 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    StringConstants.sampleTextTitle,
+                                    Utils.multiLanguage(
+                                      StringConstants.sampleTextTitle,
+                                    ),
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultAppColor,
@@ -247,7 +252,9 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                     ),
                                   ),
                                   Text(
-                                    StringConstants.sampleTextContent,
+                                    Utils.multiLanguage(
+                                      StringConstants.sampleTextContent,
+                                    ),
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultAppColor,
@@ -281,8 +288,10 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                               _videoAuthProvider!.setRecordingVideo(false);
                             } else {
                               Fluttertoast.showToast(
-                                msg: StringConstants
-                                    .video_record_duration_less_than_15s,
+                                msg: Utils.multiLanguage(
+                                  StringConstants
+                                      .video_record_duration_less_than_15s,
+                                ),
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 5,
@@ -345,10 +354,13 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       builder: (builderContext) {
         return WillPopScope(
           child: ConfirmDialogWidget(
-            title: StringConstants.confirm_exit_screen_title,
-            message: StringConstants.confirm_exit_content,
-            cancelButtonTitle: StringConstants.exit_button_title,
-            okButtonTitle: StringConstants.later_button_title,
+            title:
+                Utils.multiLanguage(StringConstants.confirm_exit_screen_title),
+            message: Utils.multiLanguage(StringConstants.confirm_exit_content),
+            cancelButtonTitle:
+                Utils.multiLanguage(StringConstants.exit_button_title),
+            okButtonTitle:
+                Utils.multiLanguage(StringConstants.later_button_title),
             dimissButtonTapped: () {
               _continueRecodingVideo();
             },
@@ -379,10 +391,18 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       context: contextBuild,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: StringConstants.confirm_exit_screen_title,
-          message: StringConstants.confirm_submit_before_out_screen,
-          cancelButtonTitle: StringConstants.exit_button_title,
-          okButtonTitle: StringConstants.submit_button_title,
+          title: Utils.multiLanguage(
+            StringConstants.confirm_exit_screen_title,
+          ),
+          message: Utils.multiLanguage(
+            StringConstants.confirm_submit_before_out_screen,
+          ),
+          cancelButtonTitle: Utils.multiLanguage(
+            StringConstants.exit_button_title,
+          ),
+          okButtonTitle: Utils.multiLanguage(
+            StringConstants.submit_button_title,
+          ),
           cancelButtonTapped: () async {
             await _videoAuthProvider!.savedFile.delete().then(
               (value) {

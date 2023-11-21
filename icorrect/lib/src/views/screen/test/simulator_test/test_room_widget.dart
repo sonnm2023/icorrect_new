@@ -8,6 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
@@ -904,7 +905,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: StringConstants.wait_until_the_exam_finished_message,
+        msg: Utils.multiLanguage(
+            StringConstants.wait_until_the_exam_finished_message),
         toastState: ToastStatesType.warning,
       );
     }
@@ -995,10 +997,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           context: context,
           builder: (BuildContext context) {
             return ConfirmDialogWidget(
-              title: StringConstants.dialog_title,
-              message: StringConstants.confirm_reanswer_when_reviewing_message,
-              cancelButtonTitle: StringConstants.cancel_button_title,
-              okButtonTitle: StringConstants.ok_button_title,
+              title: Utils.multiLanguage(StringConstants.dialog_title),
+              message: Utils.multiLanguage(
+                StringConstants.confirm_reanswer_when_reviewing_message,
+              ),
+              cancelButtonTitle:
+                  Utils.multiLanguage(StringConstants.cancel_button_title),
+              okButtonTitle:
+                  Utils.multiLanguage(StringConstants.ok_button_title),
               cancelButtonTapped: _cancelButtonTapped,
               okButtonTapped: () {
                 //TODO: Pause reviewing process
@@ -1032,7 +1038,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       showToastMsg(
-        msg: StringConstants.wait_until_the_exam_finished_message,
+        msg: Utils.multiLanguage(
+            StringConstants.wait_until_the_exam_finished_message),
         toastState: ToastStatesType.warning,
       );
     }
@@ -1049,7 +1056,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _showTip(question);
     } else {
       showToastMsg(
-        msg: StringConstants.wait_until_the_exam_finished_message,
+        msg: Utils.multiLanguage(
+            StringConstants.wait_until_the_exam_finished_message),
         toastState: ToastStatesType.warning,
       );
     }
@@ -1272,7 +1280,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Comment for spin 1
       // _startReviewing();
       showToastMsg(
-        msg: StringConstants.feature_not_available_message,
+        msg: Utils.multiLanguage(StringConstants.feature_not_available_message),
         toastState: ToastStatesType.warning,
       );
     } else {
@@ -2225,7 +2233,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _checkAnswerDuration() {
     if (_simulatorTestProvider!.isLessThan2Second) {
       Fluttertoast.showToast(
-        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        msg: Utils.multiLanguage(
+          StringConstants.answer_must_be_greater_than_2_seconds_message,
+        ),
         backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         gravity: ToastGravity.CENTER,
@@ -2394,9 +2404,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
           description: msg,
-          okButtonTitle: StringConstants.ok_button_title,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -2465,10 +2475,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           context: context,
           builder: (BuildContext context) {
             return CustomAlertDialog(
-              title: StringConstants.dialog_title,
-              description: StringConstants.confirm_save_the_test_message,
-              okButtonTitle: StringConstants.save_button_title,
-              cancelButtonTitle: StringConstants.dont_save_button_title,
+              title: Utils.multiLanguage(StringConstants.dialog_title),
+              description: Utils.multiLanguage(
+                  StringConstants.confirm_save_the_test_message),
+              okButtonTitle:
+                  Utils.multiLanguage(StringConstants.save_button_title),
+              cancelButtonTitle:
+                  Utils.multiLanguage(StringConstants.dont_save_button_title),
               borderRadius: 8,
               hasCloseButton: true,
               okButtonTapped: () {
@@ -2489,10 +2502,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           context: context,
           builder: (BuildContext context) {
             return CustomAlertDialog(
-              title: StringConstants.confirm_title,
-              description: StringConstants.confirm_save_change_answers_message,
-              okButtonTitle: StringConstants.save_button_title,
-              cancelButtonTitle: StringConstants.cancel_button_title,
+              title: Utils.multiLanguage(StringConstants.confirm_title),
+              description: Utils.multiLanguage(
+                  StringConstants.confirm_save_change_answers_message),
+              okButtonTitle:
+                  Utils.multiLanguage(StringConstants.save_button_title),
+              cancelButtonTitle:
+                  Utils.multiLanguage(StringConstants.cancel_button_title),
               borderRadius: 8,
               hasCloseButton: true,
               okButtonTapped: () {

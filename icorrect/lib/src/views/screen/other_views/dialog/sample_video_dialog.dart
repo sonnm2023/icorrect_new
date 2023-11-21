@@ -1,12 +1,15 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../../../data_sources/utils.dart';
 
 class SampleVideo extends StatefulWidget {
   String url;
@@ -76,8 +79,8 @@ class _SampleVideoState extends State<SampleVideo> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const DefaultText(
-                      text: StringConstants.sample_video,
+                     DefaultText(
+                      text: Utils.multiLanguage(StringConstants.sample_video),
                       color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

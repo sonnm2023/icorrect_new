@@ -7,11 +7,11 @@ import 'package:icorrect/src/data_sources/utils.dart';
 // const icorrectDomain1 = "ielts-correction.com";
 // const publicDomain = "http://public.icorrect.vn/";
 // const toolDomain = "http://tool.ielts-correction.com/";
-const icorrectDomain = "https://ielts-correction.com/";
-const publicDomain = "http://public.icorrect.vn/";
-const toolDomain = "http://tool.ielts-correction.com/";
+const icorrectDomain = "http://devapi.ielts-correction.com/";
+const publicDomain = "http://devpublic.icorrect.vn/";
+const toolDomain = "http://devtool.ielts-correction.com/";
 const apiDomain = "http://api.ielts-correction.com/";
-const testPositionApi = "http://public.icorrect.vn/api/student/test-position";
+const testPositionApi = "http://devpublic.icorrect.vn/api/student/test-position";
 const testPositionUser = "ic_landing";
 const testPositionPass = "5]N;3e:t<3uvgR2L";
 

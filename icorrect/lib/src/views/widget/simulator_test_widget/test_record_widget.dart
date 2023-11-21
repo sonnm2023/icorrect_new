@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../data_sources/utils.dart';
 
 class TestRecordWidget extends StatelessWidget {
   const TestRecordWidget(
@@ -42,7 +45,9 @@ class TestRecordWidget extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    const Text(StringConstants.answer_being_recorded),
+                    Text(Utils.multiLanguage(
+                      StringConstants.answer_being_recorded,
+                    )),
                     const SizedBox(height: 20),
                     Image.asset(
                       'assets/images/ic_record_2.png',
@@ -147,7 +152,9 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          StringConstants.finish_button_title,
+          Utils.multiLanguage(
+            StringConstants.finish_button_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,
@@ -175,7 +182,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          StringConstants.repeat_button_title,
+          Utils.multiLanguage(StringConstants.repeat_button_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,
@@ -202,7 +209,9 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          StringConstants.cancel_button_title,
+          Utils.multiLanguage(
+            StringConstants.cancel_button_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,

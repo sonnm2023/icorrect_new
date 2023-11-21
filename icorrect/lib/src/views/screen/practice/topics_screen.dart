@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 
 class TopicsScreen extends StatefulWidget {
@@ -22,7 +24,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
             child: CustomDivider(),
           ),
           title: Text(
-            StringConstants.topics_screen_title,
+            Utils.multiLanguage(StringConstants.topics_screen_title),
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultPurpleColor,
@@ -68,7 +70,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
                         Expanded(
                           flex: 4,
                           child: Text(
-                            StringConstants.selected_topics,
+                            Utils.multiLanguage(StringConstants.selected_topics),
                             style: CustomTextStyle.textWithCustomInfo(
                               context: context,
                               color: AppColor.defaultBlackColor,
@@ -83,7 +85,7 @@ class _TopicsScreenState extends State<TopicsScreen> {
                           child: TextButton(
                             onPressed: () {},
                             child: Text(
-                              StringConstants.clear_button_title,
+                              Utils.multiLanguage(StringConstants.clear_button_title),
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
                                 color: AppColor.defaultPurpleColor,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 
 class CustomAlertDialog extends StatefulWidget {
   const CustomAlertDialog({
@@ -92,7 +94,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               child: Center(
                                 child: Text(
                                   widget.cancelButtonTitle ??
-                                      StringConstants.cancel_button_title,
+                                      Utils.multiLanguage(StringConstants.cancel_button_title),
                                   style: CustomTextStyle.textWithCustomInfo(
                                     context: context,
                                     color: AppColor.defaultGrayColor,
@@ -117,7 +119,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               child: Center(
                                 child: Text(
                                   widget.okButtonTitle ??
-                                      StringConstants.ok_button_title,
+                                      Utils.multiLanguage(StringConstants.ok_button_title),
                                   style: CustomTextStyle.textWithCustomInfo(
                                     context: context,
                                     color: AppColor.defaultPurpleColor,
@@ -144,7 +146,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                           child: Center(
                             child: Text(
                               widget.okButtonTitle ??
-                                  StringConstants.ok_button_title,
+                                  Utils.multiLanguage(StringConstants.ok_button_title),
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
                                 color: AppColor.defaultPurpleColor,

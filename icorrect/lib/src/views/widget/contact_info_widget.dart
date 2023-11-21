@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -53,7 +54,9 @@ class _ContactInfoWidgetState extends State<ContactInfoWidget> {
             ),
           ),
           Text(
-            StringConstants.contact,
+            Utils.multiLanguage(
+              StringConstants.contact,
+            ),
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultGrayColor,

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../data_sources/utils.dart';
 
 class DownloadProgressingWidget extends StatelessWidget {
   const DownloadProgressingWidget({super.key});
@@ -38,7 +41,7 @@ class DownloadProgressingWidget extends StatelessWidget {
           }),
           const SizedBox(height: 8),
           Text(
-            StringConstants.downloading,
+            Utils.multiLanguage(StringConstants.downloading),
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultBlackColor,

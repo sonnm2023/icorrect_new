@@ -35,6 +35,8 @@ enum HandleWhenFinish {
   reviewingPlayTheQuestionType,
 }
 
+enum LanguageSelector { english, vietnamese }
+
 enum UserAuthStatus {
   draft(0),
   active(1),
@@ -309,7 +311,7 @@ class CustomTextStyle {
     required BuildContext context,
     required Color color,
     required double fontsSize,
-    required FontWeight fontWeight, 
+    required FontWeight fontWeight,
   }) {
     double size = Utils.fixSizeOfText(context: context, fontSize: fontsSize);
 
@@ -378,8 +380,7 @@ class LogEvent {
 
 const sendLogsTask = "com.csupporter.sendlogtask";
 
-class StringConstants { 
-  
+class StringConstants {
   //Button Titles
   static const String sign_in_button_title = "Sign In";
   static const String sign_up_button_title = "Sign Up";
@@ -461,6 +462,7 @@ class StringConstants {
   static const String others_tab_title = "OTHERS";
   static const String filter_choose_class_tab_title = "CHOOSE CLASS";
   static const String filter_choose_status_tab_title = "CHOOSE STATUS";
+  static const String filter_string = "Filter: Class(%a) Status: (%a)";
 
   //Text
   static const String add_your_filter = "Add your filter!";
@@ -650,7 +652,9 @@ class StringConstants {
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =
       "An error when update your answers. Please try again !";
-
+  static const String multi_language = "Multi Language";
+  static const String ens = "English";
+  static const String vn = "Tiếng Việt";
 
   //Activity status
   static const String activity_status_out_of_date = "Out of date";

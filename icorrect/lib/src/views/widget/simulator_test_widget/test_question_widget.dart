@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -52,7 +53,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
             margin: const EdgeInsets.all(20),
             height: 300,
             child: Text(
-              StringConstants.no_answer_please_start_your_test_message,
+              Utils.multiLanguage(
+                StringConstants.no_answer_please_start_your_test_message,
+              ),
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultBlackColor,
@@ -79,7 +82,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                           child: ListTile(
                             title: Center(
                               child: Text(
-                                StringConstants.part_1_header,
+                                Utils.multiLanguage(
+                                  StringConstants.part_1_header,
+                                ),
                                 textAlign: TextAlign.center,
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
@@ -116,7 +121,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                           child: ListTile(
                             title: Center(
                               child: Text(
-                                StringConstants.part_2_header,
+                                Utils.multiLanguage(
+                                  StringConstants.part_2_header,
+                                ),
                                 textAlign: TextAlign.center,
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
@@ -153,7 +160,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                           child: ListTile(
                             title: Center(
                               child: Text(
-                                StringConstants.part_3_header,
+                                Utils.multiLanguage(
+                                  StringConstants.part_3_header,
+                                ),
                                 textAlign: TextAlign.center,
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
@@ -204,7 +213,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
 
     if (question.cueCard.trim().isNotEmpty) {
       hasCueCard = true;
-      questionStr = StringConstants.answer_of_part_2;
+      questionStr = Utils.multiLanguage(
+        StringConstants.answer_of_part_2,
+      );
     }
 
     SimulatorTestProvider prepareSimulatorTestProvider =
@@ -305,7 +316,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                               widget.reAnswerCallBack(question);
                             },
                             child: Text(
-                              StringConstants.re_answer_button_title,
+                              Utils.multiLanguage(
+                                StringConstants.re_answer_button_title,
+                              ),
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
                                 color: AppColor.defaultPurpleColor,
@@ -326,7 +339,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                                   widget.showTipCallBack(question);
                                 },
                                 child: Text(
-                                  StringConstants.view_tips_button_title,
+                                  Utils.multiLanguage(
+                                    StringConstants.view_tips_button_title,
+                                  ),
                                   style: CustomTextStyle.textWithCustomInfo(
                                     context: context,
                                     color: AppColor.defaultPurpleColor,
@@ -371,7 +386,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
       widget.simulatorTestProvider.setShowFullImage(true);
     } else {
       showToastMsg(
-        msg: StringConstants.wait_until_the_exam_finished_message,
+        msg: Utils.multiLanguage(
+          StringConstants.wait_until_the_exam_finished_message,
+        ),
         toastState: ToastStatesType.warning,
       );
     }

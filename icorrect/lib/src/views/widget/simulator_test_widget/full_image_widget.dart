@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
@@ -31,13 +32,15 @@ class _FullImageWidgetState extends State<FullImageWidget> {
 
   Widget _buildChildWidget() {
     if (localImagePath == null) {
-      return const SizedBox(
-          child: Text(StringConstants.load_image_error_message));
+      return SizedBox(
+          child: Text(
+              Utils.multiLanguage(StringConstants.load_image_error_message)));
     }
 
     if (localImagePath!.isEmpty) {
-      return const SizedBox(
-          child: Text(StringConstants.load_image_error_message));
+      return SizedBox(
+          child: Text(
+              Utils.multiLanguage(StringConstants.load_image_error_message)));
     }
 
     return Image.file(

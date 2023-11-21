@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 
 class MessageDialog {
   static Widget alertDialog(BuildContext context, String message) {
@@ -16,7 +18,7 @@ class MessageDialog {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  StringConstants.dialog_title,
+                  Utils.multiLanguage(StringConstants.dialog_title),
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
                     color: AppColor.defaultBlackColor,
@@ -56,7 +58,7 @@ class MessageDialog {
                         alignment: Alignment.center,
                       ),
                       child: Text(
-                        StringConstants.ok_button_title,
+                        Utils.multiLanguage(StringConstants.ok_button_title),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultPurpleColor,

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../data_sources/utils.dart';
 
 class CueCardWidget extends StatefulWidget {
   const CueCardWidget({super.key});
@@ -33,7 +36,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
                   const SizedBox(height: 10),
                   Center(
                     child: Text(
-                      StringConstants.cue_card,
+                      Utils.multiLanguage(StringConstants.cue_card),
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultBlackColor,

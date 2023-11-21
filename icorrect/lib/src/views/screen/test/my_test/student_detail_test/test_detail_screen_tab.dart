@@ -7,6 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -266,7 +267,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                             },
                             child: (question.tips.isNotEmpty)
                                 ? Text(
-                                    StringConstants.view_tips_button_title,
+                                   Utils.multiLanguage(StringConstants.view_tips_button_title),
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultPurpleColor,
@@ -297,7 +298,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           questionId: question.id.toString());
     } else {
       Fluttertoast.showToast(
-        msg: StringConstants.no_answer_message,
+        msg: Utils.multiLanguage(StringConstants.no_answer_message),
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
@@ -411,9 +412,11 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title:Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,

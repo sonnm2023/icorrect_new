@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +69,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   void _getListHomeWork() async {
     //Reset old data
-    _homeWorkProvider.updateFilterString(StringConstants.add_your_filter);
+    _homeWorkProvider.updateFilterString(Utils.multiLanguage(StringConstants.add_your_filter));
     _homeWorkProvider.resetListSelectedClassFilter();
     _homeWorkProvider.resetListSelectedStatusFilter();
     _homeWorkProvider.resetListSelectedFilterIntoLocal();
@@ -135,7 +136,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             key: widget.scaffoldKey,
             appBar: AppBar(
               title: Text(
-                StringConstants.my_homework_screen_title,
+                Utils.multiLanguage(StringConstants.my_homework_screen_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,
@@ -257,10 +258,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.exit_app_message,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.exit_app_message),
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
@@ -296,10 +300,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.quit_the_test_message,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.quit_the_test_message),
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
@@ -358,7 +365,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
-    await _homeWorkProvider.initializeListFilter();
+    await _homeWorkProvider.initializeListFilter(context);
   }
 
   @override

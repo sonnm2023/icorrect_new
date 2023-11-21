@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
@@ -171,7 +172,9 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
           SizedBox(
             width: (w - 20) / 1.6,
             child: Text(
-              StringConstants.require_user_authentication_title,
+              Utils.multiLanguage(
+                StringConstants.require_user_authentication_title,
+              ),
               textAlign: TextAlign.start,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
@@ -258,7 +261,9 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                         const Icon(Icons.video_camera_front_outlined,
                             size: 100, color: AppColor.defaultPurpleSightColor),
                         Text(
-                          StringConstants.start_record_video_title,
+                          Utils.multiLanguage(
+                            StringConstants.start_record_video_title,
+                          ),
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultGrayColor,
@@ -285,11 +290,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   Widget _statusVideo() {
     return Consumer<UserAuthDetailProvider>(
       builder: (context, provider, child) {
-        UserAuthenStatusUI statusUI =
-            Utils.getUserAuthenStatus(provider.userAuthenDetailModel.status);
+        UserAuthenStatusUI statusUI = Utils.getUserAuthenStatus(
+            context, provider.userAuthenDetailModel.status);
         if (_inProgressForAuthentication()) {
-          statusUI =
-              Utils.getUserAuthenStatus(UserAuthStatus.waitingModelFile.get);
+          statusUI = Utils.getUserAuthenStatus(
+              context, UserAuthStatus.waitingModelFile.get);
         }
 
         String note = provider.userAuthenDetailModel.note;
@@ -396,8 +401,13 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                       child: Text(
                         provider.userAuthenDetailModel.videosAuthDetail
                                 .isNotEmpty
-                            ? StringConstants.record_video_again_title
-                            : StringConstants.record_video_authentication_title,
+                            ? Utils.multiLanguage(
+                                StringConstants.record_video_again_title,
+                              )
+                            : Utils.multiLanguage(
+                                StringConstants
+                                    .record_video_authentication_title,
+                              ),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultWhiteColor,
@@ -421,10 +431,18 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
       barrierDismissible: false,
       builder: (builderContext) {
         return ConfirmDialogWidget(
-          title: StringConstants.waiting_review_video,
-          message: StringConstants.confirm_record_new_video,
-          cancelButtonTitle: StringConstants.cancel_button_title,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(
+            StringConstants.waiting_review_video,
+          ),
+          message: Utils.multiLanguage(
+            StringConstants.confirm_record_new_video,
+          ),
+          cancelButtonTitle: Utils.multiLanguage(
+            StringConstants.cancel_button_title,
+          ),
+          okButtonTitle: Utils.multiLanguage(
+            StringConstants.ok_button_title,
+          ),
           cancelButtonTapped: () {},
           okButtonTapped: () {
             Navigator.of(context).push(
