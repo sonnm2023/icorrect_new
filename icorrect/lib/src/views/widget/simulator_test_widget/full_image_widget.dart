@@ -30,19 +30,26 @@ class _FullImageWidgetState extends State<FullImageWidget> {
   }
 
   Widget _buildChildWidget() {
-    if (localImagePath == null) {
-      return const SizedBox(
-          child: Text(StringConstants.load_image_error_message));
-    }
-
-    if (localImagePath!.isEmpty) {
-      return const SizedBox(
-          child: Text(StringConstants.load_image_error_message));
-    }
-
-    return Image.file(
-      File(localImagePath!),
-      fit: BoxFit.fill,
+    return FutureBuilder<void>(
+      future: _getLocalImagePath(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            width: 20,
+            height: 20,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return const Text(StringConstants.load_image_error_message);
+        } else {
+          return Image.file(
+            File(localImagePath!),
+            fit: BoxFit.fill,
+          );
+        }
+      },
     );
   }
 

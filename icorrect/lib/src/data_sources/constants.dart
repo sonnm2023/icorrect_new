@@ -645,7 +645,6 @@ class StringConstants {
   static const String get_special_homework_error_message =
       "GetSpecialHomeWorks: result fail!";
   static const String compress_video_error_message = "Compress video file fail";
-  static const String loading_image_error_message = "Can not load this image!";
   static const String activity_is_loaded_message =
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =

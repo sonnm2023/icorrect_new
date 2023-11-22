@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:provider/provider.dart';
 
 class LoadLocalImageWidget extends StatefulWidget {
   final String imageUrl;
@@ -35,22 +36,64 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (localImagePath == null) return const SizedBox(child: Text(StringConstants.load_image_error_message));
+    return Consumer<SimulatorTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.isVisibleSaveTheTest ||
+            provider.submitStatus == SubmitStatus.success) {
+          return _buildImageWidget();
+        } else {
+          if (localImagePath == null) {
+            return const SizedBox(
+              child: Text(StringConstants.load_image_error_message),
+            );
+          }
 
-    if (localImagePath!.isEmpty) return const SizedBox(child: Text(StringConstants.load_image_error_message));
+          if (widget.isInRow) {
+            return SizedBox(
+              width: 50,
+              height: 50,
+              child: Image.file(
+                File(localImagePath!),
+                fit: BoxFit.fitHeight,
+              ),
+            );
+          } else {
+            return _buildImageWidget();
+          }
+        }
+      },
+    );
+  }
 
-    if (kDebugMode) {
-      print("DEBUG: LoadImageWidget $localImagePath");
-    }
-
+  Widget _buildImageWidget() {
     if (widget.isInRow) {
-      return SizedBox(
-        width: 50,
-        height: 50,
-        child: Image.file(
-          File(localImagePath!),
-          fit: BoxFit.fitWidth,
-        ),
+      return FutureBuilder<void>(
+        future: _getLocalImagePath(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox(
+              width: 15,
+              height: 15,
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.all(1.5),
+                  child: CircularProgressIndicator(strokeWidth: 1.0),
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return const Text(StringConstants.load_image_error_message);
+          } else {
+            return SizedBox(
+              width: 50,
+              height: 50,
+              child: Image.file(
+                File(localImagePath!),
+                fit: BoxFit.fitHeight,
+              ),
+            );
+          }
+        },
       );
     } else {
       return Image.file(

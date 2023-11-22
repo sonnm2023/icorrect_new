@@ -172,12 +172,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (kDebugMode) {
-      print("DEBUG: TestRoomWidget --- build");
-    }
-
     return Consumer<SimulatorTestProvider>(
       builder: (context, provider, child) {
+        if (kDebugMode) {
+          print("DEBUG: TestRoomWidget --- build");
+        }
+
         if (provider.visibleRecord) {
           _startVideoRecord();
         }

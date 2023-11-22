@@ -512,24 +512,6 @@ class Utils {
     return path;
   }
 
-  static Future<String> getPathToRecordReAnswer(
-      QuestionTopicModel question, String? testId) async {
-    String fileName = '';
-    if (question.answers.length > 1) {
-      if (question.repeatIndex == 0) {
-        fileName = question.answers.last.url;
-      } else {
-        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
-      }
-    } else {
-      fileName = question.answers.first.url;
-    }
-
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String path = "${appDocDirectory.path}/$fileName.wav";
-    return path;
-  }
-
   static Future<String> getReviewingAudioPathToPlay(
       QuestionTopicModel question, String? testId) async {
     String fileName = question.answers.first.url;
@@ -1014,8 +996,8 @@ class Utils {
   }
 
   static Future<String> getLocalImagePath(String fileName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$fileName';
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String filePath = "$folderPath/$fileName";
     if (kDebugMode) {
       print("DEBUG: load image from local: $filePath");
     }
@@ -1028,8 +1010,8 @@ class Utils {
   }
 
   static Future<bool> checkImageFileExist(String fileName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$fileName';
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String filePath = "$folderPath/$fileName";
     bool result = await File(filePath).exists();
     return result;
   }

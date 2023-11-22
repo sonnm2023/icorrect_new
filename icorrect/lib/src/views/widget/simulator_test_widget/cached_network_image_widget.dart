@@ -46,7 +46,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
                 Icons.error_outline_sharp,
                 size: 80,
               ),
-              Text(StringConstants.loading_image_error_message),
+              Text(StringConstants.load_image_error_message),
             ],
           );
         },

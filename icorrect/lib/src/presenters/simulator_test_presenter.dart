@@ -361,15 +361,10 @@ class SimulatorTestPresenter {
         value: json.encode(imageFileDownloadInfo));
 
     try {
-      final directory = await getApplicationDocumentsDirectory();
-
-      final isExistFolder = await directory.exists();
-      if (!isExistFolder) {
-        await directory.create(recursive: true);
-      }
+      String folderPath = await FileStorageHelper.getExternalDocumentPath();
 
       final fileName = imageUrl.split('=').last;
-      final filePath = '${directory.path}/$fileName';
+      final filePath = '$folderPath/$fileName';
       File file = File(filePath);
 
       if (await file.exists()) {
@@ -900,8 +895,7 @@ class SimulatorTestPresenter {
 
       // For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
-        String path = await FileStorageHelper.getFilePath(
-            q.answers.elementAt(i).url.toString(), MediaType.audio, testId);
+        String path = await Utils.createNewFilePath(q.answers.elementAt(i).url.toString());
         File audioFile = File(path);
 
         if (await audioFile.exists()) {

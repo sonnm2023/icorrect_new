@@ -232,11 +232,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                           top: true,
                           right: true,
                           bottom: true,
-                          child: Stack(
-                            children: [
-                              _buildBody(),
-                            ],
-                          ),
+                          child: _buildBody(),
                         ),
                       ),
                       _buildHighLightTab(),
