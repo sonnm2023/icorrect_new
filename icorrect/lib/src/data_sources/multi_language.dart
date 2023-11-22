@@ -261,7 +261,9 @@ class MultiLanguage {
     StringConstants.multi_language: "Đa Ngôn Ngữ",
     StringConstants.filter_string: "Lọc-Lớp:(%a), Trạng Thái: (%a)",
     StringConstants.ens: "Tiếng Anh",
-    StringConstants.vn: "Tiếng Việt"
+    StringConstants.vn: "Tiếng Việt",
+    StringConstants.activity_status_loaded_test: "Đang làm",
+    StringConstants.select_all: "Chọn tất cả",
   };
 
   static const Map<String, dynamic> EN = {
@@ -521,6 +523,8 @@ class MultiLanguage {
     StringConstants.ai_score_response_not_evaluated: "Not Evaluated",
     StringConstants.filter_string: "Filter-Class:(%a), Status: (%a)",
     StringConstants.ens: "English",
-    StringConstants.vn: "Vietnamese"
+    StringConstants.vn: "Vietnamese",
+    StringConstants.activity_status_loaded_test: "Loaded Test",
+    StringConstants.select_all: "Select All",
   };
 }

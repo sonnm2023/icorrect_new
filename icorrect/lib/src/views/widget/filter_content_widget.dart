@@ -23,14 +23,15 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
         indicatorColor: AppColor.defaultPurpleColor,
         tabs: [
           Tab(
-              text: Utils.multiLanguage(
-                  StringConstants.filter_choose_class_tab_title)),
+            text: Utils.multiLanguage(
+                StringConstants.filter_choose_class_tab_title),
+          ),
           Tab(
-              text: Utils.multiLanguage(
-                  StringConstants.filter_choose_status_tab_title)),
+            text: Utils.multiLanguage(
+                StringConstants.filter_choose_status_tab_title),
+          ),
         ],
       );
-  // late List<ClassModel> _listSelectedClass = [];
   late List<NewClassModel> _listSelectedClass = [];
   late List<HomeWorkStatusModel> _listSelectedStatus = [];
 

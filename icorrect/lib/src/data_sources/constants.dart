@@ -665,6 +665,7 @@ class StringConstants {
   static const String activity_status_ai_scored = " AI Scored";
   static const String ai_score_response_not_evaluated = "Not Evaluated";
   static const String activity_status_loaded_test = "Loaded Test";
+  static const String select_all = "Select All";
 
   //keywords
   static const String k_email = "email";
