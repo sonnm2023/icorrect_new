@@ -35,6 +35,8 @@ enum HandleWhenFinish {
   reviewingPlayTheQuestionType,
 }
 
+enum LanguageSelector { english, vietnamese }
+
 enum UserAuthStatus {
   draft(0),
   active(1),
@@ -442,7 +444,7 @@ class StringConstants {
       "Are you sure to create new sample and sent to review ?";
   static const String confirm_to_log_out = "Do you want to logout?";
   static const String default_filter_title = 'Add your filter!';
-  static const String repeat_question = "Ask for repeating the question!";
+  static const String repeat_question = "Ask for repeating the question !";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
@@ -461,6 +463,7 @@ class StringConstants {
   static const String others_tab_title = "OTHERS";
   static const String filter_choose_class_tab_title = "CHOOSE CLASS";
   static const String filter_choose_status_tab_title = "CHOOSE STATUS";
+  static const String filter_string = "Filter: Class(%a) Status: (%a)";
 
   //Text
   static const String add_your_filter = "Add your filter!";
@@ -649,6 +652,9 @@ class StringConstants {
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =
       "An error when update your answers. Please try again !";
+  static const String multi_language = "Multi Language";
+  static const String ens = "English";
+  static const String vn = "Tiếng Việt";
 
   //Activity status
   static const String activity_status_out_of_date = "Out of date";

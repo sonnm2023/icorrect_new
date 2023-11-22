@@ -84,6 +84,7 @@ class MyTestImpl implements MyTestRepository {
   @override
   Future<String> getTestDetailWithId(String testId) {
     String url = getTestDetailWithIdEP(testId);
+  
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true)
         .timeout(const Duration(seconds: timeout))

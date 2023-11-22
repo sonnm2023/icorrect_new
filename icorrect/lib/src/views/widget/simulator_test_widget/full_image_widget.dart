@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
@@ -30,6 +31,8 @@ class _FullImageWidgetState extends State<FullImageWidget> {
   }
 
   Widget _buildChildWidget() {
+    String loadImageErrorMessage = Utils.multiLanguage(StringConstants.load_image_error_message);
+
     return FutureBuilder<void>(
       future: _getLocalImagePath(),
       builder: (context, snapshot) {
@@ -42,7 +45,7 @@ class _FullImageWidgetState extends State<FullImageWidget> {
             ),
           );
         } else if (snapshot.hasError) {
-          return const Text(StringConstants.load_image_error_message);
+          return Text(loadImageErrorMessage);
         } else {
           return Image.file(
             File(localImagePath!),

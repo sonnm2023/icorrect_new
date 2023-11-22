@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -112,11 +113,11 @@ class HomeWorkWidget extends StatelessWidget {
                           left: CustomSize.size_20,
                         ),
                         child: Text(
-                          _statusOfActivity(),
+                          _statusOfActivity(context),
                           textAlign: TextAlign.right,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
-                            color: _getColor(),
+                            color: _getColor(context),
                             fontsSize: FontsSize.fontSize_14,
                             fontWeight: FontWeight.w400,
                           ),
@@ -178,18 +179,19 @@ class HomeWorkWidget extends StatelessWidget {
           );
   }
 
-  String _statusOfActivity() {
+  String _statusOfActivity(BuildContext context) {
     String status = Utils.getHomeWorkStatus(
         homeWorkModel, homeWorkProvider.serverCurrentTime)['title'];
     String aiStatus = Utils.haveAiResponse(homeWorkModel);
     if (aiStatus.isNotEmpty) {
-      return "${status == 'Corrected' ? '$status &' : ''}$aiStatus";
+      return "${status == StringConstants.activity_status_corrected ? '${Utils.multiLanguage(status)} &' : ''}"
+          "${Utils.multiLanguage(aiStatus)}";
     } else {
-      return status;
+      return Utils.multiLanguage(status);
     }
   }
 
-  Color _getColor() {
+  Color _getColor(BuildContext context) {
     String aiStatus = Utils.haveAiResponse(homeWorkModel);
     if (aiStatus.isNotEmpty) {
       return const Color.fromARGB(255, 12, 201, 110);

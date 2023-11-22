@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -60,7 +61,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
           key: GlobalScaffoldKey.practiceScreenScaffoldKey,
           appBar: AppBar(
             title: Text(
-              StringConstants.practice_screen_title,
+              Utils.multiLanguage(StringConstants.practice_screen_title),
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultPurpleColor,
@@ -88,28 +89,28 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   children: [
                     _buildInPracticeCard(
                       context,
-                      title: StringConstants.practice_card_part_1_title,
-                      des: StringConstants.practice_card_part_1_description,
+                      title: Utils.multiLanguage(StringConstants.practice_card_part_1_title),
+                      des: Utils.multiLanguage(StringConstants.practice_card_part_1_description),
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: StringConstants.practice_card_part_2_title,
-                      des: StringConstants.practice_card_part_2_description,
+                      title: Utils.multiLanguage(StringConstants.practice_card_part_2_title),
+                      des: Utils.multiLanguage(StringConstants.practice_card_part_2_description),
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: StringConstants.practice_card_part_3_title,
-                      des: StringConstants.practice_card_part_3_description,
+                      title: Utils.multiLanguage(StringConstants.practice_card_part_3_title),
+                      des: Utils.multiLanguage(StringConstants.practice_card_part_3_description),
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: StringConstants.practice_card_part_2_3_title,
-                      des: StringConstants.practice_card_part_2_3_description,
+                      title: Utils.multiLanguage(StringConstants.practice_card_part_2_3_title),
+                      des: Utils.multiLanguage(StringConstants.practice_card_part_2_3_description),
                     ),
                     _buildInPracticeCard(
                       context,
-                      title: StringConstants.practice_card_full_test_title,
-                      des: StringConstants.practice_card_full_test_description,
+                      title: Utils.multiLanguage(StringConstants.practice_card_full_test_title),
+                      des: Utils.multiLanguage(StringConstants.practice_card_full_test_description),
                     ),
                   ],
                 ),

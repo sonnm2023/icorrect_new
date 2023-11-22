@@ -36,15 +36,19 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String loadImageErrorMessage = Utils.multiLanguage(
+      StringConstants.load_image_error_message,
+    );
+
     return Consumer<SimulatorTestProvider>(
       builder: (context, provider, child) {
         if (provider.isVisibleSaveTheTest ||
             provider.submitStatus == SubmitStatus.success) {
-          return _buildImageWidget();
+          return _buildImageWidget(loadImageErrorMessage);
         } else {
           if (localImagePath == null) {
-            return const SizedBox(
-              child: Text(StringConstants.load_image_error_message),
+            return SizedBox(
+              child: Text(loadImageErrorMessage),
             );
           }
 
@@ -58,14 +62,14 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
               ),
             );
           } else {
-            return _buildImageWidget();
+            return _buildImageWidget(loadImageErrorMessage);
           }
         }
       },
     );
   }
 
-  Widget _buildImageWidget() {
+  Widget _buildImageWidget(String messageLoadImg) {
     if (widget.isInRow) {
       return FutureBuilder<void>(
         future: _getLocalImagePath(),
@@ -82,7 +86,7 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
               ),
             );
           } else if (snapshot.hasError) {
-            return const Text(StringConstants.load_image_error_message);
+            return Text(messageLoadImg);
           } else {
             return SizedBox(
               width: 50,

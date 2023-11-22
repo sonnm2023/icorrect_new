@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -153,7 +155,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         ? [
             Tab(
               child: Text(
-                StringConstants.my_exam_tab_title,
+                Utils.multiLanguage(StringConstants.my_exam_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -164,7 +166,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                StringConstants.response_tab_title,
+                Utils.multiLanguage(StringConstants.response_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -175,7 +177,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                StringConstants.highlight_tab_title,
+                Utils.multiLanguage(StringConstants.highlight_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -186,7 +188,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                StringConstants.others_tab_title,
+                Utils.multiLanguage(StringConstants.others_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -199,7 +201,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         : [
             Tab(
               child: Text(
-                StringConstants.my_exam_tab_title,
+                Utils.multiLanguage(StringConstants.my_exam_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -210,7 +212,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                StringConstants.highlight_tab_title,
+                Utils.multiLanguage(StringConstants.highlight_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -221,7 +223,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                StringConstants.others_tab_title,
+                Utils.multiLanguage(StringConstants.others_tab_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -272,10 +274,14 @@ class _MyTestScreenState extends State<MyTestScreen> {
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: StringConstants.confirm_to_go_out_screen,
-          message: StringConstants.re_answer_not_be_save_message,
-          cancelButtonTitle: StringConstants.cancel_button_title,
-          okButtonTitle: StringConstants.back_button_title,
+          title: Utils.multiLanguage(
+            StringConstants.confirm_to_go_out_screen
+          ),
+          message: Utils.multiLanguage(
+              StringConstants.re_answer_not_be_save_message),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
+          okButtonTitle: Utils.multiLanguage(StringConstants.back_button_title),
           cancelButtonTapped: () {},
           okButtonTapped: () {
             deleteFileAnswers(provider.reAnswerOfQuestions);

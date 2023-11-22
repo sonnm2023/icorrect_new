@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
 import 'package:provider/provider.dart';
 import '../../data_sources/constants.dart';
@@ -22,7 +24,9 @@ Widget navbarItems({
       ),
       ListTile(
         title: Text(
-          StringConstants.home_menu_item_title,
+          Utils.multiLanguage(
+            StringConstants.home_menu_item_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultGrayColor,
@@ -66,7 +70,9 @@ Widget navbarItems({
       ),*/
       ListTile(
         title: Text(
-          StringConstants.change_password_menu_item_title,
+          Utils.multiLanguage(
+            StringConstants.change_password_menu_item_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultGrayColor,
@@ -90,7 +96,9 @@ Widget navbarItems({
       ),
       ListTile(
         title: Text(
-          StringConstants.video_authen_menu_item_title,
+          Utils.multiLanguage(
+            StringConstants.video_authen_menu_item_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultGrayColor,
@@ -114,7 +122,34 @@ Widget navbarItems({
       ),
       ListTile(
         title: Text(
-          StringConstants.logout_menu_item_title,
+          Utils.multiLanguage(
+            StringConstants.multi_language,
+          ),
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultGrayColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        leading: const Icon(
+          Icons.language,
+          color: AppColor.defaultGrayColor,
+        ),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (builder) {
+              return const LanguageSelectionDialog();
+            },
+          );
+        },
+      ),
+      ListTile(
+        title: Text(
+          Utils.multiLanguage(
+            StringConstants.logout_menu_item_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultGrayColor,

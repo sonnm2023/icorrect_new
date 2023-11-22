@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/views/widget/auth_form_field.dart';
+
+import '../../data_sources/utils.dart';
 
 class EmailInputWidget extends StatelessWidget {
   const EmailInputWidget({super.key, required this.emailController});
@@ -21,19 +24,22 @@ class EmailInputWidget extends StatelessWidget {
       textInputAction: TextInputAction.next,
       validator: (value) {
         if (emailController.text.isEmpty) {
-          return StringConstants.empty_email_error_message;
+          return Utils.multiLanguage(
+            StringConstants.empty_email_error_message,
+          );
         }
 
         if (!RegExp(regexEmail).hasMatch(emailController.text)) {
-          return StringConstants.invalid_email_error_message;
+          return Utils.multiLanguage(
+              StringConstants.invalid_email_error_message);
         }
 
         return null;
       },
       controller: emailController,
       keyboardType: TextInputType.text,
-      hintText: StringConstants.email,
-      upHintText: StringConstants.email,
+      hintText: Utils.multiLanguage(StringConstants.email),
+      upHintText: Utils.multiLanguage(StringConstants.email),
       maxLines: 1,
     );
   }

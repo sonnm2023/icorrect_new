@@ -9,11 +9,13 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
@@ -298,48 +300,70 @@ class Utils {
     }
   }
 
+  static String multiLanguage(String constantString) {
+    final FlutterLocalization localization = FlutterLocalization.instance;
+    if (localization.currentLocale == null) {
+      localization.init(
+        mapLocales: [
+          const MapLocale('en', MultiLanguage.EN),
+          const MapLocale('vn', MultiLanguage.VN),
+        ],
+        initLanguageCode: 'en',
+      );
+    }
+    return Intl.message(
+        localization.currentLocale!.languageCode == "vn"
+            ? MultiLanguage.VN[constantString]
+            : MultiLanguage.EN[constantString],
+        name: constantString);
+  }
+
   static bool isNumeric(String str) {
     return int.tryParse(str) != null || double.tryParse(str) != null;
   }
 
-  static UserAuthenStatusUI getUserAuthenStatus(int status) {
+  static UserAuthenStatusUI getUserAuthenStatus(
+      BuildContext context, int status) {
     switch (status) {
       case 0:
         return UserAuthenStatusUI(
-            title: StringConstants.not_auth_title,
-            description: StringConstants.not_auth_content,
+            title: Utils.multiLanguage(StringConstants.not_auth_title),
+            description: Utils.multiLanguage(StringConstants.not_auth_content),
             icon: Icons.cancel_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
             iconColor: Colors.red);
       case 4:
         return UserAuthenStatusUI(
-            title: StringConstants.reject_auth_title,
-            description: StringConstants.reject_auth_content,
+            title: Utils.multiLanguage(StringConstants.reject_auth_title),
+            description:
+                Utils.multiLanguage(StringConstants.reject_auth_content),
             icon: Icons.video_camera_front_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 233, 179),
             titleColor: Colors.amber,
             iconColor: Colors.amber);
       case 1:
         return UserAuthenStatusUI(
-            title: StringConstants.user_authed_title,
-            description: StringConstants.user_authed_content,
+            title: Utils.multiLanguage(StringConstants.user_authed_title),
+            description:
+                Utils.multiLanguage(StringConstants.user_authed_content),
             icon: Icons.check_circle_outline_rounded,
             backgroundColor: const Color.fromARGB(255, 179, 248, 195),
             titleColor: Colors.green,
             iconColor: Colors.green);
       case 3:
         return UserAuthenStatusUI(
-            title: StringConstants.progress_auth_title,
-            description: StringConstants.progress_auth_content,
+            title: Utils.multiLanguage(StringConstants.progress_auth_title),
+            description:
+                Utils.multiLanguage(StringConstants.progress_auth_content),
             icon: Icons.change_circle_sharp,
             backgroundColor: const Color.fromARGB(255, 179, 222, 248),
             titleColor: Colors.blue,
             iconColor: Colors.blue);
       case 2:
         return UserAuthenStatusUI(
-            title: StringConstants.lock_auth_title,
-            description: StringConstants.lock_auth_content,
+            title: Utils.multiLanguage(StringConstants.lock_auth_title),
+            description: Utils.multiLanguage(StringConstants.lock_auth_content),
             icon: Icons.lock,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -347,8 +371,9 @@ class Utils {
       case 99:
       default:
         return UserAuthenStatusUI(
-            title: StringConstants.error_auth_title,
-            description: StringConstants.error_auth_content,
+            title: Utils.multiLanguage(StringConstants.error_auth_title),
+            description:
+                Utils.multiLanguage(StringConstants.error_auth_content),
             icon: Icons.error_outline,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -678,10 +703,11 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.confirm_to_log_out,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description: Utils.multiLanguage(StringConstants.confirm_to_log_out),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () async {
@@ -954,9 +980,10 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -990,7 +1017,8 @@ class Utils {
     prepareLogData(
       log: log,
       data: null,
-      message: StringConstants.log_connection_error_message,
+      message:
+          Utils.multiLanguage(StringConstants.log_connection_error_message),
       status: LogEvent.failed,
     );
   }

@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+
+import '../../../data_sources/utils.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {
   final String imageUrl;
@@ -39,14 +42,18 @@ class CachedNetworkImageWidget extends StatelessWidget {
         imageUrl: imageUrl,
         placeholder: (context, url) => const CircularProgressIndicator(),
         errorWidget: (context, url, error) {
-          return const Column(
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline_sharp,
                 size: 80,
               ),
-              Text(StringConstants.load_image_error_message),
+              Text(
+                Utils.multiLanguage(
+                  StringConstants.load_image_error_message,
+                ),
+              ),
             ],
           );
         },

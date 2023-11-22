@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -169,7 +170,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                                 }
                               },
                               child: Text(
-                                StringConstants.skip_and_text,
+                                Utils.multiLanguage(StringConstants.skip_and_text),
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
                                   color: AppColor.defaultPurpleColor,
@@ -206,12 +207,13 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(StringConstants.warning_skip_compress_video_text,
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                    Utils.multiLanguage(StringConstants.warning_skip_compress_video_text),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
-                const Text(
-                  StringConstants.warning_skip_compress_video_content,
-                  style: TextStyle(fontSize: 15),
+                Text(
+                  Utils.multiLanguage(StringConstants.warning_skip_compress_video_content),
+                  style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -222,7 +224,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                         _authProvider!.setSkipAction(false);
                       },
                       child: Text(
-                        StringConstants.continue_prepare_text,
+                        Utils.multiLanguage(StringConstants.continue_prepare_text),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultBlackColor,
@@ -241,7 +243,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                         }
                       },
                       child: Text(
-                        StringConstants.submit_now_text,
+                        Utils.multiLanguage(StringConstants.submit_now_text),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultPurpleColor,

@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -198,8 +199,8 @@ class _MyTestTabState extends State<MyTestTab>
                                     width: constraint.maxWidth,
                                     child: Center(
                                       child: Text(
-                                        StringConstants
-                                            .update_answer_button_title,
+                                        Utils.multiLanguage(StringConstants
+                                            .update_answer_button_title),
                                         style:
                                             CustomTextStyle.textWithCustomInfo(
                                           context: context,
@@ -250,7 +251,8 @@ class _MyTestTabState extends State<MyTestTab>
                   width: constraint.maxWidth,
                   child: Center(
                     child: Text(
-                      StringConstants.view_ai_response_button_title,
+                      Utils.multiLanguage(
+                          StringConstants.view_ai_response_button_title),
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultAppColor,
@@ -271,10 +273,12 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: StringConstants.confirm_title,
-          message: StringConstants.confirm_save_change_answers_message,
-          cancelButtonTitle: StringConstants.cancel_button_title,
-          okButtonTitle: StringConstants.save_button_title,
+          title: Utils.multiLanguage(StringConstants.confirm_title),
+          message: Utils.multiLanguage(
+              StringConstants.confirm_save_change_answers_message),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
+          okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
           cancelButtonTapped: () {},
           okButtonTapped: () {
             _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
@@ -496,8 +500,8 @@ class _MyTestTabState extends State<MyTestTab>
                                           _onClickReanswer(provider, question);
                                         },
                                         child: Text(
-                                          StringConstants
-                                              .re_answer_button_title,
+                                          Utils.multiLanguage(StringConstants
+                                              .re_answer_button_title),
                                           style: CustomTextStyle
                                               .textWithCustomInfo(
                                             context: context,
@@ -517,8 +521,8 @@ class _MyTestTabState extends State<MyTestTab>
                                   },
                                   child: (question.tips.isNotEmpty)
                                       ? Text(
-                                          StringConstants
-                                              .view_tips_button_title,
+                                          Utils.multiLanguage(StringConstants
+                                              .view_tips_button_title),
                                           style: CustomTextStyle
                                               .textWithCustomInfo(
                                             context: context,
@@ -660,9 +664,11 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -678,7 +684,7 @@ class _MyTestTabState extends State<MyTestTab>
   bool _checkAnswerDuration() {
     if (widget.provider.isLessThan2Second) {
       Fluttertoast.showToast(
-        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        msg: Utils.multiLanguage(StringConstants.answer_must_be_greater_than_2_seconds_message),
         backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         gravity: ToastGravity.CENTER,

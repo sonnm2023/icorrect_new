@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +47,7 @@ class TestRecordWidget extends StatelessWidget {
                       const SizedBox(
                         height: CustomSize.size_20,
                       ),
-                      const Text(StringConstants.answer_being_recorded),
+                      Text(Utils.multiLanguage(StringConstants.answer_being_recorded)),
                       const SizedBox(
                         height: CustomSize.size_20,
                       ),
@@ -113,7 +115,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          StringConstants.finish_button_title,
+          Utils.multiLanguage(StringConstants.finish_button_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,
@@ -139,7 +141,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          StringConstants.cancel_button_title,
+          Utils.multiLanguage(StringConstants.cancel_button_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,

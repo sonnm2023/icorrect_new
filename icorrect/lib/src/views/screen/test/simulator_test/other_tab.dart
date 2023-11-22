@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -108,7 +109,7 @@ class _OtherTabState extends State<OtherTab>
         } else {
           return EmptyWidget.init().buildNothingWidget(
             context,
-            StringConstants.no_data_message,
+            Utils.multiLanguage(StringConstants.no_data_message),
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
           );

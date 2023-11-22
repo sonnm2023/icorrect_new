@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -71,7 +72,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          StringConstants.change_password_screen_title,
+          Utils.multiLanguage(StringConstants.change_password_screen_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -132,7 +133,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         if (newPasswordController.text.trim() !=
             confirmNewPasswordController.text.trim()) {
           showToastMsg(
-            msg: StringConstants.confirm_new_password_error_message,
+            msg: Utils.multiLanguage(
+                StringConstants.confirm_new_password_error_message),
             toastState: ToastStatesType.error,
           );
         } else {
@@ -169,7 +171,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         }
       },
       background: AppColor.defaultPurpleColor,
-      text: StringConstants.save_change_button_title,
+      text: Utils.multiLanguage(StringConstants.save_change_button_title),
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
       radius: 20,
@@ -184,7 +186,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       },
       background: AppColor.defaultWhiteColor,
       textColor: AppColor.defaultPurpleColor,
-      text: StringConstants.cancel_button_title,
+      text: Utils.multiLanguage(StringConstants.cancel_button_title),
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
       radius: 20,

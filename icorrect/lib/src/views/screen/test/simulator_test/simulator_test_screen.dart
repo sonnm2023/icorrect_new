@@ -77,7 +77,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return [
       Tab(
         child: Text(
-          StringConstants.my_exam_tab_title,
+          Utils.multiLanguage(StringConstants.my_exam_tab_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -88,7 +88,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          StringConstants.highlight_tab_title,
+          Utils.multiLanguage(StringConstants.highlight_tab_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -99,7 +99,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          StringConstants.others_tab_title,
+          Utils.multiLanguage(StringConstants.others_tab_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -318,11 +318,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           context: context,
           builder: (BuildContext context) {
             return CustomAlertDialog(
-              title: StringConstants.dialog_title,
-              description:
-                  StringConstants.confirm_save_change_answers_message_1,
-              okButtonTitle: StringConstants.save_button_title,
-              cancelButtonTitle: StringConstants.dont_save_button_title,
+              title: Utils.multiLanguage(StringConstants.dialog_title),
+              description: Utils.multiLanguage(
+                  StringConstants.confirm_save_change_answers_message_1),
+              okButtonTitle:
+                  Utils.multiLanguage(StringConstants.save_button_title),
+              cancelButtonTitle:
+                  Utils.multiLanguage(StringConstants.dont_save_button_title),
               borderRadius: 8,
               hasCloseButton: true,
               okButtonTapped: () {
@@ -332,7 +334,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 String savedVideoPath = _simulatorTestPresenter!
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
-
                 _simulatorTestPresenter!.submitTest(
                   context: context,
                   testId: _simulatorTestProvider!.currentTestDetail.testId
@@ -392,21 +393,22 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             }
 
             bool okButtonTapped = false;
-
             await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: StringConstants.dialog_title,
-                  description: StringConstants.quit_the_test_message,
-                  okButtonTitle: StringConstants.ok_button_title,
-                  cancelButtonTitle: StringConstants.cancel_button_title,
+                  title: Utils.multiLanguage(StringConstants.dialog_title),
+                  description: Utils.multiLanguage(
+                      StringConstants.quit_the_test_message),
+                  okButtonTitle:
+                      Utils.multiLanguage(StringConstants.ok_button_title),
+                  cancelButtonTitle:
+                      Utils.multiLanguage(StringConstants.cancel_button_title),
                   borderRadius: 8,
                   hasCloseButton: false,
                   okButtonTapped: () {
                     //Reset question image
                     _resetQuestionImage();
-
                     okButtonTapped = true;
                     _deleteAllAnswer();
                   },
@@ -449,10 +451,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.confirm_before_quit_the_test_message,
-          okButtonTitle: StringConstants.save_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description: Utils.multiLanguage(
+              StringConstants.confirm_before_quit_the_test_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: true,
           okButtonTapped: () {
@@ -546,7 +550,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         (value) {
           if (false == value) {
             showToastMsg(
-              msg: StringConstants.can_not_delete_files_message,
+              msg: Utils.multiLanguage(
+                  StringConstants.can_not_delete_files_message),
               toastState: ToastStatesType.warning,
             );
           }
@@ -659,9 +664,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,

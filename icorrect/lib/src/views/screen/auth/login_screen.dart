@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -289,7 +290,7 @@ class _LoginScreenState extends State<LoginScreen>
           }
         }
       },
-      text: StringConstants.sign_in_button_title,
+      text: Utils.multiLanguage(StringConstants.sign_in_button_title),
       background: AppColor.defaultPurpleColor,
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,

@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/connectivity_service.dart';
@@ -181,7 +182,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             },
             child: Center(
               child: Text(
-                StringConstants.close_button_title,
+                Utils.multiLanguage(StringConstants.close_button_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultGrayColor,
@@ -208,21 +209,23 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               bool isValid = widget.homeWorkProvider.checkFilterSelected();
               widget.homeWorkProvider.setProcessingStatus(isProcessing: true);
               if (isValid) {
-                widget.homeWorkProvider.filterHomeWork();
+                widget.homeWorkProvider.filterHomeWork(context);
                 Navigator.pop(context);
               } else {
                 widget.homeWorkProvider
                     .setProcessingStatus(isProcessing: false);
-
+                widget.homeWorkProvider.updateFilterString(
+                    Utils.multiLanguage(StringConstants.default_filter_title));
                 showToastMsg(
-                  msg: StringConstants.choose_filter_message,
+                  msg: Utils.multiLanguage(
+                      StringConstants.choose_filter_message),
                   toastState: ToastStatesType.warning,
                 );
               }
             },
             child: Center(
               child: Text(
-                StringConstants.done_button_title,
+                Utils.multiLanguage(StringConstants.done_button_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,
@@ -245,8 +248,11 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             builder: (context, homeworkProvider, child) {
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
               !homeworkProvider.isProcessing) {
-            return const NoDataWidget(
-                msg: StringConstants.no_data_filter_message);
+            homeworkProvider.updateFilterString(
+                Utils.multiLanguage(StringConstants.default_filter_title));
+            return NoDataWidget(
+                msg: Utils.multiLanguage(
+                    StringConstants.no_data_filter_message));
           }
           return RefreshIndicator(
             onRefresh: widget.pullToRefreshCallBack,
@@ -424,9 +430,10 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.activity_is_loaded_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.activity_is_loaded_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
