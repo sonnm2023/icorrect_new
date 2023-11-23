@@ -1193,6 +1193,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setVisibleRecord(false);
   }
 
+  void _resetEnableFinishStatus() {
+    _simulatorTestProvider!.setEnabledFinish(true);
+  }
+
   void _resetQuestionImage() {
     if (_simulatorTestProvider!.questionHasImage) {
       _simulatorTestProvider!.setQuestionHasImageStatus(false);
@@ -1817,7 +1821,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
     if (false == visible) {
-      await _stopRecord();
+      await _stopRecord().then((_) {
+        _resetEnableFinishStatus();
+      });
     }
 
     _simulatorTestProvider!.setVisibleRecord(visible);

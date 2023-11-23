@@ -610,7 +610,18 @@ class SimulatorTestProvider with ChangeNotifier {
     _logActions.clear();
   }
 
+  bool _enabledFinish = true;
+  bool get enabledFinish => _enabledFinish;
+  void setEnabledFinish(bool enabled) {
+    _enabledFinish = enabled;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   void resetAll() {
+    _enabledFinish = true;
     resetLogActions();
     _videosSaved = [];
     _timeRecordCounting = 0;
