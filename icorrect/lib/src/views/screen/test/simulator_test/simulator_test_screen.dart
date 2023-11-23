@@ -392,36 +392,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               print("DEBUG: Status is doing the exam!");
             }
 
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CustomAlertDialog(
-                  title: Utils.multiLanguage(StringConstants.dialog_title),
-                  description: Utils.multiLanguage(
-                      StringConstants.quit_the_test_message),
-                  okButtonTitle:
-                      Utils.multiLanguage(StringConstants.ok_button_title),
-                  cancelButtonTitle:
-                      Utils.multiLanguage(StringConstants.cancel_button_title),
-                  borderRadius: 8,
-                  hasCloseButton: false,
-                  okButtonTapped: () {
-                    //Reset question image
-                    _resetQuestionImage();
-                    _deleteAllAnswer();
-                  },
-                  cancelButtonTapped: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            ).then((_) {
-              if (_isExam) {
-                Navigator.pop(context, StringConstants.k_refresh);
-              } else {
-                Navigator.of(context).pop();
-              }
-            });
+            _showConfirmQuitTheTest();
+
             break;
           }
         case 1:
@@ -437,6 +409,38 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           }
       }
     }
+  }
+
+  void _showConfirmQuitTheTest() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.quit_the_test_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            //Reset question image
+            _resetQuestionImage();
+            _deleteAllAnswer();
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    ).then((_) {
+      if (_isExam) {
+        Navigator.pop(context, StringConstants.k_refresh);
+      } else {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   void _showConfirmSaveTestBeforeExit() {
