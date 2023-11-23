@@ -1208,6 +1208,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
+      _resetEnableFinishStatus();
       return;
     }
 
@@ -1821,9 +1822,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
     if (false == visible) {
-      await _stopRecord().then((_) {
-        _resetEnableFinishStatus();
-      });
+      await _stopRecord();
+    } else {
+      _resetEnableFinishStatus();
     }
 
     _simulatorTestProvider!.setVisibleRecord(visible);
@@ -2365,6 +2366,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onFinishAnswer(bool isPart2) {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
+      _resetEnableFinishStatus();
       return;
     }
 
@@ -2650,6 +2652,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onFinishForReAnswer() {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
+      _resetEnableFinishStatus();
       return;
     }
 

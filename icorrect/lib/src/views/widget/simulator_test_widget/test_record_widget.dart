@@ -155,6 +155,14 @@ class TestRecordWidget extends StatelessWidget {
         backgroundColor: MaterialStateProperty.all(
           AppColor.defaultLightGrayColor,
         ),
+        foregroundColor: MaterialStateProperty.all(
+          AppColor.defaultLightGrayColor,
+        ),
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (Set<MaterialState> states) {
+            return AppColor.defaultLightGrayColor; // Màu nền khi nút được nhấn
+          },
+        ),
         elevation: MaterialStateProperty.all(0.0),
       ),
       child: Container(
@@ -200,6 +208,14 @@ class TestRecordWidget extends StatelessWidget {
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(
           AppColor.defaultLightGrayColor,
+        ),
+        foregroundColor: MaterialStateProperty.all(
+          AppColor.defaultLightGrayColor,
+        ),
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (Set<MaterialState> states) {
+            return AppColor.defaultLightGrayColor; // Màu nền khi nút được nhấn
+          },
         ),
         elevation: MaterialStateProperty.all(0.0),
       ),
