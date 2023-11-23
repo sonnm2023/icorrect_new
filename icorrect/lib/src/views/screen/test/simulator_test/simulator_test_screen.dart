@@ -392,7 +392,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               print("DEBUG: Status is doing the exam!");
             }
 
-            bool okButtonTapped = false;
             await showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -409,7 +408,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                   okButtonTapped: () {
                     //Reset question image
                     _resetQuestionImage();
-                    okButtonTapped = true;
                     _deleteAllAnswer();
                   },
                   cancelButtonTapped: () {
@@ -417,16 +415,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                   },
                 );
               },
-            );
-
-            if (okButtonTapped) {
+            ).then((_) {
               if (_isExam) {
                 Navigator.pop(context, StringConstants.k_refresh);
               } else {
                 Navigator.of(context).pop();
               }
-            }
-
+            });
             break;
           }
         case 1:
@@ -472,7 +467,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       },
     ).then((_) {
       if (cancelButtonTapped) {
-        Navigator.of(context).pop();
+        if (_isExam) {
+          Navigator.pop(context, StringConstants.k_refresh);
+        } else {
+          Navigator.of(context).pop();
+        }
       }
     });
   }
