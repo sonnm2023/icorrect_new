@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters
 
 import 'dart:convert';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 
 ActivitiesModel activitiesModelFromJson(String str) =>
@@ -57,7 +58,7 @@ class ActivitiesModel {
   String get activityReleaseTime => _activityReleaseTime ?? "";
   set activityReleaseTime(String activityReleaseTime) =>
       _activityReleaseTime = activityReleaseTime;
-  String get activityType => _activityType ?? "";
+  String get activityType => _activityType ?? ActivityType.practice.name;
   set activityType(String activityType) => _activityType = activityType;
   int get activityStatus => _activityStatus ?? 0;
   set activityStatus(int activityStatus) => _activityStatus = activityStatus;
@@ -71,7 +72,8 @@ class ActivitiesModel {
   bool canReanswer() {
     if (_activityAnswer != null &&
             (_activityAnswer!.aiOrder != 0 || _activityAnswer!.orderId != 0) ||
-        _activityType != 'homework') {
+        _activityType == ActivityType.test.name ||
+        _activityType == ActivityType.exam.name) {
       return false;
     }
 

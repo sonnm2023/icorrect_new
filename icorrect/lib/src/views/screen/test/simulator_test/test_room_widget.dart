@@ -48,11 +48,9 @@ import 'package:record/record.dart';
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget(
-      {super.key,
-      required this.homeWorkModel,
-      required this.simulatorTestPresenter});
+      {super.key, this.homeWorkModel, required this.simulatorTestPresenter});
 
-  final ActivitiesModel homeWorkModel;
+  final ActivitiesModel? homeWorkModel;
   final SimulatorTestPresenter simulatorTestPresenter;
 
   @override
@@ -119,8 +117,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _testRoomPresenter = TestRoomPresenter(this);
     _loading = CircleLoading();
 
-    _isExam = widget.homeWorkModel.activityType == "exam" ||
-        widget.homeWorkModel.activityType == "test";
+    if (widget.homeWorkModel != null) {
+      _isExam = widget.homeWorkModel!.activityType == ActivityType.exam.name ||
+          widget.homeWorkModel!.activityType == ActivityType.test.name;
+    } else {
+      _isExam = false;
+    }
 
     if (_isExam) {
       _cameraService = CameraService();
@@ -181,9 +183,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (provider.visibleRecord) {
           _startVideoRecord();
         }
-        bool showSaveTheExamButton =
-            _simulatorTestProvider!.activityType == "homework" ||
-                _simulatorTestProvider!.submitStatus == SubmitStatus.fail;
+        bool showSaveTheExamButton = _simulatorTestProvider!.activityType ==
+                ActivityType.homework.name ||
+            _simulatorTestProvider!.activityType ==
+                ActivityType.practice.name ||
+            _simulatorTestProvider!.submitStatus == SubmitStatus.fail;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -667,10 +671,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _startToDoTest() {
     Map<String, dynamic> info = {
-      StringConstants.k_activity_id: widget.homeWorkModel.activityId.toString(),
       StringConstants.k_test_id:
           _simulatorTestProvider!.currentTestDetail.testId.toString(),
     };
+    if (widget.homeWorkModel != null) {
+      info.addEntries([
+        MapEntry(StringConstants.k_activity_id,
+            widget.homeWorkModel!.activityId.toString())
+      ]);
+    }
     _createLog(action: LogEvent.actionStartToDoTest, data: info);
 
     _initVideoController(isIntroduceVideo: false);
@@ -1143,12 +1152,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _callTestPositionApi() {
-    String activityId = widget.homeWorkModel.activityId.toString();
-    _testRoomPresenter!.callTestPositionApi(
-      context,
-      activityId: activityId,
-      questionIndex: _questionIndex,
-    );
+    if (widget.homeWorkModel != null) {
+      String activityId = widget.homeWorkModel!.activityId.toString();
+      _testRoomPresenter!.callTestPositionApi(
+        context,
+        activityId: activityId,
+        questionIndex: _questionIndex,
+      );
+    }
   }
 
   void _cancelReanswerCallBack() async {
@@ -2045,10 +2056,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
+    String activityId = "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+    }
     _testRoomPresenter!.submitTest(
       context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      activityId: widget.homeWorkModel.activityId.toString(),
+      activityId: activityId,
       questions: questions,
       isExam: _isExam,
       videoConfirmFile: videoConfirmFile,
@@ -2316,13 +2331,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _loading!.show(context: context, isViewAIResponse: false);
     }
 
+    String activityId = "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+    }
+
     _testRoomPresenter!.updateMyAnswer(
-      context: context,
-      testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      activityId: widget.homeWorkModel.activityId.toString(),
-      reQuestions: _simulatorTestProvider!.questionList,
-      isExam: _isExam,
-    );
+        context: context,
+        testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+        activityId: activityId,
+        reQuestions: _simulatorTestProvider!.questionList,
+        isExam: _isExam);
   }
 
   bool _checkAnswerDuration() {
@@ -2468,6 +2487,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (false == _simulatorTestProvider!.isLoadingVideo) {
       _initVideoController(isIntroduceVideo: true);
     }
+  }
+
+  @override
+  void onIntroduceFileEmpty() {
+    _startToPlayFollowup();
   }
 
   @override

@@ -423,6 +423,20 @@ class Utils {
     return nameFile;
   }
 
+  static int getTestOption(List<String> topicType) {
+    int testOption = IELTSTestOption.full.get;
+    if (topicType == IELTSTopicType.part1.get) {
+      testOption = IELTSTestOption.part1.get;
+    } else if (topicType == IELTSTopicType.part2.get) {
+      testOption = IELTSTestOption.part2.get;
+    } else if (topicType == IELTSTopicType.part3.get) {
+      testOption = IELTSTestOption.part3.get;
+    } else if (topicType == IELTSTopicType.part2and3.get) {
+      testOption = IELTSTestOption.part2and3.get;
+    }
+    return testOption;
+  }
+
   static File changeFileNameSync(File file, String newFileName) {
     var path = file.path;
     var lastSeparator = path.lastIndexOf(Platform.pathSeparator);

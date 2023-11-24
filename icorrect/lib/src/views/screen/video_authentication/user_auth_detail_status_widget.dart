@@ -74,11 +74,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: SafeArea(
-        left: true,
-        top: true,
-        right: true,
-        bottom: true,
+        body: SafeArea(
+          left: true,
+          top: true,
+          right: true,
+          bottom: true,
         child: Consumer<UserAuthDetailProvider>(
           builder: (context, provider, child) {
             if (provider.startGetUserAuthDetail) {

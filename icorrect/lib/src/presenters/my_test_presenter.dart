@@ -91,8 +91,13 @@ class MyTestPresenter {
           action: LogEvent.callApiGetMyTestDetail);
     }
 
-    _repository!.getMyTestDetail(testId).then((value) {
+    bool isPracticeTest = activityId.isEmpty;
+
+    _repository!.getMyTestDetail(testId, isPracticeTest).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
+      if (kDebugMode) {
+        print("DEBUG: getMyTestDetail $value");
+      }
       if (json.isNotEmpty) {
         if (json[StringConstants.k_error_code] == 200) {
           //Add log
@@ -161,6 +166,16 @@ class MyTestPresenter {
       _view!.getMyTestFail(AlertClass.getTestDetailAlert);
     });
   }
+
+  // Map<String, dynamic> _jsonFormTestDetail(
+  //     Map<String, dynamic> json, bool isPracticeTest) {
+  //   // json for test detail in homework is 'data' ,but in practice test is ['data']['test']
+  //   var jsonForm = json[StringConstants.k_data];
+  //   if (isPracticeTest) {
+  //     jsonForm = json[StringConstants.k_data][StringConstants.k_test];
+  //   }
+  //   return jsonForm;
+  // }
 
   List<QuestionTopicModel> _getQuestionsAnswer(
       TestDetailModel testDetailModel) {
@@ -284,11 +299,15 @@ class MyTestPresenter {
             log = await Utils.prepareToCreateLog(context,
                 action: LogEvent.callApiDownloadFile);
             Map<String, dynamic> fileDownloadInfo = {
-              StringConstants.k_activity_id: activityId,
               StringConstants.k_test_id: testDetail.testId.toString(),
               StringConstants.k_file_name: fileTopic,
               StringConstants.k_file_path: downloadFileEP(fileNameForDownload),
             };
+
+            if (activityId.isNotEmpty) {
+              fileDownloadInfo.addEntries(
+                  [MapEntry(StringConstants.k_activity_id, activityId)]);
+            }
             log.addData(
                 key: StringConstants.k_file_download_info,
                 value: json.encode(fileDownloadInfo));
@@ -609,6 +628,9 @@ class MyTestPresenter {
     required Map<String, dynamic>? dataLog,
   }) async {
     String url = submitHomeWorkV2EP();
+    if (activityId.isEmpty) {
+      url = submitPractice();
+    }
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -619,8 +641,11 @@ class MyTestPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
-    formData.addEntries(const [MapEntry(StringConstants.k_is_update, '1')]);
-    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    if (activityId.isNotEmpty) {
+      formData.addEntries(const [MapEntry(StringConstants.k_is_update, '1')]);
+      formData
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    }
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);

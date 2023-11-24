@@ -137,7 +137,8 @@ class HomeWorkWidget extends StatelessWidget {
   }
 
   Widget _activityNameWidget(context) {
-    return homeWorkModel.activityType == 'test'
+    return homeWorkModel.activityType == ActivityType.test.name ||
+            homeWorkModel.activityType == ActivityType.exam.name
         ? Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

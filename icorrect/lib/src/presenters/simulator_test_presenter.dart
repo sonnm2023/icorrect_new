@@ -111,7 +111,8 @@ class SimulatorTestPresenter {
   List<FileTopicModel>? filesTopic;
   List<FileTopicModel> imageFiles = [];
 
-  void getTestDetail({
+  //////////////////////GET TEST DETAIL FROM HOMEWORK///////////////////////////
+  void getTestDetailByHomeWork({
     required BuildContext context,
     required String homeworkId,
   }) async {
@@ -135,7 +136,7 @@ class SimulatorTestPresenter {
     String deviceId = await Utils.getDeviceIdentifier();
 
     _testRepository!
-        .getTestDetail(
+        .getTestDetailFromHomework(
             homeworkId: homeworkId,
             distributeCode: distributeCode,
             platform: platform,
@@ -198,6 +199,99 @@ class SimulatorTestPresenter {
           data: null,
           message:
               "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
+      }
+    }).catchError(
+      // ignore: invalid_return_type_for_catch_error
+      (onError) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
+      },
+    );
+  }
+
+  /////////////////////GET TEST DETAIL FROM PRACTICE //////////////////////////
+  Future getTestDetailByPractice(
+      {required BuildContext context,
+      required int testOption,
+      required List<int> topicsId,
+      required int isPredict}) async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetTestDetail);
+    }
+
+    _testRepository!
+        .getTestDetailFromPractice(
+      testOption: testOption,
+      topicsId: topicsId,
+      isPredict: isPredict,
+    )
+        .then((value) async {
+      Map<String, dynamic> map = jsonDecode(value);
+      if (kDebugMode) {
+        print('DEBUG create practice test : ${map.toString()}');
+      }
+      if (map[StringConstants.k_error_code] == 200) {
+        Map<String, dynamic> dataMap = map[StringConstants.k_data];
+        TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
+        tempTestDetailModel = TestDetailModel.fromJson(dataMap);
+        testDetail = TestDetailModel.fromJson(dataMap);
+
+        _prepareTopicList(tempTestDetailModel);
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: jsonDecode(value),
+          message: null,
+          status: LogEvent.success,
+        );
+
+        //Save file info for re download
+        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
+
+        _view!.onPrepareListVideoSource(filesTopic!);
+
+        List<FileTopicModel> tempFilesTopic =
+            _prepareFileTopicListForDownload(tempTestDetailModel);
+
+        if (imageFiles.isNotEmpty) {
+          //Download images
+          _prepareDownloadImages(
+            context: context,
+            testDetail: tempTestDetailModel,
+            filesTopic: tempFilesTopic,
+          );
+        } else {
+          //Download video
+          downloadFiles(
+            context: context,
+            testDetail: tempTestDetailModel,
+            filesTopic: tempFilesTopic,
+          );
+        }
+
+        _view!.onGetTestDetailComplete(
+            tempTestDetailModel, tempFilesTopic.length);
+      } else {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message:
+              "Loading pratice detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
           status: LogEvent.failed,
         );
 
@@ -343,7 +437,7 @@ class SimulatorTestPresenter {
 
   Future<bool> _downloadAndSaveImage(
     BuildContext context,
-    String activityId,
+    String? activityId,
     String testId,
     String imageUrl,
   ) async {
@@ -352,10 +446,13 @@ class SimulatorTestPresenter {
         await Utils.prepareToCreateLog(context, action: LogEvent.imageDownload);
     //Add more information into log
     Map<String, dynamic> imageFileDownloadInfo = {
-      StringConstants.k_activity_id: activityId,
       StringConstants.k_test_id: testId,
       StringConstants.k_image_url: imageUrl,
     };
+    if (activityId != null) {
+      imageFileDownloadInfo
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    }
     log.addData(
         key: "image_file_download_info",
         value: json.encode(imageFileDownloadInfo));
@@ -412,7 +509,7 @@ class SimulatorTestPresenter {
 
   Future _prepareDownloadImages({
     required BuildContext context,
-    required String activityId,
+    String? activityId,
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) async {
@@ -460,7 +557,7 @@ class SimulatorTestPresenter {
 
   Future downloadFiles({
     required BuildContext context,
-    required String activityId,
+    String? activityId,
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) async {
@@ -482,12 +579,15 @@ class SimulatorTestPresenter {
               log = await Utils.prepareToCreateLog(context,
                   action: LogEvent.callApiDownloadFile);
               Map<String, dynamic> fileDownloadInfo = {
-                StringConstants.k_activity_id: activityId,
                 StringConstants.k_test_id: testDetail.testId.toString(),
                 StringConstants.k_file_name: fileTopic,
                 StringConstants.k_file_path:
                     downloadFileEP(fileNameForDownload),
               };
+              if (activityId != null) {
+                fileDownloadInfo.addEntries(
+                    [MapEntry(StringConstants.k_activity_id, activityId)]);
+              }
               log.addData(
                   key: "file_download_info",
                   value: json.encode(fileDownloadInfo));
@@ -638,7 +738,7 @@ class SimulatorTestPresenter {
 
   void reDownloadAutomatic({
     required BuildContext context,
-    required String activityId,
+    String? activityId,
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) {
@@ -661,7 +761,7 @@ class SimulatorTestPresenter {
     }
   }
 
-  void reDownloadFiles(BuildContext context, String activityId) {
+  void reDownloadFiles(BuildContext context, String? activityId) {
     downloadFiles(
       context: context,
       activityId: activityId,
@@ -827,6 +927,10 @@ class SimulatorTestPresenter {
       url = submitExam();
     }
 
+    if (activityId.isEmpty) {
+      url = submitPractice();
+    }
+
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -837,8 +941,11 @@ class SimulatorTestPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
-    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
-    formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
+    if (activityId.isNotEmpty) {
+      formData
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+      formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
+    }
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
@@ -895,7 +1002,8 @@ class SimulatorTestPresenter {
 
       // For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
-        String path = await Utils.createNewFilePath(q.answers.elementAt(i).url.toString());
+        String path = await Utils.createNewFilePath(
+            q.answers.elementAt(i).url.toString());
         File audioFile = File(path);
 
         if (await audioFile.exists()) {

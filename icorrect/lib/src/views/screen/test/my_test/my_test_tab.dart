@@ -37,11 +37,15 @@ import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyTestTab extends StatefulWidget {
-  final ActivitiesModel homeWorkModel;
+  final ActivitiesModel? homeWorkModel;
+  final String? practiceTestId;
   final MyTestProvider provider;
 
   const MyTestTab(
-      {super.key, required this.homeWorkModel, required this.provider});
+      {super.key,
+      this.homeWorkModel,
+      this.practiceTestId,
+      required this.provider});
 
   @override
   State<MyTestTab> createState() => _MyTestTabState();
@@ -99,13 +103,22 @@ class _MyTestTabState extends State<MyTestTab>
   void _prepareDataForMyTestDetail() async {
     final status = await Permission.microphone.status;
     await _presenter!.initializeData();
+
+    String activityId = "";
+    String testId = widget.practiceTestId ?? "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+      testId = widget.homeWorkModel!.activityAnswer!.testId.toString();
+    }
+
     _presenter!.getMyTest(
       context: context,
-      activityId: widget.homeWorkModel.activityId.toString(),
-      testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
+      activityId: activityId,
+      testId: testId,
     );
 
     Future.delayed(Duration.zero, () {
+      widget.provider.clearData();
       widget.provider.setPermissionRecord(status);
       widget.provider.setDownloadingFile(true);
     });
@@ -138,6 +151,7 @@ class _MyTestTabState extends State<MyTestTab>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
+    _record.dispose();
     _presenter!.closeClientRequest();
     super.dispose();
   }
@@ -166,6 +180,7 @@ class _MyTestTabState extends State<MyTestTab>
                         padding: const EdgeInsets.only(top: 10, bottom: 70),
                         child: ListView.builder(
                           shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
                           itemCount: provider.myAnswerOfQuestions.length,
                           itemBuilder: (context, index) {
                             return _questionItem(
@@ -223,7 +238,7 @@ class _MyTestTabState extends State<MyTestTab>
                           : const SizedBox(),
                     ],
                   ),
-            _aiResponseButton()
+            (widget.homeWorkModel != null) ? _aiResponseButton() : Container()
           ],
         );
       },
@@ -231,13 +246,13 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _aiResponseButton() {
-    return (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
+    return (Utils.haveAiResponse(widget.homeWorkModel!).isNotEmpty)
         ? LayoutBuilder(
             builder: (_, constraint) {
               return InkWell(
                 onTap: () async {
                   String aiResponseLink = await aiResponseEP(
-                      widget.homeWorkModel.activityAnswer!.aiOrder.toString());
+                      widget.homeWorkModel!.activityAnswer!.aiOrder.toString());
                   Uri toLaunch = Uri.parse(aiResponseLink);
 
                   await launchUrl(toLaunch);
@@ -348,11 +363,18 @@ class _MyTestTabState extends State<MyTestTab>
 
   void _onClickUpdateReAnswer(List<QuestionTopicModel> requestions) {
     _loading!.show(context: context, isViewAIResponse: false);
-    ActivitiesModel homework = widget.homeWorkModel;
+
+    String activityId = "";
+    String testId = widget.practiceTestId ?? "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+      testId = widget.homeWorkModel!.activityAnswer!.testId.toString();
+    }
+
     _presenter!.updateMyAnswer(
       context: context,
-      testId: homework.activityAnswer!.testId.toString(),
-      activityId: homework.activityId.toString(),
+      testId: testId,
+      activityId: activityId,
       reQuestions: requestions,
     );
   }
@@ -494,7 +516,7 @@ class _MyTestTabState extends State<MyTestTab>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                (widget.homeWorkModel.canReanswer())
+                                _canReanswerQuestion()
                                     ? InkWell(
                                         onTap: () async {
                                           _onClickReanswer(provider, question);
@@ -547,6 +569,16 @@ class _MyTestTabState extends State<MyTestTab>
         );
       },
     );
+  }
+
+  bool _canReanswerQuestion() {
+    if (widget.practiceTestId != null) {
+      return true;
+    }
+    if (widget.homeWorkModel != null) {
+      return widget.homeWorkModel!.canReanswer();
+    }
+    return false;
   }
 
   bool _isAudioPlay(int repeatIndex, int questionId) {
@@ -667,8 +699,7 @@ class _MyTestTabState extends State<MyTestTab>
           title: Utils.multiLanguage(StringConstants.dialog_title),
           description:
               Utils.multiLanguage(StringConstants.network_error_message),
-          okButtonTitle:
-              Utils.multiLanguage(StringConstants.ok_button_title),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -684,7 +715,8 @@ class _MyTestTabState extends State<MyTestTab>
   bool _checkAnswerDuration() {
     if (widget.provider.isLessThan2Second) {
       Fluttertoast.showToast(
-        msg: Utils.multiLanguage(StringConstants.answer_must_be_greater_than_2_seconds_message),
+        msg: Utils.multiLanguage(
+            StringConstants.answer_must_be_greater_than_2_seconds_message),
         backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         gravity: ToastGravity.CENTER,
@@ -820,8 +852,12 @@ class _MyTestTabState extends State<MyTestTab>
         if (null == _presenter!.dio) {
           _presenter!.initializeData();
         }
-        _presenter!.reDownloadFiles(
-            context, widget.homeWorkModel.activityId.toString());
+
+        String activityId = "";
+        if (widget.homeWorkModel != null) {
+          activityId = widget.homeWorkModel!.activityId.toString();
+        }
+        _presenter!.reDownloadFiles(context, activityId);
       }
     }
   }
