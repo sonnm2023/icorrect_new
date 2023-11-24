@@ -137,46 +137,42 @@ class HomeWorkWidget extends StatelessWidget {
   }
 
   Widget _activityNameWidget(context) {
-    return homeWorkModel.activityType == 'test'
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "TEST: ",
-                maxLines: 2,
-                style: CustomTextStyle.textWithCustomInfo(
-                  context: context,
-                  color: AppColor.defaultBlackColor,
-                  fontsSize: FontsSize.fontSize_15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 1.7,
-                child: Text(
-                  homeWorkModel.activityName,
-                  maxLines: 2,
-                  overflow: TextOverflow.clip,
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultBlackColor,
-                    fontsSize: FontsSize.fontSize_15,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              )
-            ],
-          )
-        : Text(
+    String prefix = "";
+    if (homeWorkModel.activityType == 'test') {
+      prefix = "TEST: ";
+    } else if (homeWorkModel.activityType == 'exam') {
+      prefix = "EXAM: ";
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          prefix,
+          maxLines: 2,
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultBlackColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 1.7,
+          child: Text(
             homeWorkModel.activityName,
             maxLines: 2,
+            overflow: TextOverflow.clip,
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultBlackColor,
               fontsSize: FontsSize.fontSize_15,
               fontWeight: FontWeight.w400,
             ),
-          );
+          ),
+        )
+      ],
+    );
   }
 
   String _statusOfActivity(BuildContext context) {

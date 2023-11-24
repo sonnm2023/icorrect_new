@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
@@ -72,10 +72,11 @@ class TestRecordWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildOtherButton(
+                          simulatorTestProvider,
                           isRepeat: isRepeat,
                           question: currentQuestion,
                         ),
-                        _buildFinishButton(
+                        _buildFinishButton(simulatorTestProvider,
                             context: context,
                             question: currentQuestion,
                             isLess2Second:
@@ -95,7 +96,8 @@ class TestRecordWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildOtherButton({
+  Widget _buildOtherButton(
+    SimulatorTestProvider simulatorTestProvider, {
     required bool isRepeat,
     required QuestionTopicModel question,
   }) {
@@ -124,7 +126,7 @@ class TestRecordWidget extends StatelessWidget {
           visible: isRepeat,
           child: Row(
             children: [
-              _buildRepeatButton(context, question),
+              _buildRepeatButton(simulatorTestProvider, context, question),
               const SizedBox(width: 20),
             ],
           ),
@@ -134,13 +136,35 @@ class TestRecordWidget extends StatelessWidget {
   }
 
   Widget _buildFinishButton(
-      {required BuildContext context,
-      required QuestionTopicModel question,
-      required bool isLess2Second}) {
-    return InkWell(
-      onTap: () {
-        finishAnswer(question);
+    SimulatorTestProvider simulatorTestProvider, {
+    required BuildContext context,
+    required QuestionTopicModel question,
+    required bool isLess2Second,
+  }) {
+    return ElevatedButton(
+      onPressed: () {
+        if (simulatorTestProvider.enabledFinish) {
+          if (kDebugMode) {
+            print("DEBUG: _buildFinishButton");
+          }
+          simulatorTestProvider.setEnabledFinish(false);
+          finishAnswer(question);
+        }
       },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(
+          AppColor.defaultLightGrayColor,
+        ),
+        foregroundColor: MaterialStateProperty.all(
+          AppColor.defaultLightGrayColor,
+        ),
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (Set<MaterialState> states) {
+            return AppColor.defaultLightGrayColor; // Màu nền khi nút được nhấn
+          },
+        ),
+        elevation: MaterialStateProperty.all(0.0),
+      ),
       child: Container(
         width: 100,
         height: 44,
@@ -167,11 +191,34 @@ class TestRecordWidget extends StatelessWidget {
   }
 
   Widget _buildRepeatButton(
-      BuildContext context, QuestionTopicModel questionTopicModel) {
-    return InkWell(
-      onTap: () {
-        repeatQuestion(questionTopicModel);
+    SimulatorTestProvider simulatorTestProvider,
+    BuildContext context,
+    QuestionTopicModel questionTopicModel,
+  ) {
+    return ElevatedButton(
+      onPressed: () {
+        if (simulatorTestProvider.enabledFinish) {
+          if (kDebugMode) {
+            print("DEBUG: _buildRepeatButton");
+          }
+          simulatorTestProvider.setEnabledFinish(false);
+          repeatQuestion(questionTopicModel);
+        }
       },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(
+          AppColor.defaultLightGrayColor,
+        ),
+        foregroundColor: MaterialStateProperty.all(
+          AppColor.defaultLightGrayColor,
+        ),
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (Set<MaterialState> states) {
+            return AppColor.defaultLightGrayColor; // Màu nền khi nút được nhấn
+          },
+        ),
+        elevation: MaterialStateProperty.all(0.0),
+      ),
       child: Container(
         width: 100,
         height: 44,
