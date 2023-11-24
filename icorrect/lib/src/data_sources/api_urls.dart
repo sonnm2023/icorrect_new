@@ -18,8 +18,8 @@ const oldToolDomain = "http://tool.ielts-correction.com/";
 // http://devpublic.icorrect.vn/
 // http://devtool.ielts-correction.com/
 // http://devapi.ielts-correction.com/
-const dev_icorrectDomain = "http://devpublic.icorrect.vn/";
-const dev_publicDomain = dev_icorrectDomain;
+const dev_icorrectDomain = "http://devapi.ielts-correction.com/";
+const dev_publicDomain = "http://devpublic.icorrect.vn/";
 const dev_toolDomain = "http://devtool.ielts-correction.com/";
 const dev_apiDomain = "http://devapi.ielts-correction.com/";
 
