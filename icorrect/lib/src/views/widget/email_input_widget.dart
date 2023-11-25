@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/views/widget/auth_form_field.dart';
 

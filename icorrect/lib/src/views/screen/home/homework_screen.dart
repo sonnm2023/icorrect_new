@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +20,6 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:workmanager/workmanager.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;

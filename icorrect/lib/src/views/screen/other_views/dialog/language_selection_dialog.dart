@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 
 class LanguageSelectionDialog extends StatefulWidget {

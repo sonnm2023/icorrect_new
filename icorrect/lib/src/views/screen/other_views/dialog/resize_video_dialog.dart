@@ -5,14 +5,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:path_provider/path_provider.dart';
-// import 'package:light_compressor/light_compressor.dart';
 import 'package:provider/provider.dart';
 import 'package:video_compress/video_compress.dart';
 
