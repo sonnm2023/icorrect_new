@@ -35,10 +35,11 @@ class MultiLanguage {
     StringConstants.dialog_title: "Thông báo",
     StringConstants.exit_app_message: "Bạn có muốn thoát khỏi ứng dụng?",
     StringConstants.quit_the_test_message:
-        "Bài làm chưa được hoàn thiện. Bạn vẫn muốn thoát khỏi ứng dụng?",
+        "Bài làm chưa hoàn thành! Bạn có chắc chắn muốn thoát?",
     StringConstants.sample_video: "Video Tham Khảo",
     StringConstants.sample_audio: "Câu Trả Lời Tham Khảo",
-    StringConstants.confirm_to_go_out_screen: "Bạn vẫn muốn thoát ?",
+    StringConstants.confirm_to_go_out_screen:
+        "Bạn có chắc chắn muốn quay lại không?",
     StringConstants.confirm_title: "Xác nhận",
     StringConstants.confirm_save_change_answers_message:
         "Bạn có chắc chắn lưu các thay đổi trong câu trả lời của mình không?",
@@ -47,13 +48,13 @@ class MultiLanguage {
     StringConstants.confirm_before_quit_the_test_message:
         "Bạn có muốn lưu bài làm này trước khi thoát không?",
     StringConstants.confirm_reanswer_when_reviewing_message:
-        "Bạn sẽ trả lời câu hỏi này một lần nữa.Việc xem xét sẽ bị dừng. Bạn có chắc không?",
+        "Bạn sẽ trả lời lại câu hỏi này. Quá trình xem xét sẽ bị dừng. Bạn có chắc không?",
     StringConstants.confirm_save_the_test_message:
         "Bạn có muốn lưu bài làm này không?",
     StringConstants.confirm_exit_screen_title:
         "Bạn có chắc chắn thoát ra không?",
     StringConstants.confirm_exit_content:
-        "Quá trình quay video xác thực của bạn đang được ghi, bạn có chắc chắn thoát không?",
+        "Video xác thực của bạn đang ghi, bạn có chắc chắn muốn thoát không?",
     StringConstants.confirm_submit_before_out_screen:
         "Video xác thực của bạn chưa được gửi, bạn có muốn gửi và thoát không?",
     StringConstants.waiting_review_video:
@@ -93,7 +94,7 @@ class MultiLanguage {
     StringConstants.practice_card_part_2_3_title: "Phần II và III",
     StringConstants.practice_card_part_2_3_description:
         "Bạn sẽ làm bài kiểm tra phần II và Ill với cùng chủ đề",
-    StringConstants.practice_card_full_test_title: "Đầy Đủ Các Phần Bài Test",
+    StringConstants.practice_card_full_test_title: "Bài Test Đầy Đủ",
     StringConstants.practice_card_full_test_description:
         "Bạn sẽ làm bài thi mẫu đầy đủ của Bài Thi Nói IELTS",
     StringConstants.selected_topics: "Chủ đề đã chọn (%a/%a)",
@@ -230,7 +231,7 @@ class MultiLanguage {
     StringConstants.load_list_homework_error_message:
         "Lỗi tải danh sách bài tập về nhà!",
     StringConstants.load_result_response_error_message:
-        "Đang tải kết quả phản hồi không thành công!",
+        "Tải phản hồi kết quả không thành công!",
     StringConstants.can_not_load_response_message: "Không thể tải phản hồi",
     StringConstants.load_detail_homework_error_message:
         "Đang tải chi tiết lỗi bài tập về nhà!",
@@ -251,11 +252,11 @@ class MultiLanguage {
     StringConstants.activity_is_loaded_message:
         "Bài kiểm tra này đã được tải nhưng chưa hoàn thành.Vui lòng liên hệ với quản trị viên để thiết lập lại nó!",
     StringConstants.update_answer_error_message:
-        "Một lỗi khi cập nhật câu trả lời của bạn.Vui lòng thử lại !",
+        "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng thử lại!",
     StringConstants.activity_status_out_of_date: "Hết hạn",
     StringConstants.activity_status_not_completed: "Chưa hoàn thành",
     StringConstants.activity_status_corrected: "Đã Nhận Xét",
-    StringConstants.activity_status_submitted: "Đã Gửi",
+    StringConstants.activity_status_submitted: "Đã Nộp",
     StringConstants.activity_status_late: "Nộp Muộn",
     StringConstants.activity_status_ai_scored: " Đã Chấm AI",
     StringConstants.ai_score_response_not_evaluated: "Không Đánh Giá",
@@ -283,6 +284,30 @@ class MultiLanguage {
     "Lớp",
     StringConstants.status_string:
     "Trạng thái",
+    StringConstants.contact_with_us: 'Liên Hệ Với Admin',
+    StringConstants.out_the_exam: 'Thoát Khỏi Bài Làm',
+    StringConstants.go_to_setting: 'Đi Tới Cài Đặt',
+    StringConstants.fail_to_load_your_test_message: 'Có lỗi khi tải bài làm !',
+    StringConstants.cannot_download_video:
+        'Có lỗi khi tải video. Hãy thử lại !',
+    StringConstants.warning_title: "Cảnh Báo",
+    StringConstants.require_micro_permission_content:
+        "Ứng dụng cần quyền sử dụng micro phone để có thể làm bài",
+    StringConstants.require_camera_permission_content:
+        "Ứng dụng cần quyền sử dụng camera để có thể làm bài",
+    StringConstants.permission_warning_title: 'Cảnh Báo Quyền Ứng Dụng',
+    StringConstants.require_micro_and_camera_permission_content:
+        "Ứng dụng cần quyền sử dụng micro phone và camera để có thể làm bài",
+    StringConstants.require_storage_permission_content:
+        "Bạn hãy đồng ý quyền sử dụng lưu trữ để tiếp tục !",
+    StringConstants.video_path_incorrect_message:
+        'Đường dẫn video không đúng. Hãy thử lại !',
+    StringConstants.error_load_this_test_message:
+        'Có lỗi khi tải bài làm. Hãy thử lại !',
+    StringConstants.error_load_test_and_contact_admin_message:
+        "Có lỗi khi tải bài làm. Hãy liên hệ với admin để được hỗ trợ !",
+    StringConstants.timeout_update_answer_message:
+        'Hết thời gian lưu các câu trả lời. Hãy thử lại !',
   };
 
   static const Map<String, dynamic> EN = {
@@ -566,5 +591,29 @@ class MultiLanguage {
     "Class",
     StringConstants.status_string:
     "Status",
+    StringConstants.contact_with_us: 'Contact with us',
+    StringConstants.out_the_exam: 'Out the exam',
+    StringConstants.go_to_setting: 'Go to setting',
+    StringConstants.fail_to_load_your_test_message: 'Fail to load your test',
+    StringConstants.cannot_download_video:
+        'Can not download video. Please try again!',
+    StringConstants.warning_title: "Warning",
+    StringConstants.require_micro_permission_content:
+        "This app needs to access microphone to do the homeworks or the exam.",
+    StringConstants.require_camera_permission_content:
+        "This app needs to access camera to do the homeworks or the exam.",
+    StringConstants.permission_warning_title: 'Permission Warning',
+    StringConstants.require_micro_and_camera_permission_content:
+        "This app needs to access microphone and camera to do the homeworks or the exam.",
+    StringConstants.require_storage_permission_content:
+        "You must allow storage permission to continue.",
+    StringConstants.video_path_incorrect_message:
+        'Video path was incorrect. Please try again !',
+    StringConstants.error_load_this_test_message:
+        'Error when load your test. Please try again !',
+    StringConstants.error_load_test_and_contact_admin_message:
+        "'Error when load your test. Let contact to admin to support !",
+    StringConstants.timeout_update_answer_message:
+        'Timeout to update your changes. Please try again !',
   };
 }

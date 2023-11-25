@@ -307,7 +307,7 @@ class Utils {
           const MapLocale('en', MultiLanguage.EN),
           const MapLocale('vn', MultiLanguage.VN),
         ],
-        initLanguageCode: 'en',
+        initLanguageCode: 'vn',
       );
     }
     return Intl.message(
@@ -315,6 +315,33 @@ class Utils {
             ? MultiLanguage.VN[constantString]
             : MultiLanguage.EN[constantString],
         name: constantString);
+  }
+
+ static Map<String, dynamic> getCurrentLanguge() {
+    final FlutterLocalization localization = FlutterLocalization.instance;
+    if (localization.currentLocale == null) {
+      localization.init(
+        mapLocales: [
+          const MapLocale('en', MultiLanguage.EN),
+          const MapLocale('vn', MultiLanguage.VN),
+        ],
+        initLanguageCode: 'vn',
+      );
+    }
+
+    if (localization.currentLocale!.languageCode == "vn") {
+      return {
+        StringConstants.k_title: StringConstants.vn_uppercase,
+        StringConstants.k_image_url: AppAsset.imgVietName,
+        StringConstants.k_data: StringConstants.vn_shortest
+      };
+    } else {
+      return {
+        StringConstants.k_title: StringConstants.ens_upppercase,
+        StringConstants.k_image_url: AppAsset.imgEnglish,
+        StringConstants.k_data: StringConstants.en_shortest
+      };
+    }
   }
 
   static bool isNumeric(String str) {

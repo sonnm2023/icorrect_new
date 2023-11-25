@@ -167,38 +167,38 @@ enum IELTSPredict {
 
 enum Alert {
   networkError({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Try again',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.try_again_button_title,
     Alert.icon: 'assets/images/img_no_internet.png'
   }),
 
   serverError({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Contact with us',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.contact_with_us,
     Alert.icon: 'assets/images/img_server_error.png'
   }),
 
   warning({
-    Alert.cancelTitle: 'Cancel',
-    Alert.actionTitle: 'Out the exam',
+    Alert.cancelTitle: StringConstants.cancel_button_title,
+    Alert.actionTitle: StringConstants.out_the_exam,
     Alert.icon: 'assets/images/img_warning.png'
   }),
 
   downloadError({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Try again',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.try_again_button_title,
     Alert.icon: 'assets/images/img_server_error.png'
   }),
 
   dataNotFound({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Try again',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.try_again_button_title,
     Alert.icon: 'assets/images/img_not_found.png'
   }),
 
   permissionDenied({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Go to setting',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.go_to_setting,
     Alert.icon: 'assets/images/img_warning.png'
   });
 
@@ -238,57 +238,58 @@ enum MediaType { video, audio, image, none }
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
-    'Fail to load your test',
-    "Can not download video. Please try again!",
+    StringConstants.fail_to_load_your_test_message,
+    StringConstants.cannot_download_video,
     Alert.networkError.type,
   );
 
   static AlertInfo microPermissionAlert = AlertInfo(
-    'Warning',
-    "This app needs to access microphone to do the homeworks or the exam.",
+    StringConstants.warning_title,
+    StringConstants.require_micro_permission_content,
     Alert.permissionDenied.type,
   );
 
   static AlertInfo cameraPermissionAlert = AlertInfo(
-    'Warning',
-    "This app needs to access camera to do the homeworks or the exam.",
+    StringConstants.warning_title,
+    StringConstants.require_camera_permission_content,
     Alert.permissionDenied.type,
   );
 
   static AlertInfo microCameraPermissionAlert = AlertInfo(
-    'Permission Warning',
-    "This app needs to access microphone and camera to do the homeworks or the exam.",
+    StringConstants.permission_warning_title,
+    StringConstants.require_micro_and_camera_permission_content,
     Alert.permissionDenied.type,
   );
 
   static AlertInfo storagePermissionAlert = AlertInfo(
-    'Warning',
-    "You must allow storage permission to continue.",
+    StringConstants.warning_title,
+    StringConstants.require_storage_permission_content,
     Alert.permissionDenied.type,
   );
 
   static AlertInfo videoPathIncorrectAlert = AlertInfo(
-    'Warning',
-    'Video path was incorrect. Please try again !',
+    StringConstants.warning_title,
+    StringConstants.video_path_incorrect_message,
     Alert.dataNotFound.type,
   );
 
   static AlertInfo getTestDetailAlert = AlertInfo(
-    'Warning',
-    'Error when load your test. Please try again !',
+    StringConstants.warning_title,
+    StringConstants.error_load_this_test_message,
     Alert.dataNotFound.type,
   );
   static AlertInfo notResponseLoadTestAlert = AlertInfo(
-    'Warning',
-    'Error when load your test. Let contact to admin to support !',
+    StringConstants.warning_title,
+    StringConstants.error_load_test_and_contact_admin_message,
     Alert.dataNotFound.type,
   );
 
   static AlertInfo timeOutUpdateAnswer = AlertInfo(
-      'Warning', 'Timeout to update your changes. Please try again !');
+      StringConstants.warning_title,
+      StringConstants.timeout_update_answer_message);
 
   static AlertInfo errorWhenUpdateAnswer(String message) =>
-      AlertInfo('Warning', message);
+      AlertInfo(StringConstants.warning_title, message);
 }
 
 class GlobalScaffoldKey {
@@ -492,7 +493,8 @@ class StringConstants {
   static const String confirm_to_log_out = "Do you want to logout?";
   static const String default_filter_title = 'Add your filter!';
   static const String repeat_question = "Ask for repeating the question !";
-  static const String delete_this_test_confirm = "Are you sure to delete this test ?";
+  static const String delete_this_test_confirm =
+      "Are you sure to delete this test ?";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
@@ -615,6 +617,9 @@ class StringConstants {
       "Submit file to authentication fail: TimeoutException!";
   static const String submit_authen_fail_client_message =
       "Submit file to authentication fail: TimeoutException!";
+  static const String contact_with_us = 'Contact with us';
+  static const String out_the_exam = 'Out the exam';
+  static const String go_to_setting = 'Go to setting';
 
   //Compress video message
   static const String cancel_and_text = "Cancel and Later";
@@ -709,6 +714,10 @@ class StringConstants {
   static const String multi_language = "Multi Language";
   static const String ens = "English";
   static const String vn = "Tiếng Việt";
+  static const String ens_upppercase = "ENGLISH";
+  static const String vn_uppercase = "VIETNAMESE";
+  static const String en_shortest = "EN";
+  static const String vn_shortest = "VN";
   static const String choose_at_least_3_topics =
       "You must choose at least 3 topics";
   static const String choose_at_least_3_topics_at_part1_message =
@@ -718,6 +727,27 @@ class StringConstants {
   static const String delete_action_title = "Delete";
   static const String loading_title = "Loading Data";
 
+  static const String fail_to_load_your_test_message = 'Fail to load your test';
+  static const String cannot_download_video =
+      'Can not download video. Please try again!';
+  static const String warning_title = "Warning";
+  static const String require_micro_permission_content =
+      "This app needs to access microphone to do the homeworks or the exam.";
+  static const String require_camera_permission_content =
+      "This app needs to access camera to do the homeworks or the exam.";
+  static const String permission_warning_title = 'Permission Warning';
+  static const String require_micro_and_camera_permission_content =
+      "This app needs to access microphone and camera to do the homeworks or the exam.";
+  static const String require_storage_permission_content =
+      "You must allow storage permission to continue.";
+  static const String video_path_incorrect_message =
+      'Video path was incorrect. Please try again !';
+  static const String error_load_this_test_message =
+      'Error when load your test. Please try again !';
+  static const String error_load_test_and_contact_admin_message =
+      "'Error when load your test. Let contact to admin to support !";
+  static const String timeout_update_answer_message =
+      'Timeout to update your changes. Please try again !';
   //Activity status
   static const String activity_status_out_of_date = "Out of date";
   static const String activity_status_not_completed = "Not Completed";

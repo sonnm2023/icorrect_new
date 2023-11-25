@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
         const MapLocale('en', MultiLanguage.EN),
         const MapLocale('vn', MultiLanguage.VN),
       ],
-      initLanguageCode: 'en',
+      initLanguageCode: 'vn',
     );
     _localization.onTranslatedLanguage = _onTranslatedLanguage;
     super.initState();
