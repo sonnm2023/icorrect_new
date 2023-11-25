@@ -25,6 +25,7 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
+  void onIntroduceFileEmpty();
   void onCountDown(
       String countDownString, bool isLessThan2Seconds, int timeCounting);
   void onCountDownForCueCard(String countDownString);
@@ -70,6 +71,7 @@ class TestRoomPresenter {
       if (kDebugMode) {
         print("DEBUG: This topic has not introduce file");
       }
+      _view!.onIntroduceFileEmpty();
     }
   }
 
@@ -360,6 +362,10 @@ class TestRoomPresenter {
       url = submitExam();
     }
 
+    if (activityId.isEmpty) {
+      url = submitPractice();
+    }
+
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -370,9 +376,12 @@ class TestRoomPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
-    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
-    formData.addEntries(
-        [MapEntry(StringConstants.k_is_update, isUpdate ? '1' : '0')]);
+    if (activityId.isNotEmpty) {
+      formData
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+      formData.addEntries(
+          [MapEntry(StringConstants.k_is_update, isUpdate ? '1' : '0')]);
+    }
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
@@ -429,7 +438,8 @@ class TestRoomPresenter {
 
       //For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
-        String path = await Utils.createNewFilePath(q.answers.elementAt(i).url.toString());
+        String path = await Utils.createNewFilePath(
+            q.answers.elementAt(i).url.toString());
         File audioFile = File(path);
 
         if (await audioFile.exists()) {

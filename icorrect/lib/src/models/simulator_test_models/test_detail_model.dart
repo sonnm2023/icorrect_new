@@ -125,8 +125,11 @@ class TestDetailModel {
         : null;
     if (json['part1'] != null) {
       _part1 = <TopicModel>[];
+
       json['part1'].forEach((v) {
-        _part1!.add(TopicModel.fromJson(v));
+        if (v != null) {
+          _part1!.add(TopicModel.fromJson(v));
+        }
       });
     }
     _domainName = json['domain_name'];
@@ -136,9 +139,14 @@ class TestDetailModel {
     _status = json['status'];
     _updateAt = json['updated_at'];
     _hasOrder = json['has_order'];
-    _normalSpeed = json['normal_speed'].toDouble();
-    _firstRepeatSpeed = json['first_repeat_speed'].toDouble();
-    _secondRepeatSpeed = json['second_repeat_speed'].toDouble();
+    _normalSpeed =
+        json['normal_speed'] != null ? json['normal_speed'].toDouble() : 1.0;
+    _firstRepeatSpeed = json['first_repeat_speed'] != null
+        ? json['first_repeat_speed'].toDouble()
+        : 0.9;
+    _secondRepeatSpeed = json['second_repeat_speed'] != null
+        ? json['second_repeat_speed'].toDouble()
+        : 1;
     _part2 = json['part2'] != null ? TopicModel.fromJson(json['part2']) : null;
     if (_part2 != null) {
       _part2!.numPart = PartOfTest.part2.get;
@@ -147,10 +155,10 @@ class TestDetailModel {
     if (_part3 != null) {
       _part3!.numPart = PartOfTest.part3.get;
     }
-    _part1Time = json['part1_time'];
-    _part2Time = json['part2_time'];
-    _part3Time = json['part3_time'];
-    _takeNoteTime = json['take_note_time'];
+    _part1Time = json['part1_time'] ?? 30;
+    _part2Time = json['part2_time'] ?? 120;
+    _part3Time = json['part3_time'] ?? 45;
+    _takeNoteTime = json['take_note_time'] ?? 60;
   }
 
   Map<String, dynamic> toJson() {

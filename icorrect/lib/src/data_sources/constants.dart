@@ -109,6 +109,13 @@ enum SubmitStatus {
   final int get;
 }
 
+enum ActivityType {
+  exam,
+  test,
+  homework,
+  practice;
+}
+
 enum ReviewingStatus {
   none(-1),
   playing(0),
@@ -116,6 +123,45 @@ enum ReviewingStatus {
   restart(2);
 
   const ReviewingStatus(this.get);
+  final int get;
+}
+
+enum IELTSTopicType {
+  part1(['1']),
+  part2(['2']),
+  part3(['3']),
+  part2and3(['2', '3']),
+  full(['4']);
+
+  const IELTSTopicType(this.get);
+  final List<String> get;
+}
+
+enum IELTSTestOption {
+  part1(1),
+  part2(2),
+  part3(3),
+  part2and3(4),
+  full(5);
+
+  const IELTSTestOption(this.get);
+  final int get;
+}
+
+enum IELTSStatus {
+  eachPart('3'),
+  fullPart('2');
+
+  const IELTSStatus(this.get);
+  final String get;
+}
+
+enum IELTSPredict {
+  normalQuestion(0),
+  all(1402),
+  randomQuestion(1);
+
+  const IELTSPredict(this.get);
   final int get;
 }
 
@@ -404,6 +450,7 @@ class StringConstants {
   static const String finish_button_title = "Finish";
   static const String save_the_exam_button_title = "SAVE THE EXAM";
   static const String start_now_button_title = "Start Now";
+  static const String start_test_button_title = "Start Test";
   static const String repeat_button_title = "Repeat";
   static const String exit_button_title = "Exit";
   static const String later_button_title = "Later";
@@ -445,13 +492,14 @@ class StringConstants {
   static const String confirm_to_log_out = "Do you want to logout?";
   static const String default_filter_title = 'Add your filter!';
   static const String repeat_question = "Ask for repeating the question !";
+  static const String delete_this_test_confirm = "Are you sure to delete this test ?";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
   static const String my_homework_screen_title = "MY HOMEWORK";
   static const String tips_screen_title = "Tips for you";
   static const String practice_screen_title = "PRACTICE";
-  static const String topics_screen_title = "Topics";
+  static const String topics_screen_title = "TOPICS";
   static const String icorrect_title = "ICORRECT";
 
   //Tab titles
@@ -485,7 +533,7 @@ class StringConstants {
   static const String practice_card_full_test_title = "Full test";
   static const String practice_card_full_test_description =
       "You will take a full sample test of IELTS Speaking Test";
-  static const String selected_topics = "Selected topic (0/24)";
+  static const String selected_topics = "Selected topic (%a/%a)";
   static const String downloading = "Downloading...";
   static const String overview = "Overview";
   static const String show_less = "Show less";
@@ -511,6 +559,9 @@ class StringConstants {
   static const String contact = "Contact: support@ielts-correction.com";
   static const String unknown = "Unknown";
   static const String home_menu_item_title = "Home";
+  static const String practice_menu_item_title = "Practice";
+  static const String my_test_menu_item_title = "My Tests";
+  static const String my_test_title = "MY TESTS";
   static const String change_password_menu_item_title = "Change password";
   static const String logout_menu_item_title = "Logout";
   static const String email = "Email";
@@ -609,7 +660,8 @@ class StringConstants {
       "You have not been added to the testing system, please contact admin for better understanding!";
   static const String get_authen_user_fail_message =
       "Something went wrong when load your authentication!";
-
+  static const String delete_test_success_message =
+      "Delete this test successfully!";
   //Error message
   static const String getting_app_config_information_error_message =
       "Has an error when getting app config information!";
@@ -655,6 +707,14 @@ class StringConstants {
   static const String multi_language = "Multi Language";
   static const String ens = "English";
   static const String vn = "Tiếng Việt";
+  static const String choose_at_least_3_topics =
+      "You must choose at least 3 topics";
+  static const String choose_at_least_3_topics_at_part1_message =
+      "You must choose at least 3 topics at part I";
+  static const String choose_at_least_1_topics_at_part23_message =
+      "You must choose at least 1 topics at part II and III";
+  static const String delete_action_title = "Delete";
+  static const String loading_title = "Loading Data";
 
   //Activity status
   static const String activity_status_out_of_date = "Out of date";
@@ -683,6 +743,7 @@ class StringConstants {
   static const String k_color = "color";
   static const String k_score = "score";
   static const String k_data = "data";
+  static const String k_test = "test";
   static const String k_error_code = "error_code";
   static const String k_access_token = "access_token";
   static const String k_message = "message";
@@ -710,6 +771,10 @@ class StringConstants {
   static const String k_api_url = "api_url";
   static const String k_secretkey = "secretkey";
   static const String k_refresh = "refresh";
+  static const String k_topic_type = "topic_type[]";
+  static const String k_test_option = "option";
+  static const String k_required_topic = "required_topic[]";
+  static const String k_is_predict = "is_predict";
 
   static const String connectivity_name_none = "none";
 }

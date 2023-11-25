@@ -37,10 +37,17 @@ import 'package:video_compress/video_compress.dart';
 import '../../../../provider/auth_provider.dart';
 
 class SimulatorTestScreen extends StatefulWidget {
-  const SimulatorTestScreen({super.key, required this.homeWorkModel});
+  const SimulatorTestScreen(
+      {super.key,
+      this.homeWorkModel,
+      this.testOption,
+      this.topicsId,
+      this.isPredict});
 
-  final ActivitiesModel homeWorkModel;
-
+  final ActivitiesModel? homeWorkModel;
+  final int? testOption;
+  final List<int>? topicsId;
+  final int? isPredict;
   @override
   State<SimulatorTestScreen> createState() => _SimulatorTestScreenState();
 }
@@ -150,8 +157,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
     });
 
-    _isExam = widget.homeWorkModel.activityType == "exam" ||
-        widget.homeWorkModel.activityType == "test";
+    _prepareBeforeSimulatorTest();
+  }
+
+  Future _prepareBeforeSimulatorTest() async {
+    if (widget.homeWorkModel != null) {
+      _isExam = widget.homeWorkModel!.activityType == ActivityType.exam.name ||
+          widget.homeWorkModel!.activityType == ActivityType.test.name;
+    } else {
+      _isExam = false;
+    }
 
     // Utils.testCrashBug();
 
@@ -177,7 +192,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             _showConfirmSaveTestBeforeExit();
           });
         }
-        if (simulatorTest.submitStatus == SubmitStatus.success) {
+        if (simulatorTest.submitStatus == SubmitStatus.success &&
+            widget.homeWorkModel != null) {
           return Stack(
             children: [
               DefaultTabController(
@@ -198,7 +214,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                           color: AppColor.defaultPurpleColor),
                     ),
                     title: Text(
-                      widget.homeWorkModel.activityName,
+                      (widget.homeWorkModel != null)
+                          ? widget.homeWorkModel!.activityName
+                          : "",
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultPurpleColor,
@@ -294,14 +312,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildHighLightTab() {
     return HighLightTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.homeWorkModel,
+      homeWorkModel: widget.homeWorkModel!,
     );
   }
 
   Widget _buildOtherTab() {
     return OtherTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.homeWorkModel,
+      homeWorkModel: widget.homeWorkModel!,
     );
   }
 
@@ -334,16 +352,20 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 String savedVideoPath = _simulatorTestPresenter!
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
-                _simulatorTestPresenter!.submitTest(
-                  context: context,
-                  testId: _simulatorTestProvider!.currentTestDetail.testId
-                      .toString(),
-                  activityId: widget.homeWorkModel.activityId.toString(),
-                  questions: _simulatorTestProvider!.questionList,
-                  isExam: _isExam,
-                  videoConfirmFile: videoConfirmFile,
-                  logAction: _simulatorTestProvider!.logActions,
-                );
+                if (widget.homeWorkModel != null) {
+                  _simulatorTestPresenter!.submitTest(
+                    context: context,
+                    testId: _simulatorTestProvider!.currentTestDetail.testId
+                        .toString(),
+                    activityId: widget.homeWorkModel!.activityId.toString(),
+                    questions: _simulatorTestProvider!.questionList,
+                    isExam: _isExam,
+                    videoConfirmFile: videoConfirmFile,
+                    logAction: _simulatorTestProvider!.logActions,
+                  );
+                } else {
+                  /////Handle practice submit
+                }
               },
               cancelButtonTapped: () {
                 cancelButtonTapped = true;
@@ -493,10 +515,15 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
       //Submit
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+
+      String activityId = "";
+      if (widget.homeWorkModel != null) {
+        activityId = widget.homeWorkModel!.activityId.toString();
+      }
       _simulatorTestPresenter!.submitTest(
         context: context,
         testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-        activityId: widget.homeWorkModel.activityId.toString(),
+        activityId: activityId,
         questions: _simulatorTestProvider!.questionList,
         isExam: _isExam,
         videoConfirmFile: videoConfirmFile,
@@ -632,9 +659,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     await _simulatorTestPresenter!.initializeData();
     var connectivity = await connectivityService.checkConnectivity();
     if (connectivity.name != StringConstants.connectivity_name_none) {
-      _simulatorTestPresenter!.getTestDetail(
-          context: context,
-          homeworkId: widget.homeWorkModel.activityId.toString());
+      if (widget.homeWorkModel != null) {
+        _simulatorTestPresenter!.getTestDetailByHomeWork(
+            context: context,
+            homeworkId: widget.homeWorkModel!.activityId.toString());
+      } else {
+        _simulatorTestPresenter!.getTestDetailByPractice(
+            context: context,
+            testOption: widget.testOption ?? 0,
+            topicsId: widget.topicsId ?? [],
+            isPredict: widget.isPredict ?? 0);
+      }
     } else {
       //Show connect error here
       if (kDebugMode) {
@@ -713,7 +748,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setTotal(total);
     _simulatorTestProvider!.updateDownloadingIndex(index);
     _simulatorTestProvider!.updateDownloadingPercent(percent);
-    _simulatorTestProvider!.setActivityType(widget.homeWorkModel.activityType);
+    if (widget.homeWorkModel != null) {
+      _simulatorTestProvider!
+          .setActivityType(widget.homeWorkModel!.activityType);
+    } else {
+      _simulatorTestProvider!.setActivityType(ActivityType.practice.name);
+    }
 
     // Utils.testCrashBug();
 
@@ -824,7 +864,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           _simulatorTestPresenter!.initializeData();
         }
         _simulatorTestPresenter!.reDownloadFiles(
-            context, widget.homeWorkModel.activityId.toString());
+            context, widget.homeWorkModel!.activityId.toString());
       }
     }
   }
