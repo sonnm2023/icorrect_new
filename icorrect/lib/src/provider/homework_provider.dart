@@ -307,8 +307,7 @@ class HomeWorkProvider with ChangeNotifier {
         "$numberOfSelectedClassFilter/${listClassForFilter.length - 1}";
     String numStatus =
         "$numberOfSelectedStatusFilter/${listStatusForFilter.length - 1}";
-    String str = context
-        .formatString(StringConstants.filter_string, [numClass, numStatus]);
+    String str = "${Utils.multiLanguage(StringConstants.filter_string)}: ${Utils.multiLanguage(StringConstants.class_string)}($numClass) - ${Utils.multiLanguage(StringConstants.status_string)}($numStatus)";
     updateFilterString(str);
     setProcessingStatus(isProcessing: false);
   }

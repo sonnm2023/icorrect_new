@@ -260,7 +260,6 @@ class MultiLanguage {
     StringConstants.activity_status_ai_scored: " Đã Chấm AI",
     StringConstants.ai_score_response_not_evaluated: "Không Đánh Giá",
     StringConstants.multi_language: "Đa Ngôn Ngữ",
-    StringConstants.filter_string: "Lọc-Lớp:(%a), Trạng Thái: (%a)",
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
     StringConstants.activity_status_loaded_test: "Đang làm",
@@ -277,7 +276,13 @@ class MultiLanguage {
     StringConstants.loading_title: "Đang tải dữ liệu",
     StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
     StringConstants.delete_this_test_confirm:
-        "Bạn chắc chắn muốn xóa bài làm này ?"
+        "Bạn chắc chắn muốn xóa bài làm này ?",
+    StringConstants.filter_string:
+    "Lọc",
+    StringConstants.class_string:
+    "Lớp",
+    StringConstants.status_string:
+    "Trạng thái",
   };
 
   static const Map<String, dynamic> EN = {
@@ -536,7 +541,6 @@ class MultiLanguage {
     StringConstants.activity_status_late: "Late",
     StringConstants.activity_status_ai_scored: " AI Scored",
     StringConstants.ai_score_response_not_evaluated: "Not Evaluated",
-    StringConstants.filter_string: "Filter-Class:(%a), Status: (%a)",
     StringConstants.practice_menu_item_title: "Practice",
     StringConstants.ens: "English",
     StringConstants.vn: "Vietnamese",
@@ -555,6 +559,12 @@ class MultiLanguage {
     StringConstants.delete_test_success_message:
         "Delete this test successfully!",
     StringConstants.delete_this_test_confirm:
-        "Are you sure to delete this test ?"
+        "Are you sure to delete this test ?",
+    StringConstants.filter_string:
+    "Filter",
+    StringConstants.class_string:
+    "Class",
+    StringConstants.status_string:
+    "Status",
   };
 }

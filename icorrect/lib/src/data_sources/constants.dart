@@ -511,7 +511,9 @@ class StringConstants {
   static const String others_tab_title = "OTHERS";
   static const String filter_choose_class_tab_title = "CHOOSE CLASS";
   static const String filter_choose_status_tab_title = "CHOOSE STATUS";
-  static const String filter_string = "Filter: Class(%a) Status: (%a)";
+  static const String filter_string = "Filter ";
+  static const String class_string = "Class";
+  static const String status_string = "Status";
 
   //Text
   static const String add_your_filter = "Add your filter!";
