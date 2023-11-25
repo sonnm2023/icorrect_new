@@ -96,11 +96,12 @@ class MultiLanguage {
     StringConstants.practice_card_full_test_title: "Đầy Đủ Các Phần Bài Test",
     StringConstants.practice_card_full_test_description:
         "Bạn sẽ làm bài thi mẫu đầy đủ của Bài Thi Nói IELTS",
-    StringConstants.selected_topics: "Chủ đề đã chọn (0/24)",
+    StringConstants.selected_topics: "Chủ đề đã chọn (%a/%a)",
     StringConstants.downloading: "Đang Tải...",
     StringConstants.overview: "Tổng quan",
     StringConstants.show_less: "Hiện Ít Hơn",
     StringConstants.show_more: "Hiện Nhiều Hơn",
+    StringConstants.start_test_button_title: "Bắt Đầu",
     StringConstants.overall_score: "Tổng điểm:",
     StringConstants.fluency: "Sự Lưu Loát:",
     StringConstants.lexical_resource: "Vốn Từ Vựng:",
@@ -264,6 +265,19 @@ class MultiLanguage {
     StringConstants.vn: "Tiếng Việt",
     StringConstants.activity_status_loaded_test: "Đang làm",
     StringConstants.select_all: "Chọn tất cả",
+    StringConstants.practice_menu_item_title: "Luyện Tập",
+    StringConstants.choose_at_least_3_topics: "Bạn hãy chọn ít nhất 3 chủ đề !",
+    StringConstants.choose_at_least_3_topics_at_part1_message:
+        "Bạn hãy chọn ít nhất 3 chủ đề ở phần I",
+    StringConstants.choose_at_least_1_topics_at_part23_message:
+        "Bạn hãy chọn ít nhất 1 chủ đề ở phần II và III",
+    StringConstants.my_test_menu_item_title: "Bài Làm Của Tôi",
+    StringConstants.my_test_title: "BÀI LÀM CỦA TÔI",
+    StringConstants.delete_action_title: "Xoá",
+    StringConstants.loading_title: "Đang tải dữ liệu",
+    StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
+    StringConstants.delete_this_test_confirm:
+        "Bạn chắc chắn muốn xóa bài làm này ?"
   };
 
   static const Map<String, dynamic> EN = {
@@ -359,7 +373,7 @@ class MultiLanguage {
     StringConstants.practice_card_full_test_title: "Full test",
     StringConstants.practice_card_full_test_description:
         "You will take a full sample test of IELTS Speaking Test",
-    StringConstants.selected_topics: "Selected topic (0/24)",
+    StringConstants.selected_topics: "Selected topic (%a/%a)",
     StringConstants.downloading: "Downloading...",
     StringConstants.overview: "Overview",
     StringConstants.show_less: "Show less",
@@ -396,6 +410,7 @@ class MultiLanguage {
     StringConstants.confirm_new_password: "Confirm new password",
     StringConstants.video_authen_menu_item_title: "Videos Authentication",
     StringConstants.sampleTextTitle: "Sample Text :",
+    StringConstants.start_test_button_title: "Start Test",
     StringConstants.sampleTextContent: "Hello, my full name is ... (Nguyen Van Nam)."
         "I am ... (12) years old. I come from ...(Ninh Bình). I live with my family. I like to eat apples and bananas. "
         "My school's name is ... (Đồng Phong). Nice to meet you. can you introduce yourself?",
@@ -522,9 +537,24 @@ class MultiLanguage {
     StringConstants.activity_status_ai_scored: " AI Scored",
     StringConstants.ai_score_response_not_evaluated: "Not Evaluated",
     StringConstants.filter_string: "Filter-Class:(%a), Status: (%a)",
+    StringConstants.practice_menu_item_title: "Practice",
     StringConstants.ens: "English",
     StringConstants.vn: "Vietnamese",
     StringConstants.activity_status_loaded_test: "Loaded Test",
     StringConstants.select_all: "Select All",
+    StringConstants.choose_at_least_3_topics:
+        "You must choose at least 3 topics",
+    StringConstants.choose_at_least_3_topics_at_part1_message:
+        "You must choose at least 3 topics at part I",
+    StringConstants.choose_at_least_1_topics_at_part23_message:
+        "You must choose at least 1 topics at part II and III",
+    StringConstants.my_test_menu_item_title: "My Tests",
+    StringConstants.my_test_title: "MY TESTS",
+    StringConstants.delete_action_title: "Delete",
+    StringConstants.loading_title: "Loading Data",
+    StringConstants.delete_test_success_message:
+        "Delete this test successfully!",
+    StringConstants.delete_this_test_confirm:
+        "Are you sure to delete this test ?"
   };
 }

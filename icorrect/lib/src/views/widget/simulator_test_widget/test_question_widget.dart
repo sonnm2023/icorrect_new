@@ -220,7 +220,10 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
     SimulatorTestProvider prepareSimulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     bool hasReAnswer = false;
-    if (prepareSimulatorTestProvider.activityType == "homework") {
+    if (prepareSimulatorTestProvider.activityType ==
+            ActivityType.homework.name ||
+        prepareSimulatorTestProvider.activityType ==
+            ActivityType.practice.name) {
       hasReAnswer = true;
     }
 

@@ -26,7 +26,7 @@ const String logoutEP = 'auth/logout';
 const String profileInfoEP = 'auth/profile-info';
 const String updateInfoEP = 'auth/update-info';
 const String changePasswordEP = 'auth/change-password';
-const String getTestInfoEP = 'api/v1/ielts-test/syllabus/create';
+const String getTestHomeWorkInfoEP = 'api/v1/ielts-test/syllabus/create';
 const String appConfigEP = 'api/v1/ielts-test/app-config';
 String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 String fileEP(String name) => '${icorrectDomain}file?filename=$name';
@@ -66,6 +66,10 @@ String submitExam() {
   return '${icorrectDomain}api/v1/exam/submit';
 }
 
+String submitPractice() {
+  return '${icorrectDomain}api/v1/ielts-test/submit';
+}
+
 String getTestDetailWithIdEP(String testId) =>
     '${oldToolDomain}api/get-test-with-id/$testId';
 
@@ -76,6 +80,26 @@ String getActivitiesList(Map<String, String> queryParameters) {
 String getUserAuthDetailEP() => '$icorrectDomain/api/v1/exam/voice-bio/detail';
 String submitAuthEP() {
   return '$icorrectDomain/api/v1/exam/voice-bio/submit';
+}
+
+String getPracticeTopicsListEP(Map<String, String> queryParameters) {
+  return '$icorrectDomain/api/v1/ielts-test/bank/topic/index?${Uri(queryParameters: queryParameters).query}';
+}
+
+String getTestPracticeInfoEP(Map<String, String> queryParameters) {
+  return '$icorrectDomain/api/v1/ielts-test/create?${Uri(queryParameters: queryParameters).query}';
+}
+
+String getMyPracticeTestEP(String page) {
+  return '$icorrectDomain/api/v1/ielts-test/index?page=$page';
+}
+
+String deleteTestEP(String testId) {
+  return '$icorrectDomain/api/v1/ielts-test/destroy/$testId';
+}
+
+String getMyPracticeTestDetailEP(String testId) {
+  return '$icorrectDomain/api/v1/ielts-test/show/$testId';
 }
 
 class RequestMethod {
