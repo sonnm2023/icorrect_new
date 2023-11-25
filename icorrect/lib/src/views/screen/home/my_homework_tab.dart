@@ -315,20 +315,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _updateFilterText() {
-    bool hasSelectAllClass =  widget.homeWorkProvider.listSelectedClassFilter
-        .map((e) => e.id)
-        .contains( widget.homeWorkProvider.listClassForFilter.first.id);
-    bool hasSelectAllStatus =  widget.homeWorkProvider.listSelectedStatusFilter
-        .map((e) => e.id)
-        .contains( widget.homeWorkProvider.listStatusForFilter.first.id);
-
-    int numberOfSelectedClassFilter = hasSelectAllClass
-        ? widget.homeWorkProvider.listSelectedClassFilter.length - 1
-        : widget.homeWorkProvider.listSelectedClassFilter.length;
-    int numberOfSelectedStatusFilter = hasSelectAllStatus
-        ? widget.homeWorkProvider.listSelectedStatusFilter.length - 1
-        : widget.homeWorkProvider.listSelectedStatusFilter.length;
-    widget.homeWorkProvider.prepareToUpdateFilterString(numberOfSelectedClassFilter: numberOfSelectedClassFilter, numberOfSelectedStatusFilter: numberOfSelectedStatusFilter);
+    widget.homeWorkProvider.prepareToUpdateFilterString();
   }
 
   Widget _languageSelectionButton() {
