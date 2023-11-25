@@ -72,6 +72,7 @@ dependencies:
   firebase_analytics: ^10.6.3
   firebase_crashlytics: ^3.4.3
   flutter_sound: ^9.2.13
+  flutter_speed_dial: ^7.0.0
 
 dev_dependencies:
   flutter_test:

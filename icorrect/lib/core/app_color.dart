@@ -22,4 +22,6 @@ class AppColor {
   static const defaultBlueColor = Color(0xFF2EAAFA);
   static const defaultGreenLightColor = Color.fromARGB(255, 48, 209, 142);
   static const defaultYellowColor = Color.fromARGB(255, 246, 175, 8);
+  static const defaultPurpuleLight02 = Color.fromARGB(255, 136, 90, 255);
+  static const defaultPurpuleTransparent =  Color.fromARGB(63, 83, 62, 139);
 }
