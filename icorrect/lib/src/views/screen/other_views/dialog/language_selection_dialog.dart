@@ -22,6 +22,13 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
   @override
   void initState() {
     homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
+    if (null != localization.currentLocale) {
+      if (localization.currentLocale!.languageCode == "vn") {
+        _character = LanguageSelector.vietnamese;
+      } else if (localization.currentLocale!.languageCode == "en") {
+        _character = LanguageSelector.english;
+      }
+    }
     super.initState();
   }
 
@@ -38,45 +45,34 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: 20,
+                vertical: 10,
                 horizontal: 10,
               ),
-              child: Column(
+              child: Stack(
                 children: [
-                  ListTile(
-                    title: Text(
-                      Utils.multiLanguage(StringConstants.ens),
-                    ),
-                    leading: Radio<LanguageSelector>(
-                      value: LanguageSelector.english,
-                      groupValue: _character,
-                      onChanged: (LanguageSelector? value) {
-                        setState(() {
-                          _character = value;
-                        });
-                        localization.translate('en');
-                        if (null != homeWorkProvider) {
-                          homeWorkProvider!.prepareToUpdateFilterString();
-                        }
-                        Navigator.of(context).pop();
-                      },
-                    ),
+                  Column(
+                    children: [
+                      _buildItem(LanguageSelector.english),
+                      _buildItem(LanguageSelector.vietnamese),
+                    ],
                   ),
-                  ListTile(
-                    title: Text(
-                      Utils.multiLanguage(StringConstants.vn),
-                    ),
-                    leading: Radio<LanguageSelector>(
-                      value: LanguageSelector.vietnamese,
-                      groupValue: _character,
-                      onChanged: (LanguageSelector? value) {
-                        setState(() {
-                          _character = value;
-                        });
-                        localization.translate('vn');
-                        if (null != homeWorkProvider) {
-                          homeWorkProvider!.prepareToUpdateFilterString();
-                        }
+                  Positioned(
+                    top: -10,
+                    right: -10,
+                    child: InkWell(
+                      child: const SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: Image(
+                            image: AssetImage("assets/images/ic_close_black.png"),
+                            width: 20,
+                            height: 20,
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
                         Navigator.of(context).pop();
                       },
                     ),
@@ -88,5 +84,81 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
         ],
       ),
     );
+  }
+
+  String _getLanguageCode(LanguageSelector languageSelector) {
+    String code = '';
+    switch (languageSelector) {
+      case LanguageSelector.vietnamese:
+        {
+          code = 'vn';
+          break;
+        }
+      case LanguageSelector.english:
+        {
+          code = 'en';
+          break;
+        }
+    }
+
+    return code;
+  }
+
+  String _getLanguageName(LanguageSelector languageSelector) {
+    String name = '';
+    switch (languageSelector) {
+      case LanguageSelector.vietnamese:
+        {
+          name = StringConstants.vn;
+          break;
+        }
+      case LanguageSelector.english:
+        {
+          name = StringConstants.ens;
+          break;
+        }
+    }
+
+    return name;
+  }
+
+  Widget _buildItem(LanguageSelector languageSelector) {
+    String languageName = _getLanguageName(languageSelector);
+    String code = _getLanguageCode(languageSelector);
+
+    return ListTile(
+      title: InkWell(
+        onTap: () {
+          bool isChanged = localization.currentLocale!.languageCode != code;
+          if (isChanged) {
+            _changeLanguage(code, languageSelector);
+          }
+        },
+        child: Text(
+          Utils.multiLanguage(languageName),
+        ),
+      ),
+      leading: Radio<LanguageSelector>(
+        value: languageSelector,
+        groupValue: _character,
+        onChanged: (LanguageSelector? value) {
+          bool isChanged = localization.currentLocale!.languageCode != code;
+          if (isChanged) {
+            _changeLanguage(code, value!);
+          }
+        },
+      ),
+    );
+  }
+
+  void _changeLanguage(String code, LanguageSelector languageSelector) {
+    setState(() {
+      _character = languageSelector;
+    });
+
+    localization.translate(code);
+    if (null != homeWorkProvider) {
+      homeWorkProvider!.prepareToUpdateFilterString();
+    }
   }
 }
