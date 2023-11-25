@@ -314,56 +314,86 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
+  void _updateFilterText() {
+    bool hasSelectAllClass =  widget.homeWorkProvider.listSelectedClassFilter
+        .map((e) => e.id)
+        .contains( widget.homeWorkProvider.listClassForFilter.first.id);
+    bool hasSelectAllStatus =  widget.homeWorkProvider.listSelectedStatusFilter
+        .map((e) => e.id)
+        .contains( widget.homeWorkProvider.listStatusForFilter.first.id);
+
+    int numberOfSelectedClassFilter = hasSelectAllClass
+        ? widget.homeWorkProvider.listSelectedClassFilter.length - 1
+        : widget.homeWorkProvider.listSelectedClassFilter.length;
+    int numberOfSelectedStatusFilter = hasSelectAllStatus
+        ? widget.homeWorkProvider.listSelectedStatusFilter.length - 1
+        : widget.homeWorkProvider.listSelectedStatusFilter.length;
+    widget.homeWorkProvider.prepareToUpdateFilterString(numberOfSelectedClassFilter: numberOfSelectedClassFilter, numberOfSelectedStatusFilter: numberOfSelectedStatusFilter);
+  }
+
   Widget _languageSelectionButton() {
     return SpeedDial(
-        backgroundColor: AppColor.defaultPurpuleTransparent,
-        overlayColor: Colors.black,
-        overlayOpacity: 0.6,
-        spaceBetweenChildren: 10,
-        activeBackgroundColor: AppColor.defaultPurpuleLight02,
-        activeIcon: Icons.close,
-        children: [
-          SpeedDialChild(
-              onTap: () {
-                localization.translate('en');
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(2),
-                child: Image(image: AssetImage(AppAsset.imgEnglish)),
-              ),
-              label: StringConstants.ens_upppercase,
-              labelStyle: const TextStyle(
-                  color: AppColor.defaultPurpleColor,
-                  fontWeight: FontWeight.w600)),
-          SpeedDialChild(
-              onTap: () {
-                localization.translate('vn');
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(2),
-                child: Image(image: AssetImage(AppAsset.imgVietName)),
-              ),
-              label: StringConstants.vn_uppercase,
-              labelStyle: const TextStyle(
-                  color: AppColor.defaultPurpleColor,
-                  fontWeight: FontWeight.w600)),
-        ],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 30,
-              height: 30,
-              child: Image(
-                  image: AssetImage(
-                      Utils.getCurrentLanguge()[StringConstants.k_image_url])),
+      backgroundColor: AppColor.defaultPurpuleTransparent,
+      overlayColor: Colors.black,
+      overlayOpacity: 0.6,
+      spaceBetweenChildren: 10,
+      activeBackgroundColor: AppColor.defaultPurpuleLight02,
+      activeIcon: Icons.close,
+      children: [
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('en');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgEnglish),
             ),
-            Text(
-              Utils.getCurrentLanguge()[StringConstants.k_data],
-              style: const TextStyle(color: Colors.white, fontSize: 13),
-            )
-          ],
-        ));
+          ),
+          label: StringConstants.ens_upppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('vn');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgVietName),
+            ),
+          ),
+          label: StringConstants.vn_uppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: Image(
+              image: AssetImage(
+                Utils.getCurrentLanguge()[StringConstants.k_image_url],
+              ),
+            ),
+          ),
+          Text(
+            Utils.getCurrentLanguge()[StringConstants.k_data],
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _pullRefresh() async {

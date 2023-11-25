@@ -303,13 +303,24 @@ class HomeWorkProvider with ChangeNotifier {
       setListFilteredHomeWorks(temp2);
     }
 
+    prepareToUpdateFilterString(
+        numberOfSelectedClassFilter: numberOfSelectedClassFilter,
+        numberOfSelectedStatusFilter: numberOfSelectedStatusFilter);
+    setProcessingStatus(isProcessing: false);
+  }
+
+  void prepareToUpdateFilterString({
+    required int numberOfSelectedClassFilter,
+    required int numberOfSelectedStatusFilter,
+  }) {
     String numClass =
         "$numberOfSelectedClassFilter/${listClassForFilter.length - 1}";
     String numStatus =
         "$numberOfSelectedStatusFilter/${listStatusForFilter.length - 1}";
-    String str = "${Utils.multiLanguage(StringConstants.filter_string)}: ${Utils.multiLanguage(StringConstants.class_string)}($numClass) - ${Utils.multiLanguage(StringConstants.status_string)}($numStatus)";
+    String str =
+        "${Utils.multiLanguage(StringConstants.filter_string)}: ${Utils.multiLanguage(StringConstants.class_string)}($numClass) - ${Utils.multiLanguage(StringConstants.status_string)}($numStatus)";
+
     updateFilterString(str);
-    setProcessingStatus(isProcessing: false);
   }
 
   bool checkFilterSelected() {
