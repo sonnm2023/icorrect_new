@@ -1,12 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/auth_models/topic_id.dart';
-import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_each_part_topics.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_full_part_topics.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
@@ -14,10 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../data_sources/constant_methods.dart';
 import '../../../../data_sources/utils.dart';
-import '../../../../models/user_data_models/user_data_model.dart';
-import '../../../../presenters/ielts_topics_list_presenter.dart';
 import '../../../../provider/auth_provider.dart';
-import '../../other_views/dialog/message_dialog.dart';
 import '../../test/simulator_test/simulator_test_screen.dart';
 
 class IELTSTopicsScreen extends StatefulWidget {

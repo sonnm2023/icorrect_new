@@ -37,7 +37,6 @@ import '../models/ui_models/user_authen_status.dart';
 import '../provider/homework_provider.dart';
 import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'api_urls.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Utils {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;

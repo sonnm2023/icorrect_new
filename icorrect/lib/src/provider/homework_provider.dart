@@ -11,7 +11,6 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
-import 'package:path/path.dart';
 
 class HomeWorkProvider with ChangeNotifier {
   String _serverCurrentTime = '';
