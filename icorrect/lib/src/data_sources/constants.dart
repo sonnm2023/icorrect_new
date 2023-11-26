@@ -329,6 +329,7 @@ class CustomPadding {
   static const double padding_5 = 5.0;
   static const double padding_10 = 10.0;
   static const double padding_15 = 15.0;
+  static const double padding_11 = 11.0;
   static const double padding_20 = 20.0;
   static const double padding_30 = 30.0;
   static const double padding_40 = 40.0;
@@ -620,6 +621,7 @@ class StringConstants {
   static const String contact_with_us = 'Contact with us';
   static const String out_the_exam = 'Out the exam';
   static const String go_to_setting = 'Go to setting';
+  static const String select_your_language_title = 'Select your language';
 
   //Compress video message
   static const String cancel_and_text = "Cancel and Later";
@@ -748,6 +750,7 @@ class StringConstants {
       "'Error when load your test. Let contact to admin to support !";
   static const String timeout_update_answer_message =
       'Timeout to update your changes. Please try again !';
+  static const String search_title = "Search";
   //Activity status
   static const String activity_status_out_of_date = "Out of date";
   static const String activity_status_not_completed = "Not Completed";

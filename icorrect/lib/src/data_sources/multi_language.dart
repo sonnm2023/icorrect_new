@@ -84,7 +84,7 @@ class MultiLanguage {
     StringConstants.nothing_tips: "Không có gợi ý tại đây",
     StringConstants.practice_card_part_1_title: "Phần I",
     StringConstants.practice_card_part_1_description:
-        "Giám khảo sẽ đặt những câu hỏi chung về chủ đề quen thuộc",
+        "Giám khảo sẽ đặt ra những câu hỏi chung về chủ đề quen thuộc",
     StringConstants.practice_card_part_2_title: "Phần II",
     StringConstants.practice_card_part_2_description:
         "Kiểm tra khả năng nói về một chủ đề, phát triển ý tưởng của bạn về một chủ đề và những nội dung liên quan",
@@ -93,7 +93,7 @@ class MultiLanguage {
         "Giám khảo sẽ yêu cầu bạn nói về các chủ đề và đưa ra quan điểm mà bạn có thể đề cập",
     StringConstants.practice_card_part_2_3_title: "Phần II và III",
     StringConstants.practice_card_part_2_3_description:
-        "Bạn sẽ làm bài kiểm tra phần II và Ill với cùng chủ đề",
+        "Bạn sẽ làm bài kiểm tra phần II và III với cùng chủ đề",
     StringConstants.practice_card_full_test_title: "Bài Test Đầy Đủ",
     StringConstants.practice_card_full_test_description:
         "Bạn sẽ làm bài thi mẫu đầy đủ của Bài Thi Nói IELTS",
@@ -278,12 +278,9 @@ class MultiLanguage {
     StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
     StringConstants.delete_this_test_confirm:
         "Bạn chắc chắn muốn xóa bài làm này ?",
-    StringConstants.filter_string:
-    "Lọc",
-    StringConstants.class_string:
-    "Lớp",
-    StringConstants.status_string:
-    "Trạng thái",
+    StringConstants.filter_string: "Lọc",
+    StringConstants.class_string: "Lớp",
+    StringConstants.status_string: "Trạng thái",
     StringConstants.contact_with_us: 'Liên Hệ Với Admin',
     StringConstants.out_the_exam: 'Thoát Khỏi Bài Làm',
     StringConstants.go_to_setting: 'Đi Tới Cài Đặt',
@@ -308,6 +305,8 @@ class MultiLanguage {
         "Có lỗi khi tải bài làm. Hãy liên hệ với admin để được hỗ trợ !",
     StringConstants.timeout_update_answer_message:
         'Hết thời gian lưu các câu trả lời. Hãy thử lại !',
+    StringConstants.search_title: "Tìm Kiếm",
+    StringConstants.select_your_language_title: 'Chọn Ngôn Ngữ'
   };
 
   static const Map<String, dynamic> EN = {
@@ -585,12 +584,9 @@ class MultiLanguage {
         "Delete this test successfully!",
     StringConstants.delete_this_test_confirm:
         "Are you sure to delete this test ?",
-    StringConstants.filter_string:
-    "Filter",
-    StringConstants.class_string:
-    "Class",
-    StringConstants.status_string:
-    "Status",
+    StringConstants.filter_string: "Filter",
+    StringConstants.class_string: "Class",
+    StringConstants.status_string: "Status",
     StringConstants.contact_with_us: 'Contact with us',
     StringConstants.out_the_exam: 'Out the exam',
     StringConstants.go_to_setting: 'Go to setting',
@@ -615,5 +611,7 @@ class MultiLanguage {
         "'Error when load your test. Let contact to admin to support !",
     StringConstants.timeout_update_answer_message:
         'Timeout to update your changes. Please try again !',
+    StringConstants.search_title: "Search",
+    StringConstants.select_your_language_title: 'Select your language'
   };
 }
