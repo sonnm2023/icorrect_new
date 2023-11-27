@@ -756,7 +756,7 @@ class StringConstants {
   static const String not_completed_title = "Not Completed";
   static const String corrected_title = "Corrected";
   static const String submitted_title = "Submitted";
-  static const String late_title = "Late"; 
+  static const String late_title = "Late";
   static const String ai_scored_title = " AI Scored";
   static const String not_evaluated_title = "Not Evaluated";
   static const String loaded_test_title = "Loaded Test";
@@ -777,6 +777,7 @@ class StringConstants {
   static const String activity_status_loaded_test =
       "activity_status_loaded_test"; //"Loaded Test";
   static const String select_all = "select_all"; //"Select All";
+  static const String prepare_compress_video_title = "Preparing for submitting";
 
   //keywords
   static const String k_email = "email";

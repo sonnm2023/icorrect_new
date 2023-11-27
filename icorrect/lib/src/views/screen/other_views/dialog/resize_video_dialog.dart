@@ -133,7 +133,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Please wait for preparing submit...',
+                        "${Utils.multiLanguage(StringConstants.prepare_compress_video_title)}...",
                         textAlign: TextAlign.center,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
