@@ -253,6 +253,7 @@ class MultiLanguage {
         "Bài kiểm tra này đã được tải nhưng chưa hoàn thành.Vui lòng liên hệ với quản trị viên để thiết lập lại nó!",
     StringConstants.update_answer_error_message:
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng thử lại!",
+
     StringConstants.activity_status_out_of_date: "Hết hạn",
     StringConstants.activity_status_not_completed: "Chưa hoàn thành",
     StringConstants.activity_status_corrected: "Đã nhận xét",
@@ -260,6 +261,18 @@ class MultiLanguage {
     StringConstants.activity_status_late: "Nộp muộn",
     StringConstants.activity_status_ai_scored: " Đã chấm AI",
     StringConstants.ai_score_response_not_evaluated: "Không đánh giá",
+
+    //////////////////////////////////////////////////////////////////////////
+    StringConstants.out_of_date_title: "Hết hạn",
+    StringConstants.not_completed_title: "Chưa hoàn thành",
+    StringConstants.corrected_title: "Đã nhận xét",
+    StringConstants.submitted_title: "Đã nộp",
+    StringConstants.late_title: "Nộp muộn",
+    StringConstants.ai_scored_title: " Đã chấm AI",
+    StringConstants.loaded_test_title: "Đang làm",
+    StringConstants.select_all_title: "Chọn tất cả",
+
+    //////////////////////////////////////////////////////////////////////////
     StringConstants.multi_language: "Đa Ngôn Ngữ",
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
@@ -565,11 +578,19 @@ class MultiLanguage {
     StringConstants.activity_status_late: "Late",
     StringConstants.activity_status_ai_scored: " AI Scored",
     StringConstants.ai_score_response_not_evaluated: "Not Evaluated",
+    StringConstants.activity_status_loaded_test: "Loaded Test",
+    StringConstants.select_all: "Select All",
+    StringConstants.out_of_date_title: "Out Of Date",
+    StringConstants.not_completed_title: "Not Completed",
+    StringConstants.corrected_title: "Corrected",
+    StringConstants.submitted_title: "Submitted",
+    StringConstants.late_title: "Late",
+    StringConstants.ai_scored_title: " AI Scored",
+    StringConstants.loaded_test_title: "Loaded Test",
+    StringConstants.select_all_title: "Select All",
     StringConstants.practice_menu_item_title: "Practice",
     StringConstants.ens: "English",
     StringConstants.vn: "Vietnamese",
-    StringConstants.activity_status_loaded_test: "Loaded Test",
-    StringConstants.select_all: "Select All",
     StringConstants.choose_at_least_3_topics:
         "You must choose at least 3 topics",
     StringConstants.choose_at_least_3_topics_at_part1_message:

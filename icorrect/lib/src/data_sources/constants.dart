@@ -751,6 +751,16 @@ class StringConstants {
   static const String timeout_update_answer_message =
       'Timeout to update your changes. Please try again !';
   static const String search_title = "Search";
+
+  static const String out_of_date_title = "Out Of Date";
+  static const String not_completed_title = "Not Completed";
+  static const String corrected_title = "Corrected";
+  static const String submitted_title = "Submitted";
+  static const String late_title = "Late"; 
+  static const String ai_scored_title = " AI Scored";
+  static const String not_evaluated_title = "Not Evaluated";
+  static const String loaded_test_title = "Loaded Test";
+  static const String select_all_title = "Select All";
   //Activity status
   static const String activity_status_out_of_date =
       "activity_status_out_of_date"; //"Out Of Date";

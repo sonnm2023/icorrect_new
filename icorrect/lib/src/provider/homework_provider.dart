@@ -292,8 +292,9 @@ class HomeWorkProvider with ChangeNotifier {
       List<ActivitiesModel> temp2 = temp1.where((e1) {
         Map<String, dynamic> activityStatusMap =
             Utils.getHomeWorkStatus(e1, serverCurrentTime);
+
         return listSelectedStatusFilter
-            .map((e2) => e2.name)
+            .map((e2) => Utils.multiLanguage(e2.name))
             .contains(Utils.multiLanguage(activityStatusMap['title']));
       }).toList();
       setListFilteredHomeWorks(temp2);
