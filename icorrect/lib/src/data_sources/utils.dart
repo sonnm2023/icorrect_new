@@ -317,7 +317,7 @@ class Utils {
         name: constantString);
   }
 
- static Map<String, dynamic> getCurrentLanguge() {
+  static Map<String, dynamic> getCurrentLanguage() {
     final FlutterLocalization localization = FlutterLocalization.instance;
     if (localization.currentLocale == null) {
       localization.init(
@@ -1141,5 +1141,59 @@ class Utils {
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
     String path = "$folderPath/$fileName";
     return path;
+  }
+
+  static String convertActivityStatusToMulti(String status) {
+    String rs = "";
+    String temp = "";
+
+    switch (status) {
+      case "Select All":
+        {
+          temp = "select_all";
+          break;
+        }
+      case "Out Of Date":
+        {
+          temp = "activity_status_out_of_date";
+          break;
+        }
+      case "Not Completed":
+        {
+          temp = "activity_status_not_completed";
+          break;
+        }
+      case "Corrected":
+        {
+          temp = "activity_status_corrected";
+          break;
+        }
+      case "Submitted":
+        {
+          temp = "activity_status_submitted";
+          break;
+        }
+      case "Late":
+        {
+          temp = "activity_status_late";
+          break;
+        }
+      case " AI Scored":
+        {
+          temp = "activity_status_ai_scored";
+          break;
+        }
+      case "Loaded Test":
+        {
+          temp = "activity_status_loaded_test";
+          break;
+        }
+    }
+
+    if (temp.isNotEmpty) {
+      rs = multiLanguage(temp);
+    }
+
+    return rs;
   }
 }

@@ -212,12 +212,12 @@ enum Alert {
 enum SelectType { classType, statusType }
 
 class FilterJsonData {
-  static Map<String, dynamic> selectAll = {"id": -111, "name": "SelectAll"};
+  static Map<String, dynamic> selectAll = {"id": -111, "name": "Select All"};
   static Map<String, dynamic> submitted = {"id": 1, "name": "Submitted"};
   static Map<String, dynamic> corrected = {"id": 2, "name": "Corrected"};
   static Map<String, dynamic> notCompleted = {"id": 0, "name": "Not Completed"};
   static Map<String, dynamic> late = {"id": -1, "name": "Late"};
-  static Map<String, dynamic> outOfDate = {"id": -2, "name": "Out of date"};
+  static Map<String, dynamic> outOfDate = {"id": -2, "name": "Out Of Date"};
   static Map<String, dynamic> loadedTest = {"id": 99, "name": "Loaded Test"};
 }
 
@@ -752,15 +752,21 @@ class StringConstants {
       'Timeout to update your changes. Please try again !';
   static const String search_title = "Search";
   //Activity status
-  static const String activity_status_out_of_date = "Out of date";
-  static const String activity_status_not_completed = "Not Completed";
-  static const String activity_status_corrected = "Corrected";
-  static const String activity_status_submitted = "Submitted";
-  static const String activity_status_late = "Late";
-  static const String activity_status_ai_scored = " AI Scored";
+  static const String activity_status_out_of_date =
+      "activity_status_out_of_date"; //"Out Of Date";
+  static const String activity_status_not_completed =
+      "activity_status_not_completed"; //"Not Completed";
+  static const String activity_status_corrected =
+      "activity_status_corrected"; //"Corrected";
+  static const String activity_status_submitted =
+      "activity_status_submitted"; //"Submitted";
+  static const String activity_status_late = "activity_status_late"; //"Late";
+  static const String activity_status_ai_scored =
+      "activity_status_ai_scored"; //" AI Scored";
   static const String ai_score_response_not_evaluated = "Not Evaluated";
-  static const String activity_status_loaded_test = "Loaded Test";
-  static const String select_all = "Select All";
+  static const String activity_status_loaded_test =
+      "activity_status_loaded_test"; //"Loaded Test";
+  static const String select_all = "select_all"; //"Select All";
 
   //keywords
   static const String k_email = "email";

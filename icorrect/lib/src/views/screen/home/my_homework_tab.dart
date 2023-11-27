@@ -314,56 +314,73 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
+  void _updateFilterText() {
+    widget.homeWorkProvider.prepareToUpdateFilterString();
+  }
+
   Widget _languageSelectionButton() {
     return SpeedDial(
-        backgroundColor: AppColor.defaultPurpuleTransparent,
-        overlayColor: Colors.black,
-        overlayOpacity: 0.6,
-        spaceBetweenChildren: 10,
-        activeBackgroundColor: AppColor.defaultPurpuleLight02,
-        activeIcon: Icons.close,
-        children: [
-          SpeedDialChild(
-              onTap: () {
-                localization.translate('en');
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(2),
-                child: Image(image: AssetImage(AppAsset.imgEnglish)),
-              ),
-              label: StringConstants.ens_upppercase,
-              labelStyle: const TextStyle(
-                  color: AppColor.defaultPurpleColor,
-                  fontWeight: FontWeight.w600)),
-          SpeedDialChild(
-              onTap: () {
-                localization.translate('vn');
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(2),
-                child: Image(image: AssetImage(AppAsset.imgVietName)),
-              ),
-              label: StringConstants.vn_uppercase,
-              labelStyle: const TextStyle(
-                  color: AppColor.defaultPurpleColor,
-                  fontWeight: FontWeight.w600)),
-        ],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 30,
-              height: 30,
-              child: Image(
-                  image: AssetImage(
-                      Utils.getCurrentLanguge()[StringConstants.k_image_url])),
+      backgroundColor: AppColor.defaultPurpuleTransparent,
+      overlayColor: Colors.black,
+      overlayOpacity: 0.6,
+      spaceBetweenChildren: 10,
+      activeBackgroundColor: AppColor.defaultPurpuleLight02,
+      activeIcon: Icons.close,
+      children: [
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('en');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgEnglish),
             ),
-            Text(
-              Utils.getCurrentLanguge()[StringConstants.k_data],
-              style: const TextStyle(color: Colors.white, fontSize: 13),
-            )
-          ],
-        ));
+          ),
+          label: StringConstants.ens_upppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('vn');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgVietName),
+            ),
+          ),
+          label: StringConstants.vn_uppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: Image(
+              image: AssetImage(
+                Utils.getCurrentLanguage()[StringConstants.k_image_url],
+              ),
+            ),
+          ),
+          Text(
+            Utils.getCurrentLanguage()[StringConstants.k_data],
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _pullRefresh() async {

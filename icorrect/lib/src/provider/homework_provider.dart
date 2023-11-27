@@ -273,13 +273,6 @@ class HomeWorkProvider with ChangeNotifier {
         .map((e) => e.id)
         .contains(listStatusForFilter.first.id);
 
-    int numberOfSelectedClassFilter = hasSelectAllClass
-        ? listSelectedClassFilter.length - 1
-        : listSelectedClassFilter.length;
-    int numberOfSelectedStatusFilter = hasSelectAllStatus
-        ? listSelectedStatusFilter.length - 1
-        : listSelectedStatusFilter.length;
-
     if (hasSelectAllClass && hasSelectAllStatus) {
       //Reset data
       if (_listFilteredHomeWorks.isNotEmpty) _listFilteredHomeWorks.clear();
@@ -291,25 +284,48 @@ class HomeWorkProvider with ChangeNotifier {
               listSelectedClassFilter.map((e2) => e2.id).contains(e1.classId))
           .toList();
 
-      // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
-      //     .contains(e1.activityStatus)).toList();
+      // List<ActivitiesModel> temp2 = temp1
+      //     .where((e1) => listSelectedStatusFilter
+      //         .map((e2) => e2.id)
+      //         .contains(e1.activityStatus))
+      //     .toList();
       List<ActivitiesModel> temp2 = temp1.where((e1) {
         Map<String, dynamic> activityStatusMap =
             Utils.getHomeWorkStatus(e1, serverCurrentTime);
         return listSelectedStatusFilter
             .map((e2) => e2.name)
-            .contains(activityStatusMap['title']);
+            .contains(Utils.multiLanguage(activityStatusMap['title']));
       }).toList();
       setListFilteredHomeWorks(temp2);
     }
+
+    prepareToUpdateFilterString();
+    setProcessingStatus(isProcessing: false);
+  }
+
+  void prepareToUpdateFilterString() {
+    bool hasSelectAllClass = listSelectedClassFilter
+        .map((e) => e.id)
+        .contains(listClassForFilter.first.id);
+    bool hasSelectAllStatus = listSelectedStatusFilter
+        .map((e) => e.id)
+        .contains(listStatusForFilter.first.id);
+
+    int numberOfSelectedClassFilter = hasSelectAllClass
+        ? listSelectedClassFilter.length - 1
+        : listSelectedClassFilter.length;
+    int numberOfSelectedStatusFilter = hasSelectAllStatus
+        ? listSelectedStatusFilter.length - 1
+        : listSelectedStatusFilter.length;
 
     String numClass =
         "$numberOfSelectedClassFilter/${listClassForFilter.length - 1}";
     String numStatus =
         "$numberOfSelectedStatusFilter/${listStatusForFilter.length - 1}";
-    String str = "${Utils.multiLanguage(StringConstants.filter_string)}: ${Utils.multiLanguage(StringConstants.class_string)}($numClass) - ${Utils.multiLanguage(StringConstants.status_string)}($numStatus)";
+    String str =
+        "${Utils.multiLanguage(StringConstants.filter_string)}: ${Utils.multiLanguage(StringConstants.class_string)}($numClass) - ${Utils.multiLanguage(StringConstants.status_string)}($numStatus)";
+
     updateFilterString(str);
-    setProcessingStatus(isProcessing: false);
   }
 
   bool checkFilterSelected() {

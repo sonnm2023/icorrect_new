@@ -76,17 +76,23 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     );
   }
 
-  // Widget _buildClassFilterRow(ClassModel subject) {
   Widget _buildClassFilterRow(NewClassModel subject) {
     bool isSelected = _checkSelectedClass(subject);
     IconData icon =
         isSelected ? Icons.check_box_outlined : Icons.square_outlined;
 
+    String title = subject.name;
+
+    if (subject.name == "Select All") {
+      title = Utils.convertActivityStatusToMulti(subject.name);
+    }
+
     return ListTile(
       leading: Icon(icon, color: AppColor.defaultPurpleColor),
-      title: Text(subject.name,
-          style:
-              const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
+      title: Text(
+        title,
+        style: const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13),
+      ),
       onTap: () {
         if (subject == widget.homeWorkProvider.listClassForFilter.first) {
           if (isSelected) {
@@ -111,9 +117,10 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
         isSelected ? Icons.check_box_outlined : Icons.square_outlined;
     return ListTile(
       leading: Icon(icon, color: AppColor.defaultPurpleColor),
-      title: Text(subject.name,
-          style:
-              const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
+      title: Text(
+        Utils.convertActivityStatusToMulti(subject.name),
+        style: const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13),
+      ),
       onTap: () {
         if (subject == widget.homeWorkProvider.listStatusForFilter.first) {
           if (isSelected) {
