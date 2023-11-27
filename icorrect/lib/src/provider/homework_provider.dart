@@ -284,14 +284,17 @@ class HomeWorkProvider with ChangeNotifier {
               listSelectedClassFilter.map((e2) => e2.id).contains(e1.classId))
           .toList();
 
-      // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
-      //     .contains(e1.activityStatus)).toList();
+      // List<ActivitiesModel> temp2 = temp1
+      //     .where((e1) => listSelectedStatusFilter
+      //         .map((e2) => e2.id)
+      //         .contains(e1.activityStatus))
+      //     .toList();
       List<ActivitiesModel> temp2 = temp1.where((e1) {
         Map<String, dynamic> activityStatusMap =
             Utils.getHomeWorkStatus(e1, serverCurrentTime);
         return listSelectedStatusFilter
             .map((e2) => e2.name)
-            .contains(activityStatusMap['title']);
+            .contains(Utils.multiLanguage(activityStatusMap['title']));
       }).toList();
       setListFilteredHomeWorks(temp2);
     }
@@ -301,10 +304,10 @@ class HomeWorkProvider with ChangeNotifier {
   }
 
   void prepareToUpdateFilterString() {
-    bool hasSelectAllClass =  listSelectedClassFilter
+    bool hasSelectAllClass = listSelectedClassFilter
         .map((e) => e.id)
         .contains(listClassForFilter.first.id);
-    bool hasSelectAllStatus =  listSelectedStatusFilter
+    bool hasSelectAllStatus = listSelectedStatusFilter
         .map((e) => e.id)
         .contains(listStatusForFilter.first.id);
 

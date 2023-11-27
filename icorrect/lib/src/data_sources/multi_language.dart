@@ -255,11 +255,11 @@ class MultiLanguage {
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng thử lại!",
     StringConstants.activity_status_out_of_date: "Hết hạn",
     StringConstants.activity_status_not_completed: "Chưa hoàn thành",
-    StringConstants.activity_status_corrected: "Đã Nhận Xét",
-    StringConstants.activity_status_submitted: "Đã Nộp",
-    StringConstants.activity_status_late: "Nộp Muộn",
-    StringConstants.activity_status_ai_scored: " Đã Chấm AI",
-    StringConstants.ai_score_response_not_evaluated: "Không Đánh Giá",
+    StringConstants.activity_status_corrected: "Đã nhận xét",
+    StringConstants.activity_status_submitted: "Đã nộp",
+    StringConstants.activity_status_late: "Nộp muộn",
+    StringConstants.activity_status_ai_scored: " Đã chấm AI",
+    StringConstants.ai_score_response_not_evaluated: "Không đánh giá",
     StringConstants.multi_language: "Đa Ngôn Ngữ",
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
@@ -278,12 +278,9 @@ class MultiLanguage {
     StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
     StringConstants.delete_this_test_confirm:
         "Bạn chắc chắn muốn xóa bài làm này ?",
-    StringConstants.filter_string:
-    "Lọc",
-    StringConstants.class_string:
-    "Lớp",
-    StringConstants.status_string:
-    "Trạng thái",
+    StringConstants.filter_string: "Lọc",
+    StringConstants.class_string: "Lớp",
+    StringConstants.status_string: "Trạng thái",
     StringConstants.contact_with_us: 'Liên Hệ Với Admin',
     StringConstants.out_the_exam: 'Thoát Khỏi Bài Làm',
     StringConstants.go_to_setting: 'Đi Tới Cài Đặt',
@@ -585,12 +582,9 @@ class MultiLanguage {
         "Delete this test successfully!",
     StringConstants.delete_this_test_confirm:
         "Are you sure to delete this test ?",
-    StringConstants.filter_string:
-    "Filter",
-    StringConstants.class_string:
-    "Class",
-    StringConstants.status_string:
-    "Status",
+    StringConstants.filter_string: "Filter",
+    StringConstants.class_string: "Class",
+    StringConstants.status_string: "Status",
     StringConstants.contact_with_us: 'Contact with us',
     StringConstants.out_the_exam: 'Out the exam',
     StringConstants.go_to_setting: 'Go to setting',

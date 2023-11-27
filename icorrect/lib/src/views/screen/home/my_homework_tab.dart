@@ -370,12 +370,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             height: 30,
             child: Image(
               image: AssetImage(
-                Utils.getCurrentLanguge()[StringConstants.k_image_url],
+                Utils.getCurrentLanguage()[StringConstants.k_image_url],
               ),
             ),
           ),
           Text(
-            Utils.getCurrentLanguge()[StringConstants.k_data],
+            Utils.getCurrentLanguage()[StringConstants.k_data],
             style: const TextStyle(color: Colors.white, fontSize: 13),
           )
         ],
