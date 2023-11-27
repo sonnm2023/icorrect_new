@@ -49,7 +49,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  bool _skipAction = false;
+  bool _skipAction = true;
   bool get skipAction => _skipAction;
   void setSkipAction(bool skip) {
     _skipAction = skip;
