@@ -28,7 +28,7 @@ void showToastMsg({required String msg, required ToastStatesType toastState}) {
   Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 5,
       backgroundColor: AppColor.defaultPurpleColor,
       textColor: AppColor.defaultAppColor,

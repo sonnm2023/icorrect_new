@@ -636,7 +636,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 5,
       backgroundColor: AppColor.defaultGreenLightColor,
       textColor: AppColor.defaultAppColor,

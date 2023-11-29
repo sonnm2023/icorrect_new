@@ -762,11 +762,12 @@ class _MyTestTabState extends State<MyTestTab>
   void downloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
     Fluttertoast.showToast(
-        msg: alertInfo.description,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: AppColor.defaultBlackColor,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: alertInfo.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: AppColor.defaultBlackColor,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+    );
     if (kDebugMode) {
       print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
     }
@@ -780,7 +781,7 @@ class _MyTestTabState extends State<MyTestTab>
         backgroundColor: AppColor.defaultGrayColor,
         textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+        gravity: ToastGravity.CENTER);
     if (kDebugMode) {
       print('DEBUG: getMyTestFail: ${alertInfo.description.toString()}');
     }
@@ -807,7 +808,7 @@ class _MyTestTabState extends State<MyTestTab>
         msg: message,
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
         fontSize: 18,
         toastLength: Toast.LENGTH_LONG);
 
@@ -822,11 +823,12 @@ class _MyTestTabState extends State<MyTestTab>
     //AlertsDialog.init().showDialog(context, info, this);
     _loading!.hide();
     Fluttertoast.showToast(
-        msg: info.description,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: AppColor.defaultBlackColor,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: info.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: AppColor.defaultBlackColor,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+    );
   }
 
   @override

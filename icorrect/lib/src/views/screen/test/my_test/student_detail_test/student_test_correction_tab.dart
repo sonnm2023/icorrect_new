@@ -514,7 +514,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       fontSize: FontsSize.fontSize_15,
     );
   }
