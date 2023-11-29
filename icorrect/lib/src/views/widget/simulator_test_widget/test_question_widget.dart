@@ -59,6 +59,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
             fontsSize: FontsSize.fontSize_15,
             fontWeight: FontWeight.w600,
           ),
+          textAlign: TextAlign.center,
         ),
       );
     } else {
