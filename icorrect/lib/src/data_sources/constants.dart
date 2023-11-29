@@ -608,6 +608,8 @@ class StringConstants {
       "An error occurs during verification,please contact ICorrect support";
   static const String save_answer_success_message =
       "Save your answers successfully!";
+  static const String submit_test_success_message =
+      "The test has been submitted successfully!";
   static const String submit_authen_success_message =
       "Submit file to authentication successfully. Waiting for confirmation!";
   static const String submit_authen_fail_message =
@@ -712,7 +714,7 @@ class StringConstants {
   static const String activity_is_loaded_message =
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =
-      "An error when update your answers. Please try again !";
+      "An error when update your answers. Please try again!";
   static const String multi_language = "Multi Language";
   static const String ens = "English";
   static const String vn = "Tiếng Việt";

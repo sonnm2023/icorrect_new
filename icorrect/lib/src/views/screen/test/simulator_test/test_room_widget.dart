@@ -2734,7 +2734,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         msg: msg,
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
         fontSize: 18,
         toastLength: Toast.LENGTH_LONG);
   }
@@ -2755,7 +2755,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       msg: msg,
       backgroundColor: Colors.green,
       textColor: Colors.white,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       fontSize: 18,
       toastLength: Toast.LENGTH_LONG,
     );

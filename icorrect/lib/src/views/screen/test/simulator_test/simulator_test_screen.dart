@@ -434,6 +434,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _showConfirmQuitTheTest() {
+    bool okButtonTapped = false;
+    bool cancelButtonTapped = false;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -450,17 +453,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             //Reset question image
             _resetQuestionImage();
             _deleteAllAnswer();
+            okButtonTapped = true;
           },
           cancelButtonTapped: () {
+            cancelButtonTapped = true;
             Navigator.of(context).pop();
           },
         );
       },
     ).then((_) {
-      if (_isExam) {
-        Navigator.pop(context, StringConstants.k_refresh);
-      } else {
-        Navigator.of(context).pop();
+      if (cancelButtonTapped || okButtonTapped) {
+        if (_isExam) {
+          Navigator.pop(context, StringConstants.k_refresh);
+        } else {
+          Navigator.of(context).pop();
+        }
       }
     });
   }

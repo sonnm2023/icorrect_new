@@ -2,7 +2,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 
 class MultiLanguage {
   static const Map<String, dynamic> VN = {
-     StringConstants.sign_in_button_title: "Đăng nhập",
+    StringConstants.sign_in_button_title: "Đăng nhập",
     StringConstants.sign_up_button_title: "Đăng Ký",
     StringConstants.forgot_password_button_title: "Quên mật khẩu?",
     StringConstants.save_change_button_title: "Lưu Thay Đổi",
@@ -165,7 +165,8 @@ class MultiLanguage {
     StringConstants.error_auth_content:
         "Xảy ra lỗi trong quá trình xác minh, vui lòng liên hệ với bộ phận hỗ trợ của ICorrect",
     StringConstants.save_answer_success_message:
-        "Câu trả lời đã được cập nhật thành công !",
+        "Câu trả lời đã được cập nhật thành công!",
+    StringConstants.submit_test_success_message: "Nộp bài thành công !",
     StringConstants.submit_authen_success_message:
         "Gửi Video để xác thực thành công.Chờ đợi sự xác nhận!",
     StringConstants.submit_authen_fail_message:
@@ -191,7 +192,8 @@ class MultiLanguage {
     StringConstants.no_data_message: "Không có dữ liệu, vui lòng quay lại sau!",
     StringConstants.re_answer_not_be_save_message:
         "Câu trả lời của bạn đã thay đổi. Bạn có muốn lưu trước thi thoát không ?",
-    StringConstants.can_not_delete_files_message: "Không thể xóa tập tin !",//Bỏ qua thông báo khi xóa , ko cần Toast
+    StringConstants.can_not_delete_files_message:
+        "Không thể xóa tập tin !", //Bỏ qua thông báo khi xóa , ko cần Toast
     StringConstants.wait_until_the_exam_finished_message:
         "Bạn cần hoàn thành bài trước khi sử dụng tính năng này!",
     StringConstants.feature_not_available_message:
@@ -211,7 +213,7 @@ class MultiLanguage {
     StringConstants.video_record_duration_less_than_15s:
         "Video xác thực phải có độ dài lớn hơn 15 giây",
     StringConstants.not_authen_user_message:
-        "Bạn chưa được thêm vào hệ thống thử nghiệm, vui lòng liên hệ Admin để hiểu rõ hơn!",//Xóa dòng này
+        "Bạn chưa được thêm vào hệ thống thử nghiệm, vui lòng liên hệ Admin để hiểu rõ hơn!", //Xóa dòng này
     StringConstants.get_authen_user_fail_message:
         "Đã xảy ra lỗi khi tải video xác thực của bạn!",
     StringConstants.getting_app_config_information_error_message:
@@ -225,8 +227,9 @@ class MultiLanguage {
     StringConstants.common_error_message:
         "Đã xảy ra lỗi, vui lòng thử lại sau!",
     StringConstants.error_when_resize_file:
-        'Đã xảy ra lỗi khi thay đổi kích thước tệp video!',//không sử dụng
-    StringConstants.error_when_delete_file: 'Đã xảy ra lỗi khi xóa tệp video!',//không sử dụng
+        'Đã xảy ra lỗi khi thay đổi kích thước tệp video!', //không sử dụng
+    StringConstants.error_when_delete_file:
+        'Đã xảy ra lỗi khi xóa tệp video!', //không sử dụng
     StringConstants.log_connection_error_message:
         'Kết nối mạng không ổn định, vui lòng kiểm tra và thử lại !',
     StringConstants.load_image_error_message: "Không thể tải hình ảnh!",
@@ -234,11 +237,12 @@ class MultiLanguage {
         "Có lỗi xảy ra khi tải danh sách bài về nhà !",
     StringConstants.load_result_response_error_message:
         "Có lỗi xảy ra khi tải kết quả bài làm !",
-    StringConstants.can_not_load_response_message: "Không thể tải kết quả của giáo viên !",
+    StringConstants.can_not_load_response_message:
+        "Không thể tải kết quả của giáo viên !",
     StringConstants.load_detail_homework_error_message:
         "Không thể tải thông tin bài tập !",
     StringConstants.submit_test_error_message:
-        "Có lỗi xảy ra khi nộp bài, vui lòng kiểm tra kết nối mạng và thử lại !",
+        "Có lỗi xảy ra khi nộp bài. Vui lòng thử lại!",
     StringConstants.submit_test_error_invalid_return_type_message:
         "Invalid_return_type_for_catch_error: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.submit_test_error_timeout:
@@ -248,7 +252,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_client:
         "ClientException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.get_special_homework_error_message:
-        "Tải danh sách bài mẫu thất bại !",
+        "Tải danh sách bài mẫu thất bại!",
     StringConstants.compress_video_error_message:
         "Nén tập tin video không thành công",
     StringConstants.activity_is_loaded_message:
@@ -275,28 +279,30 @@ class MultiLanguage {
     StringConstants.class_string: "Lớp",
     StringConstants.status_string: "Trạng thái",
     StringConstants.contact_with_us: 'Liên Hệ Với Admin',
-    StringConstants.out_the_exam: 'Thoát Khỏi Bài Làm',//Chưa dùng 
+    StringConstants.out_the_exam: 'Thoát Khỏi Bài Làm', //Chưa dùng
     StringConstants.go_to_setting: 'Đi Tới Cài Đặt',
-    StringConstants.fail_to_load_your_test_message: 'Có lỗi khi tải bài làm !',//Chưa dùng 
-    StringConstants.cannot_download_video://Chưa dùng 
+    StringConstants.fail_to_load_your_test_message:
+        'Có lỗi khi tải bài làm !', //Chưa dùng
+    StringConstants.cannot_download_video: //Chưa dùng
         'Có lỗi khi tải video. Hãy thử lại !',
     StringConstants.warning_title: "Cảnh Báo",
-    StringConstants.require_micro_permission_content://Chưa dùng 
+    StringConstants.require_micro_permission_content: //Chưa dùng
         "Ứng dụng cần quyền sử dụng micro phone để có thể làm bài",
-    StringConstants.require_camera_permission_content://Chưa dùng 
+    StringConstants.require_camera_permission_content: //Chưa dùng
         "Ứng dụng cần quyền sử dụng camera để có thể làm bài",
-    StringConstants.permission_warning_title: 'Cảnh Báo Quyền Ứng Dụng',//Chưa dùng 
-    StringConstants.require_micro_and_camera_permission_content://Chưa dùng 
+    StringConstants.permission_warning_title:
+        'Cảnh Báo Quyền Ứng Dụng', //Chưa dùng
+    StringConstants.require_micro_and_camera_permission_content: //Chưa dùng
         "Ứng dụng cần quyền sử dụng micro phone và camera để có thể làm bài",
-    StringConstants.require_storage_permission_content://Chưa dùng 
+    StringConstants.require_storage_permission_content: //Chưa dùng
         "Bạn hãy đồng ý quyền sử dụng lưu trữ để tiếp tục !",
-    StringConstants.video_path_incorrect_message://Chưa dùng 
+    StringConstants.video_path_incorrect_message: //Chưa dùng
         'Đường dẫn video không đúng. Hãy thử lại !',
-    StringConstants.error_load_this_test_message://Chưa dùng 
+    StringConstants.error_load_this_test_message: //Chưa dùng
         'Có lỗi khi tải bài làm. Hãy thử lại !',
-    StringConstants.error_load_test_and_contact_admin_message://Chưa dùng 
+    StringConstants.error_load_test_and_contact_admin_message: //Chưa dùng
         "Có lỗi khi tải bài làm. Hãy liên hệ với admin để được hỗ trợ !",
-    StringConstants.timeout_update_answer_message://Chưa dùng 
+    StringConstants.timeout_update_answer_message: //Chưa dùng
         'Hết thời gian lưu các câu trả lời. Hãy thử lại !',
     StringConstants.search_title: "Tìm Kiếm",
     StringConstants.select_your_language_title: 'Chọn Ngôn Ngữ',
@@ -321,7 +327,7 @@ class MultiLanguage {
     StringConstants.ai_scored_title: " (AI) Đã Chấm",
     StringConstants.loaded_test_title: "Đã Khóa",
     StringConstants.select_all_title: "Chọn Tất Cả",
-    StringConstants.select_all :"Chọn Tất Cả"
+    StringConstants.select_all: "Chọn Tất Cả"
 
     //////////////////////////////////////////////////////////////////////////
   };
@@ -485,6 +491,8 @@ class MultiLanguage {
         "An error occurs during verification,please contact ICorrect support",
     StringConstants.save_answer_success_message:
         "Save your answers successfully!",
+    StringConstants.submit_test_success_message:
+        "The test has been submitted successfully!",
     StringConstants.submit_authen_success_message:
         "Submit file to authentication successfully. Waiting for confirmation!",
     StringConstants.submit_authen_fail_message:
@@ -573,7 +581,7 @@ class MultiLanguage {
     StringConstants.activity_is_loaded_message:
         "This test is loaded but not completed. Please contact admin to reset it!",
     StringConstants.update_answer_error_message:
-        "An error when update your answers. Please try again !",
+        "An error when update your answers. Please try again!",
     StringConstants.multi_language: "Multi Language",
     StringConstants.activity_status_out_of_date: "Out Of Date",
     StringConstants.activity_status_not_completed: "Not Completed",
