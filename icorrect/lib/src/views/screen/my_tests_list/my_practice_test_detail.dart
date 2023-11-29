@@ -59,7 +59,7 @@ class _MyPracticeTestDetailState extends State<MyPracticeTestDetail> {
                                 _showDialogConfirmToOutScreen(
                                     provider: _myTestProvider!);
                               } else {
-                                 _myTestProvider!.clearData();
+                                _myTestProvider!.clearData();
                                 Navigator.of(context).pop();
                               }
                             },
@@ -89,8 +89,7 @@ class _MyPracticeTestDetailState extends State<MyPracticeTestDetail> {
                   const CustomDivider(),
                   Container(
                     height: h - 60,
-                    padding: const EdgeInsets.only(top: 20, bottom: 30),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.only(bottom: 30),
                     child: MyTestTab(
                       practiceTestId: widget.testId,
                       provider: _myTestProvider!,

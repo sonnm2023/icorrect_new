@@ -49,6 +49,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
         alignment: Alignment.center,
         margin: const EdgeInsets.all(20),
         height: 300,
+        color: Colors.transparent,
         child: Text(
           Utils.multiLanguage(
             StringConstants.no_answer_please_start_your_test_message,
@@ -62,144 +63,147 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
         ),
       );
     } else {
-      return Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-            itemCount: widget.simulatorTestProvider.questionList.length,
-            itemBuilder: (BuildContext context, int index) {
-              //Header part 1
-              if (index == 0) {
-                return Column(
-                  children: [
-                    Container(
-                      color: AppColor.defaultLightGrayColor,
-                      height: 44,
-                      child: ListTile(
-                        title: Center(
-                          child: Text(
-                            Utils.multiLanguage(
-                              StringConstants.part_1_header,
-                            ),
-                            textAlign: TextAlign.center,
-                            style: CustomTextStyle.textWithCustomInfo(
-                              context: context,
-                              color: AppColor.defaultPurpleColor,
-                              fontsSize: FontsSize.fontSize_16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // The fist list item
-                    Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      child: _buildTestQuestionItem(
-                        context,
-                        widget.simulatorTestProvider.questionList
-                            .elementAt(index),
-                        index,
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              //Header part 2
-              if (widget.simulatorTestProvider.indexOfHeaderPart2 != 0 &&
-                  index == widget.simulatorTestProvider.indexOfHeaderPart2) {
-                return Column(
-                  children: [
-                    Container(
-                      color: AppColor.defaultLightGrayColor,
-                      height: 44,
-                      child: ListTile(
-                        title: Center(
-                          child: Text(
-                            Utils.multiLanguage(
-                              StringConstants.part_2_header,
-                            ),
-                            textAlign: TextAlign.center,
-                            style: CustomTextStyle.textWithCustomInfo(
-                              context: context,
-                              color: AppColor.defaultPurpleColor,
-                              fontsSize: FontsSize.fontSize_16,
-                              fontWeight: FontWeight.w600,
+      return Container(
+        color: AppColor.defaultGraySlightColor,
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: widget.simulatorTestProvider.questionList.length,
+              itemBuilder: (BuildContext context, int index) {
+                //Header part 1
+                if (index == 0) {
+                  return Column(
+                    children: [
+                      Container(
+                        color: AppColor.defaultGraySlightColor,
+                        height: 40,
+                        child: ListTile(
+                          title: Center(
+                            child: Text(
+                              Utils.multiLanguage(
+                                StringConstants.part_1_header,
+                              ),
+                              textAlign: TextAlign.center,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // The fist list item
-                    Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      child: _buildTestQuestionItem(
-                        context,
-                        widget.simulatorTestProvider.questionList
-                            .elementAt(index),
-                        index,
+                      // The fist list item
+                      Container(
+                        margin: const EdgeInsets.only(top: 15),
+                        child: _buildTestQuestionItem(
+                          context,
+                          widget.simulatorTestProvider.questionList
+                              .elementAt(index),
+                          index,
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }
+                    ],
+                  );
+                }
 
-              //Header part 3
-              if (widget.simulatorTestProvider.indexOfHeaderPart3 != 0 &&
-                  index == widget.simulatorTestProvider.indexOfHeaderPart3) {
-                return Column(
-                  children: [
-                    Container(
-                      color: AppColor.defaultLightGrayColor,
-                      height: 44,
-                      child: ListTile(
-                        title: Center(
-                          child: Text(
-                            Utils.multiLanguage(
-                              StringConstants.part_3_header,
-                            ),
-                            textAlign: TextAlign.center,
-                            style: CustomTextStyle.textWithCustomInfo(
-                              context: context,
-                              color: AppColor.defaultPurpleColor,
-                              fontsSize: FontsSize.fontSize_16,
-                              fontWeight: FontWeight.w600,
+                //Header part 2
+                if (widget.simulatorTestProvider.indexOfHeaderPart2 != 0 &&
+                    index == widget.simulatorTestProvider.indexOfHeaderPart2) {
+                  return Column(
+                    children: [
+                      Container(
+                        color: AppColor.defaultGraySlightColor,
+                        height: 44,
+                        child: ListTile(
+                          title: Center(
+                            child: Text(
+                              Utils.multiLanguage(
+                                StringConstants.part_2_header,
+                              ),
+                              textAlign: TextAlign.center,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // The fist list item
-                    Container(
-                      margin: const EdgeInsets.only(top: 15),
-                      child: _buildTestQuestionItem(
-                        context,
-                        widget.simulatorTestProvider.questionList
-                            .elementAt(index),
-                        index,
+                      // The fist list item
+                      Container(
+                        margin: const EdgeInsets.only(top: 15),
+                        child: _buildTestQuestionItem(
+                          context,
+                          widget.simulatorTestProvider.questionList
+                              .elementAt(index),
+                          index,
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }
+                    ],
+                  );
+                }
 
-              return Container(
-                margin: const EdgeInsets.only(top: 15),
-                child: _buildTestQuestionItem(
-                  context,
-                  widget.simulatorTestProvider.questionList.elementAt(index),
-                  index,
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 60),
-        ],
+                //Header part 3
+                if (widget.simulatorTestProvider.indexOfHeaderPart3 != 0 &&
+                    index == widget.simulatorTestProvider.indexOfHeaderPart3) {
+                  return Column(
+                    children: [
+                      Container(
+                        color: AppColor.defaultGraySlightColor,
+                        height: 44,
+                        child: ListTile(
+                          title: Center(
+                            child: Text(
+                              Utils.multiLanguage(
+                                StringConstants.part_3_header,
+                              ),
+                              textAlign: TextAlign.center,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // The fist list item
+                      Container(
+                        margin: const EdgeInsets.only(top: 15),
+                        child: _buildTestQuestionItem(
+                          context,
+                          widget.simulatorTestProvider.questionList
+                              .elementAt(index),
+                          index,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return Container(
+                  margin: const EdgeInsets.only(top: 15),
+                  child: _buildTestQuestionItem(
+                    context,
+                    widget.simulatorTestProvider.questionList.elementAt(index),
+                    index,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 60),
+          ],
+        ),
       );
     }
   }
@@ -229,15 +233,15 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
     bool hasImage = Utils.checkHasImage(question: question);
     String fileName = question.files.last.url;
 
-    return Card(
+    return Container(
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Visibility(
             visible: hasCueCard,
             child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+              padding: const EdgeInsets.only(left: 10, right: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

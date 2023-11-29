@@ -216,70 +216,73 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               ],
             ),
             Expanded(
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  SingleChildScrollView(
-                    child: TestQuestionWidget(
-                      testRoomPresenter: _testRoomPresenter!,
-                      playAnswerCallBack: _playAnswerCallBack,
-                      reAnswerCallBack: _reAnswerCallBack,
-                      showTipCallBack: _showTipCallBack,
-                      simulatorTestProvider: _simulatorTestProvider!,
-                      isExam: _isExam,
+              child: Container(
+                color: AppColor.defaultGraySlightColor,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    SingleChildScrollView(
+                      child: TestQuestionWidget(
+                        testRoomPresenter: _testRoomPresenter!,
+                        playAnswerCallBack: _playAnswerCallBack,
+                        reAnswerCallBack: _reAnswerCallBack,
+                        showTipCallBack: _showTipCallBack,
+                        simulatorTestProvider: _simulatorTestProvider!,
+                        isExam: _isExam,
+                      ),
                     ),
-                  ),
-                  const CueCardWidget(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Consumer<SimulatorTestProvider>(
-                        builder: (context, simulatorTestProvider, _) {
-                          return Expanded(
-                            child: simulatorTestProvider.questionHasImage
-                                ? Container(
-                                    decoration: const BoxDecoration(
-                                      color: AppColor.defaultAppColor,
-                                    ),
-                                    child: Center(
-                                      child: simulatorTestProvider
-                                              .questionImageUrlFromLocal
-                                              .isNotEmpty
-                                          ? LoadLocalImageWidget(
-                                              imageUrl: simulatorTestProvider
-                                                  .questionImageUrlFromLocal,
-                                              isInRow: false,
-                                            )
-                                          : CachedNetworkImageWidget(
-                                              imageUrl: simulatorTestProvider
-                                                  .questionImageUrl,
-                                              isInRow: false,
-                                            ),
-                                    ),
-                                  )
-                                : const SizedBox(),
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 200,
-                        child: Stack(
-                          children: [
-                            TestRecordWidget(
-                              finishAnswer: _finishAnswerCallBack,
-                              repeatQuestion: _repeatQuestionCallBack,
-                              cancelReAnswer: _cancelReanswerCallBack,
-                            ),
-                            showSaveTheExamButton
-                                ? SaveTheTestWidget(
-                                    testRoomPresenter: _testRoomPresenter!)
-                                : const SizedBox(),
-                          ],
+                    const CueCardWidget(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Consumer<SimulatorTestProvider>(
+                          builder: (context, simulatorTestProvider, _) {
+                            return Expanded(
+                              child: simulatorTestProvider.questionHasImage
+                                  ? Container(
+                                      decoration: const BoxDecoration(
+                                        color: AppColor.defaultAppColor,
+                                      ),
+                                      child: Center(
+                                        child: simulatorTestProvider
+                                                .questionImageUrlFromLocal
+                                                .isNotEmpty
+                                            ? LoadLocalImageWidget(
+                                                imageUrl: simulatorTestProvider
+                                                    .questionImageUrlFromLocal,
+                                                isInRow: false,
+                                              )
+                                            : CachedNetworkImageWidget(
+                                                imageUrl: simulatorTestProvider
+                                                    .questionImageUrl,
+                                                isInRow: false,
+                                              ),
+                                      ),
+                                    )
+                                  : const SizedBox(),
+                            );
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        SizedBox(
+                          height: 200,
+                          child: Stack(
+                            children: [
+                              TestRecordWidget(
+                                finishAnswer: _finishAnswerCallBack,
+                                repeatQuestion: _repeatQuestionCallBack,
+                                cancelReAnswer: _cancelReanswerCallBack,
+                              ),
+                              showSaveTheExamButton
+                                  ? SaveTheTestWidget(
+                                      testRoomPresenter: _testRoomPresenter!)
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           ],

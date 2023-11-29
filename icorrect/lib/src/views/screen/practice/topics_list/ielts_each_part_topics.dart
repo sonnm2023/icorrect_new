@@ -93,14 +93,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                         provider.topicsId.length == provider.topicsList.length,
                     onChanged: (bool? value) {
                       if (value ?? false) {
-                        provider.addAllTopics();
-                        List<TopicId> topicsId = [];
-                        for (int i = 0; i < provider.topicsId.length; i++) {
-                          topicsId.add(TopicId(
-                              id: provider.topicsId[i],
-                              testOption: testOption));
-                        }
-                        _provider!.setTopicsId(topicsId, testOption);
+                        _addAllTopics();
                       } else {
                         provider.clearTopicSelection();
                         _provider!.clearTopicsByTestOption(testOption);
@@ -263,6 +256,19 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   void getIELTSTopicsSuccess(List<IELTSTopicModel> topicsList) {
     _loading!.hide();
     _ieltsTopicsProvider!.setIELTSTopics(topicsList);
+
+    _addAllTopics();
+  }
+
+  void _addAllTopics() {
+    int testOption = Utils.getTestOption(widget.topicTypes);
+    _ieltsTopicsProvider!.addAllTopics();
+    List<TopicId> topicsId = [];
+    for (int i = 0; i < _ieltsTopicsProvider!.topicsId.length; i++) {
+      topicsId.add(TopicId(
+          id: _ieltsTopicsProvider!.topicsId[i], testOption: testOption));
+    }
+    _provider!.setTopicsId(topicsId, testOption);
   }
 
   @override

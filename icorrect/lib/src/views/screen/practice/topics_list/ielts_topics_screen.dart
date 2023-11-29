@@ -169,12 +169,22 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
 
   Future _onClickStartTest() async {
     List<TopicId> topicsId = _provider!.topicsId;
-    if (topicsId.length >= 3) {
-      if (widget.topicTypes == IELTSTopicType.full.get) {
-        _onTopicsIsFullTest();
-      } else {
+    if (widget.topicTypes == IELTSTopicType.part2and3.get) {
+      if (topicsId.isNotEmpty) {
         _goToTestScreen();
+      } else {
+        showToastMsg(
+          msg: Utils.multiLanguage(
+              StringConstants.choose_at_least_1_topics_at_part23_message),
+          toastState: ToastStatesType.warning,
+        );
       }
+    } else if (topicsId.length >= 3 &&
+        widget.topicTypes == IELTSTopicType.full.get) {
+      _onTopicsIsFullTest();
+    } else if (topicsId.length >= 3 &&
+        widget.topicTypes != IELTSTopicType.full.get) {
+      _goToTestScreen();
     } else {
       showToastMsg(
         msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics),
@@ -212,10 +222,10 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => SimulatorTestScreen(
-          testOption: testOption,
-          topicsId: _provider!.getTopicsIdList(),
-          isPredict: IELTSPredict.normalQuestion.get,
-        ),
+              testOption: testOption,
+              topicsId: _provider!.getTopicsIdList(),
+              isPredict: IELTSPredict.normalQuestion.get,
+            ),
       ),
     );
   }

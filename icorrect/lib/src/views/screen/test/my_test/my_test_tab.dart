@@ -175,6 +175,8 @@ class _MyTestTabState extends State<MyTestTab>
                     alignment: Alignment.bottomCenter,
                     children: [
                       Container(
+                        color: AppColor.defaultGraySlightColor,
+                        height: h,
                         alignment: Alignment.topCenter,
                         padding: const EdgeInsets.only(top: 10, bottom: 70),
                         child: ListView.builder(
@@ -429,8 +431,9 @@ class _MyTestTabState extends State<MyTestTab>
   Widget _questionItem(QuestionTopicModel question) {
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
-        return Card(
-          elevation: 2,
+        return Container(
+          color: Colors.white,
+          margin: const EdgeInsets.symmetric(vertical: 10),
           child: LayoutBuilder(
             builder: (_, constraint) {
               return Container(
