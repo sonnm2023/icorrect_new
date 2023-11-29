@@ -280,8 +280,8 @@ class Utils {
             (double.parse(aiScore) == -1.0 || double.parse(aiScore) == -2.0)) {
           return {
             StringConstants.k_color: Colors.red,
-            StringConstants.k_score:
-                StringConstants.ai_score_response_not_evaluated
+            StringConstants.k_score: Utils.multiLanguage(
+                StringConstants.ai_score_response_not_evaluated)
           };
         } else {
           return {
@@ -292,8 +292,8 @@ class Utils {
       } else {
         return {
           StringConstants.k_color: Colors.red,
-          StringConstants.k_score:
-              StringConstants.ai_score_response_not_evaluated
+          StringConstants.k_score: Utils.multiLanguage(
+              StringConstants.ai_score_response_not_evaluated)
         };
       }
     }
