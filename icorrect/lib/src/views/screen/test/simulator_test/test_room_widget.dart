@@ -2761,4 +2761,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       toastLength: Toast.LENGTH_LONG,
     );
   }
+
+  @override
+  void onUpdateHasOrderStatus(bool hasOrder) {
+    _simulatorTestProvider!.setHasOrderStatus(hasOrder);
+  }
 }

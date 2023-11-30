@@ -224,7 +224,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
             ActivityType.homework.name ||
         prepareSimulatorTestProvider.activityType ==
             ActivityType.practice.name) {
-      hasReAnswer = true;
+      hasReAnswer = !prepareSimulatorTestProvider.hasOrder;
     }
 
     bool hasImage = Utils.checkHasImage(question: question);

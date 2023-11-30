@@ -909,4 +909,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void onUpdateHasOrderStatus(bool hasOrder) {
+    _simulatorTestProvider!.setHasOrderStatus(hasOrder);
+  }
 }

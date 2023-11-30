@@ -620,7 +620,14 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _hasOrder = false;
+  bool get hasOrder => _hasOrder;
+  void setHasOrderStatus(bool hasOrder) {
+    _hasOrder = hasOrder;
+  }
+
   void resetAll() {
+    _hasOrder = false;
     _enabledFinish = true;
     resetLogActions();
     _videosSaved = [];

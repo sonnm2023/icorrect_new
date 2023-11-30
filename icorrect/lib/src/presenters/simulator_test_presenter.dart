@@ -40,6 +40,7 @@ abstract class SimulatorTestViewContract {
   void onHandleBackButtonSystemTapped();
   void onHandleEventBackButtonSystem({required bool isQuitTheTest});
   void onPrepareListVideoSource(List<FileTopicModel> filesTopic);
+  void onUpdateHasOrderStatus(bool hasOrder);
 }
 
 class SimulatorTestPresenter {
@@ -832,6 +833,13 @@ class SimulatorTestPresenter {
             message: null,
             status: LogEvent.success,
           );
+
+          bool hasOrder = false;
+          if (null != json[StringConstants.k_has_order]) {
+            hasOrder = json[StringConstants.k_has_order];
+          }
+
+          _view!.onUpdateHasOrderStatus(hasOrder);
 
           _view!.onSubmitTestSuccess(
               Utils.multiLanguage(StringConstants.save_answer_success_message));

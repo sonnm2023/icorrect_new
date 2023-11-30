@@ -10,7 +10,6 @@ import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
-import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
@@ -40,6 +39,7 @@ abstract class TestRoomViewContract {
   void onClickSaveTheTest();
   void onFinishTheTest();
   void onReDownload();
+  void onUpdateHasOrderStatus(bool hasOrder);
 }
 
 class TestRoomPresenter {
@@ -269,6 +269,12 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
+          bool hasOrder = false;
+          if (null != json[StringConstants.k_has_order]) {
+            hasOrder = json[StringConstants.k_has_order];
+          }
+
+          _view!.onUpdateHasOrderStatus(hasOrder);
           _view!.onSubmitTestSuccess(
               Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
