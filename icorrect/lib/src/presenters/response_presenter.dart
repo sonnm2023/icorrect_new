@@ -11,7 +11,7 @@ import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 
 abstract class ResponseContracts {
   void getSuccessResponse(ResultResponseModel responseModel);
-  void getErrorResponse(String message);
+  void getErrorResponse({required String message, required bool isError});
 }
 
 class ResponsePresenter {
@@ -65,7 +65,10 @@ class ResponsePresenter {
         );
 
         _view!.getErrorResponse(
-            StringConstants.load_result_response_error_message);
+          message: Utils.multiLanguage(
+              StringConstants.load_result_response_error_message),
+          isError: false,
+        );
       }
     }).catchError((onError) {
       //Add log
@@ -77,7 +80,11 @@ class ResponsePresenter {
       );
 
       // ignore: invalid_return_type_for_catch_error
-      _view!.getErrorResponse(StringConstants.can_not_load_response_message);
+      _view!.getErrorResponse(
+        message:
+            Utils.multiLanguage(StringConstants.can_not_load_response_message),
+        isError: true,
+      );
     });
   }
 }

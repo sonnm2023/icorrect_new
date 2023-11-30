@@ -509,14 +509,16 @@ class _StudentCorrectionState extends State<StudentCorrection>
   }
 
   @override
-  void getErrorResponse(String message) {
+  void getErrorResponse({required String message, required bool isError}) {
     _loading!.hide();
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      fontSize: FontsSize.fontSize_15,
-    );
+    if (isError) {
+      Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        fontSize: FontsSize.fontSize_15,
+      );
+    }
   }
 
   @override
