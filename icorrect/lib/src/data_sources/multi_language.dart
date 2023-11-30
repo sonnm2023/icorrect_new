@@ -174,7 +174,7 @@ class MultiLanguage {
     StringConstants.submit_authen_fail_timeout_message:
         "Gửi Video xác thực không thành công: TimeoutException! Vui lòng kiểm tra lại mạng và thử lại !",
     StringConstants.cancel_and_text: "Bỏ Qua Video Xác Thực",
-    StringConstants.skip_and_text: "Hủy Bỏ",
+    StringConstants.skip_and_text: "Bỏ Qua Video Xác Thực",
     StringConstants.prepare_compress_video_title: 'Đang chuẩn bị được nộp lên',
     StringConstants.continue_prepare_text: "Tiếp Tục",
     StringConstants.warning_skip_compress_video_text: "Cảnh Báo !",
