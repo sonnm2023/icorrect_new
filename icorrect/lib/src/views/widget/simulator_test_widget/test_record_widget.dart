@@ -39,7 +39,7 @@ class TestRecordWidget extends StatelessWidget {
             children: [
               Container(
                 width: w,
-                height: 200,
+                height: 300,
                 alignment: Alignment.center,
                 color: AppColor.defaultLightGrayColor,
                 child: Column(
