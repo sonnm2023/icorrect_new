@@ -59,7 +59,8 @@ String submitHomeWorkEP() {
 }
 
 String submitHomeWorkV2EP() {
-  return '${icorrectDomain}api/v1/ielts-test/submit-v2';
+  // return '${icorrectDomain}api/v1/ielts-test/submit-v2'; //Change from server required 202311301651
+  return '${icorrectDomain}api/v1/ielts-test/syllabus/submit';
 }
 
 String submitExam() {
