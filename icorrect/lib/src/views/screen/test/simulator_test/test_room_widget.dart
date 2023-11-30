@@ -1217,11 +1217,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    //Comment from build release 1.1.9 (build 1) 2023-11-29 16:55
     //Check answer of user must be greater than 2 seconds
-    if (_checkAnswerDuration()) {
-      _resetEnableFinishStatus();
-      return;
-    }
+    // if (_checkAnswerDuration()) {
+    //   _resetEnableFinishStatus();
+    //   return;
+    // }
 
     Map<String, dynamic> info = {
       StringConstants.k_question_id: questionTopicModel.id.toString(),
