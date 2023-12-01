@@ -933,11 +933,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.wait_until_the_exam_finished_message),
-        toastState: ToastStatesType.warning,
-      );
+      _showWaitUntilTheExamFinishedDialog();
     }
   }
 
@@ -1019,6 +1015,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   // }
 
   void _reAnswerCallBack(QuestionTopicModel question) async {
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+      return;
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -1068,12 +1068,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         );
       }
     } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.wait_until_the_exam_finished_message),
-        toastState: ToastStatesType.warning,
-      );
+      _showWaitUntilTheExamFinishedDialog();
     }
+  }
+
+  void _showWaitUntilTheExamFinishedDialog() {
+    showToastMsg(
+      msg: Utils.multiLanguage(
+          StringConstants.wait_until_the_exam_finished_message),
+      toastState: ToastStatesType.warning,
+    );
   }
 
   void _cancelButtonTapped() {
@@ -1083,14 +1087,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+      return;
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       _showTip(question);
     } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.wait_until_the_exam_finished_message),
-        toastState: ToastStatesType.warning,
-      );
+      _showWaitUntilTheExamFinishedDialog();
     }
   }
 
