@@ -626,7 +626,14 @@ class SimulatorTestProvider with ChangeNotifier {
     _hasOrder = hasOrder;
   }
 
+  bool _needRefreshActivityList = false;
+  bool get needRefreshActivityList => _needRefreshActivityList;
+  void setNeedRefreshActivityList(bool needRefresh) {
+    _needRefreshActivityList = needRefresh;
+  }
+
   void resetAll() {
+    _needRefreshActivityList = false;
     _hasOrder = false;
     _enabledFinish = true;
     resetLogActions();

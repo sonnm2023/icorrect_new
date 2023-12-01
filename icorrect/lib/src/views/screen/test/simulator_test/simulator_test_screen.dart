@@ -379,7 +379,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         );
 
         if (cancelButtonTapped) {
-          Navigator.of(context).pop();
+          if (_simulatorTestProvider!.needRefreshActivityList) {
+            Navigator.pop(context, StringConstants.k_refresh);
+          } else {
+            Navigator.of(context).pop();
+          }
         }
       } else {
         //Go back List homework screen

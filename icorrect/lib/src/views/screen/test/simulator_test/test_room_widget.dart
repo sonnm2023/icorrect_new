@@ -2561,6 +2561,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
+    _simulatorTestProvider!.setNeedRefreshActivityList(true);
 
     if (_isExam) {
       //Reset _questionIndex
