@@ -1091,11 +1091,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       return;
     }
 
-    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
-      _showTip(question);
-    } else {
-      _showWaitUntilTheExamFinishedDialog();
-    }
+    _showTip(question);
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
