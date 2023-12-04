@@ -442,7 +442,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _showConfirmQuitTheTest() {
     bool okButtonTapped = false;
-    bool cancelButtonTapped = false;
 
     showDialog(
       context: context,
@@ -463,13 +462,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             okButtonTapped = true;
           },
           cancelButtonTapped: () {
-            cancelButtonTapped = true;
-            Navigator.of(context).pop();
+            Navigator.of(buildContext).pop();
           },
         );
       },
     ).then((_) {
-      if (cancelButtonTapped || okButtonTapped) {
+      if (okButtonTapped) {
         if (_isExam) {
           Navigator.pop(context, StringConstants.k_refresh);
         } else {
@@ -501,8 +499,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             cancelButtonTapped = true;
             _simulatorTestProvider!.setShowConfirmSaveTest(false);
             _deleteAllAnswer();
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
+            Navigator.of(buildContext).pop();
           },
         );
       },
@@ -510,6 +507,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (cancelButtonTapped) {
         if (_isExam) {
           Navigator.pop(context, StringConstants.k_refresh);
+        } else {
+          Navigator.pop(context);
         }
       }
     });
