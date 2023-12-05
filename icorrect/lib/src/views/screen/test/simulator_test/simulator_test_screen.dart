@@ -791,7 +791,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void onGetTestDetailError(String message) {
     //Show error message
     showToastMsg(
-      msg: message,
+      msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.error,
     );
   }
