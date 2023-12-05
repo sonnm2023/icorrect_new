@@ -678,6 +678,8 @@ class StringConstants {
       "Has an error when getting app config information!";
   static const String confirm_new_password_error_message =
       "Confirm new password must be equal new password!";
+  static const String old_password_equals_new_password_error_message =
+      "The new password must be different from the old password!";
   static const String data_downloaded_error_message =
       "A part of data has not downloaded properly. Please check your internet connection and try again.";
   static const String network_error_message =
