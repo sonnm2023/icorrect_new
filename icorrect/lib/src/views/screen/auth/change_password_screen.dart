@@ -101,14 +101,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       PasswordInputWidget(
-                          passwordController: currentPasswordController,
-                          type: PasswordType.currentPassword),
+                        passwordController: currentPasswordController,
+                        type: PasswordType.currentPassword,
+                      ),
                       PasswordInputWidget(
-                          passwordController: newPasswordController,
-                          type: PasswordType.newPassword),
+                        passwordController: newPasswordController,
+                        type: PasswordType.newPassword,
+                      ),
                       PasswordInputWidget(
-                          passwordController: confirmNewPasswordController,
-                          type: PasswordType.confirmNewPassword),
+                        passwordController: confirmNewPasswordController,
+                        type: PasswordType.confirmNewPassword,
+                      ),
                       const SizedBox(height: 20),
                       _buildSaveButton(),
                       const SizedBox(height: 10),
@@ -128,7 +131,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
       onPressed: () async {
-        if (newPasswordController.text.trim() !=
+        if (newPasswordController.text.trim() ==
+            currentPasswordController.text.trim()) {
+          showToastMsg(
+            msg: Utils.multiLanguage(
+                StringConstants.old_password_equals_new_password_error_message),
+            toastState: ToastStatesType.error,
+          );
+        } else if (newPasswordController.text.trim() !=
             confirmNewPasswordController.text.trim()) {
           showToastMsg(
             msg: Utils.multiLanguage(

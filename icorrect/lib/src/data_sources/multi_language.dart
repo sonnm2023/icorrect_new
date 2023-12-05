@@ -220,6 +220,8 @@ class MultiLanguage {
         "Đã xảy ra lỗi khi lấy thông tin cấu hình ứng dụng!",
     StringConstants.confirm_new_password_error_message:
         "Xác nhận mật khẩu mới phải bằng mật khẩu mới!",
+    StringConstants.old_password_equals_new_password_error_message:
+        "Mật khẩu mới phải khác mật khẩu cũ!",
     StringConstants.data_downloaded_error_message:
         "Một phần dữ liệu chưa được tải xuống đúng cách.Vui lòng kiểm tra kết nối internet của bạn và thử lại.",
     StringConstants.network_error_message:
@@ -259,7 +261,8 @@ class MultiLanguage {
         "Bài thi đã bị khóa do bạn thoát ra trong quá trình làm bài. Vui lòng liên hệ với đội ngũ hỗ trợ !",
     StringConstants.update_answer_error_message:
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng kiểm tra và thử lại!",
-    StringConstants.change_password_success_message: "Thay đổi mật khẩu thành công!",
+    StringConstants.change_password_success_message:
+        "Thay đổi mật khẩu thành công!",
     StringConstants.multi_language: "Đa Ngôn Ngữ",
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
@@ -546,6 +549,8 @@ class MultiLanguage {
         "Has an error when getting app config information!",
     StringConstants.confirm_new_password_error_message:
         "Confirm new password must be equal new password!",
+    StringConstants.old_password_equals_new_password_error_message:
+        "The new password must be different from the old password!",
     StringConstants.data_downloaded_error_message:
         "A part of data has not downloaded properly. Please check your internet connection and try again.",
     StringConstants.network_error_message:
@@ -583,7 +588,8 @@ class MultiLanguage {
         "This test is loaded but not completed. Please contact admin to reset it!",
     StringConstants.update_answer_error_message:
         "An error when update your answers. Please try again!",
-  StringConstants.change_password_success_message: "Change password successfully!",
+    StringConstants.change_password_success_message:
+        "Change password successfully!",
     StringConstants.multi_language: "Multi Language",
     StringConstants.activity_status_out_of_date: "Out Of Date",
     StringConstants.activity_status_not_completed: "Not Completed",
