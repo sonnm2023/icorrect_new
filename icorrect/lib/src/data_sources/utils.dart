@@ -280,8 +280,8 @@ class Utils {
             (double.parse(aiScore) == -1.0 || double.parse(aiScore) == -2.0)) {
           return {
             StringConstants.k_color: Colors.red,
-            StringConstants.k_score:
-                StringConstants.ai_score_response_not_evaluated
+            StringConstants.k_score: Utils.multiLanguage(
+                StringConstants.ai_score_response_not_evaluated)
           };
         } else {
           return {
@@ -292,8 +292,8 @@ class Utils {
       } else {
         return {
           StringConstants.k_color: Colors.red,
-          StringConstants.k_score:
-              StringConstants.ai_score_response_not_evaluated
+          StringConstants.k_score: Utils.multiLanguage(
+              StringConstants.ai_score_response_not_evaluated)
         };
       }
     }
@@ -307,7 +307,7 @@ class Utils {
           const MapLocale('en', MultiLanguage.EN),
           const MapLocale('vn', MultiLanguage.VN),
         ],
-        initLanguageCode: 'en',
+        initLanguageCode: 'vn',
       );
     }
     return Intl.message(
@@ -315,6 +315,33 @@ class Utils {
             ? MultiLanguage.VN[constantString]
             : MultiLanguage.EN[constantString],
         name: constantString);
+  }
+
+  static Map<String, dynamic> getCurrentLanguage() {
+    final FlutterLocalization localization = FlutterLocalization.instance;
+    if (localization.currentLocale == null) {
+      localization.init(
+        mapLocales: [
+          const MapLocale('en', MultiLanguage.EN),
+          const MapLocale('vn', MultiLanguage.VN),
+        ],
+        initLanguageCode: 'vn',
+      );
+    }
+
+    if (localization.currentLocale!.languageCode == "vn") {
+      return {
+        StringConstants.k_title: StringConstants.vn_uppercase,
+        StringConstants.k_image_url: AppAsset.imgVietName,
+        StringConstants.k_data: StringConstants.vn_shortest
+      };
+    } else {
+      return {
+        StringConstants.k_title: StringConstants.ens_upppercase,
+        StringConstants.k_image_url: AppAsset.imgEnglish,
+        StringConstants.k_data: StringConstants.en_shortest
+      };
+    }
   }
 
   static bool isNumeric(String str) {
@@ -1114,5 +1141,59 @@ class Utils {
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
     String path = "$folderPath/$fileName";
     return path;
+  }
+
+  static String convertActivityStatusToMulti(String status) {
+    String rs = "";
+    String temp = "";
+
+    switch (status) {
+      case "Select All":
+        {
+          temp = "select_all";
+          break;
+        }
+      case "Out Of Date":
+        {
+          temp = "activity_status_out_of_date";
+          break;
+        }
+      case "Not Completed":
+        {
+          temp = "activity_status_not_completed";
+          break;
+        }
+      case "Corrected":
+        {
+          temp = "activity_status_corrected";
+          break;
+        }
+      case "Submitted":
+        {
+          temp = "activity_status_submitted";
+          break;
+        }
+      case "Late":
+        {
+          temp = "activity_status_late";
+          break;
+        }
+      case " AI Scored":
+        {
+          temp = "activity_status_ai_scored";
+          break;
+        }
+      case "Loaded Test":
+        {
+          temp = "activity_status_loaded_test";
+          break;
+        }
+    }
+
+    if (temp.isNotEmpty) {
+      rs = multiLanguage(temp);
+    }
+
+    return rs;
   }
 }

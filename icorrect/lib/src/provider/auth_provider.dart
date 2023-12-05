@@ -49,7 +49,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  bool _skipAction = false;
+  bool _skipAction = true;
   bool get skipAction => _skipAction;
   void setSkipAction(bool skip) {
     _skipAction = skip;
@@ -71,52 +71,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-///////////////////Get Topics Id for Practice Test/////////////////////////////
-  List<TopicId> _topicsId = [];
-  List<TopicId> get topicsId => _topicsId;
-
-  void setTopicsId(List<TopicId> list) {
-    if (_topicsId.isNotEmpty) {
-      _topicsId.clear();
-    }
-    _topicsId.addAll(list);
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void removeTopicId(TopicId topic) {
-    _topicsId.removeWhere(
-        (item) => item.id == topic.id && item.testOption == topic.testOption);
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void addTopicId(TopicId id) {
-    _topicsId.add(id);
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void clearTopicsId() {
-    if (_topicsId.isNotEmpty) {
-      _topicsId.clear();
-    }
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  List<int> getTopicsIdList() {
-    List<int> topicsIdList = [];
-    for (int i = 0; i < _topicsId.length; i++) {
-      topicsIdList.add(_topicsId[i].id ?? 0);
-    }
-    return topicsIdList;
-  }
+  
 
 ////////////////////////////////////////////////////////////////////////////////
   Queue<GlobalKey<ScaffoldState>> _scaffoldKeys = Queue();

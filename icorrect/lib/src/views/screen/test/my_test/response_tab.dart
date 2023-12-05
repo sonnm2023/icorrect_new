@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -489,15 +490,16 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   @override
-  void getErrorResponse(String message) {
+  void getErrorResponse({required String message, required bool isError}) {
     _loading!.hide();
-    // Fluttertoast.showToast(
-    //   msg: message,
-    //   backgroundColor: AppColor.defaultGrayColor,
-    //   textColor: Colors.black,
-    //   toastLength: Toast.LENGTH_LONG,
-    //   gravity: ToastGravity.BOTTOM,
-    // );
+    if (isError) {
+      Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        fontSize: FontsSize.fontSize_15,
+      );
+    }
   }
 
   @override

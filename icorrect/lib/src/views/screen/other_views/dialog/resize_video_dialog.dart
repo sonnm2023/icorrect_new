@@ -42,7 +42,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
   void initState() {
     super.initState();
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-    Future.delayed(Duration.zero, () {
+    Future.delayed(const Duration(seconds: 15), () {
       _authProvider!.setSkipAction(false);
     });
     if (widget.videoFile.existsSync()) {
@@ -133,7 +133,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Please wait for preparing submit...',
+                        "${Utils.multiLanguage(StringConstants.prepare_compress_video_title)}...",
                         textAlign: TextAlign.center,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,

@@ -11,6 +11,7 @@ import '../../../../data_sources/utils.dart';
 import '../../../../models/practice_model/ielts_topic_model.dart';
 import '../../../../models/user_data_models/user_data_model.dart';
 import '../../../../presenters/ielts_topics_list_presenter.dart';
+import '../../../../provider/ielts_topics_screen_provider.dart';
 import '../../../widget/divider.dart';
 import '../../other_views/dialog/circle_loading.dart';
 import '../../other_views/dialog/message_dialog.dart';
@@ -29,7 +30,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   IELTSTopicsProvider? _ieltsTopicsProvider;
   CircleLoading? _loading;
   IELTSTopicsListPresenter? _presenter;
-  AuthProvider? _authProvider;
+  IELTSTopicsScreenProvider? _provider;
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
     _presenter = IELTSTopicsListPresenter(this);
     _ieltsTopicsProvider =
         Provider.of<IELTSTopicsProvider>(context, listen: false);
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _provider = Provider.of<IELTSTopicsScreenProvider>(context, listen: false);
 
     _loading!.show(context: context, isViewAIResponse: false);
     _getTopicsList();
@@ -57,16 +58,25 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    if (FocusManager.instance.primaryFocus != null) {
+      FocusManager.instance.primaryFocus!.unfocus();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return Consumer<IELTSTopicsProvider>(builder: (context, provider, child) {
+      int testOption = Utils.getTestOption(widget.topicTypes);
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_10,
+              horizontal: CustomPadding.padding_11,
             ),
             color: AppColor.defaultLight01GrayColor,
             child: Row(
@@ -83,9 +93,10 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                         provider.topicsId.length == provider.topicsList.length,
                     onChanged: (bool? value) {
                       if (value ?? false) {
-                        provider.addAllTopics();
+                        _addAllTopics();
                       } else {
                         provider.clearTopicSelection();
+                        _provider!.clearTopicsByTestOption(testOption);
                       }
                     },
                   ),
@@ -109,6 +120,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                   child: TextButton(
                     onPressed: () {
                       provider.clearTopicSelection();
+                      _provider!.clearTopicsByTestOption(testOption);
                     },
                     child: Text(
                       StringConstants.clear_button_title,
@@ -125,19 +137,26 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
               ],
             ),
           ),
-          Expanded(
-              child: ListView.separated(
-            itemCount: provider.topicsList.length,
-            itemBuilder: (context, index) {
-              IELTSTopicModel topicModel = provider.topicsList[index];
-              return _buildInTopicCard(
-                context,
-                ieltsTopicModel: topicModel,
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) =>
-                const CustomDivider(),
-          )),
+          Consumer<IELTSTopicsScreenProvider>(
+              builder: (context, parentScreenProvider, child) {
+            var listSearched = provider.topicsList.where((element) => element
+                .title
+                .toLowerCase()
+                .contains(parentScreenProvider.queryChanged.toLowerCase()));
+            return Expanded(
+                child: ListView.separated(
+              itemCount: listSearched.length,
+              itemBuilder: (context, index) {
+                IELTSTopicModel topicModel = listSearched.elementAt(index);
+                return _buildInTopicCard(
+                  context,
+                  ieltsTopicModel: topicModel,
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const CustomDivider(),
+            ));
+          })
         ],
       );
     });
@@ -145,24 +164,24 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
 
   Widget _buildInTopicCard(BuildContext context,
       {required IELTSTopicModel ieltsTopicModel}) {
+    int option = Utils.getTestOption(widget.topicTypes);
     return Consumer<IELTSTopicsProvider>(builder: (context, provider, child) {
       bool isChecked = provider.topicsId.contains(ieltsTopicModel.id);
       return InkWell(
         onTap: () {
-          int option = Utils.getTestOption(widget.topicTypes);
           if (isChecked) {
             provider.removeTopicId(ieltsTopicModel.id);
-            _authProvider!.removeTopicId(
+            _provider!.removeTopicId(
                 TopicId(id: ieltsTopicModel.id, testOption: option));
           } else {
             provider.setTopicSelection(ieltsTopicModel.id);
-            _authProvider!.addTopicId(
+            _provider!.addTopicId(
                 TopicId(id: ieltsTopicModel.id, testOption: option));
           }
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: CustomSize.size_5,
+            horizontal: 0,
           ),
           child: Card(
             elevation: 0,
@@ -180,8 +199,12 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                     onChanged: (bool? value) {
                       if (value ?? false) {
                         provider.setTopicSelection(ieltsTopicModel.id);
+                        _provider!.addTopicId(TopicId(
+                            id: ieltsTopicModel.id, testOption: option));
                       } else {
                         provider.removeTopicId(ieltsTopicModel.id);
+                        _provider!.removeTopicId(TopicId(
+                            id: ieltsTopicModel.id, testOption: option));
                       }
                     },
                   ),
@@ -233,6 +256,19 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   void getIELTSTopicsSuccess(List<IELTSTopicModel> topicsList) {
     _loading!.hide();
     _ieltsTopicsProvider!.setIELTSTopics(topicsList);
+
+    _addAllTopics();
+  }
+
+  void _addAllTopics() {
+    int testOption = Utils.getTestOption(widget.topicTypes);
+    _ieltsTopicsProvider!.addAllTopics();
+    List<TopicId> topicsId = [];
+    for (int i = 0; i < _ieltsTopicsProvider!.topicsId.length; i++) {
+      topicsId.add(TopicId(
+          id: _ieltsTopicsProvider!.topicsId[i], testOption: testOption));
+    }
+    _provider!.setTopicsId(topicsId, testOption);
   }
 
   @override

@@ -39,6 +39,7 @@ abstract class TestRoomViewContract {
   void onClickSaveTheTest();
   void onFinishTheTest();
   void onReDownload();
+  void onUpdateHasOrderStatus(bool hasOrder);
 }
 
 class TestRoomPresenter {
@@ -268,8 +269,14 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
-          _view!
-              .onSubmitTestSuccess(StringConstants.save_answer_success_message);
+          bool hasOrder = false;
+          if (null != json[StringConstants.k_has_order]) {
+            hasOrder = json[StringConstants.k_has_order];
+          }
+
+          _view!.onUpdateHasOrderStatus(hasOrder);
+          _view!.onSubmitTestSuccess(
+              Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
           //Add log
           Utils.prepareLogData(
@@ -285,7 +292,7 @@ class TestRoomPresenter {
           }
 
           _view!.onSubmitTestFail(
-              "${StringConstants.submit_test_error_message}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -297,8 +304,8 @@ class TestRoomPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onSubmitTestFail(
-            StringConstants.submit_test_error_invalid_return_type_message);
+        _view!.onSubmitTestFail(Utils.multiLanguage(
+            StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
       //Add log
@@ -309,7 +316,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_timeout);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -319,7 +327,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_socket);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -329,7 +338,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_client);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }
 
@@ -520,7 +530,7 @@ class TestRoomPresenter {
           );
 
           _view!.onUpdateReAnswersSuccess(
-              StringConstants.save_answer_success_message);
+              Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
           //Add log
           Utils.prepareLogData(
@@ -536,7 +546,7 @@ class TestRoomPresenter {
           }
 
           _view!.onUpdateReAnswersFail(
-              "${StringConstants.submit_test_error_message}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -548,8 +558,8 @@ class TestRoomPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onUpdateReAnswersFail(
-            StringConstants.submit_test_error_invalid_return_type_message);
+        _view!.onUpdateReAnswersFail(Utils.multiLanguage(
+            StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
       //Add log
@@ -560,7 +570,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_timeout);
+      _view!.onUpdateReAnswersFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -570,7 +581,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_socket);
+      _view!.onUpdateReAnswersFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -579,7 +591,8 @@ class TestRoomPresenter {
         message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
-      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_client);
+      _view!.onUpdateReAnswersFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }
 
@@ -620,8 +633,8 @@ class TestRoomPresenter {
 
       //Add information into log
       log!.addData(key: StringConstants.k_email, value: email);
-      log!.addData(key: StringConstants.k_activity_id, value: activityId);
-      log!.addData(key: "question_index", value: questionIndex);
+      log.addData(key: StringConstants.k_activity_id, value: activityId);
+      log.addData(key: "question_index", value: questionIndex);
 
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {

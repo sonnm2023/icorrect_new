@@ -40,6 +40,7 @@ abstract class SimulatorTestViewContract {
   void onHandleBackButtonSystemTapped();
   void onHandleEventBackButtonSystem({required bool isQuitTheTest});
   void onPrepareListVideoSource(List<FileTopicModel> filesTopic);
+  void onUpdateHasOrderStatus(bool hasOrder);
 }
 
 class SimulatorTestPresenter {
@@ -833,8 +834,15 @@ class SimulatorTestPresenter {
             status: LogEvent.success,
           );
 
-          _view!
-              .onSubmitTestSuccess(StringConstants.save_answer_success_message);
+          bool hasOrder = false;
+          if (null != json[StringConstants.k_has_order]) {
+            hasOrder = json[StringConstants.k_has_order];
+          }
+
+          _view!.onUpdateHasOrderStatus(hasOrder);
+
+          _view!.onSubmitTestSuccess(
+              Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
           //Add log
           Utils.prepareLogData(
@@ -848,9 +856,8 @@ class SimulatorTestPresenter {
           if (json[StringConstants.k_error_code] != null) {
             errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
           }
-
           _view!.onSubmitTestFail(
-              "${StringConstants.submit_test_error_message}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -862,8 +869,8 @@ class SimulatorTestPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onSubmitTestFail(
-            StringConstants.submit_test_error_invalid_return_type_message);
+        _view!.onSubmitTestFail(Utils.multiLanguage(
+            StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
       //Add log
@@ -874,7 +881,8 @@ class SimulatorTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_timeout);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -884,7 +892,8 @@ class SimulatorTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_socket);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -894,7 +903,8 @@ class SimulatorTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_client);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }
 

@@ -185,7 +185,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Consumer<SimulatorTestProvider>(
+    return WillPopScope(child: Consumer<SimulatorTestProvider>(
       builder: (context, simulatorTest, child) {
         if (simulatorTest.isShowConfirmSaveTest) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -291,7 +291,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           );
         }
       },
-    );
+    ), onWillPop: () async {
+      _backButtonTapped();
+      return false;
+    });
   }
 
   Widget _buildFullImage() {
@@ -334,7 +337,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
         await showDialog(
           context: context,
-          builder: (BuildContext context) {
+          builder: (BuildContext buildContext) {
             return CustomAlertDialog(
               title: Utils.multiLanguage(StringConstants.dialog_title),
               description: Utils.multiLanguage(
@@ -347,14 +350,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               hasCloseButton: true,
               okButtonTapped: () {
                 //Update reanswer
-                _loading!.show(context: context, isViewAIResponse: false);
+                _loading!.show(context: buildContext, isViewAIResponse: false);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
                 String savedVideoPath = _simulatorTestPresenter!
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
                 if (widget.homeWorkModel != null) {
                   _simulatorTestPresenter!.submitTest(
-                    context: context,
+                    context: buildContext,
                     testId: _simulatorTestProvider!.currentTestDetail.testId
                         .toString(),
                     activityId: widget.homeWorkModel!.activityId.toString(),
@@ -369,14 +372,18 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               },
               cancelButtonTapped: () {
                 cancelButtonTapped = true;
-                Navigator.of(context).pop();
+                Navigator.of(buildContext).pop();
               },
             );
           },
         );
 
         if (cancelButtonTapped) {
-          Navigator.of(context).pop();
+          if (_simulatorTestProvider!.needRefreshActivityList) {
+            Navigator.pop(context, StringConstants.k_refresh);
+          } else {
+            Navigator.of(context).pop();
+          }
         }
       } else {
         //Go back List homework screen
@@ -434,9 +441,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _showConfirmQuitTheTest() {
+    bool okButtonTapped = false;
+
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext buildContext) {
         return CustomAlertDialog(
           title: Utils.multiLanguage(StringConstants.dialog_title),
           description:
@@ -450,17 +459,20 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             //Reset question image
             _resetQuestionImage();
             _deleteAllAnswer();
+            okButtonTapped = true;
           },
           cancelButtonTapped: () {
-            Navigator.of(context).pop();
+            Navigator.of(buildContext).pop();
           },
         );
       },
     ).then((_) {
-      if (_isExam) {
-        Navigator.pop(context, StringConstants.k_refresh);
-      } else {
-        Navigator.of(context).pop();
+      if (okButtonTapped) {
+        if (_isExam) {
+          Navigator.pop(context, StringConstants.k_refresh);
+        } else {
+          Navigator.of(context).pop();
+        }
       }
     });
   }
@@ -470,14 +482,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext buildContext) {
         return CustomAlertDialog(
           title: Utils.multiLanguage(StringConstants.dialog_title),
           description: Utils.multiLanguage(
               StringConstants.confirm_before_quit_the_test_message),
           okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
           cancelButtonTitle:
-              Utils.multiLanguage(StringConstants.cancel_button_title),
+              Utils.multiLanguage(StringConstants.exit_button_title),
           borderRadius: 8,
           hasCloseButton: true,
           okButtonTapped: () {
@@ -487,7 +499,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             cancelButtonTapped = true;
             _simulatorTestProvider!.setShowConfirmSaveTest(false);
             _deleteAllAnswer();
-            Navigator.of(context).pop();
+            Navigator.of(buildContext).pop();
           },
         );
       },
@@ -496,7 +508,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         if (_isExam) {
           Navigator.pop(context, StringConstants.k_refresh);
         } else {
-          Navigator.of(context).pop();
+          Navigator.pop(context);
         }
       }
     });
@@ -779,7 +791,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void onGetTestDetailError(String message) {
     //Show error message
     showToastMsg(
-      msg: message,
+      msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.error,
     );
   }
@@ -902,4 +914,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void onUpdateHasOrderStatus(bool hasOrder) {
+    _simulatorTestProvider!.setHasOrderStatus(hasOrder);
+  }
 }

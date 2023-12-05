@@ -73,8 +73,6 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
 
     for (int i = 0; i < topicsId.length; i++) {
       url += "&${StringConstants.k_required_topic}=${topicsId[i]}";
-      // queryParams.addEntries(
-      //     [MapEntry(StringConstants.k_required_topic, "${topicsId[i]}")]);
     }
 
     if (kDebugMode) {

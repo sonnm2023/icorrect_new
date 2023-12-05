@@ -200,7 +200,8 @@ class _OtherTabState extends State<OtherTab>
     //     backgroundColor: AppColor.defaultGrayColor,
     //     textColor: Colors.black,
     //     toastLength: Toast.LENGTH_LONG,
-    //     gravity: ToastGravity.BOTTOM);
+    //     gravity: ToastGravity.CENTER,
+    // );
   }
 
   @override

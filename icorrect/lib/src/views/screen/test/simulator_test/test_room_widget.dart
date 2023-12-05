@@ -216,70 +216,73 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               ],
             ),
             Expanded(
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  SingleChildScrollView(
-                    child: TestQuestionWidget(
-                      testRoomPresenter: _testRoomPresenter!,
-                      playAnswerCallBack: _playAnswerCallBack,
-                      reAnswerCallBack: _reAnswerCallBack,
-                      showTipCallBack: _showTipCallBack,
-                      simulatorTestProvider: _simulatorTestProvider!,
-                      isExam: _isExam,
+              child: Container(
+                color: AppColor.defaultGraySlightColor,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    SingleChildScrollView(
+                      child: TestQuestionWidget(
+                        testRoomPresenter: _testRoomPresenter!,
+                        playAnswerCallBack: _playAnswerCallBack,
+                        reAnswerCallBack: _reAnswerCallBack,
+                        showTipCallBack: _showTipCallBack,
+                        simulatorTestProvider: _simulatorTestProvider!,
+                        isExam: _isExam,
+                      ),
                     ),
-                  ),
-                  const CueCardWidget(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Consumer<SimulatorTestProvider>(
-                        builder: (context, simulatorTestProvider, _) {
-                          return Expanded(
-                            child: simulatorTestProvider.questionHasImage
-                                ? Container(
-                                    decoration: const BoxDecoration(
-                                      color: AppColor.defaultAppColor,
-                                    ),
-                                    child: Center(
-                                      child: simulatorTestProvider
-                                              .questionImageUrlFromLocal
-                                              .isNotEmpty
-                                          ? LoadLocalImageWidget(
-                                              imageUrl: simulatorTestProvider
-                                                  .questionImageUrlFromLocal,
-                                              isInRow: false,
-                                            )
-                                          : CachedNetworkImageWidget(
-                                              imageUrl: simulatorTestProvider
-                                                  .questionImageUrl,
-                                              isInRow: false,
-                                            ),
-                                    ),
-                                  )
-                                : const SizedBox(),
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 200,
-                        child: Stack(
-                          children: [
-                            TestRecordWidget(
-                              finishAnswer: _finishAnswerCallBack,
-                              repeatQuestion: _repeatQuestionCallBack,
-                              cancelReAnswer: _cancelReanswerCallBack,
-                            ),
-                            showSaveTheExamButton
-                                ? SaveTheTestWidget(
-                                    testRoomPresenter: _testRoomPresenter!)
-                                : const SizedBox(),
-                          ],
+                    const CueCardWidget(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Consumer<SimulatorTestProvider>(
+                          builder: (context, simulatorTestProvider, _) {
+                            return Expanded(
+                              child: simulatorTestProvider.questionHasImage
+                                  ? Container(
+                                      decoration: const BoxDecoration(
+                                        color: AppColor.defaultAppColor,
+                                      ),
+                                      child: Center(
+                                        child: simulatorTestProvider
+                                                .questionImageUrlFromLocal
+                                                .isNotEmpty
+                                            ? LoadLocalImageWidget(
+                                                imageUrl: simulatorTestProvider
+                                                    .questionImageUrlFromLocal,
+                                                isInRow: false,
+                                              )
+                                            : CachedNetworkImageWidget(
+                                                imageUrl: simulatorTestProvider
+                                                    .questionImageUrl,
+                                                isInRow: false,
+                                              ),
+                                      ),
+                                    )
+                                  : const SizedBox(),
+                            );
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        SizedBox(
+                          height: 200,
+                          child: Stack(
+                            children: [
+                              TestRecordWidget(
+                                finishAnswer: _finishAnswerCallBack,
+                                repeatQuestion: _repeatQuestionCallBack,
+                                cancelReAnswer: _cancelReanswerCallBack,
+                              ),
+                              showSaveTheExamButton
+                                  ? SaveTheTestWidget(
+                                      testRoomPresenter: _testRoomPresenter!)
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           ],
@@ -930,11 +933,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.wait_until_the_exam_finished_message),
-        toastState: ToastStatesType.warning,
-      );
+      _showWaitUntilTheExamFinishedDialog();
     }
   }
 
@@ -1016,6 +1015,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   // }
 
   void _reAnswerCallBack(QuestionTopicModel question) async {
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+      return;
+    }
+
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       bool isReviewing =
           _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -1065,12 +1068,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         );
       }
     } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.wait_until_the_exam_finished_message),
-        toastState: ToastStatesType.warning,
-      );
+      _showWaitUntilTheExamFinishedDialog();
     }
+  }
+
+  void _showWaitUntilTheExamFinishedDialog() {
+    showToastMsg(
+      msg: Utils.multiLanguage(
+          StringConstants.wait_until_the_exam_finished_message),
+      toastState: ToastStatesType.warning,
+    );
   }
 
   void _cancelButtonTapped() {
@@ -1080,15 +1087,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _showTipCallBack(QuestionTopicModel question) {
-    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
-      _showTip(question);
-    } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.wait_until_the_exam_finished_message),
-        toastState: ToastStatesType.warning,
-      );
+    if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
+      return;
     }
+
+    _showTip(question);
   }
 
   void _showTip(QuestionTopicModel questionTopicModel) {
@@ -1217,11 +1220,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
+    //Comment from build release 1.1.9 (build 1) 2023-11-29 16:55
     //Check answer of user must be greater than 2 seconds
-    if (_checkAnswerDuration()) {
-      _resetEnableFinishStatus();
-      return;
-    }
+    // if (_checkAnswerDuration()) {
+    //   _resetEnableFinishStatus();
+    //   return;
+    // }
 
     Map<String, dynamic> info = {
       StringConstants.k_question_id: questionTopicModel.id.toString(),
@@ -2553,6 +2557,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
+    _simulatorTestProvider!.setNeedRefreshActivityList(true);
 
     if (_isExam) {
       //Reset _questionIndex
@@ -2734,7 +2739,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         msg: msg,
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
         fontSize: 18,
         toastLength: Toast.LENGTH_LONG);
   }
@@ -2755,9 +2760,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       msg: msg,
       backgroundColor: Colors.green,
       textColor: Colors.white,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       fontSize: 18,
       toastLength: Toast.LENGTH_LONG,
     );
+  }
+
+  @override
+  void onUpdateHasOrderStatus(bool hasOrder) {
+    _simulatorTestProvider!.setHasOrderStatus(hasOrder);
   }
 }

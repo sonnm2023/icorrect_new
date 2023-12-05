@@ -3,7 +3,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
+import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -44,7 +47,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
   final connectivityService = ConnectivityService();
   ActivitiesModel? _selectedHomeWorkModel;
-
+  final FlutterLocalization localization = FlutterLocalization.instance;
   @override
   void dispose() {
     super.dispose();
@@ -255,48 +258,127 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           }
           return RefreshIndicator(
             onRefresh: widget.pullToRefreshCallBack,
-            child: CustomScrollView(
-              slivers: [
-                SliverGroupedListView<ActivitiesModel, String>(
-                  elements: homeworkProvider.listFilteredHomeWorks,
-                  groupBy: (element) => element.classId.toString(),
-                  groupComparator: (value1, value2) => value2.compareTo(value1),
-                  order: GroupedListOrder.ASC,
-                  groupSeparatorBuilder: (String classId) {
-                    String className = Utils.getClassNameWithId(
-                        classId, homeworkProvider.listClassForFilter);
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  slivers: [
+                    SliverGroupedListView<ActivitiesModel, String>(
+                      elements: homeworkProvider.listFilteredHomeWorks,
+                      groupBy: (element) => element.classId.toString(),
+                      groupComparator: (value1, value2) =>
+                          value2.compareTo(value1),
+                      order: GroupedListOrder.ASC,
+                      groupSeparatorBuilder: (String classId) {
+                        String className = Utils.getClassNameWithId(
+                            classId, homeworkProvider.listClassForFilter);
 
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        left: CustomSize.size_15,
-                        top: CustomSize.size_5,
-                        right: CustomSize.size_10,
-                        bottom: CustomSize.size_5,
-                      ),
-                      child: Text(
-                        className,
-                        textAlign: TextAlign.left,
-                        style: CustomTextStyle.textWithCustomInfo(
-                          context: context,
-                          color: AppColor.defaultBlackColor,
-                          fontsSize: FontsSize.fontSize_16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    );
-                  },
-                  itemBuilder: (c, element) {
-                    return HomeWorkWidget(
-                      homeWorkModel: element,
-                      callBack: _clickOnHomeWorkItem,
-                      homeWorkProvider: homeworkProvider,
-                    );
-                  },
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            left: CustomSize.size_15,
+                            top: CustomSize.size_5,
+                            right: CustomSize.size_10,
+                            bottom: CustomSize.size_5,
+                          ),
+                          child: Text(
+                            className,
+                            textAlign: TextAlign.left,
+                            style: CustomTextStyle.textWithCustomInfo(
+                              context: context,
+                              color: AppColor.defaultBlackColor,
+                              fontsSize: FontsSize.fontSize_16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                      itemBuilder: (c, element) {
+                        return HomeWorkWidget(
+                          homeWorkModel: element,
+                          callBack: _clickOnHomeWorkItem,
+                          homeWorkProvider: homeworkProvider,
+                        );
+                      },
+                    ),
+                  ],
                 ),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  margin: const EdgeInsets.all(20),
+                  child: _languageSelectionButton(),
+                )
               ],
             ),
           );
         }),
+      ),
+    );
+  }
+
+  void _updateFilterText() {
+    widget.homeWorkProvider.prepareToUpdateFilterString();
+  }
+
+  Widget _languageSelectionButton() {
+    return SpeedDial(
+      backgroundColor: AppColor.defaultPurpuleTransparent,
+      overlayColor: Colors.black,
+      overlayOpacity: 0.6,
+      spaceBetweenChildren: 10,
+      activeBackgroundColor: AppColor.defaultPurpuleLight02,
+      activeIcon: Icons.close,
+      children: [
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('en');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgEnglish),
+            ),
+          ),
+          label: StringConstants.ens_upppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('vn');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgVietName),
+            ),
+          ),
+          label: StringConstants.vn_uppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: Image(
+              image: AssetImage(
+                Utils.getCurrentLanguage()[StringConstants.k_image_url],
+              ),
+            ),
+          ),
+          Text(
+            Utils.getCurrentLanguage()[StringConstants.k_data],
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          )
+        ],
       ),
     );
   }
