@@ -715,6 +715,7 @@ class StringConstants {
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =
       "An error when update your answers. Please try again!";
+  static const String change_password_success_message = "Change password successfully!";
   static const String multi_language = "Multi Language";
   static const String ens = "English";
   static const String vn = "Tiếng Việt";

@@ -193,8 +193,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   }
 
   @override
-  void onChangePasswordComplete() {
+  void onChangePasswordComplete(String message) {
     _authProvider.updateProcessingStatus(isProcessing: false);
+
+    //Show error message
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.success,
+    );
 
     //Go back login screen
     Navigator.of(context).pop();

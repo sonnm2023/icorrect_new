@@ -10,7 +10,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 
 abstract class ChangePasswordViewContract {
-  void onChangePasswordComplete();
+  void onChangePasswordComplete(String message);
   void onChangePasswordError(String message);
 }
 
@@ -57,7 +57,7 @@ class ChangePasswordPresenter {
           status: LogEvent.success,
         );
 
-        _view!.onChangePasswordComplete();
+        _view!.onChangePasswordComplete(Utils.multiLanguage(StringConstants.change_password_success_message));
       } else {
         //Add log
         Utils.prepareLogData(
@@ -68,7 +68,7 @@ class ChangePasswordPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onChangePasswordError(StringConstants.common_error_message);
+        _view!.onChangePasswordError(Utils.multiLanguage(StringConstants.common_error_message));
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -81,7 +81,7 @@ class ChangePasswordPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onChangePasswordError(StringConstants.common_error_message);
+        _view!.onChangePasswordError(Utils.multiLanguage(StringConstants.common_error_message));
       },
     );
   }
