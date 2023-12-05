@@ -46,8 +46,9 @@ class MessageDialog {
                     color: AppColor.defaultLightGrayColor,
                     height: 1,
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                  SizedBox(
+                    width: 150,
+                    height: 44,
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: TextButton.styleFrom(
