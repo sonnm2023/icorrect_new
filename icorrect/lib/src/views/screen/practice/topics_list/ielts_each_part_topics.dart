@@ -27,6 +27,7 @@ class IELTSEachPartTopics extends StatefulWidget {
 class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
     with AutomaticKeepAliveClientMixin<IELTSEachPartTopics>
     implements IELTSTopicsListConstract {
+  double w = 0, h = 0;
   IELTSTopicsProvider? _ieltsTopicsProvider;
   CircleLoading? _loading;
   IELTSTopicsListPresenter? _presenter;
@@ -68,6 +69,8 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    w = MediaQuery.of(context).size.width;
+    h = MediaQuery.of(context).size.height;
     return Consumer<IELTSTopicsProvider>(builder: (context, provider, child) {
       int testOption = Utils.getTestOption(widget.topicTypes);
       return Column(
@@ -75,17 +78,20 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            width: w,
             padding: const EdgeInsets.symmetric(
               horizontal: CustomPadding.padding_11,
             ),
             color: AppColor.defaultLight01GrayColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Stack(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisSize: MainAxisSize.max,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              alignment: Alignment.center,
               children: [
-                Expanded(
-                  flex: 1,
+                Container(
+                  margin: const EdgeInsets.only(left: 8),
+                  alignment: Alignment.centerLeft,
                   child: Checkbox(
                     tristate: true,
                     activeColor: AppColor.defaultPurpleColor,
@@ -101,8 +107,8 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                     },
                   ),
                 ),
-                Expanded(
-                  flex: 4,
+                Align(
+                  alignment: Alignment.center,
                   child: Text(
                     context.formatString(StringConstants.selected_topics,
                         [provider.topicsId.length, provider.topicsList.length]),
@@ -115,8 +121,8 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Expanded(
-                  flex: 1,
+                Align(
+                  alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
                       provider.clearTopicSelection();
