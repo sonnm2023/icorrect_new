@@ -123,7 +123,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                       _provider!.clearTopicsByTestOption(testOption);
                     },
                     child: Text(
-                      StringConstants.clear_button_title,
+                      Utils.multiLanguage(StringConstants.clear_button_title),
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultPurpleColor,
