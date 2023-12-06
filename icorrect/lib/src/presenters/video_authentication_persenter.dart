@@ -94,7 +94,8 @@ class VideoAuthenticationPresenter {
               ? json['data']['video'] ?? []
               : json['data']['audio'] ?? []);
 
-          _view!.submitAuthFail(StringConstants.submit_authen_fail_message);
+          _view!.submitAuthFail(
+              Utils.multiLanguage(StringConstants.submit_authen_fail_message));
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -113,7 +114,8 @@ class VideoAuthenticationPresenter {
         message: StringConstants.submit_authen_fail_timeout_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail(StringConstants.submit_authen_fail_timeout_message);
+      _view!.submitAuthFail(Utils.multiLanguage(
+          StringConstants.submit_authen_fail_timeout_message));
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -122,7 +124,8 @@ class VideoAuthenticationPresenter {
         message: StringConstants.submit_authen_fail_socket_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail(StringConstants.submit_authen_fail_socket_message);
+      _view!.submitAuthFail(Utils.multiLanguage(
+          StringConstants.submit_authen_fail_socket_message));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -131,7 +134,8 @@ class VideoAuthenticationPresenter {
         message: StringConstants.submit_authen_fail_client_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail(StringConstants.submit_authen_fail_client_message);
+      _view!.submitAuthFail(Utils.multiLanguage(
+          StringConstants.submit_authen_fail_client_message));
     }
   }
 }

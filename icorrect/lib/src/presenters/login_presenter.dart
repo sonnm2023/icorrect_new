@@ -68,10 +68,12 @@ class LoginPresenter {
       } else {
         String message = '';
         if (authModel.message.isNotEmpty) {
-          _view!.onLoginError(StringConstants.network_error_message);
+          _view!.onLoginError(
+              Utils.multiLanguage(StringConstants.network_error_message));
           message = StringConstants.network_error_message;
         } else {
-          _view!.onLoginError(StringConstants.common_error_message);
+          _view!.onLoginError(
+              Utils.multiLanguage(StringConstants.common_error_message));
           message = '${authModel.errorCode}: ${authModel.status}';
         }
         //Add log
@@ -85,10 +87,12 @@ class LoginPresenter {
     }).catchError((onError) {
       String message = '';
       if (onError is http.ClientException || onError is SocketException) {
-        _view!.onLoginError(StringConstants.network_error_message);
+        _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.network_error_message));
         message = StringConstants.network_error_message;
       } else {
-        _view!.onLoginError(StringConstants.common_error_message);
+        _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.common_error_message));
         message = StringConstants.common_error_message;
       }
       //Add log
@@ -149,19 +153,21 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetAppConfigInfoFail(
-            StringConstants.getting_app_config_information_error_message);
+        _view!.onGetAppConfigInfoFail(Utils.multiLanguage(
+            StringConstants.getting_app_config_information_error_message));
       }
     }).catchError((onError) {
       String message = '';
       if (onError is http.ClientException || onError is SocketException) {
         message = StringConstants.network_error_message;
 
-        _view!.onGetAppConfigInfoFail(StringConstants.network_error_message);
+        _view!.onGetAppConfigInfoFail(
+            Utils.multiLanguage(StringConstants.network_error_message));
       } else {
         message = StringConstants.common_error_message;
 
-        _view!.onGetAppConfigInfoFail(StringConstants.common_error_message);
+        _view!.onGetAppConfigInfoFail(
+            Utils.multiLanguage(StringConstants.common_error_message));
       }
       //Add log
       Utils.prepareLogData(
@@ -220,7 +226,8 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_message);
+        _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.common_error_message));
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -233,7 +240,8 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_message);
+        _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.common_error_message));
       },
     );
   }

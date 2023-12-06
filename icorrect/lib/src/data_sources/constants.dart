@@ -238,58 +238,61 @@ enum MediaType { video, audio, image, none }
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
-    StringConstants.fail_to_load_your_test_message,
-    StringConstants.cannot_download_video,
+    Utils.multiLanguage(StringConstants.fail_to_load_your_test_message),
+    Utils.multiLanguage(StringConstants.cannot_download_video),
     Alert.networkError.type,
   );
 
   static AlertInfo microPermissionAlert = AlertInfo(
-    StringConstants.warning_title,
-    StringConstants.require_micro_permission_content,
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.require_micro_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo cameraPermissionAlert = AlertInfo(
-    StringConstants.warning_title,
-    StringConstants.require_camera_permission_content,
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.require_camera_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo microCameraPermissionAlert = AlertInfo(
-    StringConstants.permission_warning_title,
-    StringConstants.require_micro_and_camera_permission_content,
+    Utils.multiLanguage(StringConstants.permission_warning_title),
+    Utils.multiLanguage(
+        StringConstants.require_micro_and_camera_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo storagePermissionAlert = AlertInfo(
-    StringConstants.warning_title,
-    StringConstants.require_storage_permission_content,
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.require_storage_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo videoPathIncorrectAlert = AlertInfo(
-    StringConstants.warning_title,
-    StringConstants.video_path_incorrect_message,
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.video_path_incorrect_message),
     Alert.dataNotFound.type,
   );
 
   static AlertInfo getTestDetailAlert = AlertInfo(
-    StringConstants.warning_title,
-    StringConstants.error_load_this_test_message,
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.error_load_this_test_message),
     Alert.dataNotFound.type,
   );
   static AlertInfo notResponseLoadTestAlert = AlertInfo(
-    StringConstants.warning_title,
-    StringConstants.error_load_test_and_contact_admin_message,
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(
+        StringConstants.error_load_test_and_contact_admin_message),
     Alert.dataNotFound.type,
   );
 
   static AlertInfo timeOutUpdateAnswer = AlertInfo(
-      StringConstants.warning_title,
-      StringConstants.timeout_update_answer_message);
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.timeout_update_answer_message),
+  );
 
   static AlertInfo errorWhenUpdateAnswer(String message) =>
-      AlertInfo(StringConstants.warning_title, message);
+      AlertInfo(Utils.multiLanguage(StringConstants.warning_title), message);
 }
 
 class GlobalScaffoldKey {
@@ -717,7 +720,8 @@ class StringConstants {
       "This test is loaded but not completed. Please contact admin to reset it!";
   static const String update_answer_error_message =
       "An error when update your answers. Please try again!";
-  static const String change_password_success_message = "Change password successfully!";
+  static const String change_password_success_message =
+      "Change password successfully!";
   static const String multi_language = "Multi Language";
   static const String ens = "English";
   static const String vn = "Tiếng Việt";
