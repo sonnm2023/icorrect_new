@@ -1447,7 +1447,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.topicsQueue.isEmpty) {
       //No part for next play
       _prepareToEndTheTest();
+
+      if (kDebugMode) {
+        print("DEBUG: Call Step Next Part 1");
+      }
     } else {
+      if (kDebugMode) {
+        print("DEBUG: Call Step Next Part 2");
+      }
       _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
@@ -2355,7 +2362,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   bool _checkAnswerDuration() {
-    if (_simulatorTestProvider!.isLessThan2Second) {
+    if (_simulatorTestProvider!.isLessThan2Second &&
+        _simulatorTestProvider!.visibleRecord) {
       Fluttertoast.showToast(
         msg: Utils.multiLanguage(
           StringConstants.answer_must_be_greater_than_2_seconds_message,
@@ -2433,7 +2441,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Reset count repeat
         _countRepeat = 0;
-
         // _playNextQuestion();
         _playNextPart();
       } else {
@@ -2442,7 +2449,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         //Start to play end_of_take_note video
         Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
         TopicModel topic = topicQueue.first;
-
         _testRoomPresenter!.playEndOfTakeNoteFile(topic);
       }
     } else {
