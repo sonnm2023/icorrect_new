@@ -256,7 +256,7 @@ class AlertClass {
   );
 
   static AlertInfo microCameraPermissionAlert = AlertInfo(
-    Utils.multiLanguage(StringConstants.permission_warning_title),
+    Utils.multiLanguage(StringConstants.warning_title),
     Utils.multiLanguage(
         StringConstants.require_micro_and_camera_permission_content),
     Alert.permissionDenied.type,

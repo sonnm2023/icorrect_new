@@ -458,8 +458,15 @@ class TestRoomPresenter {
 
           request.files.add(
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          if (kDebugMode) {
+            formData.addEntries([MapEntry("$prefix[$i]", audioFile.path)]);
+          }
         }
       }
+    }
+    
+    if (kDebugMode) {
+      print("DEBUG: formdata: ${formData.toString()}");
     }
 
     if (null != videoConfirmFile) {
