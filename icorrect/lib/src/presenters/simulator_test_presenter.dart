@@ -24,7 +24,6 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
@@ -111,6 +110,7 @@ class SimulatorTestPresenter {
   TestDetailModel? testDetail;
   List<FileTopicModel>? filesTopic;
   List<FileTopicModel> imageFiles = [];
+  CancelToken cancelToken = CancelToken();
 
   //////////////////////GET TEST DETAIL FROM HOMEWORK///////////////////////////
   void getTestDetailByHomeWork({
@@ -616,7 +616,11 @@ class SimulatorTestPresenter {
                 print("DEBUG: Save as PATH = $savePath");
               }
 
-              Response response = await dio!.download(url, savePath);
+              Response response = await dio!.download(
+                url,
+                savePath,
+                cancelToken: cancelToken,
+              );
 
               if (response.statusCode == 200) {
                 if (kDebugMode) {
@@ -634,7 +638,15 @@ class SimulatorTestPresenter {
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
+              } else if (response.statusCode == 206) {
+                if (kDebugMode) {
+                  print('Download paused');
+                }
+                // await resumeDownload();
               } else {
+                if (kDebugMode) {
+                  print('Download failed');
+                }
                 //Add log
                 Utils.prepareLogData(
                   log: log,
@@ -673,6 +685,9 @@ class SimulatorTestPresenter {
                   filesTopic: filesTopic);
               break loop;
             } on TimeoutException {
+              if (kDebugMode) {
+                print("Download File TimeoutException");
+              }
               //Add log
               Utils.prepareLogData(
                 log: log,
@@ -689,6 +704,9 @@ class SimulatorTestPresenter {
                   filesTopic: filesTopic);
               break loop;
             } on SocketException {
+              if (kDebugMode) {
+                print("Download File SocketException");
+              }
               //Add log
               Utils.prepareLogData(
                 log: log,
@@ -706,6 +724,9 @@ class SimulatorTestPresenter {
                   filesTopic: filesTopic);
               break loop;
             } on http.ClientException {
+              if (kDebugMode) {
+                print("Download File ClientException");
+              }
               //Add log
               Utils.prepareLogData(
                 log: log,
@@ -736,6 +757,25 @@ class SimulatorTestPresenter {
       }
     }
   }
+
+  // Future<void> resumeDownload() async {
+  //   Dio dio = Dio();
+  //   CancelToken cancelToken = CancelToken();
+  //
+  //   downloadFiles(
+  //     context: context,
+  //     activityId: activityId,
+  //     testDetail: testDetail,
+  //     filesTopic: filesTopic,
+  //   );
+  //
+  //   // Bắt đầu quá trình download lại từ đầu
+  //   await dio.download(
+  //     'https://example.com/large-file.zip',
+  //     'path/to/save/file.zip',
+  //     cancelToken: cancelToken,
+  //   );
+  // }
 
   void reDownloadAutomatic({
     required BuildContext context,
