@@ -406,9 +406,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Permission.microphone,
       ].request();
 
-      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
-          (statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied)) {
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
@@ -433,9 +437,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Permission.microphone,
       ].request();
 
-      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
-          (statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied)) {
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
@@ -445,10 +453,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         try {
           Map<Permission, PermissionStatus> otherStatuses =
               await [Permission.camera].request();
-
-          if ((otherStatuses[Permission.camera]! == PermissionStatus.denied) ||
-              (otherStatuses[Permission.camera]! ==
-                  PermissionStatus.permanentlyDenied)) {
+          if (otherStatuses[Permission.camera]! ==
+              PermissionStatus.permanentlyDenied) {
+            _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
+            return;
+          }
+          if (otherStatuses[Permission.camera]! == PermissionStatus.denied) {
             if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
               _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
             } else {

@@ -814,6 +814,7 @@ class SimulatorTestPresenter {
       print("DEBUG: submitTest");
       print("DEBUG: testId = $testId");
       print("DEBUG: activityId = $activityId");
+      print("DEBUG: multirequest = ${multiRequest.toString()}");
     }
 
     try {
@@ -1022,8 +1023,13 @@ class SimulatorTestPresenter {
 
           request.files.add(
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          formData.addEntries([MapEntry("$prefix[$i]", audioFile.path)]);
         }
       }
+    }
+
+    if (kDebugMode) {
+      print('DEBUG: RECORDED AUDIO: ${formData.toString()}');
     }
 
     if (null != videoConfirmFile) {

@@ -9,11 +9,11 @@ class AlertInfo {
 
   AlertInfo([this._title, this._description, this._typeAlert]);
 
-  get title => Utils.multiLanguage(_title);
+  get title => _title;
 
   set title(var value) => _title = value;
 
-  get description => Utils.multiLanguage(_description);
+  get description => _description;
 
   set description(value) => _description = value;
 
