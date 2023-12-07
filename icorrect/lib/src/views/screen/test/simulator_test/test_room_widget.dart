@@ -1546,6 +1546,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required bool isPart2,
   }) async {
+    if (null == _currentQuestion) {
+      TopicModel? topicModel = _getCurrentPart();
+      List<QuestionTopicModel> questionList = topicModel!.questionList;
+      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+
+      //TODO: Need check again here
+      // if (questionList.isEmpty) return;
+      // if (index >= questionList.length) return;
+
+      QuestionTopicModel question = questionList.elementAt(index);
+      question.numPart = topicModel.numPart;
+      _currentQuestion = question;
+    }
+
     if (isPart2) {
       //Has Cue Card case
       _simulatorTestProvider!.setVisibleRecord(false);
@@ -1563,18 +1577,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       );
       _simulatorTestProvider!.setVisibleCueCard(true);
     } else {
-      TopicModel? topicModel = _getCurrentPart();
-      List<QuestionTopicModel> questionList = topicModel!.questionList;
-      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
-
-      //TODO: Need check again here
-      // if (questionList.isEmpty) return;
-      // if (index >= questionList.length) return;
-
-      QuestionTopicModel question = questionList.elementAt(index);
-      question.numPart = topicModel.numPart;
-      _currentQuestion = question;
-
       _prepareRecordForAnswer(fileName: fileName, isPart2: isPart2);
     }
   }
