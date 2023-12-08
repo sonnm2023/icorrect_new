@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 
 abstract class LoginViewContract {
   void onLoginComplete();
-  void onLoginError(String message);
+  void onLoginError(String message, String? email, String? password);
   void onGetAppConfigInfoSuccess();
   void onGetAppConfigInfoFail(String message);
 }
@@ -43,38 +43,77 @@ class LoginPresenter {
           action: LogEvent.callApiLogin);
     }
 
-    _repository!.login(email, password).then((value) async {
-      AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
-      if (authModel.errorCode == 200) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: authModel.message,
-          status: LogEvent.success,
-        );
+    int delayTime = 0; //For product
+    // int delayTime = 10; //For test
 
-        await _saveAccessToken(authModel.data.accessToken);
-        _getUserInfo(context);
-      } else if (authModel.errorCode == 401) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: authModel.status,
-          status: LogEvent.success,
-        );
-        _view!.onLoginError(authModel.status);
-      } else {
-        String message = '';
-        if (authModel.message.isNotEmpty) {
+    Future.delayed(Duration(seconds: delayTime)).then((_) {
+      _repository!.login(email, password).then((value) async {
+        AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
+        if (authModel.errorCode == 200) {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: jsonDecode(value),
+            message: authModel.message,
+            status: LogEvent.success,
+          );
+
+          await _saveAccessToken(authModel.data.accessToken);
+          _getUserInfo(context);
+        } else if (authModel.errorCode == 401) {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: jsonDecode(value),
+            message: authModel.status,
+            status: LogEvent.success,
+          );
           _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.network_error_message));
+            authModel.status,
+            email,
+            password,
+          );
+        } else {
+          String message = '';
+          if (authModel.message.isNotEmpty) {
+            _view!.onLoginError(
+              Utils.multiLanguage(StringConstants.network_error_message),
+              email,
+              password,
+            );
+            message = StringConstants.network_error_message;
+          } else {
+            _view!.onLoginError(
+              Utils.multiLanguage(StringConstants.common_error_message),
+              email,
+              password,
+            );
+            message = '${authModel.errorCode}: ${authModel.status}';
+          }
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: null,
+            message: message,
+            status: LogEvent.failed,
+          );
+        }
+      }).catchError((onError) {
+        String message = '';
+        if (onError is http.ClientException || onError is SocketException) {
+          _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.network_error_message),
+            email,
+            password,
+          );
           message = StringConstants.network_error_message;
         } else {
           _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.common_error_message));
-          message = '${authModel.errorCode}: ${authModel.status}';
+            Utils.multiLanguage(StringConstants.common_error_message),
+            null,
+            null,
+          );
+          message = StringConstants.common_error_message;
         }
         //Add log
         Utils.prepareLogData(
@@ -83,25 +122,7 @@ class LoginPresenter {
           message: message,
           status: LogEvent.failed,
         );
-      }
-    }).catchError((onError) {
-      String message = '';
-      if (onError is http.ClientException || onError is SocketException) {
-        _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.network_error_message));
-        message = StringConstants.network_error_message;
-      } else {
-        _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.common_error_message));
-        message = StringConstants.common_error_message;
-      }
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: null,
-        message: message,
-        status: LogEvent.failed,
-      );
+      });
     });
   }
 
@@ -227,7 +248,10 @@ class LoginPresenter {
         );
 
         _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+          Utils.multiLanguage(StringConstants.common_error_message),
+          null,
+          null,
+        );
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -241,7 +265,10 @@ class LoginPresenter {
         );
 
         _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+          Utils.multiLanguage(StringConstants.common_error_message),
+          null,
+          null,
+        );
       },
     );
   }
