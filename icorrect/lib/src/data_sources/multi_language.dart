@@ -33,6 +33,7 @@ class MultiLanguage {
     StringConstants.submit_now_title: "Nộp Ngay",
     StringConstants.record_new_video_title: "Quay Video Mới",
     StringConstants.dialog_title: "Thông báo",
+    StringConstants.reload_button_title: "Tải lại",
     StringConstants.exit_app_message: "Bạn có muốn thoát khỏi ứng dụng?",
     StringConstants.quit_the_test_message:
         "Bài làm chưa hoàn thành! Bạn có chắc chắn muốn thoát?",
@@ -654,6 +655,7 @@ class MultiLanguage {
         'Timeout to update your changes. Please try again !',
     StringConstants.search_title: "Search",
     StringConstants.select_your_language_title: 'Select your language',
-    StringConstants.prepare_compress_video_title: 'Preparing for submitting'
+    StringConstants.prepare_compress_video_title: 'Preparing for submitting',
+    StringConstants.reload_button_title: "Reload",
   };
 }

@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
@@ -466,6 +465,7 @@ class StringConstants {
       "Record Video Authentication";
   static const String submit_now_title = "Submit Now";
   static const String record_new_video_title = "Record New Video";
+  static const String reload_button_title = "Reload";
   //Dialog
   static const String dialog_title = "Notification";
   static const String exit_app_message = "Do you want to exit app?";

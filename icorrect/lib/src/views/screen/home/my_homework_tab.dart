@@ -251,8 +251,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             homeworkProvider.updateFilterString(
                 Utils.multiLanguage(StringConstants.default_filter_title));
             return NoDataWidget(
-                msg: Utils.multiLanguage(
-                    StringConstants.no_data_filter_message));
+              msg: Utils.multiLanguage(StringConstants.no_data_filter_message),
+              reloadCallBack: _reloadCallBack,
+            );
           }
           return RefreshIndicator(
             onRefresh: widget.pullToRefreshCallBack,
@@ -379,12 +380,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         ],
       ),
     );
-  }
-
-  Future<void> _pullRefresh() async {
-    if (kDebugMode) {
-      print("DEBUG: _buildListHomeWork: _pullRefresh");
-    }
   }
 
   void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
@@ -590,6 +585,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     Utils.showConnectionErrorDialog(context);
 
     Utils.addConnectionErrorLog(context);
+  }
+
+  void _reloadCallBack() async {
+    if (kDebugMode) {
+      print("DEBUG: MyHomeworkTab - _reloadCallBack");
+    }
+    widget.homeWorkPresenter.refreshListHomework();
   }
 
   @override
