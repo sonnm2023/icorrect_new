@@ -2607,69 +2607,73 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onClickSaveTheTest() async {
     //Check connection
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
-          SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              title: Utils.multiLanguage(StringConstants.dialog_title),
-              description: Utils.multiLanguage(
-                  StringConstants.confirm_save_the_test_message),
-              okButtonTitle:
-                  Utils.multiLanguage(StringConstants.save_button_title),
-              cancelButtonTitle:
-                  Utils.multiLanguage(StringConstants.dont_save_button_title),
-              borderRadius: 8,
-              hasCloseButton: true,
-              okButtonTapped: () {
-                _startSubmitTest();
-              },
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
+    Utils.checkInternetConnection().then(
+      (isConnected) async {
+        if (isConnected) {
+          if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
+              SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomAlertDialog(
+                  title: Utils.multiLanguage(StringConstants.dialog_title),
+                  description: Utils.multiLanguage(
+                      StringConstants.confirm_save_the_test_message),
+                  okButtonTitle:
+                      Utils.multiLanguage(StringConstants.save_button_title),
+                  cancelButtonTitle: Utils.multiLanguage(
+                      StringConstants.dont_save_button_title),
+                  borderRadius: 8,
+                  hasCloseButton: true,
+                  okButtonTapped: () {
+                    _startSubmitTest();
+                  },
+                  cancelButtonTapped: () {
+                    Navigator.of(context).pop();
+                  },
+                );
               },
             );
-          },
-        );
-      } else if (SubmitStatus.success == _simulatorTestProvider!.submitStatus) {
-        if (kDebugMode) {
-          print("DEBUG: Submit success: update answer after reanswer");
+          } else if (SubmitStatus.success ==
+              _simulatorTestProvider!.submitStatus) {
+            if (kDebugMode) {
+              print("DEBUG: Submit success: update answer after reanswer");
+            }
+
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomAlertDialog(
+                  title: Utils.multiLanguage(StringConstants.confirm_title),
+                  description: Utils.multiLanguage(
+                      StringConstants.confirm_save_change_answers_message),
+                  okButtonTitle:
+                      Utils.multiLanguage(StringConstants.save_button_title),
+                  cancelButtonTitle:
+                      Utils.multiLanguage(StringConstants.cancel_button_title),
+                  borderRadius: 8,
+                  hasCloseButton: true,
+                  okButtonTapped: () {
+                    _updateReAnswers();
+                  },
+                  cancelButtonTapped: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            );
+          }
+        } else {
+          //Show connect error here
+          if (kDebugMode) {
+            print("DEBUG: Connect error here!");
+          }
+          Utils.showConnectionErrorDialog(context);
+
+          Utils.addConnectionErrorLog(context);
         }
-
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              title: Utils.multiLanguage(StringConstants.confirm_title),
-              description: Utils.multiLanguage(
-                  StringConstants.confirm_save_change_answers_message),
-              okButtonTitle:
-                  Utils.multiLanguage(StringConstants.save_button_title),
-              cancelButtonTitle:
-                  Utils.multiLanguage(StringConstants.cancel_button_title),
-              borderRadius: 8,
-              hasCloseButton: true,
-              okButtonTapped: () {
-                _updateReAnswers();
-              },
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        );
-      }
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+      },
+    );
   }
 
   @override

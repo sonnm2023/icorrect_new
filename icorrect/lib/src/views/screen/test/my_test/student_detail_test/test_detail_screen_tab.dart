@@ -88,19 +88,21 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   void _getData() async {
     await _presenter!.initializeData();
-    var connectivity = await connectivityService.checkConnectivity();
+    Utils.checkInternetConnection().then(
+      (isConnected) async {
+        if (isConnected) {
+          _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+        } else {
+          //Show connect error here
+          if (kDebugMode) {
+            print("DEBUG: Connect error here!");
+          }
+          Utils.showConnectionErrorDialog(context);
 
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      _presenter!.getMyTest(widget.studentResultModel.testId.toString());
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+          Utils.addConnectionErrorLog(context);
+        }
+      },
+    );
   }
 
   @override

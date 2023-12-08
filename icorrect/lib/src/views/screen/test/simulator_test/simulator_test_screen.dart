@@ -527,41 +527,44 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _startSubmitTest() async {
     //Check connection
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      //Reset question image
-      _resetQuestionImage();
+    Utils.checkInternetConnection().then(
+      (isConnected) async {
+        if (isConnected) {
+          //Reset question image
+          _resetQuestionImage();
 
-      String savedVideoPath = _simulatorTestPresenter!
-          .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
-      File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
+          String savedVideoPath = _simulatorTestPresenter!
+              .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
+          File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
-      //Submit
-      _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+          //Submit
+          _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
-      String activityId = "";
-      if (widget.homeWorkModel != null) {
-        activityId = widget.homeWorkModel!.activityId.toString();
-      }
-      _simulatorTestPresenter!.submitTest(
-        context: context,
-        testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-        activityId: activityId,
-        questions: _simulatorTestProvider!.questionList,
-        isExam: _isExam,
-        videoConfirmFile: videoConfirmFile,
-        logAction: _simulatorTestProvider!.logActions,
-      );
-      _simulatorTestProvider!.setShowConfirmSaveTest(false);
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
+          String activityId = "";
+          if (widget.homeWorkModel != null) {
+            activityId = widget.homeWorkModel!.activityId.toString();
+          }
+          _simulatorTestPresenter!.submitTest(
+            context: context,
+            testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+            activityId: activityId,
+            questions: _simulatorTestProvider!.questionList,
+            isExam: _isExam,
+            videoConfirmFile: videoConfirmFile,
+            logAction: _simulatorTestProvider!.logActions,
+          );
+          _simulatorTestProvider!.setShowConfirmSaveTest(false);
+        } else {
+          //Show connect error here
+          if (kDebugMode) {
+            print("DEBUG: Connect error here!");
+          }
+          Utils.showConnectionErrorDialog(context);
 
-      Utils.addConnectionErrorLog(context);
-    }
+          Utils.addConnectionErrorLog(context);
+        }
+      },
+    );
   }
 
   void _resetQuestionImage() {
