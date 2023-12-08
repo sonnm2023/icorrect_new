@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -63,7 +62,6 @@ class _MyTestTabState extends State<MyTestTab>
   StreamSubscription? connection;
   String audioFile = "";
   Timer? timer;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {

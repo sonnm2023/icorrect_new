@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -28,7 +27,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   bool isAvailable = false;
   ChangePasswordPresenter? _changePasswordPresenter;
   late AuthProvider _authProvider;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {

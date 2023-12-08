@@ -7,7 +7,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -47,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen>
   CircleLoading? _loading;
   Permission? _writeFilePermission;
   PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -141,8 +139,8 @@ class _LoginScreenState extends State<LoginScreen>
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
-          connectivityService.checkConnectivity().then((connectivity) {
-            if (connectivity.name != StringConstants.connectivity_name_none) {
+          Utils.checkInternetConnection().then((isConnected) {
+            if (isConnected) {
               _authProvider.updateProcessingStatus(isProcessing: true);
 
               //Add firebase log
@@ -242,8 +240,8 @@ class _LoginScreenState extends State<LoginScreen>
     if (appConfigInfo.isEmpty) {
       _loginPresenter!.getAppConfigInfo(context);
     } else {
-      connectivityService.checkConnectivity().then((connectivity) {
-        if (connectivity.name != StringConstants.connectivity_name_none) {
+      Utils.checkInternetConnection().then((isConnected) {
+        if (isConnected) {
           _autoLogin();
         } else {
           _handleLoginError();
@@ -355,8 +353,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void onLoginError(String message, String? email, String? password) {
-    connectivityService.checkConnectivity().then((connectivity) {
-      if (connectivity.name != StringConstants.connectivity_name_none) {
+    Utils.checkInternetConnection().then((isConnected) {
+      if (isConnected) {
         if (null != email && null != password) {
           _authProvider.updateProcessingStatus(isProcessing: true);
 

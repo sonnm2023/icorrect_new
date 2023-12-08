@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -43,7 +42,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
-  final connectivityService = ConnectivityService();
   SimulatorTestProvider? _simulatorTestProvider;
 
   @override
