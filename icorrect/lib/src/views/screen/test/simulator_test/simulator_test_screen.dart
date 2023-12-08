@@ -127,8 +127,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
+        if (kDebugMode) {
+          print("DEBUG: connect via 3G/4G");
+        }
+        if (_simulatorTestPresenter!.isDownloading) {
+          _simulatorTestPresenter!.reDownloadFiles(context, widget.homeWorkModel!.activityId.toString());
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
+        if (kDebugMode) {
+          print("DEBUG: connect via WIFI");
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.ethernet) {
         isOffline = false;
@@ -137,7 +146,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       }
 
       if (kDebugMode) {
-        print("DEBUG: NO INTERNET === $isOffline");
+        print("DEBUG: CONNECT INTERNET === ${!isOffline}");
       }
     });
 

@@ -111,6 +111,7 @@ class SimulatorTestPresenter {
   List<FileTopicModel>? filesTopic;
   List<FileTopicModel> imageFiles = [];
   CancelToken cancelToken = CancelToken();
+  bool isDownloading = false;
 
   //////////////////////GET TEST DETAIL FROM HOMEWORK///////////////////////////
   void getTestDetailByHomeWork({
@@ -556,6 +557,13 @@ class SimulatorTestPresenter {
     }
   }
 
+  void pauseDownload() {
+    if (kDebugMode) {
+      print("DEBUG: Paused downloading by user");
+    }
+    cancelToken.cancel("Paused by user");
+  }
+
   Future downloadFiles({
     required BuildContext context,
     String? activityId,
@@ -563,6 +571,7 @@ class SimulatorTestPresenter {
     required List<FileTopicModel> filesTopic,
   }) async {
     if (null != dio) {
+      isDownloading = true;
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
@@ -638,11 +647,6 @@ class SimulatorTestPresenter {
                 double percent = _getPercent(index + 1, filesTopic.length);
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
-              } else if (response.statusCode == 206) {
-                if (kDebugMode) {
-                  print('Download paused');
-                }
-                // await resumeDownload();
               } else {
                 if (kDebugMode) {
                   print('Download failed');
@@ -752,30 +756,12 @@ class SimulatorTestPresenter {
         }
       }
     } else {
+      isDownloading = false;
       if (kDebugMode) {
         print("DEBUG: Dio is closed!");
       }
     }
   }
-
-  // Future<void> resumeDownload() async {
-  //   Dio dio = Dio();
-  //   CancelToken cancelToken = CancelToken();
-  //
-  //   downloadFiles(
-  //     context: context,
-  //     activityId: activityId,
-  //     testDetail: testDetail,
-  //     filesTopic: filesTopic,
-  //   );
-  //
-  //   // Bắt đầu quá trình download lại từ đầu
-  //   await dio.download(
-  //     'https://example.com/large-file.zip',
-  //     'path/to/save/file.zip',
-  //     cancelToken: cancelToken,
-  //   );
-  // }
 
   void reDownloadAutomatic({
     required BuildContext context,
@@ -783,6 +769,8 @@ class SimulatorTestPresenter {
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) {
+    isDownloading = false;
+
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {
