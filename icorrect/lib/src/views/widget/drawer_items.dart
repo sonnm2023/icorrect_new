@@ -201,7 +201,9 @@ Widget navbarItems({
         ),
         onTap: () {
           Utils.showLogoutConfirmDialog(
-              context: context, homeWorkPresenter: homeWorkPresenter);
+            context: context,
+            homeWorkPresenter: homeWorkPresenter,
+          );
         },
       ),
     ],

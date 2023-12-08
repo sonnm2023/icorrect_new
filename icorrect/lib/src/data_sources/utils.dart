@@ -754,19 +754,19 @@ class Utils {
           hasCloseButton: false,
           okButtonTapped: () async {
             if (null != homeWorkPresenter) {
-              var connectivity =
-                  await ConnectivityService().checkConnectivity();
-              if (connectivity.name != StringConstants.connectivity_name_none) {
-                homeWorkPresenter.logout(context);
-              } else {
-                //Show connect error here
-                if (kDebugMode) {
-                  print("DEBUG: Connect error here!");
-                }
-                Utils.showConnectionErrorDialog(context);
+              Utils.checkInternetConnection().then((isConnected) {
+                if (isConnected) {
+                  homeWorkPresenter.logout(context);
+                } else {
+                  //Show connect error here
+                  if (kDebugMode) {
+                    print("DEBUG: Connect error here!");
+                  }
+                  Utils.showConnectionErrorDialog(context);
 
-                Utils.addConnectionErrorLog(context);
-              }
+                  Utils.addConnectionErrorLog(context);
+                }
+              });
             } else {
               Navigator.of(context).pop();
             }
@@ -903,7 +903,7 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != StringConstants.connectivity_name_none) {
+    if (status != "none") {
       //NOT Action log
       DateTime createdTime =
           DateTime.fromMillisecondsSinceEpoch(log.createdTime);
