@@ -131,7 +131,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           print("DEBUG: connect via 3G/4G");
         }
         if (_simulatorTestPresenter!.isDownloading) {
-          _simulatorTestPresenter!.reDownloadFiles(context, widget.homeWorkModel!.activityId.toString());
+          _simulatorTestPresenter!.reDownloadFiles(
+              context, widget.homeWorkModel!.activityId.toString());
         }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
@@ -184,6 +185,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void dispose() {
+    _simulatorTestPresenter!.pauseDownload();
     connection!.cancel();
     _simulatorTestPresenter!.closeClientRequest();
     _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
@@ -677,9 +679,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _getTestDetail() async {
-    await _simulatorTestPresenter!.initializeData();
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
+    _simulatorTestPresenter!.initializeData().then((_) {
       if (widget.homeWorkModel != null) {
         _simulatorTestPresenter!.getTestDetailByHomeWork(
             context: context,
@@ -691,15 +691,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             topicsId: widget.topicsId ?? [],
             isPredict: widget.isPredict ?? 0);
       }
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+    });
   }
 
   void _startToDoTest() {

@@ -67,7 +67,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   void _getListHomeWork() async {
     //Reset old data
-    _homeWorkProvider.updateFilterString(Utils.multiLanguage(StringConstants.add_your_filter));
+    _homeWorkProvider.updateFilterString(
+        Utils.multiLanguage(StringConstants.add_your_filter));
     _homeWorkProvider.resetListSelectedClassFilter();
     _homeWorkProvider.resetListSelectedStatusFilter();
     _homeWorkProvider.resetListSelectedFilterIntoLocal();
@@ -76,18 +77,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.resetListFilteredHomeWorks();
 
     _homeWorkPresenter!.getListHomeWork(context);
-    // var connectivity = await connectivityService.checkConnectivity();
-    // if (connectivity.name != StringConstants.connectivity_name_none) {
-    //   _homeWorkPresenter!.getListHomeWork(context);
-    // } else {
-    //   //Show connect error here
-    //   if (kDebugMode) {
-    //     print("DEBUG: Connect error here!");
-    //   }
-    //   Utils.showConnectionErrorDialog(context);
-
-    //   Utils.addConnectionErrorLog(context);
-    // }
 
     Future.delayed(Duration.zero, () {
       _authProvider
@@ -257,10 +246,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       builder: (BuildContext context) {
         return CustomAlertDialog(
           title: Utils.multiLanguage(StringConstants.dialog_title),
-          description:
-              Utils.multiLanguage(StringConstants.exit_app_message),
-          okButtonTitle:
-              Utils.multiLanguage(StringConstants.ok_button_title),
+          description: Utils.multiLanguage(StringConstants.exit_app_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
@@ -301,8 +288,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           title: Utils.multiLanguage(StringConstants.dialog_title),
           description:
               Utils.multiLanguage(StringConstants.quit_the_test_message),
-          okButtonTitle:
-              Utils.multiLanguage(StringConstants.ok_button_title),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
