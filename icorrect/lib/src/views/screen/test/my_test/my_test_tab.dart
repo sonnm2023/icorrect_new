@@ -75,6 +75,13 @@ class _MyTestTabState extends State<MyTestTab>
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
+        if (kDebugMode) {
+          print("DEBUG: connect via 3G/4G");
+        }
+        if (_presenter!.isDownloading) {
+          _presenter!.reDownloadFiles(
+              context, widget.homeWorkModel!.activityId.toString());
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
         isOffline = false;
@@ -127,6 +134,7 @@ class _MyTestTabState extends State<MyTestTab>
     _player!.dispose();
     _record.dispose();
     _presenter!.closeClientRequest();
+    _presenter!.pauseDownload();
     super.dispose();
   }
 
