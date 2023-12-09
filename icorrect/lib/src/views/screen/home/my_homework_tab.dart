@@ -345,7 +345,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         ),
         SpeedDialChild(
           onTap: () {
-            localization.translate('vn');
+            localization.translate('vi');
             _updateFilterText();
           },
           child: const Padding(

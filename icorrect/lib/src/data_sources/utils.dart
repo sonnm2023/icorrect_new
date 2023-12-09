@@ -305,13 +305,13 @@ class Utils {
       localization.init(
         mapLocales: [
           const MapLocale('en', MultiLanguage.EN),
-          const MapLocale('vn', MultiLanguage.VN),
+          const MapLocale('vi', MultiLanguage.VN),
         ],
-        initLanguageCode: 'vn',
+        initLanguageCode: 'vi',
       );
     }
     return Intl.message(
-        localization.currentLocale!.languageCode == "vn"
+        localization.currentLocale!.languageCode == "vi"
             ? MultiLanguage.VN[constantString]
             : MultiLanguage.EN[constantString],
         name: constantString);
@@ -323,13 +323,13 @@ class Utils {
       localization.init(
         mapLocales: [
           const MapLocale('en', MultiLanguage.EN),
-          const MapLocale('vn', MultiLanguage.VN),
+          const MapLocale('vi', MultiLanguage.VN),
         ],
-        initLanguageCode: 'vn',
+        initLanguageCode: 'vi',
       );
     }
 
-    if (localization.currentLocale!.languageCode == "vn") {
+    if (localization.currentLocale!.languageCode == "vi") {
       return {
         StringConstants.k_title: StringConstants.vn_uppercase,
         StringConstants.k_image_url: AppAsset.imgVietName,
