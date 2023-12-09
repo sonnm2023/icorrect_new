@@ -387,6 +387,10 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
       print("DEBUG: _showFullImage");
     }
 
+    //For test
+    // widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
+    // widget.simulatorTestProvider.setShowFullImage(true);
+
     if (widget.simulatorTestProvider.doingStatus == DoingStatus.finish) {
       widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
       widget.simulatorTestProvider.setShowFullImage(true);
