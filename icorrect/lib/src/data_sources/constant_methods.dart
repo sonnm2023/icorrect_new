@@ -24,11 +24,14 @@ void printTest(String text) {
   }
 }
 
-void showToastMsg({required String msg, required ToastStatesType toastState}) {
+void showToastMsg(
+    {required String msg,
+    required ToastStatesType toastState,
+    required bool isCenter}) {
   Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: isCenter ? ToastGravity.CENTER : ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
       backgroundColor: AppColor.defaultPurpleColor,
       textColor: AppColor.defaultAppColor,

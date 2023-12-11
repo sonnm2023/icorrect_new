@@ -607,6 +607,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               msg: Utils.multiLanguage(
                   StringConstants.can_not_delete_files_message),
               toastState: ToastStatesType.warning,
+              isCenter: true,
             );
           }
         },
@@ -795,6 +796,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -820,6 +822,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -838,6 +841,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
 
     Navigator.pop(context, 'refresh');
