@@ -214,7 +214,7 @@ class Utils {
         if (homeWorkModel.activityAnswer!.late == 1) {
           return {
             StringConstants.k_title: StringConstants.activity_status_late,
-            StringConstants.k_color: Colors.orange,
+            StringConstants.k_color: Colors.red,
           };
         }
 
