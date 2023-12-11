@@ -311,6 +311,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -332,6 +333,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 

@@ -386,6 +386,7 @@ class _LoginScreenState extends State<LoginScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: false,
     );
   }
 

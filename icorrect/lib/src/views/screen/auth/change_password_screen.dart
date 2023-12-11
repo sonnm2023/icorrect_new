@@ -135,6 +135,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             msg: Utils.multiLanguage(
                 StringConstants.old_password_equals_new_password_error_message),
             toastState: ToastStatesType.error,
+            isCenter: false,
           );
         } else if (newPasswordController.text.trim() !=
             confirmNewPasswordController.text.trim()) {
@@ -142,6 +143,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             msg: Utils.multiLanguage(
                 StringConstants.confirm_new_password_error_message),
             toastState: ToastStatesType.error,
+            isCenter: false,
           );
         } else {
           if (_formKey.currentState!.validate() &&
@@ -189,6 +191,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.success,
+      isCenter: false,
     );
 
     //Go back login screen
@@ -203,6 +206,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: false,
     );
   }
 }

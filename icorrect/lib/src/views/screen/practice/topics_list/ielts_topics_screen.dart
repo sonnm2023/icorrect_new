@@ -6,13 +6,11 @@ import 'package:icorrect/src/models/auth_models/topic_id.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_each_part_topics.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_full_part_topics.dart';
-import 'package:icorrect/src/views/widget/custom_search_delegrate.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data_sources/constant_methods.dart';
 import '../../../../data_sources/utils.dart';
-import '../../../../provider/auth_provider.dart';
 import '../../../../provider/ielts_topics_screen_provider.dart';
 import '../../test/simulator_test/simulator_test_screen.dart';
 
@@ -177,6 +175,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
           msg: Utils.multiLanguage(
               StringConstants.choose_at_least_1_topics_at_part23_message),
           toastState: ToastStatesType.warning,
+          isCenter: true,
         );
       }
     } else if (topicsId.length >= 3 &&
@@ -189,6 +188,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
       showToastMsg(
         msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics),
         toastState: ToastStatesType.warning,
+        isCenter: true,
       );
     }
   }
@@ -204,12 +204,14 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
         msg: Utils.multiLanguage(
             StringConstants.choose_at_least_3_topics_at_part1_message),
         toastState: ToastStatesType.warning,
+        isCenter: true,
       );
     } else if (topicsPart23.isEmpty) {
       showToastMsg(
         msg: Utils.multiLanguage(
             StringConstants.choose_at_least_1_topics_at_part23_message),
         toastState: ToastStatesType.warning,
+        isCenter: true,
       );
     } else {
       _goToTestScreen();
@@ -222,10 +224,10 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => SimulatorTestScreen(
-              testOption: testOption,
-              topicsId: _provider!.getTopicsIdList(),
-              isPredict: IELTSPredict.normalQuestion.get,
-            ),
+          testOption: testOption,
+          topicsId: _provider!.getTopicsIdList(),
+          isPredict: IELTSPredict.normalQuestion.get,
+        ),
       ),
     );
   }

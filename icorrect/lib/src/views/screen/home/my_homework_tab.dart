@@ -220,6 +220,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                   msg: Utils.multiLanguage(
                       StringConstants.choose_filter_message),
                   toastState: ToastStatesType.warning,
+                  isCenter: true,
                 );
               }
             },
