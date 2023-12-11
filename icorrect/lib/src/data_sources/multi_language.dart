@@ -247,7 +247,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_message:
         "Có lỗi xảy ra khi nộp bài. Vui lòng thử lại!",
     StringConstants.submit_test_error_invalid_return_type_message:
-        "Invalid_return_type_for_catch_error: Có lỗi khi gửi bài kiểm tra này!",
+        "Có lỗi xảy ra khi nộp bài.![Lỗi: không đúng định dạng]",
     StringConstants.submit_test_error_timeout:
         "TimeoutException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.submit_test_error_socket:
@@ -575,7 +575,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_message:
         "Has an error when submit this test. Please try again later!",
     StringConstants.submit_test_error_invalid_return_type_message:
-        "invalid_return_type_for_catch_error: Has an error when submit this test!",
+        "Has an error when submit this test![Error: invalid type]",
     StringConstants.submit_test_error_timeout:
         "TimeoutException: Has an error when submit this test!",
     StringConstants.submit_test_error_socket:

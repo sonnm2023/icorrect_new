@@ -706,7 +706,7 @@ class StringConstants {
   static const String submit_test_error_message =
       "Has an error when submit this test. Please try again later!";
   static const String submit_test_error_invalid_return_type_message =
-      "invalid_return_type_for_catch_error: Has an error when submit this test!";
+      "Has an error when submit this test![Error: invalid type]";
   static const String submit_test_error_timeout =
       "TimeoutException: Has an error when submit this test!";
   static const String submit_test_error_socket =
