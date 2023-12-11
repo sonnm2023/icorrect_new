@@ -80,6 +80,7 @@ class _MyAppState extends State<MyApp> {
         showToastMsg(
           msg: Utils.multiLanguage(StringConstants.network_error_message),
           toastState: ToastStatesType.warning,
+          isCenter: false,
         );
       }
     });
