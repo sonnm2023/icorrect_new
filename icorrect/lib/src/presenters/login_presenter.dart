@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 
 abstract class LoginViewContract {
   void onLoginComplete();
-  void onLoginError(String message, String? email, String? password);
+  void onLoginError(String message);
   void onGetAppConfigInfoSuccess();
   void onGetAppConfigInfoFail(String message);
 }
@@ -70,23 +70,17 @@ class LoginPresenter {
           );
           _view!.onLoginError(
             authModel.status,
-            email,
-            password,
           );
         } else {
           String message = '';
           if (authModel.message.isNotEmpty) {
             _view!.onLoginError(
               Utils.multiLanguage(StringConstants.network_error_message),
-              email,
-              password,
             );
             message = StringConstants.network_error_message;
           } else {
             _view!.onLoginError(
               Utils.multiLanguage(StringConstants.common_error_message),
-              email,
-              password,
             );
             message = '${authModel.errorCode}: ${authModel.status}';
           }
@@ -103,15 +97,11 @@ class LoginPresenter {
         if (onError is http.ClientException || onError is SocketException) {
           _view!.onLoginError(
             Utils.multiLanguage(StringConstants.network_error_message),
-            email,
-            password,
           );
           message = StringConstants.network_error_message;
         } else {
           _view!.onLoginError(
             Utils.multiLanguage(StringConstants.common_error_message),
-            null,
-            null,
           );
           message = StringConstants.common_error_message;
         }
@@ -249,8 +239,6 @@ class LoginPresenter {
 
         _view!.onLoginError(
           Utils.multiLanguage(StringConstants.common_error_message),
-          null,
-          null,
         );
       }
     }).catchError(
@@ -266,8 +254,6 @@ class LoginPresenter {
 
         _view!.onLoginError(
           Utils.multiLanguage(StringConstants.common_error_message),
-          null,
-          null,
         );
       },
     );

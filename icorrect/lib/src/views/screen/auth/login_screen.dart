@@ -352,27 +352,39 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   @override
-  void onLoginError(String message, String? email, String? password) {
-    Utils.checkInternetConnection().then((isConnected) {
-      if (isConnected) {
-        if (null != email && null != password) {
-          _authProvider.updateProcessingStatus(isProcessing: true);
+  void onLoginError(String message) {
+    if (kDebugMode) {
+      print("DEBUG: onLoginError");
+    }
 
-          _loginPresenter!.login(
-            email,
-            password,
-            context,
-          );
+    Utils.checkInternetConnection().then((isConnected) {
+      String email = emailController.text.trim();
+      String password = passwordController.text.trim();
+      if (isConnected && email.isNotEmpty && password.isNotEmpty) {
+        if (kDebugMode) {
+          print("DEBUG: checkInternetConnection = $isConnected");
+          print("DEBUG: checkInternetConnection email = $email");
+          print("DEBUG: checkInternetConnection pass = $password");
         }
+        _loginPresenter!.login(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+          context,
+        );
       } else {
         _authProvider.updateProcessingStatus(isProcessing: false);
-
-        showDialog(
-          context: context,
-          builder: (builder) {
-            return MessageDialog.alertDialog(context, message);
-          },
+        showToastMsg(
+          msg: message,
+          toastState: ToastStatesType.error,
+          isCenter: false,
         );
+
+        // showDialog(
+        //   context: context,
+        //   builder: (builder) {
+        //     return MessageDialog.alertDialog(context, message);
+        //   },
+        // );
       }
     });
   }
