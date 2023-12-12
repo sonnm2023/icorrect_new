@@ -886,7 +886,7 @@ class SimulatorTestPresenter {
             errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
           }
           _view!.onSubmitTestFail(
-              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log
