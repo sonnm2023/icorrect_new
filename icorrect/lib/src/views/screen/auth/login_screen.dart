@@ -340,6 +340,15 @@ class _LoginScreenState extends State<LoginScreen>
     passwordController.text = "";
   }
 
+  void _finishLoginWithError(String message) {
+    _authProvider.updateProcessingStatus(isProcessing: false);
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.error,
+      isCenter: false,
+    );
+  }
+
   @override
   void onLoginComplete() {
     _authProvider.updateProcessingStatus(isProcessing: false);
@@ -352,39 +361,33 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   @override
-  void onLoginError(String message) {
+  void onLoginError(String message, int? errorCode) {
     if (kDebugMode) {
       print("DEBUG: onLoginError");
     }
 
     Utils.checkInternetConnection().then((isConnected) {
-      String email = emailController.text.trim();
-      String password = passwordController.text.trim();
-      if (isConnected && email.isNotEmpty && password.isNotEmpty) {
-        if (kDebugMode) {
-          print("DEBUG: checkInternetConnection = $isConnected");
-          print("DEBUG: checkInternetConnection email = $email");
-          print("DEBUG: checkInternetConnection pass = $password");
+      if (null != errorCode) {
+        if (errorCode == 401) {
+          _finishLoginWithError(message);
         }
-        _loginPresenter!.login(
-          emailController.text.trim(),
-          passwordController.text.trim(),
-          context,
-        );
       } else {
-        _authProvider.updateProcessingStatus(isProcessing: false);
-        showToastMsg(
-          msg: message,
-          toastState: ToastStatesType.error,
-          isCenter: false,
-        );
-
-        // showDialog(
-        //   context: context,
-        //   builder: (builder) {
-        //     return MessageDialog.alertDialog(context, message);
-        //   },
-        // );
+        String email = emailController.text.trim();
+        String password = passwordController.text.trim();
+        if (isConnected && email.isNotEmpty && password.isNotEmpty) {
+          if (kDebugMode) {
+            print("DEBUG: checkInternetConnection = $isConnected");
+            print("DEBUG: checkInternetConnection email = $email");
+            print("DEBUG: checkInternetConnection pass = $password");
+          }
+          _loginPresenter!.login(
+            emailController.text.trim(),
+            passwordController.text.trim(),
+            context,
+          );
+        } else {
+          _finishLoginWithError(message);
+        }
       }
     });
   }
