@@ -2,7 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -109,7 +108,7 @@ class _HighLightTabState extends State<HighLightTab>
         } else {
           return EmptyWidget.init().buildNothingWidget(
             context,
-            StringConstants.no_data_message,
+            Utils.multiLanguage(StringConstants.no_data_message),
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
           );
@@ -212,10 +211,10 @@ class _HighLightTabState extends State<HighLightTab>
   @override
   void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
-    Fluttertoast.showToast(
-      msg: message,
-      backgroundColor: AppColor.defaultGrayColor,
-      textColor: Colors.black,
-    );
+    // Fluttertoast.showToast(
+    //   msg: message,
+    //   backgroundColor: AppColor.defaultGrayColor,
+    //   textColor: Colors.black,
+    // );
   }
 }

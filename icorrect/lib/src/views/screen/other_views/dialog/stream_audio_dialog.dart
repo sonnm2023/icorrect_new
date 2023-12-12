@@ -74,8 +74,8 @@ class _SliderAudioState extends State<SliderAudio> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const DefaultText(
-                      text: StringConstants.sample_audio,
+                    DefaultText(
+                      text: Utils.multiLanguage(StringConstants.sample_audio),
                       color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

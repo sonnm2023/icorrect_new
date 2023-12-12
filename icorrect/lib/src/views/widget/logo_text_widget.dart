@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 
+import '../../data_sources/utils.dart';
+
 class LogoTextWidget extends StatelessWidget {
   const LogoTextWidget({super.key});
 
@@ -9,7 +11,7 @@ class LogoTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        StringConstants.logo_text,
+        Utils.multiLanguage(StringConstants.logo_text),
         style: CustomTextStyle.textWithCustomInfo(
           context: context,
           color: AppColor.defaultPurpleColor,

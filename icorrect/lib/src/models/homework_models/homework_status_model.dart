@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:icorrect/src/data_sources/utils.dart';
+
 HomeWorkStatusModel homeworkStatusModelFromJson(String str) => HomeWorkStatusModel.fromJson(json.decode(str));
 String homeworkStatusModelToJson(HomeWorkStatusModel data) => json.encode(data.toJson());
 

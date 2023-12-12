@@ -8,6 +8,8 @@ import 'package:icorrect/src/views/widget/default_text.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../data_sources/utils.dart';
+
 class SampleVideo extends StatefulWidget {
   String url;
   SampleVideo({super.key, required this.url});
@@ -76,8 +78,8 @@ class _SampleVideoState extends State<SampleVideo> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const DefaultText(
-                      text: StringConstants.sample_video,
+                     DefaultText(
+                      text: Utils.multiLanguage(StringConstants.sample_video),
                       color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

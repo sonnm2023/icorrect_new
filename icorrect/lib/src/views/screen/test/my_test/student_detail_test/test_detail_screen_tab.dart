@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -48,7 +47,6 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   bool isOffline = false;
   StreamSubscription? connection;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -88,19 +86,21 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   void _getData() async {
     await _presenter!.initializeData();
-    var connectivity = await connectivityService.checkConnectivity();
+    Utils.checkInternetConnection().then(
+      (isConnected) async {
+        if (isConnected) {
+          _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+        } else {
+          //Show connect error here
+          if (kDebugMode) {
+            print("DEBUG: Connect error here!");
+          }
+          Utils.showConnectionErrorDialog(context);
 
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      _presenter!.getMyTest(widget.studentResultModel.testId.toString());
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+          Utils.addConnectionErrorLog(context);
+        }
+      },
+    );
   }
 
   @override
@@ -266,7 +266,8 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                             },
                             child: (question.tips.isNotEmpty)
                                 ? Text(
-                                    StringConstants.view_tips_button_title,
+                                    Utils.multiLanguage(
+                                        StringConstants.view_tips_button_title),
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultPurpleColor,
@@ -297,9 +298,9 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           questionId: question.id.toString());
     } else {
       Fluttertoast.showToast(
-        msg: StringConstants.no_answer_message,
+        msg: Utils.multiLanguage(StringConstants.no_answer_message),
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
       );
     }
   }
@@ -362,7 +363,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       backgroundColor: AppColor.defaultGrayColor,
       textColor: Colors.black,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
     );
   }
 
@@ -411,9 +412,10 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -435,7 +437,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
         backgroundColor: AppColor.defaultGrayColor,
         textColor: Colors.black,
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+        gravity: ToastGravity.CENTER);
     if (kDebugMode) {
       print('DEBUG: getMyTestFail: ${alertInfo.description.toString()}');
     }

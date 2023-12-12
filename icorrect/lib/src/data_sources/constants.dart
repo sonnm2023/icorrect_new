@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
@@ -34,6 +33,8 @@ enum HandleWhenFinish {
   reviewingVideoType,
   reviewingPlayTheQuestionType,
 }
+
+enum LanguageSelector { english, vietnamese }
 
 enum UserAuthStatus {
   draft(0),
@@ -107,6 +108,13 @@ enum SubmitStatus {
   final int get;
 }
 
+enum ActivityType {
+  exam,
+  test,
+  homework,
+  practice;
+}
+
 enum ReviewingStatus {
   none(-1),
   playing(0),
@@ -117,40 +125,79 @@ enum ReviewingStatus {
   final int get;
 }
 
+enum IELTSTopicType {
+  part1(['1']),
+  part2(['2']),
+  part3(['3']),
+  part2and3(['2', '3']),
+  full(['4']);
+
+  const IELTSTopicType(this.get);
+  final List<String> get;
+}
+
+enum IELTSTestOption {
+  part1(1),
+  part2(2),
+  part3(3),
+  part2and3(4),
+  full(5);
+
+  const IELTSTestOption(this.get);
+  final int get;
+}
+
+enum IELTSStatus {
+  eachPart('3'),
+  fullPart('2');
+
+  const IELTSStatus(this.get);
+  final String get;
+}
+
+enum IELTSPredict {
+  normalQuestion(0),
+  all(1402),
+  randomQuestion(1);
+
+  const IELTSPredict(this.get);
+  final int get;
+}
+
 enum Alert {
   networkError({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Try again',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.try_again_button_title,
     Alert.icon: 'assets/images/img_no_internet.png'
   }),
 
   serverError({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Contact with us',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.contact_with_us,
     Alert.icon: 'assets/images/img_server_error.png'
   }),
 
   warning({
-    Alert.cancelTitle: 'Cancel',
-    Alert.actionTitle: 'Out the exam',
+    Alert.cancelTitle: StringConstants.cancel_button_title,
+    Alert.actionTitle: StringConstants.out_the_exam,
     Alert.icon: 'assets/images/img_warning.png'
   }),
 
   downloadError({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Try again',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.try_again_button_title,
     Alert.icon: 'assets/images/img_server_error.png'
   }),
 
   dataNotFound({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Try again',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.try_again_button_title,
     Alert.icon: 'assets/images/img_not_found.png'
   }),
 
   permissionDenied({
-    Alert.cancelTitle: 'Exit',
-    Alert.actionTitle: 'Go to setting',
+    Alert.cancelTitle: StringConstants.exit_button_title,
+    Alert.actionTitle: StringConstants.go_to_setting,
     Alert.icon: 'assets/images/img_warning.png'
   });
 
@@ -164,12 +211,13 @@ enum Alert {
 enum SelectType { classType, statusType }
 
 class FilterJsonData {
-  static Map<String, dynamic> selectAll = {"id": -111, "name": "SelectAll"};
+  static Map<String, dynamic> selectAll = {"id": -111, "name": "Select All"};
   static Map<String, dynamic> submitted = {"id": 1, "name": "Submitted"};
   static Map<String, dynamic> corrected = {"id": 2, "name": "Corrected"};
   static Map<String, dynamic> notCompleted = {"id": 0, "name": "Not Completed"};
   static Map<String, dynamic> late = {"id": -1, "name": "Late"};
-  static Map<String, dynamic> outOfDate = {"id": -2, "name": "Out of date"};
+  static Map<String, dynamic> outOfDate = {"id": -2, "name": "Out Of Date"};
+  static Map<String, dynamic> loadedTest = {"id": 99, "name": "Loaded Test"};
 }
 
 class StringClass {
@@ -189,57 +237,61 @@ enum MediaType { video, audio, image, none }
 
 class AlertClass {
   static AlertInfo downloadVideoErrorAlert = AlertInfo(
-    'Fail to load your test',
-    "Can not download video. Please try again!",
+    Utils.multiLanguage(StringConstants.fail_to_load_your_test_message),
+    Utils.multiLanguage(StringConstants.cannot_download_video),
     Alert.networkError.type,
   );
 
   static AlertInfo microPermissionAlert = AlertInfo(
-    'Warning',
-    "This app needs to access microphone to do the homeworks or the exam.",
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.require_micro_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo cameraPermissionAlert = AlertInfo(
-    'Warning',
-    "This app needs to access camera to do the homeworks or the exam.",
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.require_camera_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo microCameraPermissionAlert = AlertInfo(
-    'Permission Warning',
-    "This app needs to access microphone and camera to do the homeworks or the exam.",
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(
+        StringConstants.require_micro_and_camera_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo storagePermissionAlert = AlertInfo(
-    'Warning',
-    "You must allow storage permission to continue.",
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.require_storage_permission_content),
     Alert.permissionDenied.type,
   );
 
   static AlertInfo videoPathIncorrectAlert = AlertInfo(
-    'Warning',
-    'Video path was incorrect. Please try again !',
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.video_path_incorrect_message),
     Alert.dataNotFound.type,
   );
 
   static AlertInfo getTestDetailAlert = AlertInfo(
-    'Warning',
-    'Error when load your test. Please try again !',
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.error_load_this_test_message),
     Alert.dataNotFound.type,
   );
   static AlertInfo notResponseLoadTestAlert = AlertInfo(
-    'Warning',
-    'Error when load your test. Let contact to admin to support !',
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(
+        StringConstants.error_load_test_and_contact_admin_message),
     Alert.dataNotFound.type,
   );
 
   static AlertInfo timeOutUpdateAnswer = AlertInfo(
-      'Warning', 'Timeout to update your changes. Please try again !');
+    Utils.multiLanguage(StringConstants.warning_title),
+    Utils.multiLanguage(StringConstants.timeout_update_answer_message),
+  );
 
-  static AlertInfo errorWhenUpdateAnswer = AlertInfo(
-      'Warning', 'An error when update your answers. Please try again !');
+  static AlertInfo errorWhenUpdateAnswer(String message) =>
+      AlertInfo(Utils.multiLanguage(StringConstants.warning_title), message);
 }
 
 class GlobalScaffoldKey {
@@ -279,6 +331,7 @@ class CustomPadding {
   static const double padding_5 = 5.0;
   static const double padding_10 = 10.0;
   static const double padding_15 = 15.0;
+  static const double padding_11 = 11.0;
   static const double padding_20 = 20.0;
   static const double padding_30 = 30.0;
   static const double padding_40 = 40.0;
@@ -354,6 +407,7 @@ class LogEvent {
       'call_api_get_user_auth_detail';
   static const String callApiSubmitAuth = 'call_api_submit_auth';
   static const String callApiTestPosition = 'call_api_test_position';
+  static const String crash_bug_audio_record = 'crash_bug_audio_record';
 
   //Action log event
   static const String actionLogin = 'action_login';
@@ -372,6 +426,7 @@ class LogEvent {
   static const String compressVideoFile = 'compress_video_file';
   static const String checkConnection = 'check_connection';
   static const String imageDownload = 'image_download';
+  static const String createVideoSource = 'create_video_source';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";
@@ -399,6 +454,7 @@ class StringConstants {
   static const String finish_button_title = "Finish";
   static const String save_the_exam_button_title = "SAVE THE EXAM";
   static const String start_now_button_title = "Start Now";
+  static const String start_test_button_title = "Start Test";
   static const String repeat_button_title = "Repeat";
   static const String exit_button_title = "Exit";
   static const String later_button_title = "Later";
@@ -409,6 +465,7 @@ class StringConstants {
       "Record Video Authentication";
   static const String submit_now_title = "Submit Now";
   static const String record_new_video_title = "Record New Video";
+  static const String reload_button_title = "Reload";
   //Dialog
   static const String dialog_title = "Notification";
   static const String exit_app_message = "Do you want to exit app?";
@@ -439,14 +496,16 @@ class StringConstants {
       "Are you sure to create new sample and sent to review ?";
   static const String confirm_to_log_out = "Do you want to logout?";
   static const String default_filter_title = 'Add your filter!';
-  static const String repeat_question = "Ask for repeating the question!";
+  static const String repeat_question = "Ask for repeating the question !";
+  static const String delete_this_test_confirm =
+      "Are you sure to delete this test ?";
 
   //Screen Titles
   static const String change_password_screen_title = "Change password";
   static const String my_homework_screen_title = "MY HOMEWORK";
   static const String tips_screen_title = "Tips for you";
   static const String practice_screen_title = "PRACTICE";
-  static const String topics_screen_title = "Topics";
+  static const String topics_screen_title = "TOPICS";
   static const String icorrect_title = "ICORRECT";
 
   //Tab titles
@@ -458,6 +517,9 @@ class StringConstants {
   static const String others_tab_title = "OTHERS";
   static const String filter_choose_class_tab_title = "CHOOSE CLASS";
   static const String filter_choose_status_tab_title = "CHOOSE STATUS";
+  static const String filter_string = "Filter ";
+  static const String class_string = "Class";
+  static const String status_string = "Status";
 
   //Text
   static const String add_your_filter = "Add your filter!";
@@ -479,7 +541,7 @@ class StringConstants {
   static const String practice_card_full_test_title = "Full test";
   static const String practice_card_full_test_description =
       "You will take a full sample test of IELTS Speaking Test";
-  static const String selected_topics = "Selected topic (0/24)";
+  static const String selected_topics = "Selected topic (%a/%a)";
   static const String downloading = "Downloading...";
   static const String overview = "Overview";
   static const String show_less = "Show less";
@@ -505,6 +567,9 @@ class StringConstants {
   static const String contact = "Contact: support@ielts-correction.com";
   static const String unknown = "Unknown";
   static const String home_menu_item_title = "Home";
+  static const String practice_menu_item_title = "Practice";
+  static const String my_test_menu_item_title = "My Tests";
+  static const String my_test_title = "MY TESTS";
   static const String change_password_menu_item_title = "Change password";
   static const String logout_menu_item_title = "Logout";
   static const String email = "Email";
@@ -546,6 +611,8 @@ class StringConstants {
       "An error occurs during verification,please contact ICorrect support";
   static const String save_answer_success_message =
       "Save your answers successfully!";
+  static const String submit_test_success_message =
+      "The test has been submitted successfully!";
   static const String submit_authen_success_message =
       "Submit file to authentication successfully. Waiting for confirmation!";
   static const String submit_authen_fail_message =
@@ -556,7 +623,21 @@ class StringConstants {
       "Submit file to authentication fail: TimeoutException!";
   static const String submit_authen_fail_client_message =
       "Submit file to authentication fail: TimeoutException!";
+  static const String contact_with_us = 'Contact with us';
+  static const String out_the_exam = 'Out the exam';
+  static const String go_to_setting = 'Go to setting';
+  static const String select_your_language_title = 'Select your language';
+
+  //Compress video message
   static const String cancel_and_text = "Cancel and Later";
+  static const String skip_and_text = "Skip and Later";
+  static const String submit_now_text = "Submit Now";
+  static const String continue_prepare_text = "Continue";
+  static const String warning_skip_compress_video_text =
+      "Do you want to submit now?";
+  static const String warning_skip_compress_video_content =
+      'Your test video will not be sent'
+      ' and you will have to verify again at Video Authentication.';
 
   //Warning Message
   static const String choose_filter_message =
@@ -593,12 +674,15 @@ class StringConstants {
       "You have not been added to the testing system, please contact admin for better understanding!";
   static const String get_authen_user_fail_message =
       "Something went wrong when load your authentication!";
-
+  static const String delete_test_success_message =
+      "Delete this test successfully!";
   //Error message
   static const String getting_app_config_information_error_message =
       "Has an error when getting app config information!";
   static const String confirm_new_password_error_message =
       "Confirm new password must be equal new password!";
+  static const String old_password_equals_new_password_error_message =
+      "The new password must be different from the old password!";
   static const String data_downloaded_error_message =
       "A part of data has not downloaded properly. Please check your internet connection and try again.";
   static const String network_error_message =
@@ -622,7 +706,7 @@ class StringConstants {
   static const String submit_test_error_message =
       "Has an error when submit this test. Please try again later!";
   static const String submit_test_error_invalid_return_type_message =
-      "invalid_return_type_for_catch_error: Has an error when submit this test!";
+      "Has an error when submit this test!\n[Error: invalid type]";
   static const String submit_test_error_timeout =
       "TimeoutException: Has an error when submit this test!";
   static const String submit_test_error_socket =
@@ -632,16 +716,77 @@ class StringConstants {
   static const String get_special_homework_error_message =
       "GetSpecialHomeWorks: result fail!";
   static const String compress_video_error_message = "Compress video file fail";
-  static const String loading_image_error_message = "Can not load this image!";
+  static const String activity_is_loaded_message =
+      "This test is loaded but not completed. Please contact admin to reset it!";
+  static const String update_answer_error_message =
+      "An error when update your answers. Please try again!";
+  static const String change_password_success_message =
+      "Change password successfully!";
+  static const String multi_language = "Multi Language";
+  static const String ens = "English";
+  static const String vn = "Tiếng Việt";
+  static const String ens_upppercase = "ENGLISH";
+  static const String vn_uppercase = "VIETNAMESE";
+  static const String en_shortest = "EN";
+  static const String vn_shortest = "VN";
+  static const String choose_at_least_3_topics =
+      "You must choose at least 3 topics";
+  static const String choose_at_least_3_topics_at_part1_message =
+      "You must choose at least 3 topics at part I";
+  static const String choose_at_least_1_topics_at_part23_message =
+      "You must choose at least 1 topics at part II and III";
+  static const String delete_action_title = "Delete";
+  static const String loading_title = "Loading Data";
 
+  static const String fail_to_load_your_test_message = 'Fail to load your test';
+  static const String cannot_download_video =
+      'Can not download video. Please try again!';
+  static const String warning_title = "Warning";
+  static const String require_micro_permission_content =
+      "This app needs to access microphone to do the homeworks or the exam.";
+  static const String require_camera_permission_content =
+      "This app needs to access camera to do the homeworks or the exam.";
+  static const String permission_warning_title = 'Permission Warning';
+  static const String require_micro_and_camera_permission_content =
+      "This app needs to access microphone and camera to do the homeworks or the exam.";
+  static const String require_storage_permission_content =
+      "You must allow storage permission to continue.";
+  static const String video_path_incorrect_message =
+      'Video path was incorrect. Please try again !';
+  static const String error_load_this_test_message =
+      'Error when load your test. Please try again !';
+  static const String error_load_test_and_contact_admin_message =
+      "'Error when load your test. Let contact to admin to support !";
+  static const String timeout_update_answer_message =
+      'Timeout to update your changes. Please try again !';
+  static const String search_title = "Search";
+
+  static const String out_of_date_title = "Out Of Date";
+  static const String not_completed_title = "Not Completed";
+  static const String corrected_title = "Corrected";
+  static const String submitted_title = "Submitted";
+  static const String late_title = "Late";
+  static const String ai_scored_title = " AI Scored";
+  static const String not_evaluated_title = "Not Evaluated";
+  static const String loaded_test_title = "Loaded Test";
+  static const String select_all_title = "Select All";
   //Activity status
-  static const String activity_status_out_of_date = "Out of date";
-  static const String activity_status_not_completed = "Not Completed";
-  static const String activity_status_corrected = "Corrected";
-  static const String activity_status_submitted = "Submitted";
-  static const String activity_status_late = "Late";
-  static const String activity_status_ai_scored = " AI Scored";
+  static const String activity_status_out_of_date =
+      "activity_status_out_of_date"; //"Out Of Date";
+  static const String activity_status_not_completed =
+      "activity_status_not_completed"; //"Not Completed";
+  static const String activity_status_corrected =
+      "activity_status_corrected"; //"Corrected";
+  static const String activity_status_submitted =
+      "activity_status_submitted"; //"Submitted";
+  static const String activity_status_late = "activity_status_late"; //"Late";
+  static const String activity_status_ai_scored =
+      "activity_status_ai_scored"; //" AI Scored";
   static const String ai_score_response_not_evaluated = "Not Evaluated";
+  static const String activity_status_loaded_test =
+      "activity_status_loaded_test"; //"Loaded Test";
+  static const String select_all = "select_all"; //"Select All";
+  static const String prepare_compress_video_title = "Preparing for submitting";
 
   //keywords
   static const String k_email = "email";
@@ -659,6 +804,7 @@ class StringConstants {
   static const String k_color = "color";
   static const String k_score = "score";
   static const String k_data = "data";
+  static const String k_test = "test";
   static const String k_error_code = "error_code";
   static const String k_access_token = "access_token";
   static const String k_message = "message";
@@ -686,8 +832,11 @@ class StringConstants {
   static const String k_api_url = "api_url";
   static const String k_secretkey = "secretkey";
   static const String k_refresh = "refresh";
-
-  static const String connectivity_name_none = "none";
+  static const String k_topic_type = "topic_type[]";
+  static const String k_test_option = "option";
+  static const String k_required_topic = "required_topic[]";
+  static const String k_is_predict = "is_predict";
+  static const String k_has_order = "has_order";
 }
 
 const int timeout = 60;

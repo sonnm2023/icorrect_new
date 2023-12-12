@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -97,7 +96,7 @@ class _OtherTabState extends State<OtherTab>
       } else {
         return EmptyWidget.init().buildNothingWidget(
           context,
-          StringConstants.no_data_message,
+          Utils.multiLanguage(StringConstants.no_data_message),
           widthSize: CustomSize.size_100,
           heightSize: CustomSize.size_100,
         );
@@ -196,12 +195,13 @@ class _OtherTabState extends State<OtherTab>
   @override
   void getSpecialHomeWorksFail(String message) {
     _loading?.hide();
-    Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: Colors.black,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+    // Fluttertoast.showToast(
+    //     msg: message,
+    //     backgroundColor: AppColor.defaultGrayColor,
+    //     textColor: Colors.black,
+    //     toastLength: Toast.LENGTH_LONG,
+    //     gravity: ToastGravity.CENTER,
+    // );
   }
 
   @override

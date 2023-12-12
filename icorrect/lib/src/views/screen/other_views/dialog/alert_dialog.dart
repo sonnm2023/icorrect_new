@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class ActionAlertListener {
@@ -94,7 +95,8 @@ class AlertsDialog {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Text(
-                              alertTypeMap[Alert.cancelTitle].toString(),
+                              Utils.multiLanguage(
+                                  alertTypeMap[Alert.cancelTitle].toString()),
                             ),
                           ),
                         ),
@@ -119,7 +121,8 @@ class AlertsDialog {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
-                                alertTypeMap[Alert.actionTitle].toString(),
+                                Utils.multiLanguage(
+                                    alertTypeMap[Alert.actionTitle].toString()),
                               ),
                             ),
                           ),

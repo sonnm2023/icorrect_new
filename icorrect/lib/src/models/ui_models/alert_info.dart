@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters, prefer_typing_uninitialized_variables
 
+import 'package:icorrect/src/data_sources/utils.dart';
+
 class AlertInfo {
   var _title;
   var _description;

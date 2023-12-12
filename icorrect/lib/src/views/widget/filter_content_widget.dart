@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
@@ -15,14 +16,19 @@ class FilterContentWidget extends StatefulWidget {
 }
 
 class _FilterContentWidgetState extends State<FilterContentWidget> {
-  TabBar get _tabBar => const TabBar(
+  TabBar get _tabBar => TabBar(
         indicatorColor: AppColor.defaultPurpleColor,
         tabs: [
-          Tab(text: StringConstants.filter_choose_class_tab_title),
-          Tab(text: StringConstants.filter_choose_status_tab_title),
+          Tab(
+            text: Utils.multiLanguage(
+                StringConstants.filter_choose_class_tab_title),
+          ),
+          Tab(
+            text: Utils.multiLanguage(
+                StringConstants.filter_choose_status_tab_title),
+          ),
         ],
       );
-  // late List<ClassModel> _listSelectedClass = [];
   late List<NewClassModel> _listSelectedClass = [];
   late List<HomeWorkStatusModel> _listSelectedStatus = [];
 
@@ -70,17 +76,23 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     );
   }
 
-  // Widget _buildClassFilterRow(ClassModel subject) {
   Widget _buildClassFilterRow(NewClassModel subject) {
     bool isSelected = _checkSelectedClass(subject);
     IconData icon =
         isSelected ? Icons.check_box_outlined : Icons.square_outlined;
 
+    String title = subject.name;
+
+    if (subject.name == "Select All") {
+      title = Utils.convertActivityStatusToMulti(subject.name);
+    }
+
     return ListTile(
       leading: Icon(icon, color: AppColor.defaultPurpleColor),
-      title: Text(subject.name,
-          style:
-              const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
+      title: Text(
+        title,
+        style: const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13),
+      ),
       onTap: () {
         if (subject == widget.homeWorkProvider.listClassForFilter.first) {
           if (isSelected) {
@@ -105,9 +117,10 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
         isSelected ? Icons.check_box_outlined : Icons.square_outlined;
     return ListTile(
       leading: Icon(icon, color: AppColor.defaultPurpleColor),
-      title: Text(subject.name,
-          style:
-              const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13)),
+      title: Text(
+        Utils.convertActivityStatusToMulti(subject.name),
+        style: const TextStyle(color: AppColor.defaultBlackColor, fontSize: 13),
+      ),
       onTap: () {
         if (subject == widget.homeWorkProvider.listStatusForFilter.first) {
           if (isSelected) {

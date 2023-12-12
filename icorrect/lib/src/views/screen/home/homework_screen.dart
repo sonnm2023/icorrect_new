@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
@@ -20,7 +19,6 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:workmanager/workmanager.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
@@ -44,7 +42,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
-  final connectivityService = ConnectivityService();
   SimulatorTestProvider? _simulatorTestProvider;
 
   @override
@@ -61,11 +58,15 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     //Send log
     Utils.sendLog();
+
+    //Create crash bug for test
+    // Utils.testCrashBug();
   }
 
   void _getListHomeWork() async {
     //Reset old data
-    _homeWorkProvider.updateFilterString(StringConstants.add_your_filter);
+    _homeWorkProvider.updateFilterString(
+        Utils.multiLanguage(StringConstants.add_your_filter));
     _homeWorkProvider.resetListSelectedClassFilter();
     _homeWorkProvider.resetListSelectedStatusFilter();
     _homeWorkProvider.resetListSelectedFilterIntoLocal();
@@ -73,18 +74,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.resetListClassForFilter();
     _homeWorkProvider.resetListFilteredHomeWorks();
 
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      _homeWorkPresenter!.getListHomeWork(context);
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+    _homeWorkPresenter!.getListHomeWork(context);
 
     Future.delayed(Duration.zero, () {
       _authProvider
@@ -131,7 +121,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             key: widget.scaffoldKey,
             appBar: AppBar(
               title: Text(
-                StringConstants.my_homework_screen_title,
+                Utils.multiLanguage(StringConstants.my_homework_screen_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,
@@ -253,10 +243,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.exit_app_message,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description: Utils.multiLanguage(StringConstants.exit_app_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
@@ -292,10 +283,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.quit_the_test_message,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.quit_the_test_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () {
@@ -318,6 +311,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -339,6 +333,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -354,7 +349,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
-    await _homeWorkProvider.initializeListFilter();
+    await _homeWorkProvider.initializeListFilter(context);
   }
 
   @override

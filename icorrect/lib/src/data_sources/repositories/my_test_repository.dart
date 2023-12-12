@@ -7,7 +7,7 @@ import 'app_repository.dart';
 import 'package:http/http.dart' as http;
 
 abstract class MyTestRepository {
-  Future<String> getMyTestDetail(String testId);
+  Future<String> getMyTestDetail(String testId, bool isPracticeTest);
   Future<String> getResponse(String orderId);
   Future<String> getSpecialHomeWorks(
       String email, String activityId, int status, int example);
@@ -17,8 +17,11 @@ abstract class MyTestRepository {
 
 class MyTestImpl implements MyTestRepository {
   @override
-  Future<String> getMyTestDetail(String testId) {
+  Future<String> getMyTestDetail(String testId, bool isPracticeTest) {
     String url = myTestDetailEP(testId);
+    if (isPracticeTest) {
+      getMyPracticeTestDetailEP(testId);
+    }
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true)
         .timeout(const Duration(seconds: timeout))
@@ -84,6 +87,7 @@ class MyTestImpl implements MyTestRepository {
   @override
   Future<String> getTestDetailWithId(String testId) {
     String url = getTestDetailWithIdEP(testId);
+
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true)
         .timeout(const Duration(seconds: timeout))

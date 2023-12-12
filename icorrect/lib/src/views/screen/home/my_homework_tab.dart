@@ -3,9 +3,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
+import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -15,6 +17,7 @@ import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
@@ -41,9 +44,8 @@ class MyHomeWorkTab extends StatefulWidget {
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
-  final connectivityService = ConnectivityService();
   ActivitiesModel? _selectedHomeWorkModel;
-
+  final FlutterLocalization localization = FlutterLocalization.instance;
   @override
   void dispose() {
     super.dispose();
@@ -180,7 +182,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             },
             child: Center(
               child: Text(
-                StringConstants.close_button_title,
+                Utils.multiLanguage(StringConstants.close_button_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultGrayColor,
@@ -207,21 +209,24 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               bool isValid = widget.homeWorkProvider.checkFilterSelected();
               widget.homeWorkProvider.setProcessingStatus(isProcessing: true);
               if (isValid) {
-                widget.homeWorkProvider.filterHomeWork();
+                widget.homeWorkProvider.filterHomeWork(context);
                 Navigator.pop(context);
               } else {
                 widget.homeWorkProvider
                     .setProcessingStatus(isProcessing: false);
-
+                widget.homeWorkProvider.updateFilterString(
+                    Utils.multiLanguage(StringConstants.default_filter_title));
                 showToastMsg(
-                  msg: StringConstants.choose_filter_message,
+                  msg: Utils.multiLanguage(
+                      StringConstants.choose_filter_message),
                   toastState: ToastStatesType.warning,
+                  isCenter: true,
                 );
               }
             },
             child: Center(
               child: Text(
-                StringConstants.done_button_title,
+                Utils.multiLanguage(StringConstants.done_button_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,
@@ -244,49 +249,63 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             builder: (context, homeworkProvider, child) {
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
               !homeworkProvider.isProcessing) {
-            return const NoDataWidget(
-                msg: StringConstants.no_data_filter_message);
+            homeworkProvider.updateFilterString(
+                Utils.multiLanguage(StringConstants.default_filter_title));
+            return NoDataWidget(
+              msg: Utils.multiLanguage(StringConstants.no_data_filter_message),
+              reloadCallBack: _reloadCallBack,
+            );
           }
           return RefreshIndicator(
             onRefresh: widget.pullToRefreshCallBack,
-            child: CustomScrollView(
-              slivers: [
-                SliverGroupedListView<ActivitiesModel, String>(
-                  elements: homeworkProvider.listFilteredHomeWorks,
-                  groupBy: (element) => element.classId.toString(),
-                  groupComparator: (value1, value2) => value2.compareTo(value1),
-                  order: GroupedListOrder.ASC,
-                  groupSeparatorBuilder: (String classId) {
-                    String className = Utils.getClassNameWithId(
-                        classId, homeworkProvider.listClassForFilter);
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  slivers: [
+                    SliverGroupedListView<ActivitiesModel, String>(
+                      elements: homeworkProvider.listFilteredHomeWorks,
+                      groupBy: (element) => element.classId.toString(),
+                      groupComparator: (value1, value2) =>
+                          value2.compareTo(value1),
+                      order: GroupedListOrder.ASC,
+                      groupSeparatorBuilder: (String classId) {
+                        String className = Utils.getClassNameWithId(
+                            classId, homeworkProvider.listClassForFilter);
 
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        left: CustomSize.size_15,
-                        top: CustomSize.size_5,
-                        right: CustomSize.size_10,
-                        bottom: CustomSize.size_5,
-                      ),
-                      child: Text(
-                        className,
-                        textAlign: TextAlign.left,
-                        style: CustomTextStyle.textWithCustomInfo(
-                          context: context,
-                          color: AppColor.defaultBlackColor,
-                          fontsSize: FontsSize.fontSize_16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    );
-                  },
-                  itemBuilder: (c, element) {
-                    return HomeWorkWidget(
-                      homeWorkModel: element,
-                      callBack: _clickOnHomeWorkItem,
-                      homeWorkProvider: homeworkProvider,
-                    );
-                  },
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            left: CustomSize.size_15,
+                            top: CustomSize.size_5,
+                            right: CustomSize.size_10,
+                            bottom: CustomSize.size_5,
+                          ),
+                          child: Text(
+                            className,
+                            textAlign: TextAlign.left,
+                            style: CustomTextStyle.textWithCustomInfo(
+                              context: context,
+                              color: AppColor.defaultBlackColor,
+                              fontsSize: FontsSize.fontSize_16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                      itemBuilder: (c, element) {
+                        return HomeWorkWidget(
+                          homeWorkModel: element,
+                          callBack: _clickOnHomeWorkItem,
+                          homeWorkProvider: homeworkProvider,
+                        );
+                      },
+                    ),
+                  ],
                 ),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  margin: const EdgeInsets.all(20),
+                  child: _languageSelectionButton(),
+                )
               ],
             ),
           );
@@ -295,10 +314,73 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
-  Future<void> _pullRefresh() async {
-    if (kDebugMode) {
-      print("DEBUG: _buildListHomeWork: _pullRefresh");
-    }
+  void _updateFilterText() {
+    widget.homeWorkProvider.prepareToUpdateFilterString();
+  }
+
+  Widget _languageSelectionButton() {
+    return SpeedDial(
+      backgroundColor: AppColor.defaultPurpuleTransparent,
+      overlayColor: Colors.black,
+      overlayOpacity: 0.6,
+      spaceBetweenChildren: 10,
+      activeBackgroundColor: AppColor.defaultPurpuleLight02,
+      activeIcon: Icons.close,
+      children: [
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('en');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgEnglish),
+            ),
+          ),
+          label: StringConstants.ens_upppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SpeedDialChild(
+          onTap: () {
+            localization.translate('vi');
+            _updateFilterText();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(2),
+            child: Image(
+              image: AssetImage(AppAsset.imgVietName),
+            ),
+          ),
+          label: StringConstants.vn_uppercase,
+          labelStyle: const TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: Image(
+              image: AssetImage(
+                Utils.getCurrentLanguage()[StringConstants.k_image_url],
+              ),
+            ),
+          ),
+          Text(
+            Utils.getCurrentLanguage()[StringConstants.k_data],
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          )
+        ],
+      ),
+    );
   }
 
   void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
@@ -318,9 +400,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Permission.microphone,
       ].request();
 
-      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
-          (statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied)) {
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
@@ -345,9 +431,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Permission.microphone,
       ].request();
 
-      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
-          (statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied)) {
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
@@ -357,10 +447,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         try {
           Map<Permission, PermissionStatus> otherStatuses =
               await [Permission.camera].request();
-
-          if ((otherStatuses[Permission.camera]! == PermissionStatus.denied) ||
-              (otherStatuses[Permission.camera]! ==
-                  PermissionStatus.permanentlyDenied)) {
+          if (otherStatuses[Permission.camera]! ==
+              PermissionStatus.permanentlyDenied) {
+            _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
+            return;
+          }
+          if (otherStatuses[Permission.camera]! == PermissionStatus.denied) {
             if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
               _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
             } else {
@@ -418,50 +510,89 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     }
   }
 
+  void _showActivityIsLoadedDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.activity_is_loaded_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
+  }
+
   void _gotoHomeworkDetail() async {
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
-          _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
-
-      if (statusMap[StringConstants.k_title] ==
-              StringConstants.activity_status_out_of_date ||
-          statusMap[StringConstants.k_title] ==
-              StringConstants.activity_status_not_completed) {
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => SimulatorTestScreen(
-              homeWorkModel: _selectedHomeWorkModel!,
-            ),
-          ),
-        );
-
-        if (!mounted) return;
-        // After the SimulatorTest returns a result
-        // and refresh list of homework if needed
-        if (result == StringConstants.k_refresh) {
-          widget.homeWorkPresenter.refreshListHomework();
-        }
-      } else {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MyTestScreen(
-              homeWorkModel: _selectedHomeWorkModel!,
-              isFromSimulatorTest: false,
-            ),
-          ),
-        );
-      }
+    if (_selectedHomeWorkModel!.activityStatus == 99) {
+      _showActivityIsLoadedDialog(context);
     } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
+      Utils.checkInternetConnection().then((isConnected) async {
+        if (isConnected) {
+          Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
+            _selectedHomeWorkModel!,
+            widget.homeWorkProvider.serverCurrentTime,
+          );
 
-      Utils.addConnectionErrorLog(context);
+          if (statusMap[StringConstants.k_title] ==
+                  StringConstants.activity_status_out_of_date ||
+              statusMap[StringConstants.k_title] ==
+                  StringConstants.activity_status_not_completed) {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SimulatorTestScreen(
+                  homeWorkModel: _selectedHomeWorkModel!,
+                ),
+              ),
+            );
+
+            if (!mounted) return;
+            // After the SimulatorTest returns a result
+            // and refresh list of homework if needed
+            if (result == StringConstants.k_refresh) {
+              widget.homeWorkPresenter.refreshListHomework();
+            }
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => MyTestScreen(
+                  homeWorkModel: _selectedHomeWorkModel!,
+                  isFromSimulatorTest: false,
+                ),
+              ),
+            );
+          }
+        } else {
+          _handleConnectionError();
+        }
+      });
     }
+  }
+
+  void _handleConnectionError() {
+    //Show connect error here
+    if (kDebugMode) {
+      print("DEBUG: Connect error here!");
+    }
+    Utils.showConnectionErrorDialog(context);
+
+    Utils.addConnectionErrorLog(context);
+  }
+
+  void _reloadCallBack() async {
+    if (kDebugMode) {
+      print("DEBUG: MyHomeworkTab - _reloadCallBack");
+    }
+    widget.homeWorkPresenter.refreshListHomework();
   }
 
   @override

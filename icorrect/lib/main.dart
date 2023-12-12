@@ -1,13 +1,21 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
@@ -26,6 +34,11 @@ import 'src/provider/my_test_provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp();
+
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
   //Init task run on background
   Workmanager().initialize(callbackDispatcher);
 
@@ -37,8 +50,47 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final FlutterLocalization _localization = FlutterLocalization.instance;
+  StreamSubscription? connection;
+
+  @override
+  void initState() {
+    _localization.init(
+      mapLocales: [
+        const MapLocale('en', MultiLanguage.EN),
+        const MapLocale('vi', MultiLanguage.VN),
+      ],
+      initLanguageCode: 'vi',
+    );
+    _localization.onTranslatedLanguage = _onTranslatedLanguage;
+
+    connection = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        //Show toast for disconnected
+        showToastMsg(
+          msg: Utils.multiLanguage(StringConstants.network_error_message),
+          toastState: ToastStatesType.warning,
+          isCenter: false,
+        );
+      }
+    });
+
+    super.initState();
+  }
+
+  void _onTranslatedLanguage(Locale? locale) {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +121,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),
       ],
       child: MaterialApp(
+        supportedLocales: _localization.supportedLocales,
+        localizationsDelegates: _localization.localizationsDelegates,
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme:
@@ -82,8 +136,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-@pragma(
-    'vm:entry-point')
+@pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
     //Check logs file is exist

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 
+import '../../../data_sources/utils.dart';
+
 class StartNowButtonWidget extends StatelessWidget {
   const StartNowButtonWidget({super.key, required this.startNowButtonTapped});
 
@@ -16,7 +18,9 @@ class StartNowButtonWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: Text(
-            StringConstants.start_now_description,
+            Utils.multiLanguage(
+              StringConstants.start_now_description,
+            ),
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultBlackColor,
@@ -38,7 +42,9 @@ class StartNowButtonWidget extends StatelessWidget {
             alignment: Alignment.center,
             child: Center(
               child: Text(
-                StringConstants.start_now_button_title,
+                Utils.multiLanguage(
+                  StringConstants.start_now_button_title
+                ),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,

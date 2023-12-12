@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
+  void onIntroduceFileEmpty();
   void onCountDown(
       String countDownString, bool isLessThan2Seconds, int timeCounting);
   void onCountDownForCueCard(String countDownString);
@@ -37,6 +39,7 @@ abstract class TestRoomViewContract {
   void onClickSaveTheTest();
   void onFinishTheTest();
   void onReDownload();
+  void onUpdateHasOrderStatus(bool hasOrder);
 }
 
 class TestRoomPresenter {
@@ -69,6 +72,7 @@ class TestRoomPresenter {
       if (kDebugMode) {
         print("DEBUG: This topic has not introduce file");
       }
+      _view!.onIntroduceFileEmpty();
     }
   }
 
@@ -114,6 +118,21 @@ class TestRoomPresenter {
   }
 
   String getVideoLongestDuration(List<VideoExamRecordInfo> videosSaved) {
+    List<VideoExamRecordInfo> videosMore7s = [];
+    for (int i = 0; i < videosSaved.length; i++) {
+      File videoFile = File(videosSaved.elementAt(i).filePath!);
+      if (videoFile.existsSync() &&
+          (videoFile.lengthSync() / (1024 * 1024)) >= 40) {
+        videosMore7s.add(videosSaved.elementAt(i));
+      }
+    }
+    if (videosMore7s.isNotEmpty) {
+      Random random = Random();
+      int positionRandom = random.nextInt(videosMore7s.length);
+      VideoExamRecordInfo randomVideo = videosMore7s.elementAt(positionRandom);
+      return randomVideo.filePath ?? '';
+    }
+
     videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
     VideoExamRecordInfo maxValue = videosSaved.last;
     return maxValue.filePath ?? '';
@@ -250,8 +269,15 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
-          _view!
-              .onSubmitTestSuccess(StringConstants.save_answer_success_message);
+          bool hasOrder = false;
+          if (null != json[StringConstants.k_has_order]) {
+            hasOrder = json[StringConstants.k_has_order];
+          }
+
+          _view!.onUpdateHasOrderStatus(hasOrder);
+
+          _view!.onSubmitTestSuccess(
+              Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
           //Add log
           Utils.prepareLogData(
@@ -261,7 +287,13 @@ class TestRoomPresenter {
             status: LogEvent.failed,
           );
 
-          _view!.onSubmitTestFail(StringConstants.submit_test_error_message);
+          String errorCode = "";
+          if (json[StringConstants.k_error_code] != null) {
+            errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
+          }
+
+          _view!.onSubmitTestFail(
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -273,8 +305,8 @@ class TestRoomPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onSubmitTestFail(
-            StringConstants.submit_test_error_invalid_return_type_message);
+        _view!.onSubmitTestFail(Utils.multiLanguage(
+            StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
       //Add log
@@ -285,7 +317,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_timeout);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -295,7 +328,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_socket);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -305,7 +339,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(StringConstants.submit_test_error_client);
+      _view!.onSubmitTestFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }
 
@@ -338,6 +373,10 @@ class TestRoomPresenter {
       url = submitExam();
     }
 
+    if (activityId.isEmpty) {
+      url = submitPractice();
+    }
+
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -348,9 +387,12 @@ class TestRoomPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
-    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
-    formData.addEntries(
-        [MapEntry(StringConstants.k_is_update, isUpdate ? '1' : '0')]);
+    if (activityId.isNotEmpty) {
+      formData
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+      formData.addEntries(
+          [MapEntry(StringConstants.k_is_update, isUpdate ? '1' : '0')]);
+    }
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);
@@ -407,15 +449,25 @@ class TestRoomPresenter {
 
       //For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
-        String path = await FileStorageHelper.getFilePath(
-            q.answers.elementAt(i).url.toString(), MediaType.audio, testId);
+        String path = await Utils.createNewFilePath(
+            q.answers.elementAt(i).url.toString());
         File audioFile = File(path);
 
         if (await audioFile.exists()) {
+          String audioSize = "${audioFile.lengthSync() / (1024 * 1024)} Mb";
+          dataLog!.addEntries([MapEntry(q.answers[i].url, audioSize)]);
+
           request.files.add(
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          if (kDebugMode) {
+            formData.addEntries([MapEntry("$prefix[$i]", audioFile.path)]);
+          }
         }
       }
+    }
+
+    if (kDebugMode) {
+      print("DEBUG: formdata: ${formData.toString()}");
     }
 
     if (null != videoConfirmFile) {
@@ -486,7 +538,7 @@ class TestRoomPresenter {
           );
 
           _view!.onUpdateReAnswersSuccess(
-              StringConstants.save_answer_success_message);
+              Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
           //Add log
           Utils.prepareLogData(
@@ -496,8 +548,13 @@ class TestRoomPresenter {
             status: LogEvent.failed,
           );
 
-          _view!
-              .onUpdateReAnswersFail(StringConstants.submit_test_error_message);
+          String errorCode = "";
+          if (json[StringConstants.k_error_code] != null) {
+            errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
+          }
+
+          _view!.onUpdateReAnswersFail(
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -509,8 +566,8 @@ class TestRoomPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onUpdateReAnswersFail(
-            StringConstants.submit_test_error_invalid_return_type_message);
+        _view!.onUpdateReAnswersFail(Utils.multiLanguage(
+            StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
       //Add log
@@ -521,7 +578,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_timeout);
+      _view!.onUpdateReAnswersFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -531,7 +589,8 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_socket);
+      _view!.onUpdateReAnswersFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -540,7 +599,8 @@ class TestRoomPresenter {
         message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
-      _view!.onUpdateReAnswersFail(StringConstants.submit_test_error_client);
+      _view!.onUpdateReAnswersFail(
+          Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }
 
@@ -581,8 +641,8 @@ class TestRoomPresenter {
 
       //Add information into log
       log!.addData(key: StringConstants.k_email, value: email);
-      log!.addData(key: StringConstants.k_activity_id, value: activityId);
-      log!.addData(key: "question_index", value: questionIndex);
+      log.addData(key: StringConstants.k_activity_id, value: activityId);
+      log.addData(key: "question_index", value: questionIndex);
 
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {

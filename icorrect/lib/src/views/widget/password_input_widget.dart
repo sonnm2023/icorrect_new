@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/views/widget/auth_form_field.dart';
 
+import '../../data_sources/utils.dart';
+
 class PasswordInputWidget extends StatelessWidget {
   const PasswordInputWidget(
       {super.key, required this.passwordController, required this.type});
@@ -23,31 +25,33 @@ class PasswordInputWidget extends StatelessWidget {
         text = StringConstants.new_password;
       case PasswordType.confirmNewPassword:
         text = StringConstants.confirm_new_password;
-
     }
 
     return AuthFormField(
       validator: (value) {
         if (passwordController.text.isEmpty) {
-          return StringConstants.empty_password_error_message;
+          return Utils.multiLanguage(
+              StringConstants.empty_password_error_message);
         } else if (passwordController.text.length < 6) {
-          return StringConstants.password_min_lenght_message;
+          return Utils.multiLanguage(
+              StringConstants.password_min_lenght_message);
         } else if (passwordController.text.length > 32) {
-          return StringConstants.password_max_lenght_message;
+          return Utils.multiLanguage(
+              StringConstants.password_max_lenght_message);
         }
         return null;
       },
       prefixIcon: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: Image.asset('assets/images/ic_password.png',
-            width: 1, height: 1),
+        child:
+            Image.asset('assets/images/ic_password.png', width: 1, height: 1),
       ),
       obscureText: true,
       maxLines: 1,
       controller: passwordController,
       keyboardType: TextInputType.text,
-      hintText: text,
-      upHintText: text,
+      hintText: Utils.multiLanguage(text),
+      upHintText: Utils.multiLanguage(text),
     );
   }
 }

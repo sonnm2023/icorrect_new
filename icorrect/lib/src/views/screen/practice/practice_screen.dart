@@ -5,9 +5,12 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/views/screen/practice/topics_screen.dart';
+import 'package:icorrect/src/provider/ielts_topics_provider.dart';
+import 'package:icorrect/src/views/screen/practice/topics_list/ielts_topics_screen.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../provider/ielts_topics_screen_provider.dart';
 
 class PracticeScreen extends StatefulWidget {
   const PracticeScreen({super.key});
@@ -23,6 +26,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
   void initState() {
     super.initState();
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    Future.delayed(Duration.zero, () {
+      _authProvider.setGlobalScaffoldKey(
+        GlobalScaffoldKey.practiceScreenScaffoldKey,
+      );
+    });
   }
 
   @override
@@ -32,108 +40,86 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_authProvider.isShowDialog) {
-          GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
-          _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
-
-          Navigator.of(key.currentState!.context).pop();
-        } else {
-          Queue<GlobalKey<ScaffoldState>> scaffoldKeys =
-              _authProvider.scaffoldKeys;
-          GlobalKey<ScaffoldState> key = scaffoldKeys.first;
-          if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
-            Utils.showLogoutConfirmDialog(
-                context: context, homeWorkPresenter: null);
-          } else {
-            Navigator.of(key.currentState!.context).pop();
-            scaffoldKeys.removeFirst();
-          }
-        }
-
-        return false;
-      },
-      child: DefaultTabController(
-        length: 1,
-        child: Scaffold(
-          key: GlobalScaffoldKey.practiceScreenScaffoldKey,
-          appBar: AppBar(
-            title: Text(
-              StringConstants.practice_screen_title,
-              style: CustomTextStyle.textWithCustomInfo(
-                context: context,
-                color: AppColor.defaultPurpleColor,
-                fontsSize: FontsSize.fontSize_18,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            centerTitle: true,
-            elevation: 0.0,
-            iconTheme: const IconThemeData(
-              color: AppColor.defaultPurpleColor,
-            ),
-            backgroundColor: AppColor.defaultWhiteColor,
-            bottom: const PreferredSize(
-              preferredSize: Size.fromHeight(1),
-              child: CustomDivider(),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          Utils.multiLanguage(StringConstants.practice_screen_title),
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultPurpleColor,
+            fontsSize: FontsSize.fontSize_18,
+            fontWeight: FontWeight.w800,
           ),
-          body: Stack(
-            children: [
-              SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildInPracticeCard(
-                      context,
-                      title: StringConstants.practice_card_part_1_title,
-                      des: StringConstants.practice_card_part_1_description,
-                    ),
-                    _buildInPracticeCard(
-                      context,
-                      title: StringConstants.practice_card_part_2_title,
-                      des: StringConstants.practice_card_part_2_description,
-                    ),
-                    _buildInPracticeCard(
-                      context,
-                      title: StringConstants.practice_card_part_3_title,
-                      des: StringConstants.practice_card_part_3_description,
-                    ),
-                    _buildInPracticeCard(
-                      context,
-                      title: StringConstants.practice_card_part_2_3_title,
-                      des: StringConstants.practice_card_part_2_3_description,
-                    ),
-                    _buildInPracticeCard(
-                      context,
-                      title: StringConstants.practice_card_full_test_title,
-                      des: StringConstants.practice_card_full_test_description,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          drawer: Utils.navbar(context: context, homeWorkPresenter: null),
-          drawerEnableOpenDragGesture: false,
         ),
+        centerTitle: true,
+        elevation: 0.0,
+        iconTheme: const IconThemeData(
+          color: AppColor.defaultPurpleColor,
+        ),
+        backgroundColor: AppColor.defaultWhiteColor,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: CustomDivider(),
+        ),
+      ),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                _buildInPracticeCard(context,
+                    title: Utils.multiLanguage(
+                        StringConstants.practice_card_part_1_title),
+                    des: Utils.multiLanguage(
+                        StringConstants.practice_card_part_1_description),
+                    topicTypes: IELTSTopicType.part1.get),
+                _buildInPracticeCard(context,
+                    title: Utils.multiLanguage(
+                        StringConstants.practice_card_part_2_title),
+                    des: Utils.multiLanguage(
+                        StringConstants.practice_card_part_2_description),
+                    topicTypes: IELTSTopicType.part2.get),
+                _buildInPracticeCard(context,
+                    title: Utils.multiLanguage(
+                        StringConstants.practice_card_part_3_title),
+                    des: Utils.multiLanguage(
+                        StringConstants.practice_card_part_3_description),
+                    topicTypes: IELTSTopicType.part3.get),
+                _buildInPracticeCard(context,
+                    title: Utils.multiLanguage(
+                        StringConstants.practice_card_part_2_3_title),
+                    des: Utils.multiLanguage(
+                        StringConstants.practice_card_part_2_3_description),
+                    topicTypes: IELTSTopicType.part2and3.get),
+                _buildInPracticeCard(context,
+                    title: Utils.multiLanguage(
+                        StringConstants.practice_card_full_test_title),
+                    des: Utils.multiLanguage(
+                        StringConstants.practice_card_full_test_description),
+                    topicTypes: IELTSTopicType.full.get),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
 }
 
-Widget _buildInPracticeCard(
-  BuildContext context, {
-  required String title,
-  required String des,
-}) {
+Widget _buildInPracticeCard(BuildContext context,
+    {required String title,
+    required String des,
+    required List<String> topicTypes}) {
   return GestureDetector(
     onTap: () => Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const TopicsScreen(),
+        builder: (context) => ChangeNotifierProvider(
+            create: (_) => IELTSTopicsScreenProvider(),
+            child: IELTSTopicsScreen(topicTypes: topicTypes)),
       ),
     ),
     child: Padding(
@@ -150,6 +136,7 @@ Widget _buildInPracticeCard(
           ),
           width: double.infinity,
           decoration: BoxDecoration(
+            color: AppColor.defaultGraySlightColor,
             border: Border.all(
               color: AppColor.defaultPurpleColor,
               style: BorderStyle.solid,
@@ -167,7 +154,7 @@ Widget _buildInPracticeCard(
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
-                  fontsSize: FontsSize.fontSize_14,
+                  fontsSize: FontsSize.fontSize_16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -176,7 +163,7 @@ Widget _buildInPracticeCard(
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultGrayColor,
-                  fontsSize: FontsSize.fontSize_14,
+                  fontsSize: FontsSize.fontSize_15,
                   fontWeight: FontWeight.w400,
                 ),
               )

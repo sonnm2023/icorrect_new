@@ -83,7 +83,8 @@ class _StudentCorrectionState extends State<StudentCorrection>
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  StringConstants.test_correction_wait_response_message,
+                  Utils.multiLanguage(
+                      StringConstants.test_correction_wait_response_message),
                   textAlign: TextAlign.center,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
@@ -132,7 +133,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
             Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                StringConstants.overview,
+                Utils.multiLanguage(StringConstants.overview),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -180,8 +181,8 @@ class _StudentCorrectionState extends State<StudentCorrection>
                       },
                       child: Text(
                         (appState.visibleOverviewComment)
-                            ? StringConstants.show_less
-                            : StringConstants.show_more,
+                            ? Utils.multiLanguage(StringConstants.show_less)
+                            : Utils.multiLanguage(StringConstants.show_more),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultBlackColor,
@@ -209,30 +210,34 @@ class _StudentCorrectionState extends State<StudentCorrection>
           children: [
             _scoreItem(
               index: 0,
-              title: '${StringConstants.overall_score} ${result.overallScore}',
+              title:
+                  '${Utils.multiLanguage(StringConstants.overall_score)} ${result.overallScore}',
             ),
             _scoreItem(
               index: 1,
-              title: '${StringConstants.fluency} ${result.fluency}',
+              title:
+                  '${Utils.multiLanguage(StringConstants.fluency)} ${result.fluency}',
               problems: result.fluencyProblem,
               visible: appState.visibleFluency,
             ),
             _scoreItem(
               index: 2,
               title:
-                  '${StringConstants.lexical_resource} ${result.lexicalResource}',
+                  '${Utils.multiLanguage(StringConstants.lexical_resource)} ${result.lexicalResource}',
               problems: result.lexicalResourceProblem,
               visible: appState.visibleLexical,
             ),
             _scoreItem(
               index: 3,
-              title: '${StringConstants.grammatical} ${result.grammatical}',
+              title:
+                  '${Utils.multiLanguage(StringConstants.grammatical)} ${result.grammatical}',
               problems: result.grammaticalProblem,
               visible: appState.visibleGramatical,
             ),
             _scoreItem(
               index: 4,
-              title: '${StringConstants.pronunciation} ${result.pronunciation}',
+              title:
+                  '${Utils.multiLanguage(StringConstants.pronunciation)} ${result.pronunciation}',
               problems: result.pronunciationProblem,
               visible: appState.visiblePronunciation,
             ),
@@ -388,7 +393,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         Text(
-                          StringConstants.problem,
+                          Utils.multiLanguage(StringConstants.problem),
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultBlackColor,
@@ -413,7 +418,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         Text(
-                          StringConstants.solution,
+                          Utils.multiLanguage(StringConstants.solution),
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultBlackColor,
@@ -444,7 +449,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
             )
           : EmptyWidget.init().buildNothingWidget(
               context,
-              StringConstants.nothing_problem_message,
+              Utils.multiLanguage(StringConstants.no_data_message),
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
             ),
@@ -468,7 +473,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
         child: Text(
-          StringConstants.view_sample_button_title,
+          Utils.multiLanguage(StringConstants.view_sample_button_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -504,14 +509,16 @@ class _StudentCorrectionState extends State<StudentCorrection>
   }
 
   @override
-  void getErrorResponse(String message) {
+  void getErrorResponse({required String message, required bool isError}) {
     _loading!.hide();
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      fontSize: FontsSize.fontSize_15,
-    );
+    if (isError) {
+      Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        fontSize: FontsSize.fontSize_15,
+      );
+    }
   }
 
   @override

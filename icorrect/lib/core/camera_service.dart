@@ -12,7 +12,7 @@ class CameraService {
     _cameras = await availableCameras();
     _cameraController = CameraController(
       _cameras![1],
-      ResolutionPreset.high,
+      ResolutionPreset.ultraHigh,
       enableAudio: true,
     );
 

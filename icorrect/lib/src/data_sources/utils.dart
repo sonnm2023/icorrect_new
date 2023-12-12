@@ -5,14 +5,16 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:icorrect/core/connectivity_service.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
@@ -23,6 +25,7 @@ import 'package:http/http.dart' as http;
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/drawer_items.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
@@ -34,9 +37,10 @@ import '../models/ui_models/user_authen_status.dart';
 import '../provider/homework_provider.dart';
 import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'api_urls.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Utils {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   static Future<String> getDeviceIdentifier() async {
     String deviceIdentifier = "unknown";
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -172,6 +176,13 @@ class Utils {
 
   static Map<String, dynamic> getHomeWorkStatus(
       ActivitiesModel homeWorkModel, String serverCurrentTime) {
+    if (homeWorkModel.activityStatus == 99) {
+      return {
+        StringConstants.k_title: StringConstants.activity_status_loaded_test,
+        StringConstants.k_color: Colors.brown,
+      };
+    }
+
     if (null == homeWorkModel.activityAnswer) {
       bool timeCheck =
           isExpired(homeWorkModel.activityEndTime, serverCurrentTime);
@@ -203,7 +214,7 @@ class Utils {
         if (homeWorkModel.activityAnswer!.late == 1) {
           return {
             StringConstants.k_title: StringConstants.activity_status_late,
-            StringConstants.k_color: Colors.orange,
+            StringConstants.k_color: Colors.red,
           };
         }
 
@@ -269,8 +280,8 @@ class Utils {
             (double.parse(aiScore) == -1.0 || double.parse(aiScore) == -2.0)) {
           return {
             StringConstants.k_color: Colors.red,
-            StringConstants.k_score:
-                StringConstants.ai_score_response_not_evaluated
+            StringConstants.k_score: Utils.multiLanguage(
+                StringConstants.ai_score_response_not_evaluated)
           };
         } else {
           return {
@@ -281,10 +292,55 @@ class Utils {
       } else {
         return {
           StringConstants.k_color: Colors.red,
-          StringConstants.k_score:
-              StringConstants.ai_score_response_not_evaluated
+          StringConstants.k_score: Utils.multiLanguage(
+              StringConstants.ai_score_response_not_evaluated)
         };
       }
+    }
+  }
+
+  static String multiLanguage(String constantString) {
+    final FlutterLocalization localization = FlutterLocalization.instance;
+    if (localization.currentLocale == null) {
+      localization.init(
+        mapLocales: [
+          const MapLocale('en', MultiLanguage.EN),
+          const MapLocale('vi', MultiLanguage.VN),
+        ],
+        initLanguageCode: 'vi',
+      );
+    }
+    return Intl.message(
+        localization.currentLocale!.languageCode == "vi"
+            ? MultiLanguage.VN[constantString]
+            : MultiLanguage.EN[constantString],
+        name: constantString);
+  }
+
+  static Map<String, dynamic> getCurrentLanguage() {
+    final FlutterLocalization localization = FlutterLocalization.instance;
+    if (localization.currentLocale == null) {
+      localization.init(
+        mapLocales: [
+          const MapLocale('en', MultiLanguage.EN),
+          const MapLocale('vi', MultiLanguage.VN),
+        ],
+        initLanguageCode: 'vi',
+      );
+    }
+
+    if (localization.currentLocale!.languageCode == "vi") {
+      return {
+        StringConstants.k_title: StringConstants.vn_uppercase,
+        StringConstants.k_image_url: AppAsset.imgVietName,
+        StringConstants.k_data: StringConstants.vn_shortest
+      };
+    } else {
+      return {
+        StringConstants.k_title: StringConstants.ens_upppercase,
+        StringConstants.k_image_url: AppAsset.imgEnglish,
+        StringConstants.k_data: StringConstants.en_shortest
+      };
     }
   }
 
@@ -292,44 +348,48 @@ class Utils {
     return int.tryParse(str) != null || double.tryParse(str) != null;
   }
 
-  static UserAuthenStatusUI getUserAuthenStatus(int status) {
+  static UserAuthenStatusUI getUserAuthenStatus(
+      BuildContext context, int status) {
     switch (status) {
       case 0:
         return UserAuthenStatusUI(
-            title: StringConstants.not_auth_title,
-            description: StringConstants.not_auth_content,
+            title: Utils.multiLanguage(StringConstants.not_auth_title),
+            description: Utils.multiLanguage(StringConstants.not_auth_content),
             icon: Icons.cancel_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
             iconColor: Colors.red);
       case 4:
         return UserAuthenStatusUI(
-            title: StringConstants.reject_auth_title,
-            description: StringConstants.reject_auth_content,
+            title: Utils.multiLanguage(StringConstants.reject_auth_title),
+            description:
+                Utils.multiLanguage(StringConstants.reject_auth_content),
             icon: Icons.video_camera_front_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 233, 179),
             titleColor: Colors.amber,
             iconColor: Colors.amber);
       case 1:
         return UserAuthenStatusUI(
-            title: StringConstants.user_authed_title,
-            description: StringConstants.user_authed_content,
+            title: Utils.multiLanguage(StringConstants.user_authed_title),
+            description:
+                Utils.multiLanguage(StringConstants.user_authed_content),
             icon: Icons.check_circle_outline_rounded,
             backgroundColor: const Color.fromARGB(255, 179, 248, 195),
             titleColor: Colors.green,
             iconColor: Colors.green);
       case 3:
         return UserAuthenStatusUI(
-            title: StringConstants.progress_auth_title,
-            description: StringConstants.progress_auth_content,
+            title: Utils.multiLanguage(StringConstants.progress_auth_title),
+            description:
+                Utils.multiLanguage(StringConstants.progress_auth_content),
             icon: Icons.change_circle_sharp,
             backgroundColor: const Color.fromARGB(255, 179, 222, 248),
             titleColor: Colors.blue,
             iconColor: Colors.blue);
       case 2:
         return UserAuthenStatusUI(
-            title: StringConstants.lock_auth_title,
-            description: StringConstants.lock_auth_content,
+            title: Utils.multiLanguage(StringConstants.lock_auth_title),
+            description: Utils.multiLanguage(StringConstants.lock_auth_content),
             icon: Icons.lock,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -337,8 +397,9 @@ class Utils {
       case 99:
       default:
         return UserAuthenStatusUI(
-            title: StringConstants.error_auth_title,
-            description: StringConstants.error_auth_content,
+            title: Utils.multiLanguage(StringConstants.error_auth_title),
+            description:
+                Utils.multiLanguage(StringConstants.error_auth_content),
             icon: Icons.error_outline,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -386,6 +447,20 @@ class Utils {
     }
 
     return nameFile;
+  }
+
+  static int getTestOption(List<String> topicType) {
+    int testOption = IELTSTestOption.full.get;
+    if (topicType == IELTSTopicType.part1.get) {
+      testOption = IELTSTestOption.part1.get;
+    } else if (topicType == IELTSTopicType.part2.get) {
+      testOption = IELTSTestOption.part2.get;
+    } else if (topicType == IELTSTopicType.part3.get) {
+      testOption = IELTSTestOption.part3.get;
+    } else if (topicType == IELTSTopicType.part2and3.get) {
+      testOption = IELTSTestOption.part2and3.get;
+    }
+    return testOption;
   }
 
   static File changeFileNameSync(File file, String newFileName) {
@@ -499,24 +574,6 @@ class Utils {
     }
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.audio, testId);
-    return path;
-  }
-
-  static Future<String> getPathToRecordReAnswer(
-      QuestionTopicModel question, String? testId) async {
-    String fileName = '';
-    if (question.answers.length > 1) {
-      if (question.repeatIndex == 0) {
-        fileName = question.answers.last.url;
-      } else {
-        fileName = question.answers.elementAt(question.repeatIndex - 1).url;
-      }
-    } else {
-      fileName = question.answers.first.url;
-    }
-
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String path = "${appDocDirectory.path}/$fileName.wav";
     return path;
   }
 
@@ -686,27 +743,28 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.confirm_to_log_out,
-          okButtonTitle: StringConstants.ok_button_title,
-          cancelButtonTitle: StringConstants.cancel_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description: Utils.multiLanguage(StringConstants.confirm_to_log_out),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
           borderRadius: 8,
           hasCloseButton: false,
           okButtonTapped: () async {
             if (null != homeWorkPresenter) {
-              var connectivity =
-                  await ConnectivityService().checkConnectivity();
-              if (connectivity.name != StringConstants.connectivity_name_none) {
-                homeWorkPresenter.logout(context);
-              } else {
-                //Show connect error here
-                if (kDebugMode) {
-                  print("DEBUG: Connect error here!");
-                }
-                Utils.showConnectionErrorDialog(context);
+              Utils.checkInternetConnection().then((isConnected) {
+                if (isConnected) {
+                  homeWorkPresenter.logout(context);
+                } else {
+                  //Show connect error here
+                  if (kDebugMode) {
+                    print("DEBUG: Connect error here!");
+                  }
+                  Utils.showConnectionErrorDialog(context);
 
-                Utils.addConnectionErrorLog(context);
-              }
+                  Utils.addConnectionErrorLog(context);
+                }
+              });
             } else {
               Navigator.of(context).pop();
             }
@@ -843,7 +901,7 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != StringConstants.connectivity_name_none) {
+    if (status != "none") {
       //NOT Action log
       DateTime createdTime =
           DateTime.fromMillisecondsSinceEpoch(log.createdTime);
@@ -962,9 +1020,10 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -998,14 +1057,15 @@ class Utils {
     prepareLogData(
       log: log,
       data: null,
-      message: StringConstants.log_connection_error_message,
+      message:
+          Utils.multiLanguage(StringConstants.log_connection_error_message),
       status: LogEvent.failed,
     );
   }
 
   static Future<String> getLocalImagePath(String fileName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$fileName';
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String filePath = "$folderPath/$fileName";
     if (kDebugMode) {
       print("DEBUG: load image from local: $filePath");
     }
@@ -1018,8 +1078,8 @@ class Utils {
   }
 
   static Future<bool> checkImageFileExist(String fileName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$fileName';
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String filePath = "$folderPath/$fileName";
     bool result = await File(filePath).exists();
     return result;
   }
@@ -1060,5 +1120,84 @@ class Utils {
         sendLogsTask,
       );
     }
+  }
+
+  static void testCrashBug() {
+    int result = 5 ~/ 0;
+    if (kDebugMode) {
+      print(result);
+    }
+  }
+
+  //Firebase log
+  static void addFirebaseLog({
+    required String eventName,
+    required Map<String, Object> parameters,
+  }) {
+    analytics.logEvent(name: eventName, parameters: parameters);
+  }
+
+  static Future<String> createNewFilePath(String fileName) async {
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String path = "$folderPath/$fileName";
+    return path;
+  }
+
+  static String convertActivityStatusToMulti(String status) {
+    String rs = "";
+    String temp = "";
+
+    switch (status) {
+      case "Select All":
+        {
+          temp = "select_all";
+          break;
+        }
+      case "Out Of Date":
+        {
+          temp = "activity_status_out_of_date";
+          break;
+        }
+      case "Not Completed":
+        {
+          temp = "activity_status_not_completed";
+          break;
+        }
+      case "Corrected":
+        {
+          temp = "activity_status_corrected";
+          break;
+        }
+      case "Submitted":
+        {
+          temp = "activity_status_submitted";
+          break;
+        }
+      case "Late":
+        {
+          temp = "activity_status_late";
+          break;
+        }
+      case " AI Scored":
+        {
+          temp = "activity_status_ai_scored";
+          break;
+        }
+      case "Loaded Test":
+        {
+          temp = "activity_status_loaded_test";
+          break;
+        }
+    }
+
+    if (temp.isNotEmpty) {
+      rs = multiLanguage(temp);
+    }
+
+    return rs;
+  }
+
+  static Future<bool> checkInternetConnection() async {
+    return await InternetConnectionChecker().hasConnection;
   }
 }

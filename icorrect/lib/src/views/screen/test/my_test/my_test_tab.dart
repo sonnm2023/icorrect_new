@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -36,11 +35,15 @@ import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyTestTab extends StatefulWidget {
-  final ActivitiesModel homeWorkModel;
+  final ActivitiesModel? homeWorkModel;
+  final String? practiceTestId;
   final MyTestProvider provider;
 
   const MyTestTab(
-      {super.key, required this.homeWorkModel, required this.provider});
+      {super.key,
+      this.homeWorkModel,
+      this.practiceTestId,
+      required this.provider});
 
   @override
   State<MyTestTab> createState() => _MyTestTabState();
@@ -49,6 +52,7 @@ class MyTestTab extends StatefulWidget {
 class _MyTestTabState extends State<MyTestTab>
     with AutomaticKeepAliveClientMixin<MyTestTab>, WidgetsBindingObserver
     implements MyTestContract, ActionAlertListener {
+  double w = 0, h = 0;
   MyTestPresenter? _presenter;
   CircleLoading? _loading;
 
@@ -58,7 +62,6 @@ class _MyTestTabState extends State<MyTestTab>
   StreamSubscription? connection;
   String audioFile = "";
   Timer? timer;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -72,6 +75,13 @@ class _MyTestTabState extends State<MyTestTab>
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
+        if (kDebugMode) {
+          print("DEBUG: connect via 3G/4G");
+        }
+        if (_presenter!.isDownloading) {
+          _presenter!.reDownloadFiles(
+              context, widget.homeWorkModel!.activityId.toString());
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
         isOffline = false;
@@ -97,36 +107,34 @@ class _MyTestTabState extends State<MyTestTab>
   void _prepareDataForMyTestDetail() async {
     final status = await Permission.microphone.status;
     await _presenter!.initializeData();
-    var connectivity = await connectivityService.checkConnectivity();
 
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      _presenter!.getMyTest(
-        context: context,
-        activityId: widget.homeWorkModel.activityId.toString(),
-        testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
-      );
-
-      Future.delayed(Duration.zero, () {
-        widget.provider.setPermissionRecord(status);
-        widget.provider.setDownloadingFile(true);
-      });
-    } else {
-      _loading!.hide();
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
+    String activityId = "";
+    String testId = widget.practiceTestId ?? "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+      testId = widget.homeWorkModel!.activityAnswer!.testId.toString();
     }
+
+    _presenter!.getMyTest(
+      context: context,
+      activityId: activityId,
+      testId: testId,
+    );
+
+    Future.delayed(Duration.zero, () {
+      widget.provider.clearData();
+      widget.provider.setPermissionRecord(status);
+      widget.provider.setDownloadingFile(true);
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
+    _record.dispose();
     _presenter!.closeClientRequest();
+    _presenter!.pauseDownload();
     super.dispose();
   }
 
@@ -137,108 +145,126 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _buildMyTest() {
+    w = MediaQuery.of(context).size.width;
+    h = MediaQuery.of(context).size.height;
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
-        if (provider.isDownloading) {
-          return const DownloadProgressingWidget();
-        }
         return Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            Container(
-              alignment: Alignment.topCenter,
-              padding: const EdgeInsets.only(top: 10, bottom: 70),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: provider.myAnswerOfQuestions.length,
-                itemBuilder: (context, index) {
-                  return _questionItem(provider.myAnswerOfQuestions[index]);
-                },
-              ),
-            ),
-            (Utils.haveAiResponse(widget.homeWorkModel).isNotEmpty)
-                ? LayoutBuilder(
-                    builder: (_, constraint) {
-                      return InkWell(
-                        onTap: () async {
-                          String aiResponseLink = await aiResponseEP(widget
-                              .homeWorkModel.activityAnswer!.aiOrder
-                              .toString());
-                          Uri toLaunch = Uri.parse(aiResponseLink);
-
-                          await launchUrl(toLaunch);
-                        },
-                        child: Container(
-                          height: 51,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: CustomSize.size_10,
-                          ),
-                          color: Colors.green,
-                          width: constraint.maxWidth,
-                          child: Center(
-                            child: Text(
-                              StringConstants.view_ai_response_button_title,
-                              style: CustomTextStyle.textWithCustomInfo(
-                                context: context,
-                                color: AppColor.defaultAppColor,
-                                fontsSize: FontsSize.fontSize_16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+            (provider.isDownloading)
+                ? const DownloadProgressingWidget()
+                : Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Container(
+                        color: AppColor.defaultGraySlightColor,
+                        height: h,
+                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.only(top: 10, bottom: 70),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: provider.myAnswerOfQuestions.length,
+                          itemBuilder: (context, index) {
+                            return _questionItem(
+                                provider.myAnswerOfQuestions[index]);
+                          },
                         ),
-                      );
-                    },
-                  )
-                : Container(),
-            TestRecordWidget(
-              finishAnswer: (currentQuestion) {
-                _onFinishReanswer(currentQuestion);
-              },
-              cancelAnswer: () {
-                _onCancelReanswer();
-              },
-            ),
-            (provider.reAnswerOfQuestions.isNotEmpty && !provider.visibleRecord)
-                ? LayoutBuilder(
-                    builder: (_, constraint) {
-                      return InkWell(
-                        onTap: () {
-                          _showDialogConfirmSaveChange(provider: provider);
+                      ),
+                      TestRecordWidget(
+                        finishAnswer: (currentQuestion) {
+                          _onFinishReanswer(currentQuestion);
                         },
-                        child: Container(
-                          height: 50,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: CustomSize.size_10,
-                          ),
-                          color: AppColor.defaultPurpleColor,
-                          width: constraint.maxWidth,
-                          child: Center(
-                            child: Text(
-                              StringConstants.update_answer_button_title,
-                              style: CustomTextStyle.textWithCustomInfo(
-                                context: context,
-                                color: AppColor.defaultAppColor,
-                                fontsSize: FontsSize.fontSize_16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : Container(),
-            provider.needDownloadAgain
-                ? const DownloadAgainWidget(
-                    simulatorTestPresenter: null,
-                    myTestPresenter: null,
-                  )
-                : const SizedBox(),
+                        cancelAnswer: () {
+                          _onCancelReanswer();
+                        },
+                      ),
+                      (provider.reAnswerOfQuestions.isNotEmpty &&
+                              !provider.visibleRecord)
+                          ? LayoutBuilder(
+                              builder: (_, constraint) {
+                                return InkWell(
+                                  onTap: () {
+                                    _showDialogConfirmSaveChange(
+                                        provider: provider);
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: CustomSize.size_10,
+                                    ),
+                                    color: AppColor.defaultPurpleColor,
+                                    width: constraint.maxWidth,
+                                    child: Center(
+                                      child: Text(
+                                        Utils.multiLanguage(StringConstants
+                                            .update_answer_button_title),
+                                        style:
+                                            CustomTextStyle.textWithCustomInfo(
+                                          context: context,
+                                          color: AppColor.defaultAppColor,
+                                          fontsSize: FontsSize.fontSize_16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(),
+                      provider.needDownloadAgain
+                          ? const DownloadAgainWidget(
+                              simulatorTestPresenter: null,
+                              myTestPresenter: null,
+                            )
+                          : const SizedBox(),
+                    ],
+                  ),
+            (widget.homeWorkModel != null) ? _aiResponseButton() : Container()
           ],
         );
       },
     );
+  }
+
+  Widget _aiResponseButton() {
+    return (Utils.haveAiResponse(widget.homeWorkModel!).isNotEmpty)
+        ? LayoutBuilder(
+            builder: (_, constraint) {
+              return InkWell(
+                onTap: () async {
+                  String aiResponseLink = await aiResponseEP(
+                      widget.homeWorkModel!.activityAnswer!.aiOrder.toString());
+                  Uri toLaunch = Uri.parse(aiResponseLink);
+
+                  await launchUrl(toLaunch);
+                },
+                child: Container(
+                  height: 51,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: CustomSize.size_10,
+                  ),
+                  color: Colors.green,
+                  width: constraint.maxWidth,
+                  child: Center(
+                    child: Text(
+                      Utils.multiLanguage(
+                          StringConstants.view_ai_response_button_title),
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultAppColor,
+                        fontsSize: FontsSize.fontSize_16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+        : Container();
   }
 
   void _showDialogConfirmSaveChange({required MyTestProvider provider}) {
@@ -246,10 +272,12 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: StringConstants.confirm_title,
-          message: StringConstants.confirm_save_change_answers_message,
-          cancelButtonTitle: StringConstants.cancel_button_title,
-          okButtonTitle: StringConstants.save_button_title,
+          title: Utils.multiLanguage(StringConstants.confirm_title),
+          message: Utils.multiLanguage(
+              StringConstants.confirm_save_change_answers_message),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
+          okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
           cancelButtonTapped: () {},
           okButtonTapped: () {
             _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
@@ -319,11 +347,18 @@ class _MyTestTabState extends State<MyTestTab>
 
   void _onClickUpdateReAnswer(List<QuestionTopicModel> requestions) {
     _loading!.show(context: context, isViewAIResponse: false);
-    ActivitiesModel homework = widget.homeWorkModel;
+
+    String activityId = "";
+    String testId = widget.practiceTestId ?? "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+      testId = widget.homeWorkModel!.activityAnswer!.testId.toString();
+    }
+
     _presenter!.updateMyAnswer(
       context: context,
-      testId: homework.activityAnswer!.testId.toString(),
-      activityId: homework.activityId.toString(),
+      testId: testId,
+      activityId: activityId,
       reQuestions: requestions,
     );
   }
@@ -379,8 +414,9 @@ class _MyTestTabState extends State<MyTestTab>
   Widget _questionItem(QuestionTopicModel question) {
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
-        return Card(
-          elevation: 2,
+        return Container(
+          color: Colors.white,
+          margin: const EdgeInsets.symmetric(vertical: 10),
           child: LayoutBuilder(
             builder: (_, constraint) {
               return Container(
@@ -465,14 +501,14 @@ class _MyTestTabState extends State<MyTestTab>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                (widget.homeWorkModel.canReanswer())
+                                _canReanswerQuestion()
                                     ? InkWell(
                                         onTap: () async {
                                           _onClickReanswer(provider, question);
                                         },
                                         child: Text(
-                                          StringConstants
-                                              .re_answer_button_title,
+                                          Utils.multiLanguage(StringConstants
+                                              .re_answer_button_title),
                                           style: CustomTextStyle
                                               .textWithCustomInfo(
                                             context: context,
@@ -492,8 +528,8 @@ class _MyTestTabState extends State<MyTestTab>
                                   },
                                   child: (question.tips.isNotEmpty)
                                       ? Text(
-                                          StringConstants
-                                              .view_tips_button_title,
+                                          Utils.multiLanguage(StringConstants
+                                              .view_tips_button_title),
                                           style: CustomTextStyle
                                               .textWithCustomInfo(
                                             context: context,
@@ -518,6 +554,16 @@ class _MyTestTabState extends State<MyTestTab>
         );
       },
     );
+  }
+
+  bool _canReanswerQuestion() {
+    if (widget.practiceTestId != null) {
+      return true;
+    }
+    if (widget.homeWorkModel != null) {
+      return widget.homeWorkModel!.canReanswer();
+    }
+    return false;
   }
 
   bool _isAudioPlay(int repeatIndex, int questionId) {
@@ -635,9 +681,10 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: StringConstants.dialog_title,
-          description: StringConstants.network_error_message,
-          okButtonTitle: StringConstants.ok_button_title,
+          title: Utils.multiLanguage(StringConstants.dialog_title),
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message),
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
           hasCloseButton: false,
@@ -653,7 +700,8 @@ class _MyTestTabState extends State<MyTestTab>
   bool _checkAnswerDuration() {
     if (widget.provider.isLessThan2Second) {
       Fluttertoast.showToast(
-        msg: StringConstants.answer_must_be_greater_than_2_seconds_message,
+        msg: Utils.multiLanguage(
+            StringConstants.answer_must_be_greater_than_2_seconds_message),
         backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         gravity: ToastGravity.CENTER,
@@ -700,11 +748,12 @@ class _MyTestTabState extends State<MyTestTab>
   void downloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
     Fluttertoast.showToast(
-        msg: alertInfo.description,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: AppColor.defaultBlackColor,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: alertInfo.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: AppColor.defaultBlackColor,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+    );
     if (kDebugMode) {
       print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
     }
@@ -718,7 +767,7 @@ class _MyTestTabState extends State<MyTestTab>
         backgroundColor: AppColor.defaultGrayColor,
         textColor: AppColor.defaultBlackColor,
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+        gravity: ToastGravity.CENTER);
     if (kDebugMode) {
       print('DEBUG: getMyTestFail: ${alertInfo.description.toString()}');
     }
@@ -745,7 +794,7 @@ class _MyTestTabState extends State<MyTestTab>
         msg: message,
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
         fontSize: 18,
         toastLength: Toast.LENGTH_LONG);
 
@@ -760,11 +809,12 @@ class _MyTestTabState extends State<MyTestTab>
     //AlertsDialog.init().showDialog(context, info, this);
     _loading!.hide();
     Fluttertoast.showToast(
-        msg: info.description,
-        backgroundColor: AppColor.defaultGrayColor,
-        textColor: AppColor.defaultBlackColor,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM);
+      msg: info.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: AppColor.defaultBlackColor,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+    );
   }
 
   @override
@@ -789,8 +839,12 @@ class _MyTestTabState extends State<MyTestTab>
         if (null == _presenter!.dio) {
           _presenter!.initializeData();
         }
-        _presenter!.reDownloadFiles(
-            context, widget.homeWorkModel.activityId.toString());
+
+        String activityId = "";
+        if (widget.homeWorkModel != null) {
+          activityId = widget.homeWorkModel!.activityId.toString();
+        }
+        _presenter!.reDownloadFiles(context, activityId);
       }
     }
   }

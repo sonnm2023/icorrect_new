@@ -7,12 +7,12 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/login_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
@@ -46,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen>
   CircleLoading? _loading;
   Permission? _writeFilePermission;
   PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -56,115 +55,10 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //For debug
-    // emailController.text = "testkhaothi01@testing.com";
+    // emailController.text = "testbase04@testing.com";
     // passwordController.text = "123456";
 
     _checkPermission();
-  }
-
-  void _checkPermission() async {
-    await _initializePermission();
-
-    if (mounted && _writeFilePermission != null) {
-      _requestPermission(_writeFilePermission!, context);
-    } else {
-      _getAppConfigInfo();
-    }
-  }
-
-  Future<void> _requestPermission(
-      Permission permission, BuildContext context) async {
-    _authProvider.setPermissionDeniedTime();
-    // ignore: unused_local_variable
-    final status = await permission.request();
-    _listenForPermissionStatus(context);
-  }
-
-  Future<void> _initializePermission() async {
-    _writeFilePermission = Permission.storage;
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
-      int sdk = android.version.sdkInt;
-
-      if (sdk >= 33) {
-        _writeFilePermission = null;
-      }
-    }
-  }
-
-  void _listenForPermissionStatus(BuildContext context) async {
-    if (_writeFilePermission != null) {
-      _writeFilePermissionStatus = await _writeFilePermission!.status;
-
-      if (_writeFilePermissionStatus == PermissionStatus.denied) {
-        if (_authProvider.permissionDeniedTime > 2) {
-          _showConfirmDialog();
-        }
-      } else if (_writeFilePermissionStatus ==
-          PermissionStatus.permanentlyDenied) {
-        openAppSettings();
-      } else {
-        _getAppConfigInfo();
-      }
-    }
-  }
-
-  void _showConfirmDialog() {
-    if (false == _authProvider.dialogShowing) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertsDialog.init().showDialog(
-            context,
-            AlertClass.storagePermissionAlert,
-            this,
-            keyInfo: StringClass.permissionDenied,
-          );
-        },
-      );
-      _authProvider.setDialogShowing(true);
-    }
-  }
-
-  void _getAppConfigInfo() async {
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      String appConfigInfo = await AppSharedPref.instance()
-          .getString(key: AppSharedKeys.secretkey);
-      if (appConfigInfo.isEmpty) {
-        _loginPresenter!.getAppConfigInfo(context);
-      } else {
-        _autoLogin();
-      }
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
-  }
-
-  void _autoLogin() async {
-    String token = await Utils.getAccessToken();
-
-    if (token.isNotEmpty) {
-      _authProvider.updateProcessingStatus(isProcessing: true);
-
-      //Has login
-      Timer(const Duration(milliseconds: 2000), () async {
-        _authProvider.updateProcessingStatus(isProcessing: false);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => HomeWorkScreen(),
-          ),
-          ModalRoute.withName('/'),
-        );
-      });
-    }
   }
 
   @override
@@ -245,31 +139,152 @@ class _LoginScreenState extends State<LoginScreen>
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
-          var connectivity = await connectivityService.checkConnectivity();
-          if (connectivity.name != StringConstants.connectivity_name_none) {
-            _authProvider.updateProcessingStatus(isProcessing: true);
+          Utils.checkInternetConnection().then((isConnected) {
+            if (isConnected) {
+              _authProvider.updateProcessingStatus(isProcessing: true);
 
-            _loginPresenter!.login(
-              emailController.text.trim(),
-              passwordController.text.trim(),
-              context,
-            );
-          } else {
-            //Show connect error here
-            if (kDebugMode) {
-              print("DEBUG: Connect error here!");
+              //Add firebase log
+              Utils.addFirebaseLog(
+                eventName: "button_click",
+                parameters: {
+                  "button_name": "login",
+                },
+              );
+
+              _loginPresenter!.login(
+                emailController.text.trim(),
+                passwordController.text.trim(),
+                context,
+              );
+            } else {
+              _handleLoginError();
             }
-            Utils.showConnectionErrorDialog(context);
-
-            Utils.addConnectionErrorLog(context);
-          }
+          });
         }
       },
-      text: StringConstants.sign_in_button_title,
+      text: Utils.multiLanguage(StringConstants.sign_in_button_title),
       background: AppColor.defaultPurpleColor,
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
     );
+  }
+
+  void _checkPermission() async {
+    await _initializePermission();
+
+    if (mounted && _writeFilePermission != null) {
+      _requestPermission(_writeFilePermission!, context);
+    } else {
+      _getAppConfigInfo();
+    }
+  }
+
+  Future<void> _requestPermission(
+      Permission permission, BuildContext context) async {
+    _authProvider.setPermissionDeniedTime();
+    // ignore: unused_local_variable
+    final status = await permission.request();
+    _listenForPermissionStatus(context);
+  }
+
+  Future<void> _initializePermission() async {
+    _writeFilePermission = Permission.storage;
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+      int sdk = android.version.sdkInt;
+
+      if (sdk >= 33) {
+        _writeFilePermission = null;
+      }
+    }
+  }
+
+  void _listenForPermissionStatus(BuildContext context) async {
+    if (_writeFilePermission != null) {
+      _writeFilePermissionStatus = await _writeFilePermission!.status;
+
+      if (_writeFilePermissionStatus == PermissionStatus.denied) {
+        if (_authProvider.permissionDeniedTime > 2) {
+          _showConfirmDialog();
+        }
+      } else if (_writeFilePermissionStatus ==
+          PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      } else {
+        _getAppConfigInfo();
+      }
+    }
+  }
+
+  void _showConfirmDialog() {
+    if (false == _authProvider.dialogShowing) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertsDialog.init().showDialog(
+            context,
+            AlertClass.storagePermissionAlert,
+            this,
+            keyInfo: StringClass.permissionDenied,
+          );
+        },
+      );
+      _authProvider.setDialogShowing(true);
+    }
+  }
+
+  void _getAppConfigInfo() async {
+    String appConfigInfo =
+        await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
+    if (appConfigInfo.isEmpty) {
+      _loginPresenter!.getAppConfigInfo(context);
+    } else {
+      Utils.checkInternetConnection().then((isConnected) {
+        if (isConnected) {
+          _autoLogin();
+        } else {
+          _handleLoginError();
+        }
+      });
+    }
+  }
+
+  void _autoLogin() async {
+    String token = await Utils.getAccessToken();
+
+    if (token.isNotEmpty) {
+      _authProvider.updateProcessingStatus(isProcessing: true);
+
+      UserDataModel? currentUser = await Utils.getCurrentUser();
+      if (null == currentUser) {
+        return;
+      }
+
+      _loginPresenter!
+          .setUserInformation(currentUser.userInfoModel.id.toString());
+
+      //Has login
+      Timer(const Duration(milliseconds: 2000), () async {
+        _authProvider.updateProcessingStatus(isProcessing: false);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => HomeWorkScreen(),
+          ),
+          ModalRoute.withName('/'),
+        );
+      });
+    }
+  }
+
+  void _handleLoginError() {
+    //Show connect error here
+    if (kDebugMode) {
+      print("DEBUG: Connect error here!");
+    }
+    Utils.showConnectionErrorDialog(context);
+
+    Utils.addConnectionErrorLog(context);
   }
 
   //TODO: Next phase
@@ -325,6 +340,15 @@ class _LoginScreenState extends State<LoginScreen>
     passwordController.text = "";
   }
 
+  void _finishLoginWithError(String message) {
+    _authProvider.updateProcessingStatus(isProcessing: false);
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.error,
+      isCenter: false,
+    );
+  }
+
   @override
   void onLoginComplete() {
     _authProvider.updateProcessingStatus(isProcessing: false);
@@ -337,15 +361,35 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   @override
-  void onLoginError(String message) {
-    _authProvider.updateProcessingStatus(isProcessing: false);
+  void onLoginError(String message, int? errorCode) {
+    if (kDebugMode) {
+      print("DEBUG: onLoginError");
+    }
 
-    showDialog(
-      context: context,
-      builder: (builder) {
-        return MessageDialog.alertDialog(context, message);
-      },
-    );
+    Utils.checkInternetConnection().then((isConnected) {
+      if (null != errorCode) {
+        if (errorCode == 401) {
+          _finishLoginWithError(message);
+        }
+      } else {
+        String email = emailController.text.trim();
+        String password = passwordController.text.trim();
+        if (isConnected && email.isNotEmpty && password.isNotEmpty) {
+          if (kDebugMode) {
+            print("DEBUG: checkInternetConnection = $isConnected");
+            print("DEBUG: checkInternetConnection email = $email");
+            print("DEBUG: checkInternetConnection pass = $password");
+          }
+          _loginPresenter!.login(
+            emailController.text.trim(),
+            passwordController.text.trim(),
+            context,
+          );
+        } else {
+          _finishLoginWithError(message);
+        }
+      }
+    });
   }
 
   @override
@@ -357,6 +401,7 @@ class _LoginScreenState extends State<LoginScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: false,
     );
   }
 

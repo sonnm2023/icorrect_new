@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -77,6 +78,7 @@ class HomeWorkProvider with ChangeNotifier {
     HomeWorkStatusModel.fromJson(FilterJsonData.notCompleted),
     HomeWorkStatusModel.fromJson(FilterJsonData.late),
     HomeWorkStatusModel.fromJson(FilterJsonData.outOfDate),
+    HomeWorkStatusModel.fromJson(FilterJsonData.loadedTest),
   ];
   List<HomeWorkStatusModel> get listStatusForFilter => _listStatusForFilter;
 
@@ -196,12 +198,12 @@ class HomeWorkProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initializeListFilter() async {
+  Future<void> initializeListFilter(BuildContext context) async {
     getListSelectedFilterFromLocal().then((value) {
       if (listSelectedClassFilter.isEmpty && listSelectedStatusFilter.isEmpty) {
         setListSelectedFilterIntoLocal();
       }
-      filterHomeWork();
+      filterHomeWork(context);
     });
   }
 
@@ -263,7 +265,46 @@ class HomeWorkProvider with ChangeNotifier {
         .putString(key: AppSharedKeys.listStatusFilter, value: null);
   }
 
-  void filterHomeWork() {
+  void filterHomeWork(BuildContext context) {
+    bool hasSelectAllClass = listSelectedClassFilter
+        .map((e) => e.id)
+        .contains(listClassForFilter.first.id);
+    bool hasSelectAllStatus = listSelectedStatusFilter
+        .map((e) => e.id)
+        .contains(listStatusForFilter.first.id);
+
+    if (hasSelectAllClass && hasSelectAllStatus) {
+      //Reset data
+      if (_listFilteredHomeWorks.isNotEmpty) _listFilteredHomeWorks.clear();
+
+      setListFilteredHomeWorks(listHomeWorks);
+    } else {
+      List<ActivitiesModel> temp1 = listHomeWorks
+          .where((e1) =>
+              listSelectedClassFilter.map((e2) => e2.id).contains(e1.classId))
+          .toList();
+
+      // List<ActivitiesModel> temp2 = temp1
+      //     .where((e1) => listSelectedStatusFilter
+      //         .map((e2) => e2.id)
+      //         .contains(e1.activityStatus))
+      //     .toList();
+      List<ActivitiesModel> temp2 = temp1.where((e1) {
+        Map<String, dynamic> activityStatusMap =
+            Utils.getHomeWorkStatus(e1, serverCurrentTime);
+
+        return listSelectedStatusFilter
+            .map((e2) => Utils.multiLanguage(e2.name))
+            .contains(Utils.multiLanguage(activityStatusMap['title']));
+      }).toList();
+      setListFilteredHomeWorks(temp2);
+    }
+
+    prepareToUpdateFilterString();
+    setProcessingStatus(isProcessing: false);
+  }
+
+  void prepareToUpdateFilterString() {
     bool hasSelectAllClass = listSelectedClassFilter
         .map((e) => e.id)
         .contains(listClassForFilter.first.id);
@@ -278,33 +319,14 @@ class HomeWorkProvider with ChangeNotifier {
         ? listSelectedStatusFilter.length - 1
         : listSelectedStatusFilter.length;
 
-    if (hasSelectAllClass && hasSelectAllStatus) {
-      //Reset data
-      if (_listFilteredHomeWorks.isNotEmpty) _listFilteredHomeWorks.clear();
-
-      setListFilteredHomeWorks(listHomeWorks);
-    } else {
-      List<ActivitiesModel> temp1 = listHomeWorks
-          .where((e1) =>
-              listSelectedClassFilter.map((e2) => e2.id).contains(e1.classId))
-          .toList();
-
-      // List<ActivitiesModel> temp2 = temp1.where((e1) => listSelectedStatusFilter.map((e2) => e2.id)
-      //     .contains(e1.activityStatus)).toList();
-      List<ActivitiesModel> temp2 = temp1.where((e1) {
-        Map<String, dynamic> activityStatusMap =
-            Utils.getHomeWorkStatus(e1, serverCurrentTime);
-        return listSelectedStatusFilter
-            .map((e2) => e2.name)
-            .contains(activityStatusMap['title']);
-      }).toList();
-      setListFilteredHomeWorks(temp2);
-    }
-
+    String numClass =
+        "$numberOfSelectedClassFilter/${listClassForFilter.length - 1}";
+    String numStatus =
+        "$numberOfSelectedStatusFilter/${listStatusForFilter.length - 1}";
     String str =
-        'Filter: class($numberOfSelectedClassFilter/${listClassForFilter.length - 1}) status: ($numberOfSelectedStatusFilter/${listStatusForFilter.length - 1})';
+        "${Utils.multiLanguage(StringConstants.filter_string)}: ${Utils.multiLanguage(StringConstants.class_string)}($numClass) - ${Utils.multiLanguage(StringConstants.status_string)}($numStatus)";
+
     updateFilterString(str);
-    setProcessingStatus(isProcessing: false);
   }
 
   bool checkFilterSelected() {

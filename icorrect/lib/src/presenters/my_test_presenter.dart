@@ -57,6 +57,8 @@ class MyTestPresenter {
 
   TestDetailModel? testDetail;
   List<FileTopicModel>? filesTopic;
+  bool isDownloading = false;
+  CancelToken cancelToken = CancelToken();
 
   Future<void> initializeData() async {
     dio ??= Dio();
@@ -91,8 +93,13 @@ class MyTestPresenter {
           action: LogEvent.callApiGetMyTestDetail);
     }
 
-    _repository!.getMyTestDetail(testId).then((value) {
+    bool isPracticeTest = activityId.isEmpty;
+
+    _repository!.getMyTestDetail(testId, isPracticeTest).then((value) {
       Map<String, dynamic> json = jsonDecode(value) ?? {};
+      if (kDebugMode) {
+        print("DEBUG: getMyTestDetail $value");
+      }
       if (json.isNotEmpty) {
         if (json[StringConstants.k_error_code] == 200) {
           //Add log
@@ -161,6 +168,16 @@ class MyTestPresenter {
       _view!.getMyTestFail(AlertClass.getTestDetailAlert);
     });
   }
+
+  // Map<String, dynamic> _jsonFormTestDetail(
+  //     Map<String, dynamic> json, bool isPracticeTest) {
+  //   // json for test detail in homework is 'data' ,but in practice test is ['data']['test']
+  //   var jsonForm = json[StringConstants.k_data];
+  //   if (isPracticeTest) {
+  //     jsonForm = json[StringConstants.k_data][StringConstants.k_test];
+  //   }
+  //   return jsonForm;
+  // }
 
   List<QuestionTopicModel> _getQuestionsAnswer(
       TestDetailModel testDetailModel) {
@@ -265,6 +282,13 @@ class MyTestPresenter {
     _view!.downloadFilesFail(alertInfo);
   }
 
+  void pauseDownload() {
+    if (kDebugMode) {
+      print("DEBUG: Paused downloading by user");
+    }
+    cancelToken.cancel("Paused by user");
+  }
+
   Future downloadFiles({
     required BuildContext context,
     required String activityId,
@@ -272,6 +296,7 @@ class MyTestPresenter {
     required List<FileTopicModel> filesTopic,
   }) async {
     if (null != dio) {
+      isDownloading = true;
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
@@ -284,11 +309,15 @@ class MyTestPresenter {
             log = await Utils.prepareToCreateLog(context,
                 action: LogEvent.callApiDownloadFile);
             Map<String, dynamic> fileDownloadInfo = {
-              StringConstants.k_activity_id: activityId,
               StringConstants.k_test_id: testDetail.testId.toString(),
               StringConstants.k_file_name: fileTopic,
               StringConstants.k_file_path: downloadFileEP(fileNameForDownload),
             };
+
+            if (activityId.isNotEmpty) {
+              fileDownloadInfo.addEntries(
+                  [MapEntry(StringConstants.k_activity_id, activityId)]);
+            }
             log.addData(
                 key: StringConstants.k_file_download_info,
                 value: json.encode(fileDownloadInfo));
@@ -434,6 +463,7 @@ class MyTestPresenter {
         }
       }
     } else {
+      isDownloading = false;
       if (kDebugMode) {
         print("DEBUG: Dio is closed!");
       }
@@ -446,6 +476,7 @@ class MyTestPresenter {
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) {
+    isDownloading = false;
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {
@@ -548,11 +579,12 @@ class MyTestPresenter {
           Utils.prepareLogData(
             log: log,
             data: dataLog,
-            message: "Has an error when update my answer!",
+            message: StringConstants.update_answer_error_message,
             status: LogEvent.failed,
           );
 
-          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+              StringConstants.update_answer_error_message));
         }
       }).catchError((onError) {
         //Add log
@@ -563,7 +595,8 @@ class MyTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+            StringConstants.update_answer_error_message));
       });
     } on TimeoutException {
       //Add log
@@ -584,7 +617,8 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          "SocketException: Has an error when update my answer!"));
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -594,7 +628,8 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer);
+      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          "ClientException: Has an error when update my answer!"));
     }
   }
 
@@ -605,6 +640,9 @@ class MyTestPresenter {
     required Map<String, dynamic>? dataLog,
   }) async {
     String url = submitHomeWorkV2EP();
+    if (activityId.isEmpty) {
+      url = submitPractice();
+    }
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(url));
     request.headers.addAll({
@@ -615,8 +653,11 @@ class MyTestPresenter {
     Map<String, String> formData = {};
 
     formData.addEntries([MapEntry(StringConstants.k_test_id, testId)]);
-    formData.addEntries(const [MapEntry(StringConstants.k_is_update, '1')]);
-    formData.addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    if (activityId.isNotEmpty) {
+      formData.addEntries(const [MapEntry(StringConstants.k_is_update, '1')]);
+      formData
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    }
 
     if (Platform.isAndroid) {
       formData.addEntries([const MapEntry(StringConstants.k_os, "android")]);

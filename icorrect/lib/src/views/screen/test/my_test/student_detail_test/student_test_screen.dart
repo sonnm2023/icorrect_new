@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/student_test_detail_provider.dart';
@@ -115,7 +116,7 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
     return [
       Tab(
         child: Text(
-          StringConstants.test_detail_tab_title,
+          Utils.multiLanguage(StringConstants.test_detail_tab_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -126,7 +127,7 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       ),
       Tab(
         child: Text(
-          StringConstants.correction_tab_title,
+          Utils.multiLanguage(StringConstants.correction_tab_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,

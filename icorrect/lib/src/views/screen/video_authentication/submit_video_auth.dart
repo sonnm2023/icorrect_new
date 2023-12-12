@@ -11,6 +11,8 @@ import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../data_sources/utils.dart';
+
 class SubmitVideoAuthentication extends StatefulWidget {
   File videoFile;
   Function onClickSubmit;
@@ -97,7 +99,9 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    StringConstants.confirm_submit_video_auth_title,
+                    Utils.multiLanguage(
+                      StringConstants.confirm_submit_video_auth_title,
+                    ),
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
                       color: AppColor.defaultPurpleColor,
@@ -107,7 +111,9 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    StringConstants.confirm_submit_video_auth_content,
+                    Utils.multiLanguage(
+                      StringConstants.confirm_submit_video_auth_content,
+                    ),
                     textAlign: TextAlign.center,
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
@@ -165,7 +171,9 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
           borderRadius: BorderRadius.circular(100),
         ),
         child: Text(
-          StringConstants.submit_now_title,
+          Utils.multiLanguage(
+            StringConstants.submit_now_title,
+          ),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,
@@ -198,7 +206,7 @@ class _SubmitVideoAuthenticationState extends State<SubmitVideoAuthentication> {
           borderRadius: BorderRadius.circular(100),
         ),
         child: Text(
-          StringConstants.record_new_video_title,
+          Utils.multiLanguage(StringConstants.record_new_video_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,

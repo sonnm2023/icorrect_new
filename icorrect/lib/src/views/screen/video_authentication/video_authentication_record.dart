@@ -21,6 +21,8 @@ import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth
 import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data_sources/utils.dart';
+
 class VideoAuthenticationRecord extends StatefulWidget {
   UserAuthDetailProvider userAuthDetailProvider;
   VideoAuthenticationRecord({required this.userAuthDetailProvider, super.key});
@@ -238,7 +240,9 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    StringConstants.sampleTextTitle,
+                                    Utils.multiLanguage(
+                                      StringConstants.sampleTextTitle,
+                                    ),
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultAppColor,
@@ -247,7 +251,9 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                     ),
                                   ),
                                   Text(
-                                    StringConstants.sampleTextContent,
+                                    Utils.multiLanguage(
+                                      StringConstants.sampleTextContent,
+                                    ),
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultAppColor,
@@ -281,8 +287,10 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                               _videoAuthProvider!.setRecordingVideo(false);
                             } else {
                               Fluttertoast.showToast(
-                                msg: StringConstants
-                                    .video_record_duration_less_than_15s,
+                                msg: Utils.multiLanguage(
+                                  StringConstants
+                                      .video_record_duration_less_than_15s,
+                                ),
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 5,
@@ -345,10 +353,13 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       builder: (builderContext) {
         return WillPopScope(
           child: ConfirmDialogWidget(
-            title: StringConstants.confirm_exit_screen_title,
-            message: StringConstants.confirm_exit_content,
-            cancelButtonTitle: StringConstants.exit_button_title,
-            okButtonTitle: StringConstants.later_button_title,
+            title:
+                Utils.multiLanguage(StringConstants.confirm_exit_screen_title),
+            message: Utils.multiLanguage(StringConstants.confirm_exit_content),
+            cancelButtonTitle:
+                Utils.multiLanguage(StringConstants.exit_button_title),
+            okButtonTitle:
+                Utils.multiLanguage(StringConstants.later_button_title),
             dimissButtonTapped: () {
               _continueRecodingVideo();
             },
@@ -379,10 +390,18 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       context: contextBuild,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: StringConstants.confirm_exit_screen_title,
-          message: StringConstants.confirm_submit_before_out_screen,
-          cancelButtonTitle: StringConstants.exit_button_title,
-          okButtonTitle: StringConstants.submit_button_title,
+          title: Utils.multiLanguage(
+            StringConstants.confirm_exit_screen_title,
+          ),
+          message: Utils.multiLanguage(
+            StringConstants.confirm_submit_before_out_screen,
+          ),
+          cancelButtonTitle: Utils.multiLanguage(
+            StringConstants.exit_button_title,
+          ),
+          okButtonTitle: Utils.multiLanguage(
+            StringConstants.submit_button_title,
+          ),
           cancelButtonTapped: () async {
             await _videoAuthProvider!.savedFile.delete().then(
               (value) {
@@ -413,9 +432,13 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       _cameraService!.saveVideoDoingTest(
         (savedFile) {
           _cameraService!.cameraController!.pausePreview();
-          _videoAuthProvider!.setSavedFile(savedFile);
-          _showResizeFileDialog(savedFile);
           _loading!.hide();
+          if (savedFile.existsSync() &&
+              (savedFile.lengthSync() / (1024 * 1024)) > 40) {
+            _showResizeFileDialog(savedFile);
+          } else {
+            _prepareForSubmitVideo(savedFile);
+          }
         },
       );
 
@@ -435,16 +458,17 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         return WillPopScope(
           child: ResizeVideoDialog(
               videoFile: savedFile,
+              isVideoExam: false,
               onResizeCompleted: (resizedFile) async {
                 // String newPath =
                 //     'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
                 // File newFile = Utils.changeFileNameSync(resizedFile, newPath);
                 _prepareForSubmitVideo(resizedFile);
               },
-              onErrorResizeFile: (_) {
+              onErrorResizeFile: () {
                 _prepareForSubmitVideo(savedFile);
               },
-              onCancelResizeFile: () {
+              skipAndLater: () {
                 _continuePreviewVideo();
               }),
           onWillPop: () async {
@@ -461,6 +485,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showSubmitVideoAuthen(savedFile);
     });
+    setState(() {});
   }
 
   void _continuePreviewVideo() {
@@ -514,14 +539,30 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     );
   }
 
-  void _onSubmitVideoAuth(File savedFile) {
-    _videoAuthProvider!.setIsSubmitLoading(true);
+  void _onSubmitVideoAuth(File savedFile) async {
+    Utils.checkInternetConnection().then((isConnected) {
+      if (isConnected) {
+        _videoAuthProvider!.setIsSubmitLoading(true);
 
-    _presenter!.submitAuth(
-      authFile: savedFile,
-      isUploadVideo: true,
-      context: context,
-    );
+        _presenter!.submitAuth(
+          authFile: savedFile,
+          isUploadVideo: true,
+          context: context,
+        );
+      } else {
+        _handleConnectionError();
+      }
+    });
+  }
+
+  void _handleConnectionError() {
+    //Show connect error here
+    if (kDebugMode) {
+      print("DEBUG: Connect error here!");
+    }
+    Utils.showConnectionErrorDialog(context);
+
+    Utils.addConnectionErrorLog(context);
   }
 
   void _cancelRecordingVideo({required bool isStop}) {
@@ -611,7 +652,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 5,
       backgroundColor: AppColor.defaultGreenLightColor,
       textColor: AppColor.defaultAppColor,

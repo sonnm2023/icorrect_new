@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/other_student_test_presenter.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 
@@ -36,7 +37,8 @@ class DownloadAgainWidget extends StatelessWidget {
                   left: 40, top: 10, right: 40, bottom: 10),
               child: Center(
                 child: Text(
-                  StringConstants.data_downloaded_error_message,
+                  Utils.multiLanguage(
+                      StringConstants.data_downloaded_error_message),
                   textAlign: TextAlign.center,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
@@ -61,7 +63,7 @@ class DownloadAgainWidget extends StatelessWidget {
                 height: 60,
                 child: Center(
                   child: Text(
-                    StringConstants.try_again_button_title,
+                    Utils.multiLanguage(StringConstants.try_again_button_title),
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
                       color: AppColor.defaultPurpleColor,

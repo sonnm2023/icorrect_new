@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -29,7 +27,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   bool isAvailable = false;
   ChangePasswordPresenter? _changePasswordPresenter;
   late AuthProvider _authProvider;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -71,7 +68,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          StringConstants.change_password_screen_title,
+          Utils.multiLanguage(StringConstants.change_password_screen_title),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -102,14 +99,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       PasswordInputWidget(
-                          passwordController: currentPasswordController,
-                          type: PasswordType.currentPassword),
+                        passwordController: currentPasswordController,
+                        type: PasswordType.currentPassword,
+                      ),
                       PasswordInputWidget(
-                          passwordController: newPasswordController,
-                          type: PasswordType.newPassword),
+                        passwordController: newPasswordController,
+                        type: PasswordType.newPassword,
+                      ),
                       PasswordInputWidget(
-                          passwordController: confirmNewPasswordController,
-                          type: PasswordType.confirmNewPassword),
+                        passwordController: confirmNewPasswordController,
+                        type: PasswordType.confirmNewPassword,
+                      ),
                       const SizedBox(height: 20),
                       _buildSaveButton(),
                       const SizedBox(height: 10),
@@ -129,39 +129,38 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
       onPressed: () async {
-        if (newPasswordController.text.trim() !=
+        if (newPasswordController.text.trim() ==
+            currentPasswordController.text.trim()) {
+          showToastMsg(
+            msg: Utils.multiLanguage(
+                StringConstants.old_password_equals_new_password_error_message),
+            toastState: ToastStatesType.error,
+            isCenter: false,
+          );
+        } else if (newPasswordController.text.trim() !=
             confirmNewPasswordController.text.trim()) {
           showToastMsg(
-            msg: StringConstants.confirm_new_password_error_message,
+            msg: Utils.multiLanguage(
+                StringConstants.confirm_new_password_error_message),
             toastState: ToastStatesType.error,
+            isCenter: false,
           );
         } else {
           if (_formKey.currentState!.validate() &&
               _authProvider.isProcessing == false) {
-            var connectivity = await connectivityService.checkConnectivity();
-            if (connectivity.name != StringConstants.connectivity_name_none) {
-              _authProvider.updateProcessingStatus(isProcessing: true);
+            _authProvider.updateProcessingStatus(isProcessing: true);
 
-              _changePasswordPresenter!.changePassword(
-                context,
-                currentPasswordController.text.trim(),
-                newPasswordController.text.trim(),
-                confirmNewPasswordController.text.trim(),
-              );
-            } else {
-              //Show connect error here
-              if (kDebugMode) {
-                print("DEBUG: Connect error here!");
-              }
-              Utils.showConnectionErrorDialog(context);
-
-              Utils.addConnectionErrorLog(context);
-            }
+            _changePasswordPresenter!.changePassword(
+              context,
+              currentPasswordController.text.trim(),
+              newPasswordController.text.trim(),
+              confirmNewPasswordController.text.trim(),
+            );
           }
         }
       },
       background: AppColor.defaultPurpleColor,
-      text: StringConstants.save_change_button_title,
+      text: Utils.multiLanguage(StringConstants.save_change_button_title),
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
       radius: 20,
@@ -176,7 +175,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       },
       background: AppColor.defaultWhiteColor,
       textColor: AppColor.defaultPurpleColor,
-      text: StringConstants.cancel_button_title,
+      text: Utils.multiLanguage(StringConstants.cancel_button_title),
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
       radius: 20,
@@ -185,8 +184,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   }
 
   @override
-  void onChangePasswordComplete() {
+  void onChangePasswordComplete(String message) {
     _authProvider.updateProcessingStatus(isProcessing: false);
+
+    //Show error message
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.success,
+      isCenter: false,
+    );
 
     //Go back login screen
     Navigator.of(context).pop();
@@ -200,6 +206,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: false,
     );
   }
 }
