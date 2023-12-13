@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -68,6 +67,10 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
         "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
       };
 
+      if (null != log) {
+        log.addData(key: "compress_data", value: data);
+      }
+
       await VideoCompress.setLogLevel(0);
 
       MediaInfo? mediaInfo = await VideoCompress.compressVideo(
@@ -101,6 +104,14 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       //Add duration into log
       data.addEntries(
           [MapEntry("duration", '${stopwatch.elapsed.inSeconds} seconds')]);
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: data,
+        message: "Compress authentication video",
+        status: LogEvent.success,
+      );
     } else {
       VideoCompress.cancelCompression();
       widget.onErrorResizeFile!();
@@ -167,7 +178,8 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                                 }
                               },
                               child: Text(
-                                Utils.multiLanguage(StringConstants.skip_and_text),
+                                Utils.multiLanguage(
+                                    StringConstants.skip_and_text),
                                 style: CustomTextStyle.textWithCustomInfo(
                                   context: context,
                                   color: AppColor.defaultPurpleColor,
@@ -205,11 +217,13 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    Utils.multiLanguage(StringConstants.warning_skip_compress_video_text),
+                    Utils.multiLanguage(
+                        StringConstants.warning_skip_compress_video_text),
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 Text(
-                  Utils.multiLanguage(StringConstants.warning_skip_compress_video_content),
+                  Utils.multiLanguage(
+                      StringConstants.warning_skip_compress_video_content),
                   style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(height: 10),
@@ -221,7 +235,8 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                         _authProvider!.setSkipAction(false);
                       },
                       child: Text(
-                        Utils.multiLanguage(StringConstants.continue_prepare_text),
+                        Utils.multiLanguage(
+                            StringConstants.continue_prepare_text),
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultBlackColor,

@@ -438,6 +438,7 @@ class _MyTestsListState extends State<MyTestsList>
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
     _myTestsListProvider!.removeTestAt(indexDeleted);
   }

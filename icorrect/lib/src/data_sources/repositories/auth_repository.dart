@@ -32,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
             StringConstants.k_password: password
           },
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;

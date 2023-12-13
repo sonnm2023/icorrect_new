@@ -63,7 +63,7 @@ class UserAuthDetailPresenter {
           );
 
           _view!.userNotFoundWhenLoadAuth(
-              StringConstants.not_authen_user_message);
+              Utils.multiLanguage(StringConstants.not_authen_user_message));
         }
       } else {
         //Add log
@@ -74,7 +74,7 @@ class UserAuthDetailPresenter {
           status: LogEvent.failed,
         );
         _view!.getUserAuthDetailFail(
-            StringConstants.get_authen_user_fail_message);
+            Utils.multiLanguage(StringConstants.get_authen_user_fail_message));
       }
     }).catchError((e) {
       //Add log
@@ -84,8 +84,8 @@ class UserAuthDetailPresenter {
         message: "An Error : ${e.toString()}!",
         status: LogEvent.failed,
       );
-      _view!
-          .getUserAuthDetailFail(StringConstants.get_authen_user_fail_message);
+      _view!.getUserAuthDetailFail(
+          Utils.multiLanguage(StringConstants.get_authen_user_fail_message));
     });
   }
 }

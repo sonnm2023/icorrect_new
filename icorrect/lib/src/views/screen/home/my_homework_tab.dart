@@ -8,7 +8,6 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -45,7 +44,6 @@ class MyHomeWorkTab extends StatefulWidget {
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
-  final connectivityService = ConnectivityService();
   ActivitiesModel? _selectedHomeWorkModel;
   final FlutterLocalization localization = FlutterLocalization.instance;
   @override
@@ -222,6 +220,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                   msg: Utils.multiLanguage(
                       StringConstants.choose_filter_message),
                   toastState: ToastStatesType.warning,
+                  isCenter: true,
                 );
               }
             },
@@ -253,8 +252,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             homeworkProvider.updateFilterString(
                 Utils.multiLanguage(StringConstants.default_filter_title));
             return NoDataWidget(
-                msg: Utils.multiLanguage(
-                    StringConstants.no_data_filter_message));
+              msg: Utils.multiLanguage(StringConstants.no_data_filter_message),
+              reloadCallBack: _reloadCallBack,
+            );
           }
           return RefreshIndicator(
             onRefresh: widget.pullToRefreshCallBack,
@@ -346,7 +346,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         ),
         SpeedDialChild(
           onTap: () {
-            localization.translate('vn');
+            localization.translate('vi');
             _updateFilterText();
           },
           child: const Padding(
@@ -383,12 +383,6 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
-  Future<void> _pullRefresh() async {
-    if (kDebugMode) {
-      print("DEBUG: _buildListHomeWork: _pullRefresh");
-    }
-  }
-
   void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
     widget.homeWorkPresenter
         .clickOnHomeworkItem(context: context, homework: homeWorkModel);
@@ -406,9 +400,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Permission.microphone,
       ].request();
 
-      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
-          (statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied)) {
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
@@ -433,9 +431,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Permission.microphone,
       ].request();
 
-      if ((statuses[Permission.microphone]! == PermissionStatus.denied) ||
-          (statuses[Permission.microphone]! ==
-              PermissionStatus.permanentlyDenied)) {
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
         if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
@@ -445,10 +447,12 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         try {
           Map<Permission, PermissionStatus> otherStatuses =
               await [Permission.camera].request();
-
-          if ((otherStatuses[Permission.camera]! == PermissionStatus.denied) ||
-              (otherStatuses[Permission.camera]! ==
-                  PermissionStatus.permanentlyDenied)) {
+          if (otherStatuses[Permission.camera]! ==
+              PermissionStatus.permanentlyDenied) {
+            _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
+            return;
+          }
+          if (otherStatuses[Permission.camera]! == PermissionStatus.denied) {
             if (widget.homeWorkProvider.permissionDeniedTime >= 1) {
               _showConfirmDeniedDialog(AlertClass.cameraPermissionAlert);
             } else {
@@ -531,50 +535,64 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     if (_selectedHomeWorkModel!.activityStatus == 99) {
       _showActivityIsLoadedDialog(context);
     } else {
-      var connectivity = await connectivityService.checkConnectivity();
-      if (connectivity.name != StringConstants.connectivity_name_none) {
-        Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
-            _selectedHomeWorkModel!, widget.homeWorkProvider.serverCurrentTime);
-
-        if (statusMap[StringConstants.k_title] ==
-                StringConstants.activity_status_out_of_date ||
-            statusMap[StringConstants.k_title] ==
-                StringConstants.activity_status_not_completed) {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => SimulatorTestScreen(
-                homeWorkModel: _selectedHomeWorkModel!,
-              ),
-            ),
+      Utils.checkInternetConnection().then((isConnected) async {
+        if (isConnected) {
+          Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
+            _selectedHomeWorkModel!,
+            widget.homeWorkProvider.serverCurrentTime,
           );
 
-          if (!mounted) return;
-          // After the SimulatorTest returns a result
-          // and refresh list of homework if needed
-          if (result == StringConstants.k_refresh) {
-            widget.homeWorkPresenter.refreshListHomework();
+          if (statusMap[StringConstants.k_title] ==
+                  StringConstants.activity_status_out_of_date ||
+              statusMap[StringConstants.k_title] ==
+                  StringConstants.activity_status_not_completed) {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SimulatorTestScreen(
+                  homeWorkModel: _selectedHomeWorkModel!,
+                ),
+              ),
+            );
+
+            if (!mounted) return;
+            // After the SimulatorTest returns a result
+            // and refresh list of homework if needed
+            if (result == StringConstants.k_refresh) {
+              widget.homeWorkPresenter.refreshListHomework();
+            }
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => MyTestScreen(
+                  homeWorkModel: _selectedHomeWorkModel!,
+                  isFromSimulatorTest: false,
+                ),
+              ),
+            );
           }
         } else {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => MyTestScreen(
-                homeWorkModel: _selectedHomeWorkModel!,
-                isFromSimulatorTest: false,
-              ),
-            ),
-          );
+          _handleConnectionError();
         }
-      } else {
-        //Show connect error here
-        if (kDebugMode) {
-          print("DEBUG: Connect error here!");
-        }
-        Utils.showConnectionErrorDialog(context);
-
-        Utils.addConnectionErrorLog(context);
-      }
+      });
     }
+  }
+
+  void _handleConnectionError() {
+    //Show connect error here
+    if (kDebugMode) {
+      print("DEBUG: Connect error here!");
+    }
+    Utils.showConnectionErrorDialog(context);
+
+    Utils.addConnectionErrorLog(context);
+  }
+
+  void _reloadCallBack() async {
+    if (kDebugMode) {
+      print("DEBUG: MyHomeworkTab - _reloadCallBack");
+    }
+    widget.homeWorkPresenter.refreshListHomework();
   }
 
   @override

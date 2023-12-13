@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 
 abstract class LoginViewContract {
   void onLoginComplete();
-  void onLoginError(String message);
+  void onLoginError(String message, int? errorCode);
   void onGetAppConfigInfoSuccess();
   void onGetAppConfigInfoFail(String message);
 }
@@ -43,36 +43,68 @@ class LoginPresenter {
           action: LogEvent.callApiLogin);
     }
 
-    _repository!.login(email, password).then((value) async {
-      AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
-      if (authModel.errorCode == 200) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: authModel.message,
-          status: LogEvent.success,
-        );
+    int delayTime = 0; //For product
+    // int delayTime = 10; //For test
 
-        await _saveAccessToken(authModel.data.accessToken);
-        _getUserInfo(context);
-      } else if (authModel.errorCode == 401) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: authModel.status,
-          status: LogEvent.success,
-        );
-        _view!.onLoginError(authModel.status);
-      } else {
+    Future.delayed(Duration(seconds: delayTime)).then((_) {
+      _repository!.login(email, password).then((value) async {
+        AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
+        if (authModel.errorCode == 200) {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: jsonDecode(value),
+            message: authModel.message,
+            status: LogEvent.success,
+          );
+
+          await _saveAccessToken(authModel.data.accessToken);
+          _getUserInfo(context);
+        } else if (authModel.errorCode == 401) {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: jsonDecode(value),
+            message: authModel.status,
+            status: LogEvent.success,
+          );
+          _view!.onLoginError(
+            authModel.status,
+            authModel.errorCode,
+          );
+        } else {
+          String message = '';
+          if (authModel.message.isNotEmpty) {
+            _view!.onLoginError(
+              Utils.multiLanguage(StringConstants.network_error_message), null,
+            );
+            message = StringConstants.network_error_message;
+          } else {
+            _view!.onLoginError(
+              Utils.multiLanguage(StringConstants.common_error_message), null,
+            );
+            message = '${authModel.errorCode}: ${authModel.status}';
+          }
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: null,
+            message: message,
+            status: LogEvent.failed,
+          );
+        }
+      }).catchError((onError) {
         String message = '';
-        if (authModel.message.isNotEmpty) {
-          _view!.onLoginError(StringConstants.network_error_message);
+        if (onError is http.ClientException || onError is SocketException) {
+          _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.network_error_message), null,
+          );
           message = StringConstants.network_error_message;
         } else {
-          _view!.onLoginError(StringConstants.common_error_message);
-          message = '${authModel.errorCode}: ${authModel.status}';
+          _view!.onLoginError(
+            Utils.multiLanguage(StringConstants.common_error_message), null,
+          );
+          message = StringConstants.common_error_message;
         }
         //Add log
         Utils.prepareLogData(
@@ -81,23 +113,7 @@ class LoginPresenter {
           message: message,
           status: LogEvent.failed,
         );
-      }
-    }).catchError((onError) {
-      String message = '';
-      if (onError is http.ClientException || onError is SocketException) {
-        _view!.onLoginError(StringConstants.network_error_message);
-        message = StringConstants.network_error_message;
-      } else {
-        _view!.onLoginError(StringConstants.common_error_message);
-        message = StringConstants.common_error_message;
-      }
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: null,
-        message: message,
-        status: LogEvent.failed,
-      );
+      });
     });
   }
 
@@ -149,19 +165,21 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetAppConfigInfoFail(
-            StringConstants.getting_app_config_information_error_message);
+        _view!.onGetAppConfigInfoFail(Utils.multiLanguage(
+            StringConstants.getting_app_config_information_error_message));
       }
     }).catchError((onError) {
       String message = '';
       if (onError is http.ClientException || onError is SocketException) {
         message = StringConstants.network_error_message;
 
-        _view!.onGetAppConfigInfoFail(StringConstants.network_error_message);
+        _view!.onGetAppConfigInfoFail(
+            Utils.multiLanguage(StringConstants.network_error_message));
       } else {
         message = StringConstants.common_error_message;
 
-        _view!.onGetAppConfigInfoFail(StringConstants.common_error_message);
+        _view!.onGetAppConfigInfoFail(
+            Utils.multiLanguage(StringConstants.common_error_message));
       }
       //Add log
       Utils.prepareLogData(
@@ -220,7 +238,9 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_message);
+        _view!.onLoginError(
+          Utils.multiLanguage(StringConstants.common_error_message), null,
+        );
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -233,7 +253,9 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLoginError(StringConstants.common_error_message);
+        _view!.onLoginError(
+          Utils.multiLanguage(StringConstants.common_error_message), null,
+        );
       },
     );
   }

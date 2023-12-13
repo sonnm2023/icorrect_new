@@ -24,7 +24,6 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
@@ -111,6 +110,8 @@ class SimulatorTestPresenter {
   TestDetailModel? testDetail;
   List<FileTopicModel>? filesTopic;
   List<FileTopicModel> imageFiles = [];
+  CancelToken cancelToken = CancelToken();
+  bool isDownloading = false;
 
   //////////////////////GET TEST DETAIL FROM HOMEWORK///////////////////////////
   void getTestDetailByHomeWork({
@@ -556,6 +557,13 @@ class SimulatorTestPresenter {
     }
   }
 
+  void pauseDownload() {
+    if (kDebugMode) {
+      print("DEBUG: Paused downloading by user");
+    }
+    cancelToken.cancel("Paused by user");
+  }
+
   Future downloadFiles({
     required BuildContext context,
     String? activityId,
@@ -563,6 +571,7 @@ class SimulatorTestPresenter {
     required List<FileTopicModel> filesTopic,
   }) async {
     if (null != dio) {
+      isDownloading = true;
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
@@ -616,7 +625,11 @@ class SimulatorTestPresenter {
                 print("DEBUG: Save as PATH = $savePath");
               }
 
-              Response response = await dio!.download(url, savePath);
+              Response response = await dio!.download(
+                url,
+                savePath,
+                cancelToken: cancelToken,
+              );
 
               if (response.statusCode == 200) {
                 if (kDebugMode) {
@@ -635,6 +648,9 @@ class SimulatorTestPresenter {
                 _view!.onDownloadSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
               } else {
+                if (kDebugMode) {
+                  print('Download failed');
+                }
                 //Add log
                 Utils.prepareLogData(
                   log: log,
@@ -673,6 +689,9 @@ class SimulatorTestPresenter {
                   filesTopic: filesTopic);
               break loop;
             } on TimeoutException {
+              if (kDebugMode) {
+                print("Download File TimeoutException");
+              }
               //Add log
               Utils.prepareLogData(
                 log: log,
@@ -689,6 +708,9 @@ class SimulatorTestPresenter {
                   filesTopic: filesTopic);
               break loop;
             } on SocketException {
+              if (kDebugMode) {
+                print("Download File SocketException");
+              }
               //Add log
               Utils.prepareLogData(
                 log: log,
@@ -706,6 +728,9 @@ class SimulatorTestPresenter {
                   filesTopic: filesTopic);
               break loop;
             } on http.ClientException {
+              if (kDebugMode) {
+                print("Download File ClientException");
+              }
               //Add log
               Utils.prepareLogData(
                 log: log,
@@ -731,6 +756,7 @@ class SimulatorTestPresenter {
         }
       }
     } else {
+      isDownloading = false;
       if (kDebugMode) {
         print("DEBUG: Dio is closed!");
       }
@@ -743,6 +769,8 @@ class SimulatorTestPresenter {
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) {
+    isDownloading = false;
+
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {
@@ -814,6 +842,7 @@ class SimulatorTestPresenter {
       print("DEBUG: submitTest");
       print("DEBUG: testId = $testId");
       print("DEBUG: activityId = $activityId");
+      print("DEBUG: multirequest = ${multiRequest.toString()}");
     }
 
     try {
@@ -857,7 +886,7 @@ class SimulatorTestPresenter {
             errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
           }
           _view!.onSubmitTestFail(
-              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -1022,8 +1051,13 @@ class SimulatorTestPresenter {
 
           request.files.add(
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          formData.addEntries([MapEntry("$prefix[$i]", audioFile.path)]);
         }
       }
+    }
+
+    if (kDebugMode) {
+      print('DEBUG: RECORDED AUDIO: ${formData.toString()}');
     }
 
     if (null != videoConfirmFile) {

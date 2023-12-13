@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/repositories/practice_repository.dart';
-import 'package:icorrect/src/data_sources/utils.dart';
-
 import '../data_sources/constants.dart';
 import '../data_sources/dependency_injection.dart';
 import '../models/my_practice_test_model/my_practice_response_model.dart';

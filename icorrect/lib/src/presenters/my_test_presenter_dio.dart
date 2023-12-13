@@ -353,7 +353,7 @@
 //           }
 
 //           _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
-//               "${StringConstants.update_answer_error_message}$errorCode"));
+//               "${StringConstants.update_answer_error_message}\n$errorCode"));
 //         }
 //       }).catchError((onError) {
 //         if (kDebugMode) {

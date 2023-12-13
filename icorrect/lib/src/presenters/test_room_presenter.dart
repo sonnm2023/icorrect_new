@@ -275,6 +275,7 @@ class TestRoomPresenter {
           }
 
           _view!.onUpdateHasOrderStatus(hasOrder);
+
           _view!.onSubmitTestSuccess(
               Utils.multiLanguage(StringConstants.save_answer_success_message));
         } else {
@@ -292,7 +293,7 @@ class TestRoomPresenter {
           }
 
           _view!.onSubmitTestFail(
-              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -458,8 +459,15 @@ class TestRoomPresenter {
 
           request.files.add(
               await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          if (kDebugMode) {
+            formData.addEntries([MapEntry("$prefix[$i]", audioFile.path)]);
+          }
         }
       }
+    }
+
+    if (kDebugMode) {
+      print("DEBUG: formdata: ${formData.toString()}");
     }
 
     if (null != videoConfirmFile) {
@@ -546,7 +554,7 @@ class TestRoomPresenter {
           }
 
           _view!.onUpdateReAnswersFail(
-              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log

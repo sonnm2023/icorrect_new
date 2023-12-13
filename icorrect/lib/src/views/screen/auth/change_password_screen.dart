@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -28,7 +27,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   bool isAvailable = false;
   ChangePasswordPresenter? _changePasswordPresenter;
   late AuthProvider _authProvider;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -137,6 +135,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             msg: Utils.multiLanguage(
                 StringConstants.old_password_equals_new_password_error_message),
             toastState: ToastStatesType.error,
+            isCenter: false,
           );
         } else if (newPasswordController.text.trim() !=
             confirmNewPasswordController.text.trim()) {
@@ -144,6 +143,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             msg: Utils.multiLanguage(
                 StringConstants.confirm_new_password_error_message),
             toastState: ToastStatesType.error,
+            isCenter: false,
           );
         } else {
           if (_formKey.currentState!.validate() &&
@@ -156,25 +156,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
               newPasswordController.text.trim(),
               confirmNewPasswordController.text.trim(),
             );
-            // var connectivity = await connectivityService.checkConnectivity();
-            // if (connectivity.name != StringConstants.connectivity_name_none) {
-            //   _authProvider.updateProcessingStatus(isProcessing: true);
-
-            //   _changePasswordPresenter!.changePassword(
-            //     context,
-            //     currentPasswordController.text.trim(),
-            //     newPasswordController.text.trim(),
-            //     confirmNewPasswordController.text.trim(),
-            //   );
-            // } else {
-            //   //Show connect error here
-            //   if (kDebugMode) {
-            //     print("DEBUG: Connect error here!");
-            //   }
-            //   Utils.showConnectionErrorDialog(context);
-
-            //   Utils.addConnectionErrorLog(context);
-            // }
           }
         }
       },
@@ -210,6 +191,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.success,
+      isCenter: false,
     );
 
     //Go back login screen
@@ -224,6 +206,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: false,
     );
   }
 }

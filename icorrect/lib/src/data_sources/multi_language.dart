@@ -33,6 +33,7 @@ class MultiLanguage {
     StringConstants.submit_now_title: "Nộp Ngay",
     StringConstants.record_new_video_title: "Quay Video Mới",
     StringConstants.dialog_title: "Thông báo",
+    StringConstants.reload_button_title: "Tải lại",
     StringConstants.exit_app_message: "Bạn có muốn thoát khỏi ứng dụng?",
     StringConstants.quit_the_test_message:
         "Bài làm chưa hoàn thành! Bạn có chắc chắn muốn thoát?",
@@ -246,7 +247,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_message:
         "Có lỗi xảy ra khi nộp bài. Vui lòng thử lại!",
     StringConstants.submit_test_error_invalid_return_type_message:
-        "Invalid_return_type_for_catch_error: Có lỗi khi gửi bài kiểm tra này!",
+        "Có lỗi xảy ra khi nộp bài.!\n[Lỗi: không đúng định dạng]",
     StringConstants.submit_test_error_timeout:
         "TimeoutException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.submit_test_error_socket:
@@ -574,7 +575,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_message:
         "Has an error when submit this test. Please try again later!",
     StringConstants.submit_test_error_invalid_return_type_message:
-        "invalid_return_type_for_catch_error: Has an error when submit this test!",
+        "Has an error when submit this test!\n[Error: invalid type]",
     StringConstants.submit_test_error_timeout:
         "TimeoutException: Has an error when submit this test!",
     StringConstants.submit_test_error_socket:
@@ -654,6 +655,7 @@ class MultiLanguage {
         'Timeout to update your changes. Please try again !',
     StringConstants.search_title: "Search",
     StringConstants.select_your_language_title: 'Select your language',
-    StringConstants.prepare_compress_video_title: 'Preparing for submitting'
+    StringConstants.prepare_compress_video_title: 'Preparing for submitting',
+    StringConstants.reload_button_title: "Reload",
   };
 }

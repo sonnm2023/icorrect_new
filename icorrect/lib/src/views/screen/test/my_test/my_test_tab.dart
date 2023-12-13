@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -63,7 +62,6 @@ class _MyTestTabState extends State<MyTestTab>
   StreamSubscription? connection;
   String audioFile = "";
   Timer? timer;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -77,6 +75,13 @@ class _MyTestTabState extends State<MyTestTab>
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
+        if (kDebugMode) {
+          print("DEBUG: connect via 3G/4G");
+        }
+        if (_presenter!.isDownloading) {
+          _presenter!.reDownloadFiles(
+              context, widget.homeWorkModel!.activityId.toString());
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
         isOffline = false;
@@ -121,29 +126,6 @@ class _MyTestTabState extends State<MyTestTab>
       widget.provider.setPermissionRecord(status);
       widget.provider.setDownloadingFile(true);
     });
-    // var connectivity = await connectivityService.checkConnectivity();
-
-    // if (connectivity.name != StringConstants.connectivity_name_none) {
-    //   _presenter!.getMyTest(
-    //     context: context,
-    //     activityId: widget.homeWorkModel.activityId.toString(),
-    //     testId: widget.homeWorkModel.activityAnswer!.testId.toString(),
-    //   );
-
-    //   Future.delayed(Duration.zero, () {
-    //     widget.provider.setPermissionRecord(status);
-    //     widget.provider.setDownloadingFile(true);
-    //   });
-    // } else {
-    //   _loading!.hide();
-    //   //Show connect error here
-    //   if (kDebugMode) {
-    //     print("DEBUG: Connect error here!");
-    //   }
-    //   Utils.showConnectionErrorDialog(context);
-
-    //   Utils.addConnectionErrorLog(context);
-    // }
   }
 
   @override
@@ -152,6 +134,7 @@ class _MyTestTabState extends State<MyTestTab>
     _player!.dispose();
     _record.dispose();
     _presenter!.closeClientRequest();
+    _presenter!.pauseDownload();
     super.dispose();
   }
 

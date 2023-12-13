@@ -12,7 +12,6 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -92,7 +91,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   DateTime? _logEndTime;
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
-  final connectivityService = ConnectivityService();
   int _questionIndex = 0;
 
   @override
@@ -1077,6 +1075,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       msg: Utils.multiLanguage(
           StringConstants.wait_until_the_exam_finished_message),
       toastState: ToastStatesType.warning,
+      isCenter: true,
     );
   }
 
@@ -1334,6 +1333,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       showToastMsg(
         msg: Utils.multiLanguage(StringConstants.feature_not_available_message),
         toastState: ToastStatesType.warning,
+        isCenter: true,
       );
     } else {
       //Start to do the test
@@ -1448,7 +1448,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.topicsQueue.isEmpty) {
       //No part for next play
       _prepareToEndTheTest();
+
+      if (kDebugMode) {
+        print("DEBUG: Call Step Next Part 1");
+      }
     } else {
+      if (kDebugMode) {
+        print("DEBUG: Call Step Next Part 2");
+      }
       _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
     }
   }
@@ -1539,6 +1546,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required String fileName,
     required bool isPart2,
   }) async {
+    if (null == _currentQuestion) {
+      TopicModel? topicModel = _getCurrentPart();
+      List<QuestionTopicModel> questionList = topicModel!.questionList;
+      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+
+      //TODO: Need check again here
+      // if (questionList.isEmpty) return;
+      // if (index >= questionList.length) return;
+
+      QuestionTopicModel question = questionList.elementAt(index);
+      question.numPart = topicModel.numPart;
+      _currentQuestion = question;
+    }
+
     if (isPart2) {
       //Has Cue Card case
       _simulatorTestProvider!.setVisibleRecord(false);
@@ -1556,18 +1577,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       );
       _simulatorTestProvider!.setVisibleCueCard(true);
     } else {
-      TopicModel? topicModel = _getCurrentPart();
-      List<QuestionTopicModel> questionList = topicModel!.questionList;
-      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
-
-      //TODO: Need check again here
-      // if (questionList.isEmpty) return;
-      // if (index >= questionList.length) return;
-
-      QuestionTopicModel question = questionList.elementAt(index);
-      question.numPart = topicModel.numPart;
-      _currentQuestion = question;
-
       _prepareRecordForAnswer(fileName: fileName, isPart2: isPart2);
     }
   }
@@ -2356,7 +2365,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   bool _checkAnswerDuration() {
-    if (_simulatorTestProvider!.isLessThan2Second) {
+    if (_simulatorTestProvider!.isLessThan2Second &&
+        _simulatorTestProvider!.visibleRecord) {
       Fluttertoast.showToast(
         msg: Utils.multiLanguage(
           StringConstants.answer_must_be_greater_than_2_seconds_message,
@@ -2434,7 +2444,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Reset count repeat
         _countRepeat = 0;
-
         // _playNextQuestion();
         _playNextPart();
       } else {
@@ -2443,7 +2452,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         //Start to play end_of_take_note video
         Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
         TopicModel topic = topicQueue.first;
-
         _testRoomPresenter!.playEndOfTakeNoteFile(topic);
       }
     } else {
@@ -2572,6 +2580,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
   }
 
@@ -2599,69 +2608,73 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onClickSaveTheTest() async {
     //Check connection
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
-          SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              title: Utils.multiLanguage(StringConstants.dialog_title),
-              description: Utils.multiLanguage(
-                  StringConstants.confirm_save_the_test_message),
-              okButtonTitle:
-                  Utils.multiLanguage(StringConstants.save_button_title),
-              cancelButtonTitle:
-                  Utils.multiLanguage(StringConstants.dont_save_button_title),
-              borderRadius: 8,
-              hasCloseButton: true,
-              okButtonTapped: () {
-                _startSubmitTest();
-              },
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
+    Utils.checkInternetConnection().then(
+      (isConnected) async {
+        if (isConnected) {
+          if (SubmitStatus.none == _simulatorTestProvider!.submitStatus ||
+              SubmitStatus.fail == _simulatorTestProvider!.submitStatus) {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomAlertDialog(
+                  title: Utils.multiLanguage(StringConstants.dialog_title),
+                  description: Utils.multiLanguage(
+                      StringConstants.confirm_save_the_test_message),
+                  okButtonTitle:
+                      Utils.multiLanguage(StringConstants.save_button_title),
+                  cancelButtonTitle: Utils.multiLanguage(
+                      StringConstants.dont_save_button_title),
+                  borderRadius: 8,
+                  hasCloseButton: true,
+                  okButtonTapped: () {
+                    _startSubmitTest();
+                  },
+                  cancelButtonTapped: () {
+                    Navigator.of(context).pop();
+                  },
+                );
               },
             );
-          },
-        );
-      } else if (SubmitStatus.success == _simulatorTestProvider!.submitStatus) {
-        if (kDebugMode) {
-          print("DEBUG: Submit success: update answer after reanswer");
+          } else if (SubmitStatus.success ==
+              _simulatorTestProvider!.submitStatus) {
+            if (kDebugMode) {
+              print("DEBUG: Submit success: update answer after reanswer");
+            }
+
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomAlertDialog(
+                  title: Utils.multiLanguage(StringConstants.confirm_title),
+                  description: Utils.multiLanguage(
+                      StringConstants.confirm_save_change_answers_message),
+                  okButtonTitle:
+                      Utils.multiLanguage(StringConstants.save_button_title),
+                  cancelButtonTitle:
+                      Utils.multiLanguage(StringConstants.cancel_button_title),
+                  borderRadius: 8,
+                  hasCloseButton: true,
+                  okButtonTapped: () {
+                    _updateReAnswers();
+                  },
+                  cancelButtonTapped: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            );
+          }
+        } else {
+          //Show connect error here
+          if (kDebugMode) {
+            print("DEBUG: Connect error here!");
+          }
+          Utils.showConnectionErrorDialog(context);
+
+          Utils.addConnectionErrorLog(context);
         }
-
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              title: Utils.multiLanguage(StringConstants.confirm_title),
-              description: Utils.multiLanguage(
-                  StringConstants.confirm_save_change_answers_message),
-              okButtonTitle:
-                  Utils.multiLanguage(StringConstants.save_button_title),
-              cancelButtonTitle:
-                  Utils.multiLanguage(StringConstants.cancel_button_title),
-              borderRadius: 8,
-              hasCloseButton: true,
-              okButtonTapped: () {
-                _updateReAnswers();
-              },
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        );
-      }
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+      },
+    );
   }
 
   @override

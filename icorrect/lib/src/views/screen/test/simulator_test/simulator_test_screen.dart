@@ -6,7 +6,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -64,7 +63,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   StreamSubscription? connection;
   bool isOffline = false;
   CircleLoading? _loading;
-  final connectivityService = ConnectivityService();
   bool _isExam = false;
 
   TabBar get _tabBar {
@@ -127,8 +125,18 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
+        if (kDebugMode) {
+          print("DEBUG: connect via 3G/4G");
+        }
+        if (_simulatorTestPresenter!.isDownloading) {
+          _simulatorTestPresenter!.reDownloadFiles(
+              context, widget.homeWorkModel!.activityId.toString());
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
+        if (kDebugMode) {
+          print("DEBUG: connect via WIFI");
+        }
         isOffline = false;
       } else if (result == ConnectivityResult.ethernet) {
         isOffline = false;
@@ -137,7 +145,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       }
 
       if (kDebugMode) {
-        print("DEBUG: NO INTERNET === $isOffline");
+        print("DEBUG: CONNECT INTERNET === ${!isOffline}");
       }
     });
 
@@ -175,6 +183,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void dispose() {
+    _simulatorTestPresenter!.pauseDownload();
     connection!.cancel();
     _simulatorTestPresenter!.closeClientRequest();
     _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
@@ -516,41 +525,44 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   void _startSubmitTest() async {
     //Check connection
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
-      //Reset question image
-      _resetQuestionImage();
+    Utils.checkInternetConnection().then(
+      (isConnected) async {
+        if (isConnected) {
+          //Reset question image
+          _resetQuestionImage();
 
-      String savedVideoPath = _simulatorTestPresenter!
-          .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
-      File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
+          String savedVideoPath = _simulatorTestPresenter!
+              .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
+          File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
-      //Submit
-      _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+          //Submit
+          _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
-      String activityId = "";
-      if (widget.homeWorkModel != null) {
-        activityId = widget.homeWorkModel!.activityId.toString();
-      }
-      _simulatorTestPresenter!.submitTest(
-        context: context,
-        testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-        activityId: activityId,
-        questions: _simulatorTestProvider!.questionList,
-        isExam: _isExam,
-        videoConfirmFile: videoConfirmFile,
-        logAction: _simulatorTestProvider!.logActions,
-      );
-      _simulatorTestProvider!.setShowConfirmSaveTest(false);
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
+          String activityId = "";
+          if (widget.homeWorkModel != null) {
+            activityId = widget.homeWorkModel!.activityId.toString();
+          }
+          _simulatorTestPresenter!.submitTest(
+            context: context,
+            testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+            activityId: activityId,
+            questions: _simulatorTestProvider!.questionList,
+            isExam: _isExam,
+            videoConfirmFile: videoConfirmFile,
+            logAction: _simulatorTestProvider!.logActions,
+          );
+          _simulatorTestProvider!.setShowConfirmSaveTest(false);
+        } else {
+          //Show connect error here
+          if (kDebugMode) {
+            print("DEBUG: Connect error here!");
+          }
+          Utils.showConnectionErrorDialog(context);
 
-      Utils.addConnectionErrorLog(context);
-    }
+          Utils.addConnectionErrorLog(context);
+        }
+      },
+    );
   }
 
   void _resetQuestionImage() {
@@ -595,6 +607,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               msg: Utils.multiLanguage(
                   StringConstants.can_not_delete_files_message),
               toastState: ToastStatesType.warning,
+              isCenter: true,
             );
           }
         },
@@ -668,9 +681,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _getTestDetail() async {
-    await _simulatorTestPresenter!.initializeData();
-    var connectivity = await connectivityService.checkConnectivity();
-    if (connectivity.name != StringConstants.connectivity_name_none) {
+    _simulatorTestPresenter!.initializeData().then((_) {
       if (widget.homeWorkModel != null) {
         _simulatorTestPresenter!.getTestDetailByHomeWork(
             context: context,
@@ -682,15 +693,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             topicsId: widget.topicsId ?? [],
             isPredict: widget.isPredict ?? 0);
       }
-    } else {
-      //Show connect error here
-      if (kDebugMode) {
-        print("DEBUG: Connect error here!");
-      }
-      Utils.showConnectionErrorDialog(context);
-
-      Utils.addConnectionErrorLog(context);
-    }
+    });
   }
 
   void _startToDoTest() {
@@ -793,6 +796,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -818,6 +822,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -836,6 +841,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
 
     Navigator.pop(context, 'refresh');

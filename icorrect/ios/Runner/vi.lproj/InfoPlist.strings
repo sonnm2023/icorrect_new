@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Apple on 09/12/2023.
+  
+*/
+"NSAppleMusicUsageDescription"="Được sử dụng trong quá trình làm bài.";
+"NSCameraUsageDescription"="Ứng dụng này yêu cầu quyền truy cập vào camera ghi lại tệp video để trả lời câu hỏi.";
+"NSMicrophoneUsageDescription"="Ứng dụng này yêu cầu quyền truy cập vào micro ghi lại tệp audio để trả lời câu hỏi.";
+"NSPhotoLibraryUsageDescription"="Ứng dụng này yêu cầu quyền truy cập vào thư viện.";

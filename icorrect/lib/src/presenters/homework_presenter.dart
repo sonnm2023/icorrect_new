@@ -43,8 +43,8 @@ class HomeWorkPresenter {
 
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser == null) {
-      _view!.onGetListHomeworkError(
-          StringConstants.load_list_homework_error_message);
+      _view!.onGetListHomeworkError(Utils.multiLanguage(
+          StringConstants.load_list_homework_error_message));
       return;
     }
 
@@ -93,7 +93,8 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(StringConstants.common_error_message);
+        _view!.onGetListHomeworkError(
+            Utils.multiLanguage(StringConstants.common_error_message));
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -106,7 +107,8 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(StringConstants.common_error_message);
+        _view!.onGetListHomeworkError(
+            Utils.multiLanguage(StringConstants.common_error_message));
       },
     );
   }
@@ -172,7 +174,8 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLogoutError(StringConstants.common_error_message);
+        _view!.onLogoutError(
+            Utils.multiLanguage(StringConstants.common_error_message));
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -185,7 +188,8 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onLogoutError(StringConstants.common_error_message);
+        _view!.onLogoutError(
+            Utils.multiLanguage(StringConstants.common_error_message));
       },
     );
   }
