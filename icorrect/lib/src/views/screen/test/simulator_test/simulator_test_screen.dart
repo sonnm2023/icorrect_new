@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
@@ -31,9 +32,6 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/download_progres
 import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:video_compress/video_compress.dart';
-
-import '../../../../provider/auth_provider.dart';
 
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen(
@@ -573,7 +571,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Future<void> _deleteAllAnswer() async {
-    await VideoCompress.deleteAllCache();
     File videoResizePath = _simulatorTestProvider!.savedVideoFile;
     if (videoResizePath.existsSync()) {
       if (kDebugMode) {

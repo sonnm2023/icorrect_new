@@ -4,13 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:video_compress/video_compress.dart';
 
 class ResizeVideoDialog extends StatefulWidget {
   File videoFile;
@@ -34,13 +34,25 @@ class ResizeVideoDialog extends StatefulWidget {
 
 class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
   AuthProvider? _authProvider;
-  Subscription? _subscription;
+
+  // Subscription? _subscription;
+  final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
 
   double w = 0, h = 0;
   @override
   void initState() {
     super.initState();
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Add a listener to the FFmpeg process events
+    // _flutterFFmpeg
+    //     .getStatistics()
+    //     .then((statistics) => print('FFmpeg statistics: $statistics'));
+    //
+    // _flutterFFmpeg
+    //     .executeWithArguments(['-version'])
+    //     .then((rc) => print('FFmpeg process exited with rc $rc'));
+
     Future.delayed(const Duration(seconds: 15), () {
       _authProvider!.setSkipAction(false);
     });
@@ -49,74 +61,74 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
     }
   }
 
-  Future _compressVideo() async {
-    if (!VideoCompress.isCompressing) {
-      final String videoName = widget.onSubmitNow != null
-          ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
-          : 'VIDEO_EXAM_${DateTime.now().microsecondsSinceEpoch}';
-      final Stopwatch stopwatch = Stopwatch()..start();
-      LogModel? log;
-      if (context.mounted) {
-        log = await Utils.prepareToCreateLog(context,
-            action: LogEvent.compressVideoFile);
-      }
-
-      Map<String, dynamic> data = {
-        "video_name": videoName,
-        "start_time": '${DateTime.now().microsecondsSinceEpoch}',
-        "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
-      };
-
-      if (null != log) {
-        log.addData(key: "compress_data", value: data);
-      }
-
-      await VideoCompress.setLogLevel(0);
-
-      MediaInfo? mediaInfo = await VideoCompress.compressVideo(
-        widget.videoFile.path,
-        quality: VideoQuality.LowQuality,
-        deleteOrigin: true,
-        includeAudio: true,
-      );
-
-      _subscription = VideoCompress.compressProgress$.subscribe((event) {
-        if (kDebugMode) {
-          print('COMPRESS_VIDEO: progress index : $event');
-        }
-        if (event == 100 && mediaInfo != null) {
-          widget.onResizeCompleted(File(mediaInfo.path!));
-          Navigator.of(context).pop();
-          if (kDebugMode) {
-            print("COMPRESS_VIDEO: file: ${mediaInfo.path!}, "
-                "exist :${File(mediaInfo.path!).existsSync()}");
-          }
-        }
-      });
-
-      stopwatch.stop();
-
-      if (kDebugMode) {
-        print(
-            "DEBUG : process compress second: ${stopwatch.elapsed.inSeconds}");
-      }
-
-      //Add duration into log
-      data.addEntries(
-          [MapEntry("duration", '${stopwatch.elapsed.inSeconds} seconds')]);
-
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: data,
-        message: "Compress authentication video",
-        status: LogEvent.success,
-      );
-    } else {
-      VideoCompress.cancelCompression();
-      widget.onErrorResizeFile!();
-    }
-  }
+  // Future _compressVideo() async {
+  //   if (!VideoCompress.isCompressing) {
+  //     final String videoName = widget.onSubmitNow != null
+  //         ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
+  //         : 'VIDEO_EXAM_${DateTime.now().microsecondsSinceEpoch}';
+  //     final Stopwatch stopwatch = Stopwatch()..start();
+  //     LogModel? log;
+  //     if (context.mounted) {
+  //       log = await Utils.prepareToCreateLog(context,
+  //           action: LogEvent.compressVideoFile);
+  //     }
+  //
+  //     Map<String, dynamic> data = {
+  //       "video_name": videoName,
+  //       "start_time": '${DateTime.now().microsecondsSinceEpoch}',
+  //       "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
+  //     };
+  //
+  //     if (null != log) {
+  //       log.addData(key: "compress_data", value: data);
+  //     }
+  //
+  //     await VideoCompress.setLogLevel(0);
+  //
+  //     MediaInfo? mediaInfo = await VideoCompress.compressVideo(
+  //       widget.videoFile.path,
+  //       quality: VideoQuality.LowQuality,
+  //       deleteOrigin: true,
+  //       includeAudio: true,
+  //     );
+  //
+  //     _subscription = VideoCompress.compressProgress$.subscribe((event) {
+  //       if (kDebugMode) {
+  //         print('COMPRESS_VIDEO: progress index : $event');
+  //       }
+  //       if (event == 100 && mediaInfo != null) {
+  //         widget.onResizeCompleted(File(mediaInfo.path!));
+  //         Navigator.of(context).pop();
+  //         if (kDebugMode) {
+  //           print("COMPRESS_VIDEO: file: ${mediaInfo.path!}, "
+  //               "exist :${File(mediaInfo.path!).existsSync()}");
+  //         }
+  //       }
+  //     });
+  //
+  //     stopwatch.stop();
+  //
+  //     if (kDebugMode) {
+  //       print(
+  //           "DEBUG : process compress second: ${stopwatch.elapsed.inSeconds}");
+  //     }
+  //
+  //     //Add duration into log
+  //     data.addEntries(
+  //         [MapEntry("duration", '${stopwatch.elapsed.inSeconds} seconds')]);
+  //
+  //     //Add log
+  //     Utils.prepareLogData(
+  //       log: log,
+  //       data: data,
+  //       message: "Compress authentication video",
+  //       status: LogEvent.success,
+  //     );
+  //   } else {
+  //     VideoCompress.cancelCompression();
+  //     widget.onErrorResizeFile!();
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -274,8 +286,33 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
     );
   }
 
+  Future<void> compressVideo(String inputPath, String outputPath) async {
+    try {
+      String command = '-i $inputPath -c:v libx264 -crf 23 -c:a aac -strict -2 $outputPath';
+
+      // Start FFmpeg process
+      int rc = await _flutterFFmpeg.executeWithArguments(command.split(' '), (completed) {});
+
+      if (rc == 0) {
+        if (kDebugMode) {
+          print('Video compression successful');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Video compression failed with code $rc');
+        }
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print('Error during video compression: $e');
+      }
+    }
+  }
+
+
   Future disposeAll() async {
-    VideoCompress.cancelCompression();
+    // VideoCompress.cancelCompression();
+
     if (_subscription != null) {
       _subscription!.unsubscribe();
     }
