@@ -46,14 +46,14 @@ String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 String fileEP(String name) => '${icorrectDomain}file?filename=$name';
 
 String responseEP(String orderId) =>
-    '${oldToolDomain}api/response?order_id=$orderId';
+    '${dev_toolDomain}api/response?order_id=$orderId';
 
 Future<String> aiResponseEP(String orderId) async =>
     '${icorrectDomain}ai-response/index1.html?order_id=$orderId&token=${await Utils.getAccessToken()}';
 
 String specialHomeWorksEP(
     String email, String activityId, int status, int example) {
-  return "$oldPublicDomain"
+  return "$dev_publicDomain"
       "api/list-answers-activity?activity_id="
       "$activityId"
       "&email="
@@ -86,7 +86,7 @@ String submitPractice() {
 }
 
 String getTestDetailWithIdEP(String testId) =>
-    '${oldToolDomain}api/get-test-with-id/$testId';
+    '${dev_toolDomain}api/get-test-with-id/$testId';
 
 String getActivitiesList(Map<String, String> queryParameters) {
   return '${apiDomain}api/v1/syllabus/activities-of-class/index?${Uri(queryParameters: queryParameters).query}';
