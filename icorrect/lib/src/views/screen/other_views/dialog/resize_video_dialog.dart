@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/light_compress_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
@@ -35,21 +36,23 @@ class ResizeVideoDialog extends StatefulWidget {
 class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
   AuthProvider? _authProvider;
   Subscription? _subscription;
+  var lightCompressor;
 
   double w = 0, h = 0;
   @override
   void initState() {
     super.initState();
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    lightCompressor = LightCompressVideo.getLightCompress();
     Future.delayed(const Duration(seconds: 15), () {
       _authProvider!.setSkipAction(false);
     });
     if (widget.videoFile.existsSync()) {
-      _compressVideo();
+      _startVideoCompress();
     }
   }
 
-  Future _compressVideo() async {
+  Future _startVideoCompress() async {
     if (!VideoCompress.isCompressing) {
       final String videoName = widget.onSubmitNow != null
           ? 'VIDEO_AUTH_${DateTime.now().microsecondsSinceEpoch}'
@@ -64,7 +67,9 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       Map<String, dynamic> data = {
         "video_name": videoName,
         "start_time": '${DateTime.now().microsecondsSinceEpoch}',
-        "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb'
+        "original_size":
+            '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb',
+        "used_lib": "video_compress:3.1.0"
       };
 
       if (null != log) {
@@ -84,7 +89,11 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
         if (kDebugMode) {
           print('COMPRESS_VIDEO: progress index : $event');
         }
-        if (event == 100 && mediaInfo != null) {
+        if (mediaInfo == null) {
+          _startLightCompressVideo();
+          return;
+        }
+        if (event == 100) {
           widget.onResizeCompleted(File(mediaInfo.path!));
           Navigator.of(context).pop();
           if (kDebugMode) {
@@ -109,13 +118,84 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       Utils.prepareLogData(
         log: log,
         data: data,
-        message: "Compress authentication video",
+        message: "Compress authentication video By Video Compress",
         status: LogEvent.success,
       );
     } else {
       VideoCompress.cancelCompression();
-      widget.onErrorResizeFile!();
+      _startLightCompressVideo();
     }
+  }
+
+  Future _startLightCompressVideo() async {
+    String videoName =
+        'VIDEO_EXAM_${DateTime.now().microsecond.toString()}.mp4';
+
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.compressVideoFile);
+    }
+
+    Map<String, dynamic> data = {
+      "video_name": videoName,
+      "start_time": '${DateTime.now().microsecondsSinceEpoch}',
+      "original_size": '${((widget.videoFile.lengthSync()) / 1024) / 1024} Mb',
+      "used_lib": "light_compressor: 2.2.0"
+    };
+    if (null != log) {
+      log.addData(key: "compress_data", value: data);
+    }
+
+    if (lightCompressor == null) {
+      Utils.prepareLogData(
+        log: log,
+        data: data,
+        message: "LightCompressor is null",
+        status: LogEvent.failed,
+      );
+      widget.onErrorResizeFile!();
+      return;
+    }
+
+    final Stopwatch stopwatch = Stopwatch()..start();
+    var response = await LightCompressVideo.getLightCompressVideo(
+        widget.videoFile.path, videoName, lightCompressor);
+    stopwatch.stop();
+    final Duration duration =
+        Duration(milliseconds: stopwatch.elapsedMilliseconds);
+    data.addEntries([MapEntry("duration", '$duration seconds')]);
+
+    //Add log
+    Utils.prepareLogData(
+      log: log,
+      data: data,
+      message: "Compress authentication video by LightCompressor",
+      status: LogEvent.success,
+    );
+    LightCompressVideo.getResponseLightCompress(response, (outputFile) {
+      widget.onResizeCompleted(File(outputFile));
+      Navigator.of(context).pop();
+      if (kDebugMode) {
+        print("LIGHT_COMPRESS_VIDEO: file: $outputFile, "
+            "exist :${File(outputFile).existsSync()}");
+      }
+    }, (onFailure) {
+      Utils.prepareLogData(
+        log: log,
+        data: data,
+        message: onFailure,
+        status: LogEvent.failed,
+      );
+      widget.onErrorResizeFile!();
+    }, (onCancelled) {
+      Utils.prepareLogData(
+        log: log,
+        data: data,
+        message: onCancelled,
+        status: LogEvent.failed,
+      );
+    });
   }
 
   @override
@@ -278,6 +358,9 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
     VideoCompress.cancelCompression();
     if (_subscription != null) {
       _subscription!.unsubscribe();
+    }
+    if (lightCompressor != null) {
+      lightCompressor.cancelCompression();
     }
   }
 }

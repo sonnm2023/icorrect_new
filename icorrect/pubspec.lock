@@ -645,6 +645,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.1"
+  light_compressor:
+    dependency: "direct main"
+    description:
+      name: light_compressor
+      sha256: dfcbc94f55b3e5ca628f4994ece43fac40c7d6d58e9aaa3f66685cd91419b0cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   lints:
     dependency: transitive
     description:

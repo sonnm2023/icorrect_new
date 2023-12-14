@@ -27,6 +27,7 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/widget/drawer_items.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
+import 'package:light_compressor/light_compressor.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
