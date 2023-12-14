@@ -57,7 +57,8 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       _authProvider!.setSkipAction(false);
     });
     if (widget.videoFile.existsSync()) {
-      _compressVideo();
+      // _compressVideo();
+      compressVideo(widget.videoFile.path, "outputPath");
     }
   }
 
@@ -70,7 +71,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
   //     LogModel? log;
   //     if (context.mounted) {
   //       log = await Utils.prepareToCreateLog(context,
-  //           action: LogEvent.compressVideoFile);
+  //compressVideo           action: LogEvent.compressVideoFile);
   //     }
   //
   //     Map<String, dynamic> data = {
@@ -291,7 +292,11 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       String command = '-i $inputPath -c:v libx264 -crf 23 -c:a aac -strict -2 $outputPath';
 
       // Start FFmpeg process
-      int rc = await _flutterFFmpeg.executeWithArguments(command.split(' '), (completed) {});
+      int rc = await _flutterFFmpeg.executeAsync(command, (execution) {
+        if (kDebugMode) {
+          print(execution.toString());
+        }
+      });
 
       if (rc == 0) {
         if (kDebugMode) {
@@ -312,9 +317,9 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
 
   Future disposeAll() async {
     // VideoCompress.cancelCompression();
-
-    if (_subscription != null) {
-      _subscription!.unsubscribe();
-    }
+    // if (_subscription != null) {
+    //   _subscription!.unsubscribe();
+    // }
+    _flutterFFmpeg.cancel();
   }
 }
