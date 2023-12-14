@@ -11,8 +11,8 @@ import 'package:icorrect/src/data_sources/utils.dart';
 // const publicDomain = icorrectDomain;
 // const toolDomain = icorrectDomain;
 // const apiDomain = icorrectDomain;
-const oldPublicDomain = "http://public.icorrect.vn/";
-const oldToolDomain = "http://tool.ielts-correction.com/";
+// const oldPublicDomain = "http://public.icorrect.vn/";
+// const oldToolDomain = "http://tool.ielts-correction.com/";
 
 //For development env
 // http://devpublic.icorrect.vn/
