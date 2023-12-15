@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -14,9 +13,9 @@ import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
@@ -32,8 +31,6 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widge
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:video_compress/video_compress.dart';
-
-import '../../../../provider/auth_provider.dart';
 
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen(
@@ -798,14 +795,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       toastState: ToastStatesType.error,
       isCenter: true,
     );
-  }
-
-  @override
-  void onSaveTopicListIntoProvider(List<TopicModel> list) {
-    _simulatorTestProvider!.setTopicsList(list);
-    Queue<TopicModel> queue = Queue<TopicModel>();
-    queue.addAll(list);
-    _simulatorTestProvider!.setTopicsQueue(queue);
   }
 
   @override
