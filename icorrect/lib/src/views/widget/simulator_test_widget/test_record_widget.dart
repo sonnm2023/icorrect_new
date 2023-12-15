@@ -30,6 +30,13 @@ class TestRecordWidget extends StatelessWidget {
     QuestionTopicModel currentQuestion = simulatorTestProvider.currentQuestion;
 
     bool isRepeat = false;
+    if (simulatorTestProvider.enableRepeatButton) {
+      if (currentQuestion.numPart == PartOfTest.part1.get || currentQuestion.numPart == PartOfTest.part3.get) {
+        isRepeat = true;
+      } else {
+        isRepeat = false;
+      }
+    }
 
     return Consumer<SimulatorTestProvider>(
       builder: (context, simulatorTestProvider, _) {
@@ -111,15 +118,6 @@ class TestRecordWidget extends StatelessWidget {
               const SizedBox(width: 20),
             ],
           );
-        }
-
-        //Doing test - build Repeat button if has
-        if (simulatorTestProvider.topicsQueue.isNotEmpty) {
-          isRepeat = (simulatorTestProvider.topicsQueue.first.numPart ==
-                      PartOfTest.part1.get ||
-                  simulatorTestProvider.topicsQueue.first.numPart ==
-                      PartOfTest.part3.get) &&
-              simulatorTestProvider.enableRepeatButton;
         }
 
         return Visibility(
