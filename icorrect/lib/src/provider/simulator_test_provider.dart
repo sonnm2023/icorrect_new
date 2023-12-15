@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -9,7 +8,6 @@ import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart'
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
-// import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;
@@ -174,17 +172,6 @@ class SimulatorTestProvider with ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
-  }
-
-  final List<TopicModel> _topicsList = [];
-  List<TopicModel> get topicsList => _topicsList;
-  void setTopicsList(List<TopicModel> list) {
-    _topicsList.clear();
-    _topicsList.addAll(list);
-  }
-
-  void resetTopicsList() {
-    _topicsList.clear();
   }
 
   //Status of doing the test
@@ -457,20 +444,6 @@ class SimulatorTestProvider with ChangeNotifier {
     _enableRepeatButton = enable;
   }
 
-  final Queue<TopicModel> _topicsQueue = Queue<TopicModel>();
-  Queue<TopicModel> get topicsQueue => _topicsQueue;
-  void setTopicsQueue(Queue<TopicModel> queue) {
-    _topicsQueue.addAll(queue);
-  }
-
-  void removeTopicsQueueFirst() {
-    _topicsQueue.removeFirst();
-  }
-
-  void resetTopicsQueue() {
-    _topicsQueue.clear();
-  }
-
   String? _strCountCueCard;
   String get strCountCueCard => _strCountCueCard ?? '00:00';
   void setCountDownCueCard(String strCount) {
@@ -493,11 +466,6 @@ class SimulatorTestProvider with ChangeNotifier {
 
   final List<FileTopicModel> _listVideoSource = [];
   List<FileTopicModel> get listVideoSource => _listVideoSource;
-  void setListVideoSource(List<FileTopicModel> list) {
-    _listVideoSource.clear();
-    _listVideoSource.addAll(list);
-  }
-
   void addVideoSource(FileTopicModel fileTopicModel) {
     _listVideoSource.add(fileTopicModel);
   }
@@ -673,9 +641,7 @@ class SimulatorTestProvider with ChangeNotifier {
     _currentQuestion = QuestionTopicModel();
     _indexOfCurrentQuestion = 0;
     _reviewingStatus = ReviewingStatus.none;
-    resetTopicsQueue();
     clearQuestionList();
-    resetTopicsList();
     clearListVideoSource();
     resetNeedUpdateReanswerStatus();
     resetSelectedQuestionImageUrl();

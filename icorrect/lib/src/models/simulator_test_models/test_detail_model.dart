@@ -121,14 +121,14 @@ class TestDetailModel {
     _activityType = json['activity_type'];
     _testOption = json['test_option'];
     _introduce = json['introduce'] != null
-        ? TopicModel.fromJson(json['introduce'])
+        ? TopicModel.fromJson(json['introduce'], PartOfTest.introduce.get)
         : null;
     if (json['part1'] != null) {
       _part1 = <TopicModel>[];
 
       json['part1'].forEach((v) {
         if (v != null) {
-          _part1!.add(TopicModel.fromJson(v));
+          _part1!.add(TopicModel.fromJson(v, PartOfTest.part1.get));
         }
       });
     }
@@ -147,11 +147,11 @@ class TestDetailModel {
     _secondRepeatSpeed = json['second_repeat_speed'] != null
         ? json['second_repeat_speed'].toDouble()
         : 1;
-    _part2 = json['part2'] != null ? TopicModel.fromJson(json['part2']) : null;
+    _part2 = json['part2'] != null ? TopicModel.fromJson(json['part2'], PartOfTest.part2.get) : null;
     if (_part2 != null) {
       _part2!.numPart = PartOfTest.part2.get;
     }
-    _part3 = json['part3'] != null ? TopicModel.fromJson(json['part3']) : null;
+    _part3 = json['part3'] != null ? TopicModel.fromJson(json['part3'], PartOfTest.part3.get) : null;
     if (_part3 != null) {
       _part3!.numPart = PartOfTest.part3.get;
     }
@@ -208,19 +208,19 @@ class TestDetailModel {
     _domainName = json['test']['domain_name'] ?? '';
 
     _introduce = json['test']['introduce'] != null
-        ? TopicModel.fromJson(json['test']['introduce'])
+        ? TopicModel.fromJson(json['test']['introduce'], PartOfTest.introduce.get)
         : null;
     if (json['test']['part1'] != null) {
       _part1 = <TopicModel>[];
       json['test']['part1'].forEach((v) {
-        _part1!.add(TopicModel.fromJson(v));
+        _part1!.add(TopicModel.fromJson(v, PartOfTest.part1.get));
       });
     }
     _part2 = json['test']['part2'] != null
-        ? TopicModel.fromJson(json['test']['part2'])
+        ? TopicModel.fromJson(json['test']['part2'], PartOfTest.part2.get)
         : null;
     _part3 = json['test']['part3'] != null
-        ? TopicModel.fromJson(json['test']['part3'])
+        ? TopicModel.fromJson(json['test']['part3'], PartOfTest.part3.get)
         : null;
   }
 }

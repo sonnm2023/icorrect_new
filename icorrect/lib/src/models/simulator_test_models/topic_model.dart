@@ -1,11 +1,5 @@
-import 'dart:convert';
-
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-
-TopicModel topicModelFromJson(String str) =>
-    TopicModel.fromJson(json.decode(str));
-String topicModelToJson(TopicModel data) => json.encode(data.toJson());
 
 class TopicModel {
   int? _id;
@@ -108,7 +102,7 @@ class TopicModel {
   FileTopicModel get endOfTakeNote => _endOfTakeNote ?? FileTopicModel();
   set endOfTakeNote(FileTopicModel endOfTakeNote) => _endOfTakeNote = endOfTakeNote;
 
-  TopicModel.fromJson(Map<String, dynamic> json) {
+  TopicModel.fromJson(Map<String, dynamic> json, int numPart) {
     _id = json['id'];
     _title = json['title'];
     _description = json['description'];
@@ -122,7 +116,7 @@ class TopicModel {
     _deletedAt = json['deleted_at'];
     _distributeCode = json['distribute_code'];
     _merchantId = json['merchant_id'];
-    _numPart = json['num_part'];
+    _numPart = numPart;
 
     if (json['files'] != null) {
       _files = <FileTopicModel>[];
