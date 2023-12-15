@@ -31,7 +31,6 @@ abstract class SimulatorTestViewContract {
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
   void onDownloadFailure(AlertInfo info);
-  void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onSubmitTestSuccess(String msg);
   void onSubmitTestFail(String msg);
   void onReDownload();
@@ -56,7 +55,6 @@ class SimulatorTestPresenter {
     _autoRequestDownloadTimes += 1;
   }
 
-  // http.Client? client;
   Dio? dio;
   final Map<String, String> headers = {
     StringConstants.k_accept: 'application/json',
@@ -156,8 +154,6 @@ class SimulatorTestPresenter {
         tempTestDetailModel = TestDetailModel.fromJson(dataMap);
         testDetail = TestDetailModel.fromJson(dataMap);
 
-        _prepareTopicList(tempTestDetailModel);
-
         //Add log
         Utils.prepareLogData(
           log: log,
@@ -251,8 +247,6 @@ class SimulatorTestPresenter {
         tempTestDetailModel = TestDetailModel.fromJson(dataMap);
         testDetail = TestDetailModel.fromJson(dataMap);
 
-        _prepareTopicList(tempTestDetailModel);
-
         //Add log
         Utils.prepareLogData(
           log: log,
@@ -313,41 +307,6 @@ class SimulatorTestPresenter {
         _view!.onGetTestDetailError(StringConstants.common_error_message);
       },
     );
-  }
-
-  //Prepare list of topic for save into provider
-  void _prepareTopicList(TestDetailModel testDetail) {
-    List<TopicModel> topicsList = [];
-    //Introduce
-    if (0 != testDetail.introduce.id && testDetail.introduce.title.isNotEmpty) {
-      testDetail.introduce.numPart = PartOfTest.introduce.get;
-      topicsList.add(testDetail.introduce);
-    }
-
-    //Part 1
-    if (testDetail.part1.isNotEmpty) {
-      for (int i = 0; i < testDetail.part1.length; i++) {
-        testDetail.part1[i].numPart = PartOfTest.part1.get;
-      }
-      topicsList.addAll(testDetail.part1);
-    }
-
-    //Part 2
-    if (0 != testDetail.part2.id && testDetail.part2.title.isNotEmpty) {
-      testDetail.part2.numPart = PartOfTest.part2.get;
-      topicsList.add(testDetail.part2);
-    }
-
-    //Part 3
-    if (0 != testDetail.part3.id && testDetail.part3.title.isNotEmpty) {
-      if (testDetail.part3.questionList.isNotEmpty ||
-          testDetail.part3.fileEndOfTest.url.isNotEmpty) {
-        testDetail.part3.numPart = PartOfTest.part3.get;
-        topicsList.add(testDetail.part3);
-      }
-    }
-
-    _view!.onSaveTopicListIntoProvider(topicsList);
   }
 
   List<FileTopicModel> _prepareFileTopicListForDownload(
