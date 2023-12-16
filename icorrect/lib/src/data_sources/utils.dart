@@ -348,6 +348,13 @@ class Utils {
     return int.tryParse(str) != null || double.tryParse(str) != null;
   }
 
+  static double convertToDouble(dynamic data) {
+    if (data is int) {
+      return double.parse('$data.0');
+    }
+    return double.parse('$data');
+  }
+
   static UserAuthenStatusUI getUserAuthenStatus(
       BuildContext context, int status) {
     switch (status) {
