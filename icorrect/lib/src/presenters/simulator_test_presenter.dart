@@ -167,8 +167,15 @@ class SimulatorTestPresenter {
 
         _view!.onPrepareListVideoSource(filesTopic!);
 
-        List<FileTopicModel> tempFilesTopic =
-            _prepareFileTopicListForDownload(tempTestDetailModel);
+        // List<FileTopicModel> tempFilesTopic =
+        //     _prepareFileTopicListForDownload(tempTestDetailModel);
+
+        if (null == filesTopic) {
+          if (kDebugMode) {
+            print("DEBUG: filesTopic is empty");
+          }
+          return;
+        }
 
         if (imageFiles.isNotEmpty) {
           //Download images
@@ -176,7 +183,7 @@ class SimulatorTestPresenter {
             context: context,
             testDetail: tempTestDetailModel,
             activityId: homeworkId,
-            filesTopic: tempFilesTopic,
+            filesTopic: filesTopic!,
           );
         } else {
           //Download video
@@ -184,12 +191,12 @@ class SimulatorTestPresenter {
             context: context,
             testDetail: tempTestDetailModel,
             activityId: homeworkId,
-            filesTopic: tempFilesTopic,
+            filesTopic: filesTopic!,
           );
         }
 
         _view!.onGetTestDetailComplete(
-            tempTestDetailModel, tempFilesTopic.length);
+            tempTestDetailModel, filesTopic!.length);
       } else {
         //Add log
         Utils.prepareLogData(

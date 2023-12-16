@@ -464,9 +464,9 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
-  final List<FileTopicModel> _listVideoSource = [];
-  List<FileTopicModel> get listVideoSource => _listVideoSource;
-  void addVideoSource(FileTopicModel fileTopicModel) {
+  final List<dynamic> _listVideoSource = [];
+  List<dynamic> get listVideoSource => _listVideoSource;
+  void addVideoSource(dynamic fileTopicModel) {
     _listVideoSource.add(fileTopicModel);
   }
 

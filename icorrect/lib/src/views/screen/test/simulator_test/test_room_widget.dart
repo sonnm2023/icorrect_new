@@ -12,7 +12,6 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -22,7 +21,6 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -328,7 +326,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                               .updateDoingStatus(DoingStatus.doing);
                           simulatorTestProvider
                               .updateReviewingStatus(ReviewingStatus.playing);
-                          _startToPlayVideo();
+                          _playVideoTapped();
                         },
                         child: const Icon(
                           Icons.play_arrow,
@@ -453,7 +451,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               AspectRatio(
                 aspectRatio: 16 / 9,
                 child: NativeVideoPlayerView(
-                  onViewReady: _initController,
+                  onViewReady: _initVideoController,
                 ),
               ),
 
@@ -568,7 +566,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  Future<void> _initController(NativeVideoPlayerController controller) async {
+  Future<void> _initVideoController(NativeVideoPlayerController controller) async {
     if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
       _videoPlayerController = controller;
       _videoPlayerController!.setVolume(1.0);
@@ -576,6 +574,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _simulatorTestProvider!.listVideoSource[_playingIndex].url)
           .then((_) {
         _videoPlayerController!.stop();
+      }).onError((error, stackTrace) {
+        if (kDebugMode) {
+          print("DEBUG: _initController ERROR ${error.toString()}");
+        }
       });
     }
   }
@@ -681,9 +683,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             widget.homeWorkModel!.activityId.toString())
       ]);
     }
+
+    if (kDebugMode) {
+      if (null != widget.simulatorTestPresenter.testDetail) {
+        print("DEBUG: ${widget.simulatorTestPresenter.testDetail!}");
+      }
+    }
+
     _createLog(action: LogEvent.actionStartToDoTest, data: info);
 
-    _initVideoController(isIntroduceVideo: false);
+    // _initVideoController(isIntroduceVideo: false); //TODO
   }
 
   Future _onAppInBackground() async {
@@ -810,7 +819,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           //Playing end_of_take_note ==> replay end_of_take_note
 
           if (_endOfTakeNoteIndex != 0) {
-            _rePlayEndOfTakeNote();
+            // _rePlayEndOfTakeNote(); //TODO
           } else if (_simulatorTestProvider!.visibleRecord) {
             _continueRecordPart2();
           }
@@ -823,7 +832,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _simulatorTestProvider!.visibleRecord == false) {
             _videoPlayerController!.play();
           } else if (_simulatorTestProvider!.visibleRecord == true) {
-            _reRecordAnswer();
+            // _reRecordAnswer(); //TODO
           }
         }
       }
@@ -1131,14 +1140,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       onFinishForReAnswer();
     } else {
       //Finish answer
-      bool isPart2 = false;
+      bool isPart2 = questionTopicModel.numPart == PartOfTest.part2.get;
 
-      if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
-        isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
-            PartOfTest.part2.get;
-      } else {
-        isPart2 = questionTopicModel.numPart == PartOfTest.part2.get;
-      }
+      // if (_simulatorTestProvider!.topicsQueue.isNotEmpty) {
+      //   isPart2 = _simulatorTestProvider!.topicsQueue.first.numPart ==
+      //       PartOfTest.part2.get;
+      // } else {
+      //   isPart2 = questionTopicModel.numPart == PartOfTest.part2.get;
+      // }
 
       _createLog(action: LogEvent.actionFinishAnswer, data: info);
 
@@ -1220,62 +1229,62 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _repeatQuestionCallBack(QuestionTopicModel questionTopicModel) async {
     //Comment from build release 1.1.9 (build 1) 2023-11-29 16:55
-    //Check answer of user must be greater than 2 seconds
-    // if (_checkAnswerDuration()) {
-    //   _resetEnableFinishStatus();
-    //   return;
-    // }
-
-    Map<String, dynamic> info = {
-      StringConstants.k_question_id: questionTopicModel.id.toString(),
-      StringConstants.k_question_content: questionTopicModel.content,
-    };
-    _createLog(action: LogEvent.actionRepeatQuestion, data: info);
-
-    //Stop record
-    _setVisibleRecord(false, null, null);
-
-    //Reset question image
-    _resetQuestionImage();
-
-    //Add question into List Question & show it
-    _simulatorTestProvider!.addCurrentQuestionIntoList(
-      questionTopic: _currentQuestion!,
-      repeatIndex: _countRepeat,
-      isRepeat: true,
-    );
-
-    _countRepeat++;
-
-    TopicModel? topicModel = _getCurrentPart();
-    if (null != topicModel) {
-      if (topicModel.numPart == PartOfTest.part3.get) {
-        bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
-        if (finishFollowUp == true) {
-          if (_countRepeat > 0 && _countRepeat <= 2) {
-            _repeatPlayCurrentQuestion();
-          } else {
-            _playNextQuestion();
-          }
-        } else {
-          if (_countRepeat > 0 && _countRepeat <= 2) {
-            _repeatPlayCurrentFollowup();
-          } else {
-            _playNextFollowup();
-          }
-        }
-      } else {
-        if (_countRepeat > 0 && _countRepeat <= 2) {
-          _repeatPlayCurrentQuestion();
-        } else {
-          _playNextQuestion();
-        }
-      }
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
-      }
-    }
+  //   //Check answer of user must be greater than 2 seconds
+  //   // if (_checkAnswerDuration()) {
+  //   //   _resetEnableFinishStatus();
+  //   //   return;
+  //   // }
+  //
+  //   Map<String, dynamic> info = {
+  //     StringConstants.k_question_id: questionTopicModel.id.toString(),
+  //     StringConstants.k_question_content: questionTopicModel.content,
+  //   };
+  //   _createLog(action: LogEvent.actionRepeatQuestion, data: info);
+  //
+  //   //Stop record
+  //   _setVisibleRecord(false, null, null);
+  //
+  //   //Reset question image
+  //   _resetQuestionImage();
+  //
+  //   //Add question into List Question & show it
+  //   _simulatorTestProvider!.addCurrentQuestionIntoList(
+  //     questionTopic: _currentQuestion!,
+  //     repeatIndex: _countRepeat,
+  //     isRepeat: true,
+  //   );
+  //
+  //   _countRepeat++;
+  //
+  //   TopicModel? topicModel = _getCurrentPart();
+  //   if (null != topicModel) {
+  //     if (topicModel.numPart == PartOfTest.part3.get) {
+  //       bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
+  //       if (finishFollowUp == true) {
+  //         if (_countRepeat > 0 && _countRepeat <= 2) {
+  //           _repeatPlayCurrentQuestion();
+  //         } else {
+  //           _playNextQuestion();
+  //         }
+  //       } else {
+  //         if (_countRepeat > 0 && _countRepeat <= 2) {
+  //           _repeatPlayCurrentFollowup();
+  //         } else {
+  //           _playNextFollowup();
+  //         }
+  //       }
+  //     } else {
+  //       if (_countRepeat > 0 && _countRepeat <= 2) {
+  //         _repeatPlayCurrentQuestion();
+  //       } else {
+  //         _playNextQuestion();
+  //       }
+  //     }
+  //   } else {
+  //     if (kDebugMode) {
+  //       print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
+  //     }
+  //   }
   }
 
   void _startReviewing() async {
@@ -1324,7 +1333,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _startToPlayVideo() {
+  void _playVideoTapped() {
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       //Start to review the test
 
@@ -1341,10 +1350,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _playNextQuestion() {
-    _setIndexOfNextQuestion();
-    _startToPlayQuestion();
-  }
+  // void _playNextQuestion() {
+  //   _setIndexOfNextQuestion();
+  //   _startToPlayQuestion();
+  // }
 
   void _setIndexOfNextQuestion() {
     int i = _simulatorTestProvider!.indexOfCurrentQuestion;
@@ -1356,176 +1365,176 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setIndexOfCurrentFollowUp(i + 1);
   }
 
-  TopicModel? _getCurrentPart() {
-    Queue<TopicModel> topicsQueue = _simulatorTestProvider!.topicsQueue;
+  // TopicModel? _getCurrentPart() {
+  //   Queue<TopicModel> topicsQueue = _simulatorTestProvider!.topicsQueue;
+  //
+  //   if (topicsQueue.isEmpty) {
+  //     return null;
+  //   }
+  //
+  //   //Get current part:
+  //   //introduce / part 1 / part 2 / part 3 is testing
+  //   TopicModel topicModel = topicsQueue.first;
+  //   return topicModel;
+  // }
 
-    if (topicsQueue.isEmpty) {
-      return null;
-    }
+  // Future<void> _startToPlayQuestion() async {
+  //   TopicModel? topicModel = _getCurrentPart();
+  //
+  //   if (null == topicModel) {
+  //     if (kDebugMode) {
+  //       print("DEBUG: Hasn't any part to playing");
+  //     }
+  //     return;
+  //   }
+  //
+  //   List<QuestionTopicModel> questionList = topicModel.questionList;
+  //   if (questionList.isEmpty) {
+  //     if (kDebugMode) {
+  //       print("DEBUG: This part hasn't any question to playing");
+  //     }
+  //     switch (topicModel.numPart) {
+  //       case 0:
+  //         {
+  //           //For introduce part
+  //           _playNextPart();
+  //           break;
+  //         }
+  //       case 1:
+  //         {
+  //           //For part 1
+  //           _playNextQuestion();
+  //           break;
+  //         }
+  //       case 2:
+  //         {
+  //           //For part 2
+  //           if (kDebugMode) {
+  //             print("DEBUG: onPlayEndOfTakeNote(fileName)");
+  //           }
+  //           break;
+  //         }
+  //       case 3:
+  //         {
+  //           //For part 3
+  //           _testRoomPresenter!.playEndOfTestFile(topicModel);
+  //           break;
+  //         }
+  //     }
+  //   } else {
+  //     int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+  //     if (index >= questionList.length) {
+  //       /*
+  //       We played all questions of current part
+  //       _playNextPart
+  //       If current part is part 3 ==> to play end_of_test
+  //       */
+  //       if (topicModel.numPart == PartOfTest.part3.get) {
+  //         _testRoomPresenter!.playEndOfTestFile(topicModel);
+  //       } else {
+  //         _playNextPart();
+  //       }
+  //     } else {
+  //       QuestionTopicModel question = questionList.elementAt(index);
+  //       question.numPart = topicModel.numPart;
+  //       _currentQuestion = question;
+  //
+  //       //Play next video
+  //       if (_countRepeat == 0) {
+  //         _playingIndex++;
+  //       }
+  //       _initVideoController(isIntroduceVideo: false);
+  //     }
+  //   }
+  // }
 
-    //Get current part:
-    //introduce / part 1 / part 2 / part 3 is testing
-    TopicModel topicModel = topicsQueue.first;
-    return topicModel;
-  }
+  // void _playNextPart() {
+  //   //Remove part which played
+  //   _simulatorTestProvider!.removeTopicsQueueFirst();
+  //   _simulatorTestProvider!.resetIndexOfCurrentQuestion();
+  //
+  //   _playingIndex++;
+  //   if (_simulatorTestProvider!.topicsQueue.isEmpty) {
+  //     //No part for next play
+  //     _prepareToEndTheTest();
+  //
+  //     if (kDebugMode) {
+  //       print("DEBUG: Call Step Next Part 1");
+  //     }
+  //   } else {
+  //     if (kDebugMode) {
+  //       print("DEBUG: Call Step Next Part 2");
+  //     }
+  //     _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
+  //   }
+  // }
 
-  Future<void> _startToPlayQuestion() async {
-    TopicModel? topicModel = _getCurrentPart();
+  // void _playNextFollowup() {
+  //   _setIndexOfNextFollowUp();
+  //   _startToPlayFollowup();
+  // }
+  //
+  // void _repeatPlayCurrentFollowup() {
+  //   if (_countRepeat == 2) {
+  //     //Disable repeat button
+  //     _simulatorTestProvider!.setEnableRepeatButton(false);
+  //   }
+  //
+  //   _startToPlayFollowup();
+  // }
 
-    if (null == topicModel) {
-      if (kDebugMode) {
-        print("DEBUG: Hasn't any part to playing");
-      }
-      return;
-    }
+  // Future<void> _startToPlayFollowup() async {
+  //   TopicModel? topicModel = _getCurrentPart();
+  //
+  //   if (null == topicModel) {
+  //     if (kDebugMode) {
+  //       print("DEBUG: Hasn't any part to playing");
+  //     }
+  //     return;
+  //   }
+  //
+  //   List<QuestionTopicModel> followUpList = topicModel.followUp;
+  //
+  //   if (followUpList.isEmpty) {
+  //     if (kDebugMode) {
+  //       print("DEBUG: This part hasn't any followup to playing");
+  //     }
+  //     _simulatorTestProvider!.setFinishPlayFollowUp(true);
+  //     _startToPlayQuestion();
+  //   } else {
+  //     _simulatorTestProvider!.resetIndexOfCurrentQuestion();
+  //
+  //     int index = _simulatorTestProvider!.indexOfCurrentFollowUp;
+  //     if (index >= followUpList.length) {
+  //       _simulatorTestProvider!.setFinishPlayFollowUp(true);
+  //       _startToPlayQuestion();
+  //     } else {
+  //       QuestionTopicModel question = followUpList.elementAt(index);
+  //       question.numPart = topicModel.numPart;
+  //       _currentQuestion = question;
+  //
+  //       if (question.files.isEmpty) {
+  //         if (kDebugMode) {
+  //           print("DEBUG: This is DATA ERROR");
+  //         }
+  //       } else {
+  //         if (_countRepeat == 0) {
+  //           _playingIndex++;
+  //         }
+  //         _initVideoController(isIntroduceVideo: false);
+  //       }
+  //     }
+  //   }
+  // }
 
-    List<QuestionTopicModel> questionList = topicModel.questionList;
-    if (questionList.isEmpty) {
-      if (kDebugMode) {
-        print("DEBUG: This part hasn't any question to playing");
-      }
-      switch (topicModel.numPart) {
-        case 0:
-          {
-            //For introduce part
-            _playNextPart();
-            break;
-          }
-        case 1:
-          {
-            //For part 1
-            _playNextQuestion();
-            break;
-          }
-        case 2:
-          {
-            //For part 2
-            if (kDebugMode) {
-              print("DEBUG: onPlayEndOfTakeNote(fileName)");
-            }
-            break;
-          }
-        case 3:
-          {
-            //For part 3
-            _testRoomPresenter!.playEndOfTestFile(topicModel);
-            break;
-          }
-      }
-    } else {
-      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
-      if (index >= questionList.length) {
-        /*
-        We played all questions of current part
-        _playNextPart
-        If current part is part 3 ==> to play end_of_test
-        */
-        if (topicModel.numPart == PartOfTest.part3.get) {
-          _testRoomPresenter!.playEndOfTestFile(topicModel);
-        } else {
-          _playNextPart();
-        }
-      } else {
-        QuestionTopicModel question = questionList.elementAt(index);
-        question.numPart = topicModel.numPart;
-        _currentQuestion = question;
-
-        //Play next video
-        if (_countRepeat == 0) {
-          _playingIndex++;
-        }
-        _initVideoController(isIntroduceVideo: false);
-      }
-    }
-  }
-
-  void _playNextPart() {
-    //Remove part which played
-    _simulatorTestProvider!.removeTopicsQueueFirst();
-    _simulatorTestProvider!.resetIndexOfCurrentQuestion();
-
-    _playingIndex++;
-    if (_simulatorTestProvider!.topicsQueue.isEmpty) {
-      //No part for next play
-      _prepareToEndTheTest();
-
-      if (kDebugMode) {
-        print("DEBUG: Call Step Next Part 1");
-      }
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: Call Step Next Part 2");
-      }
-      _testRoomPresenter!.startPart(_simulatorTestProvider!.topicsQueue);
-    }
-  }
-
-  void _playNextFollowup() {
-    _setIndexOfNextFollowUp();
-    _startToPlayFollowup();
-  }
-
-  void _repeatPlayCurrentFollowup() {
-    if (_countRepeat == 2) {
-      //Disable repeat button
-      _simulatorTestProvider!.setEnableRepeatButton(false);
-    }
-
-    _startToPlayFollowup();
-  }
-
-  Future<void> _startToPlayFollowup() async {
-    TopicModel? topicModel = _getCurrentPart();
-
-    if (null == topicModel) {
-      if (kDebugMode) {
-        print("DEBUG: Hasn't any part to playing");
-      }
-      return;
-    }
-
-    List<QuestionTopicModel> followUpList = topicModel.followUp;
-
-    if (followUpList.isEmpty) {
-      if (kDebugMode) {
-        print("DEBUG: This part hasn't any followup to playing");
-      }
-      _simulatorTestProvider!.setFinishPlayFollowUp(true);
-      _startToPlayQuestion();
-    } else {
-      _simulatorTestProvider!.resetIndexOfCurrentQuestion();
-
-      int index = _simulatorTestProvider!.indexOfCurrentFollowUp;
-      if (index >= followUpList.length) {
-        _simulatorTestProvider!.setFinishPlayFollowUp(true);
-        _startToPlayQuestion();
-      } else {
-        QuestionTopicModel question = followUpList.elementAt(index);
-        question.numPart = topicModel.numPart;
-        _currentQuestion = question;
-
-        if (question.files.isEmpty) {
-          if (kDebugMode) {
-            print("DEBUG: This is DATA ERROR");
-          }
-        } else {
-          if (_countRepeat == 0) {
-            _playingIndex++;
-          }
-          _initVideoController(isIntroduceVideo: false);
-        }
-      }
-    }
-  }
-
-  void _repeatPlayCurrentQuestion() {
-    if (_countRepeat == 2) {
-      //Disable repeat button
-      _simulatorTestProvider!.setEnableRepeatButton(false);
-    }
-
-    _startToPlayQuestion();
-  }
+  // void _repeatPlayCurrentQuestion() {
+  //   if (_countRepeat == 2) {
+  //     //Disable repeat button
+  //     _simulatorTestProvider!.setEnableRepeatButton(false);
+  //   }
+  //
+  //   _startToPlayQuestion();
+  // }
 
   bool _checkExist(QuestionTopicModel question) {
     if (_reviewingList.isEmpty) return false;
@@ -1542,250 +1551,250 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return false;
   }
 
-  void _prepareStep1RecordAnswer({
-    required String fileName,
-    required bool isPart2,
-  }) async {
-    if (null == _currentQuestion) {
-      TopicModel? topicModel = _getCurrentPart();
-      List<QuestionTopicModel> questionList = topicModel!.questionList;
-      int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+  // void _prepareStep1RecordAnswer({
+  //   required String fileName,
+  //   required bool isPart2,
+  // }) async {
+  //   if (null == _currentQuestion) {
+  //     TopicModel? topicModel = _getCurrentPart();
+  //     List<QuestionTopicModel> questionList = topicModel!.questionList;
+  //     int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+  //
+  //     //TODO: Need check again here
+  //     // if (questionList.isEmpty) return;
+  //     // if (index >= questionList.length) return;
+  //
+  //     QuestionTopicModel question = questionList.elementAt(index);
+  //     question.numPart = topicModel.numPart;
+  //     _currentQuestion = question;
+  //   }
+  //
+  //   if (isPart2) {
+  //     //Has Cue Card case
+  //     _simulatorTestProvider!.setVisibleRecord(false);
+  //     _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+  //
+  //     int time = widget.simulatorTestPresenter.testDetail!
+  //         .takeNoteTime; //60; //3 for test, 60 for product
+  //     String timeString = Utils.getTimeRecordString(time);
+  //     _simulatorTestProvider!.setCountDownCueCard(timeString);
+  //
+  //     _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
+  //       context: context,
+  //       count: time,
+  //       isPart2: false,
+  //     );
+  //     _simulatorTestProvider!.setVisibleCueCard(true);
+  //   } else {
+  //     _prepareRecordForAnswer(fileName: fileName, isPart2: isPart2);
+  //   }
+  // }
 
-      //TODO: Need check again here
-      // if (questionList.isEmpty) return;
-      // if (index >= questionList.length) return;
+  // void _checkStatusWhenFinishVideo() async {
+  //   if (!_isBackgroundMode) {
+  //     FileTopicModel current =
+  //         _simulatorTestProvider!.listVideoSource[_playingIndex];
+  //     //Check type of video
+  //     switch (current.fileTopicType) {
+  //       case FileTopicType.introduce:
+  //         {
+  //           // _playNextVideo();
+  //           TopicModel? topicModel = _getCurrentPart();
+  //           if (null != topicModel) {
+  //             if (topicModel.numPart == PartOfTest.part3.get) {
+  //               _startToPlayFollowup();
+  //             } else {
+  //               _startToPlayQuestion();
+  //             }
+  //           }
+  //           break;
+  //         }
+  //       case FileTopicType.question:
+  //         {
+  //           //prepare to record answer
+  //           bool isPart2 = current.numPart == PartOfTest.part2.get;
+  //           String fileName = current.id.toString();
+  //           _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
+  //           if (_countRepeat == 0) {
+  //             _calculateIndexOfHeader();
+  //           }
+  //           break;
+  //         }
+  //       case FileTopicType.followup:
+  //         {
+  //           _prepareRecordForAnswer(fileName: current.url, isPart2: false);
+  //           if (!_hasHeaderPart3) {
+  //             _calculateIndexOfHeader();
+  //           }
+  //           break;
+  //         }
+  //       case FileTopicType.end_of_take_note:
+  //         {
+  //           _endOfTakeNoteIndex = 0;
+  //           _prepareRecordForAnswer(fileName: current.url, isPart2: true);
+  //           break;
+  //         }
+  //       case FileTopicType.end_of_test:
+  //         {
+  //           _prepareToEndTheTest();
+  //           break;
+  //         }
+  //       case FileTopicType.answer:
+  //       case FileTopicType.none:
+  //         {
+  //           break;
+  //         }
+  //     }
+  //   } else {
+  //     if (kDebugMode) {
+  //       print("DEBUG: _checkStatusWhenFinishVideo: App is in background mode!");
+  //     }
+  //   }
+  // }
 
-      QuestionTopicModel question = questionList.elementAt(index);
-      question.numPart = topicModel.numPart;
-      _currentQuestion = question;
-    }
+  // void _showQuestionImage() async {
+  //   TopicModel? topicModel = _getCurrentPart();
+  //   List<QuestionTopicModel> questionList = topicModel!.questionList;
+  //   int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+  //
+  //   if (index >= questionList.length) {
+  //     return;
+  //   }
+  //
+  //   QuestionTopicModel question = questionList.elementAt(index);
+  //   question.numPart = topicModel.numPart;
+  //
+  //   //Validate question with image
+  //   bool hasImage = Utils.checkHasImage(question: question);
+  //   if (hasImage) {
+  //     String fileName = question.files.last.url;
+  //     String imageUrl = downloadFileEP(fileName);
+  //     if (kDebugMode) {
+  //       print(
+  //           "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
+  //     }
+  //     //Update has image status in provider
+  //     _simulatorTestProvider!.setQuestionHasImageStatus(true);
+  //     _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
+  //     String localImagePath = await Utils.getLocalImagePath(fileName);
+  //     _simulatorTestProvider!.setQuestionImageUrlFromLocal(localImagePath);
+  //   }
+  // }
 
-    if (isPart2) {
-      //Has Cue Card case
-      _simulatorTestProvider!.setVisibleRecord(false);
-      _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
-
-      int time = widget.simulatorTestPresenter.testDetail!
-          .takeNoteTime; //60; //3 for test, 60 for product
-      String timeString = Utils.getTimeRecordString(time);
-      _simulatorTestProvider!.setCountDownCueCard(timeString);
-
-      _countDownCueCard = _testRoomPresenter!.startCountDownForCueCard(
-        context: context,
-        count: time,
-        isPart2: false,
-      );
-      _simulatorTestProvider!.setVisibleCueCard(true);
-    } else {
-      _prepareRecordForAnswer(fileName: fileName, isPart2: isPart2);
-    }
-  }
-
-  void _checkStatusWhenFinishVideo() async {
-    if (!_isBackgroundMode) {
-      FileTopicModel current =
-          _simulatorTestProvider!.listVideoSource[_playingIndex];
-      //Check type of video
-      switch (current.fileTopicType) {
-        case FileTopicType.introduce:
-          {
-            // _playNextVideo();
-            TopicModel? topicModel = _getCurrentPart();
-            if (null != topicModel) {
-              if (topicModel.numPart == PartOfTest.part3.get) {
-                _startToPlayFollowup();
-              } else {
-                _startToPlayQuestion();
-              }
-            }
-            break;
-          }
-        case FileTopicType.question:
-          {
-            //prepare to record answer
-            bool isPart2 = current.numPart == PartOfTest.part2.get;
-            String fileName = current.id.toString();
-            _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
-            if (_countRepeat == 0) {
-              _calculateIndexOfHeader();
-            }
-            break;
-          }
-        case FileTopicType.followup:
-          {
-            _prepareRecordForAnswer(fileName: current.url, isPart2: false);
-            if (!_hasHeaderPart3) {
-              _calculateIndexOfHeader();
-            }
-            break;
-          }
-        case FileTopicType.end_of_take_note:
-          {
-            _endOfTakeNoteIndex = 0;
-            _prepareRecordForAnswer(fileName: current.url, isPart2: true);
-            break;
-          }
-        case FileTopicType.end_of_test:
-          {
-            _prepareToEndTheTest();
-            break;
-          }
-        case FileTopicType.answer:
-        case FileTopicType.none:
-          {
-            break;
-          }
-      }
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: _checkStatusWhenFinishVideo: App is in background mode!");
-      }
-    }
-  }
-
-  void _showQuestionImage() async {
-    TopicModel? topicModel = _getCurrentPart();
-    List<QuestionTopicModel> questionList = topicModel!.questionList;
-    int index = _simulatorTestProvider!.indexOfCurrentQuestion;
-
-    if (index >= questionList.length) {
-      return;
-    }
-
-    QuestionTopicModel question = questionList.elementAt(index);
-    question.numPart = topicModel.numPart;
-
-    //Validate question with image
-    bool hasImage = Utils.checkHasImage(question: question);
-    if (hasImage) {
-      String fileName = question.files.last.url;
-      String imageUrl = downloadFileEP(fileName);
-      if (kDebugMode) {
-        print(
-            "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
-      }
-      //Update has image status in provider
-      _simulatorTestProvider!.setQuestionHasImageStatus(true);
-      _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
-      String localImagePath = await Utils.getLocalImagePath(fileName);
-      _simulatorTestProvider!.setQuestionImageUrlFromLocal(localImagePath);
-    }
-  }
-
-  Future<void> _initVideoController({required isIntroduceVideo}) async {
-    if (_simulatorTestProvider!.playingIndexWhenReDownload != 0) {
-      _playingIndex = _simulatorTestProvider!.playingIndexWhenReDownload;
-
-      //Reset _playingIndexWhenReDownload
-      _simulatorTestProvider!.setPlayingIndexWhenReDownload(0);
-    }
-    FileTopicModel currentPlayingFile =
-        _simulatorTestProvider!.listVideoSource[_playingIndex];
-    if (kDebugMode) {
-      print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
-    }
-
-    Map<String, dynamic> info = {
-      StringConstants.k_file_id: currentPlayingFile.id.toString(),
-      StringConstants.k_file_url: currentPlayingFile.url,
-    };
-    _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
-
-    //Remove old listener
-    // ignore: invalid_use_of_protected_member
-    if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
-      _videoPlayerController!.onPlaybackEnded
-          .removeListener(_checkStatusWhenFinishVideo);
-    }
-
-    //Add new listener
-    _videoPlayerController!.onPlaybackEnded
-        .addListener(_checkStatusWhenFinishVideo);
-
-    if (_playingIndex == 0) {
-      _videoPlayerController!.play();
-    } else {
-      switch (_countRepeat) {
-        case 0:
-          {
-            _videoPlayerController!.setPlaybackSpeed(
-                _simulatorTestProvider!.currentTestDetail.normalSpeed);
-            break;
-          }
-        case 1:
-          {
-            _videoPlayerController!.setPlaybackSpeed(
-                _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
-            break;
-          }
-        case 2:
-          {
-            _videoPlayerController!.setPlaybackSpeed(
-                _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
-            break;
-          }
-      }
-
-      _createVideoSource(currentPlayingFile.url).then((value) async {
-        if (kDebugMode) {
-          print(
-              "DEBUG: _createVideoSource: ${currentPlayingFile.url} - $value");
-        }
-        if (null == value) {
-          if (kDebugMode) {
-            print("DEBUG: ReDownload here");
-          }
-          _isReDownload = true;
-          _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
-          _redownload();
-        } else {
-          try {
-            if (kDebugMode) {
-              print("DEBUG: _videoPlayerController!.loadVideoSource");
-            }
-
-            _videoPlayerController!.loadVideoSource(value).then((_) {
-              _videoPlayerController!.play();
-
-              if (!isIntroduceVideo) {
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  _showQuestionImage();
-                });
-              }
-            });
-          } catch (e) {
-            //Add log
-            LogModel? log;
-            Map<String, dynamic> dataLog = {"error": e.toString()};
-
-            if (context.mounted) {
-              log = await Utils.prepareToCreateLog(context,
-                  action: LogEvent.callApiSubmitTest);
-            }
-            //Add log
-            Utils.prepareLogData(
-              log: log,
-              data: dataLog,
-              message: "_videoPlayerController!.loadVideoSource",
-              status: LogEvent.failed,
-            );
-          }
-        }
-      });
-
-      if (currentPlayingFile.fileTopicType == FileTopicType.introduce ||
-          currentPlayingFile.fileTopicType == FileTopicType.end_of_test ||
-          currentPlayingFile.fileTopicType == FileTopicType.end_of_take_note) {
-        _reviewingList.add(currentPlayingFile.url);
-      } else {
-        if (null != _currentQuestion) {
-          if (!_checkExist(_currentQuestion!)) {
-            _reviewingList.add(_currentQuestion!); //Add file
-          }
-        }
-      }
-    }
-  }
+  // Future<void> _initVideoController({required isIntroduceVideo}) async {
+  //   if (_simulatorTestProvider!.playingIndexWhenReDownload != 0) {
+  //     _playingIndex = _simulatorTestProvider!.playingIndexWhenReDownload;
+  //
+  //     //Reset _playingIndexWhenReDownload
+  //     _simulatorTestProvider!.setPlayingIndexWhenReDownload(0);
+  //   }
+  //   FileTopicModel currentPlayingFile =
+  //       _simulatorTestProvider!.listVideoSource[_playingIndex];
+  //   if (kDebugMode) {
+  //     print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
+  //   }
+  //
+  //   Map<String, dynamic> info = {
+  //     StringConstants.k_file_id: currentPlayingFile.id.toString(),
+  //     StringConstants.k_file_url: currentPlayingFile.url,
+  //   };
+  //   _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
+  //
+  //   //Remove old listener
+  //   // ignore: invalid_use_of_protected_member
+  //   if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
+  //     _videoPlayerController!.onPlaybackEnded
+  //         .removeListener(_checkStatusWhenFinishVideo);
+  //   }
+  //
+  //   //Add new listener
+  //   _videoPlayerController!.onPlaybackEnded
+  //       .addListener(_checkStatusWhenFinishVideo);
+  //
+  //   if (_playingIndex == 0) {
+  //     _videoPlayerController!.play();
+  //   } else {
+  //     switch (_countRepeat) {
+  //       case 0:
+  //         {
+  //           _videoPlayerController!.setPlaybackSpeed(
+  //               _simulatorTestProvider!.currentTestDetail.normalSpeed);
+  //           break;
+  //         }
+  //       case 1:
+  //         {
+  //           _videoPlayerController!.setPlaybackSpeed(
+  //               _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
+  //           break;
+  //         }
+  //       case 2:
+  //         {
+  //           _videoPlayerController!.setPlaybackSpeed(
+  //               _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
+  //           break;
+  //         }
+  //     }
+  //
+  //     _createVideoSource(currentPlayingFile.url).then((value) async {
+  //       if (kDebugMode) {
+  //         print(
+  //             "DEBUG: _createVideoSource: ${currentPlayingFile.url} - $value");
+  //       }
+  //       if (null == value) {
+  //         if (kDebugMode) {
+  //           print("DEBUG: ReDownload here");
+  //         }
+  //         _isReDownload = true;
+  //         _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
+  //         _redownload();
+  //       } else {
+  //         try {
+  //           if (kDebugMode) {
+  //             print("DEBUG: _videoPlayerController!.loadVideoSource");
+  //           }
+  //
+  //           _videoPlayerController!.loadVideoSource(value).then((_) {
+  //             _videoPlayerController!.play();
+  //
+  //             if (!isIntroduceVideo) {
+  //               Future.delayed(const Duration(milliseconds: 500), () {
+  //                 _showQuestionImage();
+  //               });
+  //             }
+  //           });
+  //         } catch (e) {
+  //           //Add log
+  //           LogModel? log;
+  //           Map<String, dynamic> dataLog = {"error": e.toString()};
+  //
+  //           if (context.mounted) {
+  //             log = await Utils.prepareToCreateLog(context,
+  //                 action: LogEvent.callApiSubmitTest);
+  //           }
+  //           //Add log
+  //           Utils.prepareLogData(
+  //             log: log,
+  //             data: dataLog,
+  //             message: "_videoPlayerController!.loadVideoSource",
+  //             status: LogEvent.failed,
+  //           );
+  //         }
+  //       }
+  //     });
+  //
+  //     if (currentPlayingFile.fileTopicType == FileTopicType.introduce ||
+  //         currentPlayingFile.fileTopicType == FileTopicType.end_of_test ||
+  //         currentPlayingFile.fileTopicType == FileTopicType.end_of_take_note) {
+  //       _reviewingList.add(currentPlayingFile.url);
+  //     } else {
+  //       if (null != _currentQuestion) {
+  //         if (!_checkExist(_currentQuestion!)) {
+  //           _reviewingList.add(_currentQuestion!); //Add file
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   void _redownload() async {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
@@ -2139,40 +2148,40 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return temp;
   }
 
-  void _calculateIndexOfHeader() {
-    TopicModel? topicModel = _getCurrentPart();
-    if (null != topicModel) {
-      switch (topicModel.numPart) {
-        case 2:
-          {
-            //PART 2
-            if (_simulatorTestProvider!.indexOfCurrentQuestion == 0) {
-              _simulatorTestProvider!.setIndexOfHeaderPart2(
-                  _simulatorTestProvider!.questionList.length);
-            }
-            break;
-          }
-        case 3:
-          {
-            //PART 3
-            _hasHeaderPart3 = true;
-
-            if (topicModel.followUp.isNotEmpty) {
-              if (_simulatorTestProvider!.indexOfCurrentFollowUp == 0) {
-                _simulatorTestProvider!.setIndexOfHeaderPart3(
-                    _simulatorTestProvider!.questionList.length);
-              }
-            } else {
-              if (_simulatorTestProvider!.indexOfCurrentQuestion == 0) {
-                _simulatorTestProvider!.setIndexOfHeaderPart3(
-                    _simulatorTestProvider!.questionList.length);
-              }
-            }
-            break;
-          }
-      }
-    }
-  }
+  // void _calculateIndexOfHeader() {
+  //   TopicModel? topicModel = _getCurrentPart();
+  //   if (null != topicModel) {
+  //     switch (topicModel.numPart) {
+  //       case 2:
+  //         {
+  //           //PART 2
+  //           if (_simulatorTestProvider!.indexOfCurrentQuestion == 0) {
+  //             _simulatorTestProvider!.setIndexOfHeaderPart2(
+  //                 _simulatorTestProvider!.questionList.length);
+  //           }
+  //           break;
+  //         }
+  //       case 3:
+  //         {
+  //           //PART 3
+  //           _hasHeaderPart3 = true;
+  //
+  //           if (topicModel.followUp.isNotEmpty) {
+  //             if (_simulatorTestProvider!.indexOfCurrentFollowUp == 0) {
+  //               _simulatorTestProvider!.setIndexOfHeaderPart3(
+  //                   _simulatorTestProvider!.questionList.length);
+  //             }
+  //           } else {
+  //             if (_simulatorTestProvider!.indexOfCurrentQuestion == 0) {
+  //               _simulatorTestProvider!.setIndexOfHeaderPart3(
+  //                   _simulatorTestProvider!.questionList.length);
+  //             }
+  //           }
+  //           break;
+  //         }
+  //     }
+  //   }
+  // }
 
   int _getRecordTime(int type) {
     switch (type) {
@@ -2221,42 +2230,42 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _recordForReAnswer(fileName);
   }
 
-  void _prepareRecordForAnswer({
-    required String fileName,
-    required bool isPart2,
-  }) async {
-    //Stop old record
-    await _stopRecord();
-
-    TopicModel? topicModel = _getCurrentPart();
-
-    if (null == topicModel) {
-      return;
-    }
-
-    Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
-    //TODO
-    int timeRecord = _getRecordTime(queue.first.numPart);
-    // int timeRecord = Utils.getRecordTime(queue.first.numPart);
-    String timeString = Utils.getTimeRecordString(timeRecord);
-    //Record the answer
-    _timerProvider!.setCountDown(timeString);
-
-    if (null != _countDown) {
-      _countDown!.cancel();
-    }
-    _simulatorTestProvider!.setIsLessThan2Second(true);
-    _countDown = _testRoomPresenter!.startCountDown(
-        context: context,
-        count: timeRecord,
-        isPart2: isPart2,
-        isReAnswer: false,
-        isLessThan2Seconds: true);
-
-    _setVisibleRecord(true, _countDown, fileName);
-
-    _recordAnswer(fileName);
-  }
+  // void _prepareRecordForAnswer({
+  //   required String fileName,
+  //   required bool isPart2,
+  // }) async {
+  //   //Stop old record
+  //   await _stopRecord();
+  //
+  //   TopicModel? topicModel = _getCurrentPart();
+  //
+  //   if (null == topicModel) {
+  //     return;
+  //   }
+  //
+  //   Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
+  //   //TODO
+  //   int timeRecord = _getRecordTime(queue.first.numPart);
+  //   // int timeRecord = Utils.getRecordTime(queue.first.numPart);
+  //   String timeString = Utils.getTimeRecordString(timeRecord);
+  //   //Record the answer
+  //   _timerProvider!.setCountDown(timeString);
+  //
+  //   if (null != _countDown) {
+  //     _countDown!.cancel();
+  //   }
+  //   _simulatorTestProvider!.setIsLessThan2Second(true);
+  //   _countDown = _testRoomPresenter!.startCountDown(
+  //       context: context,
+  //       count: timeRecord,
+  //       isPart2: isPart2,
+  //       isReAnswer: false,
+  //       isLessThan2Seconds: true);
+  //
+  //   _setVisibleRecord(true, _countDown, fileName);
+  //
+  //   _recordAnswer(fileName);
+  // }
 
   void _setVisibleSaveTest(bool isVisible) {
     _simulatorTestProvider!.setVisibleSaveTheTest(isVisible);
@@ -2280,10 +2289,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     return temp;
   }
 
-  void _rePlayEndOfTakeNote() {
-    _playingIndex = _endOfTakeNoteIndex;
-    _initVideoController(isIntroduceVideo: false);
-  }
+  // void _rePlayEndOfTakeNote() {
+  //   _playingIndex = _endOfTakeNoteIndex;
+  //   _initVideoController(isIntroduceVideo: false);
+  // }
 
   void _continueRecordPart2() async {
     if (kDebugMode) {
@@ -2323,17 +2332,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _reRecordAnswer() {
-    if (kDebugMode) {
-      print("DEBUG: _reRecordAnswer");
-    }
-    FileTopicModel current =
-        _simulatorTestProvider!.listVideoSource[_playingIndex];
-    //prepare to record answer
-    bool isPart2 = current.numPart == PartOfTest.part2.get;
-    String fileName = current.id.toString();
-    _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
-  }
+  // void _reRecordAnswer() {
+  //   if (kDebugMode) {
+  //     print("DEBUG: _reRecordAnswer");
+  //   }
+  //   FileTopicModel current =
+  //       _simulatorTestProvider!.listVideoSource[_playingIndex];
+  //   //prepare to record answer
+  //   bool isPart2 = current.numPart == PartOfTest.part2.get;
+  //   String fileName = current.id.toString();
+  //   _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
+  // }
 
   bool _isLastAnswer(QuestionTopicModel question) {
     return question.answers[question.repeatIndex].url ==
@@ -2445,14 +2454,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         //Reset count repeat
         _countRepeat = 0;
         // _playNextQuestion();
-        _playNextPart();
+
+        // _playNextPart(); //TODO
       } else {
         //Reset count repeat
         _countRepeat = 0;
         //Start to play end_of_take_note video
-        Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
-        TopicModel topic = topicQueue.first;
-        _testRoomPresenter!.playEndOfTakeNoteFile(topic);
+
+        //TODO - start
+        // Queue<TopicModel> topicQueue = _simulatorTestProvider!.topicsQueue;
+        // TopicModel topic = topicQueue.first;
+        // _testRoomPresenter!.playEndOfTakeNoteFile(topic);
+        //TODO - end
       }
     } else {
       //Add question or followup into List Question & show it
@@ -2465,23 +2478,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Reset count repeat
       _countRepeat = 0;
 
-      TopicModel? topicModel = _getCurrentPart();
-      if (null != topicModel) {
-        if (topicModel.numPart == PartOfTest.part3.get) {
-          bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
-          if (finishFollowUp == true) {
-            _playNextQuestion();
-          } else {
-            _playNextFollowup();
-          }
-        } else {
-          _playNextQuestion();
-        }
-      } else {
-        if (kDebugMode) {
-          print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
-        }
-      }
+      //TODO - start
+      // TopicModel? topicModel = _getCurrentPart();
+      // if (null != topicModel) {
+      //   if (topicModel.numPart == PartOfTest.part3.get) {
+      //     bool finishFollowUp = _simulatorTestProvider!.finishPlayFollowUp;
+      //     if (finishFollowUp == true) {
+      //       _playNextQuestion();
+      //     } else {
+      //       _playNextFollowup();
+      //     }
+      //   } else {
+      //     _playNextQuestion();
+      //   }
+      // } else {
+      //   if (kDebugMode) {
+      //     print("DEBUG: onFinishAnswer: ERROR-Current Part is NULL!");
+      //   }
+      // }
+      //TODO - end
     }
   }
 
@@ -2490,7 +2505,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (false == _simulatorTestProvider!.isLoadingVideo) {
       _playingIndex++;
       _endOfTakeNoteIndex = _playingIndex;
-      _initVideoController(isIntroduceVideo: false);
+      // _initVideoController(isIntroduceVideo: false); //TODO
     }
   }
 
@@ -2498,20 +2513,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void onPlayEndOfTest(String fileName) {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
       _playingIndex++;
-      _initVideoController(isIntroduceVideo: false);
+      // _initVideoController(isIntroduceVideo: false); //TODO
     }
   }
 
   @override
   void onPlayIntroduce() {
     if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _initVideoController(isIntroduceVideo: true);
+      // _initVideoController(isIntroduceVideo: true); //TODO
     }
   }
 
   @override
   void onIntroduceFileEmpty() {
-    _startToPlayFollowup();
+    // _startToPlayFollowup();
   }
 
   @override
