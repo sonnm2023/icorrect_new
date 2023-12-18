@@ -567,11 +567,26 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _initVideoController(NativeVideoPlayerController controller) async {
-    if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
+    //TODO
+    // if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
+    //   _videoPlayerController = controller;
+    //   _videoPlayerController!.setVolume(1.0);
+    //   await _loadVideoSource(
+    //           _simulatorTestProvider!.listVideoSource[_playingIndex].url)
+    //       .then((_) {
+    //     _videoPlayerController!.stop();
+    //   }).onError((error, stackTrace) {
+    //     if (kDebugMode) {
+    //       print("DEBUG: _initController ERROR ${error.toString()}");
+    //     }
+    //   });
+    // }
+
+    if (_simulatorTestProvider!.listFileSource.isNotEmpty) {
       _videoPlayerController = controller;
       _videoPlayerController!.setVolume(1.0);
       await _loadVideoSource(
-              _simulatorTestProvider!.listVideoSource[_playingIndex].url)
+          _simulatorTestProvider!.listFileSource[_playingIndex].url)
           .then((_) {
         _videoPlayerController!.stop();
       }).onError((error, stackTrace) {

@@ -12,6 +12,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
@@ -904,6 +905,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     for (int i = 0; i < filesTopic.length; i++) {
       FileTopicModel fileTopicModel = filesTopic[i];
       _simulatorTestProvider!.addVideoSource(fileTopicModel);
+    }
+  }
+
+  @override
+  void onPrepareListVideoSource1(List<QuestionTopicModel> allFilesTopic) async {
+    for (int i = 0; i < allFilesTopic.length; i++) {
+      QuestionTopicModel q = allFilesTopic[i];
+      _simulatorTestProvider!.addFileSource(q);
     }
   }
 

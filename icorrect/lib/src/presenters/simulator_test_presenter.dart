@@ -38,6 +38,7 @@ abstract class SimulatorTestViewContract {
   void onHandleBackButtonSystemTapped();
   void onHandleEventBackButtonSystem({required bool isQuitTheTest});
   void onPrepareListVideoSource(List<FileTopicModel> filesTopic);
+  void onPrepareListVideoSource1(List<QuestionTopicModel> allFilesTopic);
   void onUpdateHasOrderStatus(bool hasOrder);
 }
 
@@ -107,6 +108,7 @@ class SimulatorTestPresenter {
 
   TestDetailModel? testDetail;
   List<FileTopicModel>? filesTopic;
+  List<QuestionTopicModel>? allFilesTopic;
   List<FileTopicModel> imageFiles = [];
   CancelToken cancelToken = CancelToken();
   bool isDownloading = false;
@@ -163,14 +165,15 @@ class SimulatorTestPresenter {
         );
 
         //Save file info for re download
-        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
+        allFilesTopic = _prepareFileTopicListForDownload1(tempTestDetailModel);
 
-        _view!.onPrepareListVideoSource(filesTopic!);
+        // _view!.onPrepareListVideoSource(filesTopic!); //TODO
+        _view!.onPrepareListVideoSource1(allFilesTopic!);
 
         // List<FileTopicModel> tempFilesTopic =
         //     _prepareFileTopicListForDownload(tempTestDetailModel);
 
-        if (null == filesTopic) {
+        if (null == allFilesTopic) {
           if (kDebugMode) {
             print("DEBUG: filesTopic is empty");
           }
@@ -179,19 +182,19 @@ class SimulatorTestPresenter {
 
         if (imageFiles.isNotEmpty) {
           //Download images
-          _prepareDownloadImages(
+          _prepareDownloadImages1(
             context: context,
             testDetail: tempTestDetailModel,
             activityId: homeworkId,
-            filesTopic: filesTopic!,
+            allFilesTopic: allFilesTopic!,
           );
         } else {
           //Download video
-          downloadFiles(
+          downloadFiles1(
             context: context,
             testDetail: tempTestDetailModel,
             activityId: homeworkId,
-            filesTopic: filesTopic!,
+            allFilesTopic: allFilesTopic!,
           );
         }
 
@@ -316,6 +319,100 @@ class SimulatorTestPresenter {
     );
   }
 
+  List<QuestionTopicModel> getAllFiles(TopicModel topic) {
+    List<QuestionTopicModel> allFiles = [];
+
+    //Add all files of introduce part
+    if (topic.files.isNotEmpty) {
+      for (FileTopicModel file in topic.files) {
+        QuestionTopicModel q = QuestionTopicModel();
+        if (q.files.isEmpty) {
+          q.files = [];
+        }
+        q.files.add(file);
+        allFiles.add(q);
+      }
+    }
+
+    //Add followup files
+    if (topic.followUp.isNotEmpty) {
+      for (QuestionTopicModel q in topic.followUp) {
+        q.files.first.fileTopicType = FileTopicType.followup;
+        q.files.first.numPart = topic.numPart;
+        allFiles.add(q);
+      }
+    }
+
+    //Add question files
+    if (topic.questionList.isNotEmpty) {
+      for (QuestionTopicModel q in topic.questionList) {
+        if (q.files.isNotEmpty) {
+          //Add video url
+          q.files.first.fileTopicType = FileTopicType.question;
+          q.files.first.numPart = topic.numPart;
+          allFiles.add(q);
+        }
+
+        //Add image url
+        //For question has an image
+        bool hasImage = Utils.checkHasImage(question: q);
+        if (hasImage) {
+          imageFiles.add(q.files.elementAt(1));
+        }
+      }
+    }
+
+    if (topic.endOfTakeNote.url.isNotEmpty) {
+      topic.endOfTakeNote.fileTopicType = FileTopicType.end_of_take_note;
+      topic.endOfTakeNote.numPart = topic.numPart;
+      QuestionTopicModel q = QuestionTopicModel();
+      if (q.files.isEmpty) {
+        q.files = [];
+      }
+      q.files.add(topic.endOfTakeNote);
+      allFiles.add(q);
+    }
+
+    if (topic.fileEndOfTest.url.isNotEmpty) {
+      topic.fileEndOfTest.fileTopicType = FileTopicType.end_of_test;
+      topic.fileEndOfTest.numPart = topic.numPart;
+      QuestionTopicModel q = QuestionTopicModel();
+      if (q.files.isEmpty) {
+        q.files = [];
+      }
+      q.files.add(topic.fileEndOfTest);
+      allFiles.add(q);
+    }
+
+    return allFiles;
+  }
+
+  List<QuestionTopicModel> _prepareFileTopicListForDownload1(
+      TestDetailModel testDetail) {
+    List<QuestionTopicModel> allFiles = [];
+
+    if (kDebugMode) {
+      print("DEBUG 11111: _prepareFileTopicListForDownload1");
+    }
+
+    //Introduce
+    allFiles.addAll(getAllFiles(testDetail.introduce));
+
+    //Part 1
+    for (int i = 0; i < testDetail.part1.length; i++) {
+      TopicModel temp = testDetail.part1[i];
+      allFiles.addAll(getAllFiles(temp));
+    }
+
+    //Part 2
+    allFiles.addAll(getAllFiles(testDetail.part2));
+
+    //Part 3
+    allFiles.addAll(getAllFiles(testDetail.part3));
+
+    return allFiles;
+  }
+
   List<FileTopicModel> _prepareFileTopicListForDownload(
       TestDetailModel testDetail) {
     List<FileTopicModel> filesTopic = [];
@@ -333,6 +430,7 @@ class SimulatorTestPresenter {
 
     //Part 3
     filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
+
     return filesTopic;
   }
 
@@ -511,6 +609,58 @@ class SimulatorTestPresenter {
                 activityId: activityId,
                 testDetail: testDetail,
                 filesTopic: filesTopic,
+              );
+            }
+          }
+        });
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: Dio is closed!");
+      }
+    }
+  }
+
+  Future _prepareDownloadImages1({
+    required BuildContext context,
+    String? activityId,
+    required TestDetailModel testDetail,
+    required List<QuestionTopicModel> allFilesTopic,
+  }) async {
+    if (kDebugMode) {
+      print("DEBUG 11111: _prepareDownloadImages1");
+    }
+
+    if (null != dio) {
+      int imagesDownloaded = 0;
+      List<String> imageUrls = [];
+
+      for (FileTopicModel fileTopicModel in imageFiles) {
+        String url = downloadFileEP(fileTopicModel.url);
+        if (!imageUrls.contains(url)) {
+          imageUrls.add(url);
+        }
+      }
+
+      for (String imageUrl in imageUrls) {
+        await _downloadAndSaveImage(
+          context,
+          activityId,
+          testDetail.testId.toString(),
+          imageUrl,
+        ).then((isDownloaded) {
+          if (isDownloaded) {
+            imagesDownloaded++;
+            if (imagesDownloaded == imageUrls.length) {
+              if (kDebugMode) {
+                print('Đã tải hết ${imageUrls.length} hình ảnh');
+              }
+              //Start to download files (video)
+              downloadFiles1(
+                context: context,
+                activityId: activityId,
+                testDetail: testDetail,
+                allFilesTopic: allFilesTopic,
               );
             }
           }
@@ -729,6 +879,205 @@ class SimulatorTestPresenter {
     }
   }
 
+  Future downloadFiles1({
+    required BuildContext context,
+    String? activityId,
+    required TestDetailModel testDetail,
+    required List<QuestionTopicModel> allFilesTopic,
+  }) async {
+    if (null != dio) {
+      isDownloading = true;
+      loop:
+      for (int index = 0; index < allFilesTopic.length; index++) {
+        FileTopicModel temp = allFilesTopic[index].files[0];
+        String fileTopic = temp.url;
+        String fileNameForDownload = Utils.reConvertFileName(fileTopic);
+
+        if (allFilesTopic.isNotEmpty) {
+          String fileType = Utils.fileType(fileTopic);
+          bool isExist = await FileStorageHelper.checkExistFile(
+              fileTopic, MediaType.video, null);
+
+          if (fileType.isNotEmpty && !isExist) {
+            LogModel? log;
+            if (context.mounted) {
+              log = await Utils.prepareToCreateLog(context,
+                  action: LogEvent.callApiDownloadFile);
+              Map<String, dynamic> fileDownloadInfo = {
+                StringConstants.k_test_id: testDetail.testId.toString(),
+                StringConstants.k_file_name: fileTopic,
+                StringConstants.k_file_path:
+                downloadFileEP(fileNameForDownload),
+              };
+              if (activityId != null) {
+                fileDownloadInfo.addEntries(
+                    [MapEntry(StringConstants.k_activity_id, activityId)]);
+              }
+              log.addData(
+                  key: "file_download_info",
+                  value: json.encode(fileDownloadInfo));
+            }
+
+            try {
+              String url = downloadFileEP(fileNameForDownload);
+
+              if (kDebugMode) {
+                print("DEBUG: download video: $url");
+              }
+
+              if (null == dio) {
+                return;
+              }
+
+              dio!.head(url).timeout(const Duration(seconds: timeout));
+              // use client.get as you would http.get
+
+              String savePath =
+                  '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileTopic';
+
+              if (kDebugMode) {
+                print("DEBUG: Downloading file at index = $index");
+                print("DEBUG: Save as PATH = $savePath");
+              }
+
+              Response response = await dio!.download(
+                url,
+                savePath,
+                cancelToken: cancelToken,
+              );
+
+              if (response.statusCode == 200) {
+                if (kDebugMode) {
+                  print('DEBUG : save Path : $savePath');
+                }
+
+                //Add log
+                Utils.prepareLogData(
+                  log: log,
+                  data: null,
+                  message: response.statusMessage,
+                  status: LogEvent.success,
+                );
+
+                double percent = _getPercent(index + 1, allFilesTopic.length);
+                _view!.onDownloadSuccess(testDetail, fileTopic, percent,
+                    index + 1, allFilesTopic.length);
+              } else {
+                if (kDebugMode) {
+                  print('Download failed');
+                }
+                //Add log
+                Utils.prepareLogData(
+                  log: log,
+                  data: null,
+                  message: "Download failed!",
+                  status: LogEvent.failed,
+                );
+
+                _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+                reDownloadAutomatic1(
+                    context: context,
+                    activityId: activityId,
+                    testDetail: testDetail,
+                    allFilesTopic: allFilesTopic,);
+                break loop;
+              }
+            } on DioException catch (e) {
+              if (kDebugMode) {
+                print(
+                    "DEBUG: Download error: ${e.type} - message: ${e.message}");
+              }
+
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: null,
+                message: "Error type: ${e.type} - message: ${e.message}",
+                status: LogEvent.failed,
+              );
+
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              reDownloadAutomatic1(
+                  context: context,
+                  activityId: activityId,
+                  testDetail: testDetail,
+                  allFilesTopic: allFilesTopic);
+              break loop;
+            } on TimeoutException {
+              if (kDebugMode) {
+                print("Download File TimeoutException");
+              }
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: null,
+                message: "Download File TimeoutException",
+                status: LogEvent.failed,
+              );
+
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              reDownloadAutomatic1(
+                  context: context,
+                  activityId: activityId,
+                  testDetail: testDetail,
+                  allFilesTopic: allFilesTopic);
+              break loop;
+            } on SocketException {
+              if (kDebugMode) {
+                print("Download File SocketException");
+              }
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: null,
+                message: "Download File SocketException",
+                status: LogEvent.failed,
+              );
+
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              //Download again
+              reDownloadAutomatic1(
+                  context: context,
+                  activityId: activityId,
+                  testDetail: testDetail,
+                  allFilesTopic: allFilesTopic);
+              break loop;
+            } on http.ClientException {
+              if (kDebugMode) {
+                print("Download File ClientException");
+              }
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: null,
+                message: "Download File ClientException",
+                status: LogEvent.failed,
+              );
+
+              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              //Download again
+              reDownloadAutomatic1(
+                  context: context,
+                  activityId: activityId,
+                  testDetail: testDetail,
+                  allFilesTopic: allFilesTopic);
+              break loop;
+            }
+          } else {
+            double percent = _getPercent(index + 1, allFilesTopic.length);
+            _view!.onDownloadSuccess(
+                testDetail, fileTopic, percent, index + 1, allFilesTopic.length);
+          }
+        }
+      }
+    } else {
+      isDownloading = false;
+      if (kDebugMode) {
+        print("DEBUG: Dio is closed!");
+      }
+    }
+  }
+
   void reDownloadAutomatic({
     required BuildContext context,
     String? activityId,
@@ -762,6 +1111,42 @@ class SimulatorTestPresenter {
       activityId: activityId,
       testDetail: testDetail!,
       filesTopic: filesTopic!,
+    );
+  }
+
+  void reDownloadAutomatic1({
+    required BuildContext context,
+    String? activityId,
+    required TestDetailModel testDetail,
+    required List<QuestionTopicModel> allFilesTopic,
+  }) {
+    isDownloading = false;
+
+    //Download again
+    if (autoRequestDownloadTimes <= 3) {
+      if (kDebugMode) {
+        print("DEBUG: request to download in times: $autoRequestDownloadTimes");
+      }
+      downloadFiles1(
+        context: context,
+        activityId: activityId,
+        testDetail: testDetail,
+        allFilesTopic: allFilesTopic,
+      );
+      increaseAutoRequestDownloadTimes();
+    } else {
+      //Close old download request
+      closeClientRequest();
+      _view!.onReDownload();
+    }
+  }
+
+  void reDownloadFiles1(BuildContext context, String? activityId) {
+    downloadFiles1(
+      context: context,
+      activityId: activityId,
+      testDetail: testDetail!,
+      allFilesTopic: allFilesTopic!,
     );
   }
 

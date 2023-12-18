@@ -474,6 +474,16 @@ class SimulatorTestProvider with ChangeNotifier {
     _listVideoSource.clear();
   }
 
+  final List<dynamic> _listFileSource = [];
+  List<dynamic> get listFileSource => _listFileSource;
+  void addFileSource(dynamic fileTopicModel) {
+    _listFileSource.add(fileTopicModel);
+  }
+
+  void clearListFileSource() {
+    _listFileSource.clear();
+  }
+
   bool _questionHasImage = false;
   bool get questionHasImage => _questionHasImage;
   void setQuestionHasImageStatus(bool hasImage) {
