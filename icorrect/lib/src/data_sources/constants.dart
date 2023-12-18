@@ -640,6 +640,7 @@ class StringConstants {
       ' and you will have to verify again at Video Authentication.';
 
   //Warning Message
+  static const String email_or_password_wrong_message = "Opps! Something went wrong, email or password is not found.";
   static const String choose_filter_message =
       "You must choose at least one class and one status!";
   static const String no_data_filter_message =

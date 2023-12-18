@@ -342,6 +342,9 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _finishLoginWithError(String message) {
     _authProvider.updateProcessingStatus(isProcessing: false);
+    if (message == StringConstants.email_or_password_wrong_message) {
+      message = Utils.multiLanguage(message);
+    }
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,

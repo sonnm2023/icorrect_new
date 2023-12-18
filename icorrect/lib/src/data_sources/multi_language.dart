@@ -160,6 +160,8 @@ class MultiLanguage {
     StringConstants.progress_auth_content:
         "Gửi video xác thực thành công. Hãy chờ kết quả xác nhận từ giáo viên !",
     StringConstants.lock_auth_title: "Tính năng gửi mẫu xác thực đã bị khóa",
+    StringConstants.email_or_password_wrong_message:
+        "Email hoặc mật khẩu bị sai. Vui lòng thử lại !",
     StringConstants.lock_auth_content:
         "Vui lòng liên hệ với quản trị viên ICorrect để được hỗ trợ",
     StringConstants.error_auth_title: "Xác thực lỗi",
@@ -477,6 +479,8 @@ class MultiLanguage {
         "Confirm to submit your video !",
     StringConstants.confirm_submit_video_auth_content:
         "This video will be used to confirm when you do your exam. So you want submit this video ?",
+    StringConstants.email_or_password_wrong_message:
+        "Opps! Something went wrong, email or password is not found.",
     StringConstants.not_auth_title: "Not Authenticated",
     StringConstants.not_auth_content:
         "You need to record and send video for authentication",

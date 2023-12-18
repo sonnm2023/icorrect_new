@@ -48,6 +48,9 @@ class LoginPresenter {
 
     Future.delayed(Duration(seconds: delayTime)).then((_) {
       _repository!.login(email, password).then((value) async {
+        if (kDebugMode) {
+          print("DEBUG: login response: $value");
+        }
         AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
         if (authModel.errorCode == 200) {
           //Add log
@@ -76,12 +79,14 @@ class LoginPresenter {
           String message = '';
           if (authModel.message.isNotEmpty) {
             _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.network_error_message), null,
+              Utils.multiLanguage(StringConstants.network_error_message),
+              null,
             );
             message = StringConstants.network_error_message;
           } else {
             _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.common_error_message), null,
+              Utils.multiLanguage(StringConstants.common_error_message),
+              null,
             );
             message = '${authModel.errorCode}: ${authModel.status}';
           }
@@ -97,12 +102,14 @@ class LoginPresenter {
         String message = '';
         if (onError is http.ClientException || onError is SocketException) {
           _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.network_error_message), null,
+            Utils.multiLanguage(StringConstants.network_error_message),
+            null,
           );
           message = StringConstants.network_error_message;
         } else {
           _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.common_error_message), null,
+            Utils.multiLanguage(StringConstants.common_error_message),
+            null,
           );
           message = StringConstants.common_error_message;
         }
@@ -239,7 +246,8 @@ class LoginPresenter {
         );
 
         _view!.onLoginError(
-          Utils.multiLanguage(StringConstants.common_error_message), null,
+          Utils.multiLanguage(StringConstants.common_error_message),
+          null,
         );
       }
     }).catchError(
@@ -254,7 +262,8 @@ class LoginPresenter {
         );
 
         _view!.onLoginError(
-          Utils.multiLanguage(StringConstants.common_error_message), null,
+          Utils.multiLanguage(StringConstants.common_error_message),
+          null,
         );
       },
     );
