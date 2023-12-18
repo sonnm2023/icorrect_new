@@ -235,8 +235,8 @@ class _MyTestTabState extends State<MyTestTab>
             builder: (_, constraint) {
               return InkWell(
                 onTap: () async {
-                  String aiResponseLink = await aiResponseEP(
-                      widget.homeWorkModel!.activityAnswer!.aiOrder.toString());
+                  String aiResponseLink =
+                      '${widget.homeWorkModel!.activityAnswer!.aiResponseLink}&token=${await Utils.getAccessToken()}';
                   Uri toLaunch = Uri.parse(aiResponseLink);
 
                   await launchUrl(toLaunch);
