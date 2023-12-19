@@ -50,8 +50,6 @@ Widget navbarItems({
           );*/
         },
       ),
-      //Comment for build release 20231129 - version 1.1.9 (build 1)
-      /*
       ListTile(
         title: Text(
           Utils.multiLanguage(
@@ -105,7 +103,6 @@ Widget navbarItems({
           );
         },
       ),
-     */
       ListTile(
         title: Text(
           Utils.multiLanguage(
