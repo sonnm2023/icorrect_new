@@ -789,6 +789,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
+  void onGetTestDetailComplete1(TestDetailModel testDetailModel, int total) {
+    _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
+    _simulatorTestProvider!.setDownloadProgressingStatus(true);
+    _simulatorTestProvider!.setTotal(total);
+  }
+
+  @override
   void onGetTestDetailError(String message) {
     //Show error message
     showToastMsg(

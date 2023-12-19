@@ -451,7 +451,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               AspectRatio(
                 aspectRatio: 16 / 9,
                 child: NativeVideoPlayerView(
-                  onViewReady: _initVideoController,
+                  onViewReady: _initController,
                 ),
               ),
 
@@ -566,7 +566,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  Future<void> _initVideoController(NativeVideoPlayerController controller) async {
+  Future<void> _initController(NativeVideoPlayerController controller) async {
     //TODO
     // if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
     //   _videoPlayerController = controller;
@@ -585,15 +585,23 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.listFileSource.isNotEmpty) {
       _videoPlayerController = controller;
       _videoPlayerController!.setVolume(1.0);
-      await _loadVideoSource(
-          _simulatorTestProvider!.listFileSource[_playingIndex].url)
-          .then((_) {
-        _videoPlayerController!.stop();
-      }).onError((error, stackTrace) {
+      QuestionTopicModel q = _simulatorTestProvider!.listFileSource[_playingIndex];
+      String url = q.files[0].url;
+      if (q.files.isNotEmpty) {
+        await _loadVideoSource(url)
+            .then((_) {
+          _videoPlayerController!.stop();
+        }).onError((error, stackTrace) {
+          if (kDebugMode) {
+            print("DEBUG: _initController ERROR ${error.toString()}");
+          }
+        });
+      } else {
         if (kDebugMode) {
-          print("DEBUG: _initController ERROR ${error.toString()}");
+          print("DEBUG: _initController ERROR with empty data!");
         }
-      });
+      }
+
     }
   }
 
@@ -1605,211 +1613,233 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //   }
   // }
 
-  // void _checkStatusWhenFinishVideo() async {
-  //   if (!_isBackgroundMode) {
-  //     FileTopicModel current =
-  //         _simulatorTestProvider!.listVideoSource[_playingIndex];
-  //     //Check type of video
-  //     switch (current.fileTopicType) {
-  //       case FileTopicType.introduce:
-  //         {
-  //           // _playNextVideo();
-  //           TopicModel? topicModel = _getCurrentPart();
-  //           if (null != topicModel) {
-  //             if (topicModel.numPart == PartOfTest.part3.get) {
-  //               _startToPlayFollowup();
-  //             } else {
-  //               _startToPlayQuestion();
-  //             }
-  //           }
-  //           break;
-  //         }
-  //       case FileTopicType.question:
-  //         {
-  //           //prepare to record answer
-  //           bool isPart2 = current.numPart == PartOfTest.part2.get;
-  //           String fileName = current.id.toString();
-  //           _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
-  //           if (_countRepeat == 0) {
-  //             _calculateIndexOfHeader();
-  //           }
-  //           break;
-  //         }
-  //       case FileTopicType.followup:
-  //         {
-  //           _prepareRecordForAnswer(fileName: current.url, isPart2: false);
-  //           if (!_hasHeaderPart3) {
-  //             _calculateIndexOfHeader();
-  //           }
-  //           break;
-  //         }
-  //       case FileTopicType.end_of_take_note:
-  //         {
-  //           _endOfTakeNoteIndex = 0;
-  //           _prepareRecordForAnswer(fileName: current.url, isPart2: true);
-  //           break;
-  //         }
-  //       case FileTopicType.end_of_test:
-  //         {
-  //           _prepareToEndTheTest();
-  //           break;
-  //         }
-  //       case FileTopicType.answer:
-  //       case FileTopicType.none:
-  //         {
-  //           break;
-  //         }
-  //     }
-  //   } else {
-  //     if (kDebugMode) {
-  //       print("DEBUG: _checkStatusWhenFinishVideo: App is in background mode!");
-  //     }
-  //   }
-  // }
+  void _checkStatusWhenFinishVideo() async {
+    if (!_isBackgroundMode) {
+      FileTopicModel current =
+          _simulatorTestProvider!.listVideoSource[_playingIndex];
+      //Check type of video
+      switch (current.fileTopicType) {
+        case FileTopicType.introduce:
+          {
+            // _playNextVideo();
+            TopicModel? topicModel = _getCurrentPart();
+            if (null != topicModel) {
+              if (topicModel.numPart == PartOfTest.part3.get) {
+                _startToPlayFollowup();
+              } else {
+                _startToPlayQuestion();
+              }
+            }
+            break;
+          }
+        case FileTopicType.question:
+          {
+            //prepare to record answer
+            bool isPart2 = current.numPart == PartOfTest.part2.get;
+            String fileName = current.id.toString();
+            _prepareStep1RecordAnswer(fileName: fileName, isPart2: isPart2);
+            if (_countRepeat == 0) {
+              _calculateIndexOfHeader();
+            }
+            break;
+          }
+        case FileTopicType.followup:
+          {
+            _prepareRecordForAnswer(fileName: current.url, isPart2: false);
+            if (!_hasHeaderPart3) {
+              _calculateIndexOfHeader();
+            }
+            break;
+          }
+        case FileTopicType.end_of_take_note:
+          {
+            _endOfTakeNoteIndex = 0;
+            _prepareRecordForAnswer(fileName: current.url, isPart2: true);
+            break;
+          }
+        case FileTopicType.end_of_test:
+          {
+            _prepareToEndTheTest();
+            break;
+          }
+        case FileTopicType.answer:
+        case FileTopicType.none:
+          {
+            break;
+          }
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: _checkStatusWhenFinishVideo: App is in background mode!");
+      }
+    }
+  }
 
-  // void _showQuestionImage() async {
-  //   TopicModel? topicModel = _getCurrentPart();
-  //   List<QuestionTopicModel> questionList = topicModel!.questionList;
-  //   int index = _simulatorTestProvider!.indexOfCurrentQuestion;
-  //
-  //   if (index >= questionList.length) {
-  //     return;
-  //   }
-  //
-  //   QuestionTopicModel question = questionList.elementAt(index);
-  //   question.numPart = topicModel.numPart;
-  //
-  //   //Validate question with image
-  //   bool hasImage = Utils.checkHasImage(question: question);
-  //   if (hasImage) {
-  //     String fileName = question.files.last.url;
-  //     String imageUrl = downloadFileEP(fileName);
-  //     if (kDebugMode) {
-  //       print(
-  //           "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
-  //     }
-  //     //Update has image status in provider
-  //     _simulatorTestProvider!.setQuestionHasImageStatus(true);
-  //     _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
-  //     String localImagePath = await Utils.getLocalImagePath(fileName);
-  //     _simulatorTestProvider!.setQuestionImageUrlFromLocal(localImagePath);
-  //   }
-  // }
+  void _showQuestionImage() async {
+    //TODO
+    // TopicModel? topicModel = _getCurrentPart();
+    // List<QuestionTopicModel> questionList = topicModel!.questionList;
+    // int index = _simulatorTestProvider!.indexOfCurrentQuestion;
+    //
+    // if (index >= questionList.length) {
+    //   return;
+    // }
+    //
+    // QuestionTopicModel question = questionList.elementAt(index);
+    // question.numPart = topicModel.numPart;
+    //
+    // //Validate question with image
+    // bool hasImage = Utils.checkHasImage(question: question);
+    // if (hasImage) {
+    //   String fileName = question.files.last.url;
+    //   String imageUrl = downloadFileEP(fileName);
+    //   if (kDebugMode) {
+    //     print(
+    //         "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
+    //   }
+    //   //Update has image status in provider
+    //   _simulatorTestProvider!.setQuestionHasImageStatus(true);
+    //   _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
+    //   String localImagePath = await Utils.getLocalImagePath(fileName);
+    //   _simulatorTestProvider!.setQuestionImageUrlFromLocal(localImagePath);
+    // }
 
-  // Future<void> _initVideoController({required isIntroduceVideo}) async {
-  //   if (_simulatorTestProvider!.playingIndexWhenReDownload != 0) {
-  //     _playingIndex = _simulatorTestProvider!.playingIndexWhenReDownload;
-  //
-  //     //Reset _playingIndexWhenReDownload
-  //     _simulatorTestProvider!.setPlayingIndexWhenReDownload(0);
-  //   }
-  //   FileTopicModel currentPlayingFile =
-  //       _simulatorTestProvider!.listVideoSource[_playingIndex];
-  //   if (kDebugMode) {
-  //     print("DEBUG: _initVideoController: Playing - ${currentPlayingFile.url}");
-  //   }
-  //
-  //   Map<String, dynamic> info = {
-  //     StringConstants.k_file_id: currentPlayingFile.id.toString(),
-  //     StringConstants.k_file_url: currentPlayingFile.url,
-  //   };
-  //   _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
-  //
-  //   //Remove old listener
-  //   // ignore: invalid_use_of_protected_member
-  //   if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
-  //     _videoPlayerController!.onPlaybackEnded
-  //         .removeListener(_checkStatusWhenFinishVideo);
-  //   }
-  //
-  //   //Add new listener
-  //   _videoPlayerController!.onPlaybackEnded
-  //       .addListener(_checkStatusWhenFinishVideo);
-  //
-  //   if (_playingIndex == 0) {
-  //     _videoPlayerController!.play();
-  //   } else {
-  //     switch (_countRepeat) {
-  //       case 0:
-  //         {
-  //           _videoPlayerController!.setPlaybackSpeed(
-  //               _simulatorTestProvider!.currentTestDetail.normalSpeed);
-  //           break;
-  //         }
-  //       case 1:
-  //         {
-  //           _videoPlayerController!.setPlaybackSpeed(
-  //               _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
-  //           break;
-  //         }
-  //       case 2:
-  //         {
-  //           _videoPlayerController!.setPlaybackSpeed(
-  //               _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
-  //           break;
-  //         }
-  //     }
-  //
-  //     _createVideoSource(currentPlayingFile.url).then((value) async {
-  //       if (kDebugMode) {
-  //         print(
-  //             "DEBUG: _createVideoSource: ${currentPlayingFile.url} - $value");
-  //       }
-  //       if (null == value) {
-  //         if (kDebugMode) {
-  //           print("DEBUG: ReDownload here");
-  //         }
-  //         _isReDownload = true;
-  //         _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
-  //         _redownload();
-  //       } else {
-  //         try {
-  //           if (kDebugMode) {
-  //             print("DEBUG: _videoPlayerController!.loadVideoSource");
-  //           }
-  //
-  //           _videoPlayerController!.loadVideoSource(value).then((_) {
-  //             _videoPlayerController!.play();
-  //
-  //             if (!isIntroduceVideo) {
-  //               Future.delayed(const Duration(milliseconds: 500), () {
-  //                 _showQuestionImage();
-  //               });
-  //             }
-  //           });
-  //         } catch (e) {
-  //           //Add log
-  //           LogModel? log;
-  //           Map<String, dynamic> dataLog = {"error": e.toString()};
-  //
-  //           if (context.mounted) {
-  //             log = await Utils.prepareToCreateLog(context,
-  //                 action: LogEvent.callApiSubmitTest);
-  //           }
-  //           //Add log
-  //           Utils.prepareLogData(
-  //             log: log,
-  //             data: dataLog,
-  //             message: "_videoPlayerController!.loadVideoSource",
-  //             status: LogEvent.failed,
-  //           );
-  //         }
-  //       }
-  //     });
-  //
-  //     if (currentPlayingFile.fileTopicType == FileTopicType.introduce ||
-  //         currentPlayingFile.fileTopicType == FileTopicType.end_of_test ||
-  //         currentPlayingFile.fileTopicType == FileTopicType.end_of_take_note) {
-  //       _reviewingList.add(currentPlayingFile.url);
-  //     } else {
-  //       if (null != _currentQuestion) {
-  //         if (!_checkExist(_currentQuestion!)) {
-  //           _reviewingList.add(_currentQuestion!); //Add file
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+    QuestionTopicModel question = _simulatorTestProvider!.listFileSource!
+
+    //Validate question with image
+    bool hasImage = Utils.checkHasImage(question: question);
+    if (hasImage) {
+      String fileName = question.files.last.url;
+      String imageUrl = downloadFileEP(fileName);
+      if (kDebugMode) {
+        print(
+            "DEBUG: This question has an image: url = $imageUrl \t question: ${question.id} - ${question.content}");
+      }
+      //Update has image status in provider
+      _simulatorTestProvider!.setQuestionHasImageStatus(true);
+      _simulatorTestProvider!.setQuestionImageUrl(imageUrl);
+      String localImagePath = await Utils.getLocalImagePath(fileName);
+      _simulatorTestProvider!.setQuestionImageUrlFromLocal(localImagePath);
+    }
+  }
+
+  Future<void> _initVideoController({required isIntroduceVideo}) async {
+    if (_simulatorTestProvider!.playingIndexWhenReDownload != 0) {
+      _playingIndex = _simulatorTestProvider!.playingIndexWhenReDownload;
+
+      //Reset _playingIndexWhenReDownload
+      _simulatorTestProvider!.setPlayingIndexWhenReDownload(0);
+    }
+    QuestionTopicModel currentPlayingQuestion =
+        _simulatorTestProvider!.listVideoSource[_playingIndex];
+    if (kDebugMode) {
+      print("DEBUG: _initVideoController:\nPlaying index - $_playingIndex \nPlay file - ${currentPlayingQuestion.files[0].url}");
+    }
+
+    Map<String, dynamic> info = {
+      StringConstants.k_question_id: currentPlayingQuestion.id != null ? currentPlayingQuestion.id.toString() : '',
+      StringConstants.k_question_content: currentPlayingQuestion.id != null ? currentPlayingQuestion.content : '',
+      StringConstants.k_file_id: currentPlayingQuestion.files[0].id.toString(),
+      StringConstants.k_file_url: currentPlayingQuestion.files[0].url,
+    };
+    _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
+
+    //Remove old listener
+    // ignore: invalid_use_of_protected_member
+    if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
+      _videoPlayerController!.onPlaybackEnded
+          .removeListener(_checkStatusWhenFinishVideo);
+    }
+
+    //Add new listener
+    _videoPlayerController!.onPlaybackEnded
+        .addListener(_checkStatusWhenFinishVideo);
+
+    if (_playingIndex == 0) {
+      _videoPlayerController!.play();
+    } else {
+      switch (_countRepeat) {
+        case 0:
+          {
+            _videoPlayerController!.setPlaybackSpeed(
+                _simulatorTestProvider!.currentTestDetail.normalSpeed);
+            break;
+          }
+        case 1:
+          {
+            _videoPlayerController!.setPlaybackSpeed(
+                _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
+            break;
+          }
+        case 2:
+          {
+            _videoPlayerController!.setPlaybackSpeed(
+                _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
+            break;
+          }
+      }
+
+      _createVideoSource(currentPlayingQuestion.files[0].url).then((value) async {
+        if (kDebugMode) {
+          print(
+              "DEBUG: _createVideoSource: ${currentPlayingQuestion.files[0].url} - $value");
+        }
+        if (null == value) {
+          if (kDebugMode) {
+            print("DEBUG: ReDownload here");
+          }
+          _isReDownload = true;
+          _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
+          _redownload();
+        } else {
+          try {
+            if (kDebugMode) {
+              print("DEBUG: _videoPlayerController!.loadVideoSource");
+            }
+
+            _videoPlayerController!.loadVideoSource(value).then((_) {
+              _videoPlayerController!.play();
+
+              if (!isIntroduceVideo) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  _showQuestionImage();
+                });
+              }
+            });
+          } catch (e) {
+            //Add log
+            LogModel? log;
+            Map<String, dynamic> dataLog = {"error": e.toString()};
+
+            if (context.mounted) {
+              log = await Utils.prepareToCreateLog(context,
+                  action: LogEvent.callApiSubmitTest);
+            }
+            //Add log
+            Utils.prepareLogData(
+              log: log,
+              data: dataLog,
+              message: "_videoPlayerController!.loadVideoSource",
+              status: LogEvent.failed,
+            );
+          }
+        }
+      });
+
+      //TODO: Reviewing
+      // if (currentPlayingFile.fileTopicType == FileTopicType.introduce ||
+      //     currentPlayingFile.fileTopicType == FileTopicType.end_of_test ||
+      //     currentPlayingFile.fileTopicType == FileTopicType.end_of_take_note) {
+      //   _reviewingList.add(currentPlayingFile.url);
+      // } else {
+      //   if (null != _currentQuestion) {
+      //     if (!_checkExist(_currentQuestion!)) {
+      //       _reviewingList.add(_currentQuestion!); //Add file
+      //     }
+      //   }
+      // }
+    }
+  }
 
   void _redownload() async {
     _simulatorTestProvider!.setNeedDownloadAgain(true);

@@ -27,6 +27,7 @@ import 'package:dio/dio.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
+  void onGetTestDetailComplete1(TestDetailModel testDetailModel, int total);
   void onGetTestDetailError(String message);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
@@ -198,8 +199,8 @@ class SimulatorTestPresenter {
           );
         }
 
-        _view!.onGetTestDetailComplete(
-            tempTestDetailModel, filesTopic!.length);
+        _view!.onGetTestDetailComplete1(
+            tempTestDetailModel, allFilesTopic!.length);
       } else {
         //Add log
         Utils.prepareLogData(
