@@ -2237,7 +2237,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
     //TODO
     int timeRecord = _getRecordTime(queue.first.numPart);
-    // int timeRecord = Utils.getRecordTime(queue.first.numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
     //Record the answer
     _timerProvider!.setCountDown(timeString);

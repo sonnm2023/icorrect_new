@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/auth_models/topic_id.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_each_part_topics.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_full_part_topics.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data_sources/constant_methods.dart';
@@ -22,7 +26,7 @@ class IELTSTopicsScreen extends StatefulWidget {
   State<IELTSTopicsScreen> createState() => _TopicsScreenState();
 }
 
-class _TopicsScreenState extends State<IELTSTopicsScreen> {
+class _TopicsScreenState extends State<IELTSTopicsScreen> implements ActionAlertListener {
   IELTSTopicsScreenProvider? _provider;
   FocusNode focusNode = FocusNode();
 
@@ -166,6 +170,10 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
   }
 
   Future _onClickStartTest() async {
+    _requestMicroPermission();
+  }
+
+  Future _prepareBeforeToDoTest() async {
     List<TopicId> topicsId = _provider!.topicsId;
     if (widget.topicTypes == IELTSTopicType.part2and3.get) {
       if (topicsId.isNotEmpty) {
@@ -218,6 +226,52 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
     }
   }
 
+  Future _requestMicroPermission() async {
+    try {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.microphone,
+      ].request();
+
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
+        if (_provider!.permissionDeniedTime >= 1) {
+          _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        } else {
+          _provider!.setPermissionDeniedTime();
+        }
+      } else {
+        _provider!.resetPermissionDeniedTime();
+        _prepareBeforeToDoTest();
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: Permission error ${e.toString()}");
+      }
+    }
+  }
+
+  void _showConfirmDeniedDialog(AlertInfo alertInfo) {
+    if (false == _provider!.dialogShowing) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertsDialog.init().showDialog(
+              context,
+              alertInfo,
+              this,
+              keyInfo: StringClass.permissionDenied,
+            );
+          });
+      _provider!.setDialogShowing(true);
+    }
+  }
+
   Future<void> _goToTestScreen() async {
     int testOption = Utils.getTestOption(widget.topicTypes);
     await Navigator.push(
@@ -230,5 +284,16 @@ class _TopicsScreenState extends State<IELTSTopicsScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void onAlertExit(String keyInfo) {
+    _provider!.setDialogShowing(false);
+  }
+
+  @override
+  void onAlertNextStep(String keyInfo) {
+    _provider!.setDialogShowing(false);
+    openAppSettings();
   }
 }
