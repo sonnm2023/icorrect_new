@@ -37,7 +37,7 @@ class StartNowButtonWidget extends StatelessWidget {
           },
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
-            width: 200,
+            width: 300,
             height: 60,
             alignment: Alignment.center,
             child: Center(
