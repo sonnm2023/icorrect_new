@@ -85,4 +85,22 @@ class IELTSTopicsScreenProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool _dialogShowing = false;
+  bool get dialogShowing => _dialogShowing;
+  void setDialogShowing(bool isShowing) {
+    _dialogShowing = isShowing;
+
+    notifyListeners();
+  }
+
+  int _permissionDeniedTime = 0;
+  int get permissionDeniedTime => _permissionDeniedTime;
+  void setPermissionDeniedTime() {
+    _permissionDeniedTime++;
+  }
+
+  void resetPermissionDeniedTime() {
+    _permissionDeniedTime = 0;
+  }
 }
