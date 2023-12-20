@@ -189,6 +189,9 @@ class MyTestPresenter {
     }
 
     questions.addAll(testDetailModel.part2.questionList);
+    if (testDetailModel.part3.followUp.isNotEmpty) {
+      questions.addAll(testDetailModel.part3.followUp);
+    }
     questions.addAll(testDetailModel.part3.questionList);
 
     for (var question in questions) {
