@@ -1207,4 +1207,14 @@ class Utils {
   static Future<bool> checkInternetConnection() async {
     return await InternetConnectionChecker().hasConnection;
   }
+
+  static String getRatingText(double rate) {
+    String ratingText = "Very Good";
+    if (rate >= 0 && rate <= 2.5) {
+      ratingText = "Bad";
+    } else if (rate < 4.5) {
+      ratingText = "Good";
+    }
+    return ratingText;
+  }
 }
