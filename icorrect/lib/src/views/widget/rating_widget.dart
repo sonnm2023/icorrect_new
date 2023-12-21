@@ -34,6 +34,7 @@ class RatingWidget extends StatelessWidget {
               Text(
                 'Did you like the service',
                 style: TextStyle(color: AppColor.defaultBlackColor),
+                textAlign: TextAlign.center,
               ),
               SizedBox(
                 height: 10,
