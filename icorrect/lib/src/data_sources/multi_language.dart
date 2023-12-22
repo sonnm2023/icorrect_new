@@ -266,6 +266,9 @@ class MultiLanguage {
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng kiểm tra và thử lại!",
     StringConstants.change_password_success_message:
         "Thay đổi mật khẩu thành công!",
+    StringConstants.start_pratice: "Bắt Đầu Luyện Tập",
+    StringConstants.topic_tab_title: "Chủ Đề",
+    StringConstants.num_of_question_title: "Số Lượng Câu Hỏi",
     StringConstants.multi_language: "Đa Ngôn Ngữ",
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
@@ -340,6 +343,9 @@ class MultiLanguage {
   };
 
   static const Map<String, dynamic> EN = {
+    StringConstants.topic_tab_title: "Topics",
+    StringConstants.num_of_question_title: "Num of questions",
+    StringConstants.start_pratice: "Start Practicing",
     StringConstants.sign_in_button_title: "Sign In",
     StringConstants.sign_up_button_title: "Sign Up",
     StringConstants.forgot_password_button_title: "Forgot password?",

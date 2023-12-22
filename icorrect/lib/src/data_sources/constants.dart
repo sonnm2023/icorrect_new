@@ -509,6 +509,8 @@ class StringConstants {
   static const String icorrect_title = "ICORRECT";
 
   //Tab titles
+  static const String topic_tab_title = "Topics";
+  static const String num_of_question_title = "Num of questions";
   static const String test_detail_tab_title = "Test Detail";
   static const String correction_tab_title = "Correction";
   static const String my_exam_tab_title = "MY EXAM";
@@ -522,6 +524,7 @@ class StringConstants {
   static const String status_string = "Status";
 
   //Text
+  static const String start_pratice = "Start Practicing";
   static const String add_your_filter = "Add your filter!";
   static const String cue_card = "Cue Card";
   static const String another_tips = "Another tips";
@@ -640,7 +643,8 @@ class StringConstants {
       ' and you will have to verify again at Video Authentication.';
 
   //Warning Message
-  static const String email_or_password_wrong_message = "Opps! Something went wrong, email or password is not found.";
+  static const String email_or_password_wrong_message =
+      "Opps! Something went wrong, email or password is not found.";
   static const String choose_filter_message =
       "You must choose at least one class and one status!";
   static const String no_data_filter_message =
