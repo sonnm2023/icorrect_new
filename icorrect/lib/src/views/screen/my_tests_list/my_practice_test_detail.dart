@@ -91,6 +91,7 @@ class _MyPracticeTestDetailState extends State<MyPracticeTestDetail> {
                     height: h - 60,
                     padding: const EdgeInsets.only(bottom: 30),
                     child: MyTestTab(
+                      homeWorkModel: null,
                       practiceTestId: widget.testId,
                       provider: _myTestProvider!,
                     ),
