@@ -71,7 +71,7 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
     return InkWell(
       splashColor: AppColor.defaultPurpleColor,
       onTap: () {
-        localization.translate(isEnglish ? 'en' : 'vn');
+        localization.translate(isEnglish ? 'en' : 'vi');
         if (null != homeWorkProvider) {
           homeWorkProvider!.prepareToUpdateFilterString();
         }

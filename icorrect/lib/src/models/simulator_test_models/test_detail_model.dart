@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 
 TestDetailModel testDetailModelFromJson(String str) =>
@@ -139,13 +140,14 @@ class TestDetailModel {
     _status = json['status'];
     _updateAt = json['updated_at'];
     _hasOrder = json['has_order'];
-    _normalSpeed =
-        json['normal_speed'] != null ? json['normal_speed'].toDouble() : 1.0;
+    _normalSpeed = json['normal_speed'] != null
+        ? Utils.convertToDouble(json['normal_speed'])
+        : 1.0;
     _firstRepeatSpeed = json['first_repeat_speed'] != null
-        ? json['first_repeat_speed'].toDouble()
+        ? Utils.convertToDouble(json['first_repeat_speed'])
         : 0.9;
     _secondRepeatSpeed = json['second_repeat_speed'] != null
-        ? json['second_repeat_speed'].toDouble()
+        ? Utils.convertToDouble(json['second_repeat_speed'])
         : 1;
     _part2 = json['part2'] != null ? TopicModel.fromJson(json['part2']) : null;
     if (_part2 != null) {

@@ -4,14 +4,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -216,7 +214,7 @@ class Utils {
         if (homeWorkModel.activityAnswer!.late == 1) {
           return {
             StringConstants.k_title: StringConstants.activity_status_late,
-            StringConstants.k_color: Colors.orange,
+            StringConstants.k_color: Colors.red,
           };
         }
 
@@ -307,13 +305,13 @@ class Utils {
       localization.init(
         mapLocales: [
           const MapLocale('en', MultiLanguage.EN),
-          const MapLocale('vn', MultiLanguage.VN),
+          const MapLocale('vi', MultiLanguage.VN),
         ],
-        initLanguageCode: 'vn',
+        initLanguageCode: 'vi',
       );
     }
     return Intl.message(
-        localization.currentLocale!.languageCode == "vn"
+        localization.currentLocale!.languageCode == "vi"
             ? MultiLanguage.VN[constantString]
             : MultiLanguage.EN[constantString],
         name: constantString);
@@ -325,13 +323,13 @@ class Utils {
       localization.init(
         mapLocales: [
           const MapLocale('en', MultiLanguage.EN),
-          const MapLocale('vn', MultiLanguage.VN),
+          const MapLocale('vi', MultiLanguage.VN),
         ],
-        initLanguageCode: 'vn',
+        initLanguageCode: 'vi',
       );
     }
 
-    if (localization.currentLocale!.languageCode == "vn") {
+    if (localization.currentLocale!.languageCode == "vi") {
       return {
         StringConstants.k_title: StringConstants.vn_uppercase,
         StringConstants.k_image_url: AppAsset.imgVietName,
@@ -348,6 +346,13 @@ class Utils {
 
   static bool isNumeric(String str) {
     return int.tryParse(str) != null || double.tryParse(str) != null;
+  }
+
+  static double convertToDouble(dynamic data) {
+    if (data is int) {
+      return double.parse('$data.0');
+    }
+    return double.parse('$data');
   }
 
   static UserAuthenStatusUI getUserAuthenStatus(
@@ -754,19 +759,19 @@ class Utils {
           hasCloseButton: false,
           okButtonTapped: () async {
             if (null != homeWorkPresenter) {
-              var connectivity =
-                  await ConnectivityService().checkConnectivity();
-              if (connectivity.name != StringConstants.connectivity_name_none) {
-                homeWorkPresenter.logout(context);
-              } else {
-                //Show connect error here
-                if (kDebugMode) {
-                  print("DEBUG: Connect error here!");
-                }
-                Utils.showConnectionErrorDialog(context);
+              Utils.checkInternetConnection().then((isConnected) {
+                if (isConnected) {
+                  homeWorkPresenter.logout(context);
+                } else {
+                  //Show connect error here
+                  if (kDebugMode) {
+                    print("DEBUG: Connect error here!");
+                  }
+                  Utils.showConnectionErrorDialog(context);
 
-                Utils.addConnectionErrorLog(context);
-              }
+                  Utils.addConnectionErrorLog(context);
+                }
+              });
             } else {
               Navigator.of(context).pop();
             }
@@ -903,7 +908,7 @@ class Utils {
   }
 
   static void addLog(LogModel log, String status) {
-    if (status != StringConstants.connectivity_name_none) {
+    if (status != "none") {
       //NOT Action log
       DateTime createdTime =
           DateTime.fromMillisecondsSinceEpoch(log.createdTime);
@@ -1201,5 +1206,15 @@ class Utils {
 
   static Future<bool> checkInternetConnection() async {
     return await InternetConnectionChecker().hasConnection;
+  }
+
+  static String getRatingText(double rate) {
+    String ratingText = "Very Good";
+    if (rate >= 0 && rate <= 2.5) {
+      ratingText = "Bad";
+    } else if (rate < 4.5) {
+      ratingText = "Good";
+    }
+    return ratingText;
   }
 }

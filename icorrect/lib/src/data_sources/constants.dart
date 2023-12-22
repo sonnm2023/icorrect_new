@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
@@ -466,6 +465,7 @@ class StringConstants {
       "Record Video Authentication";
   static const String submit_now_title = "Submit Now";
   static const String record_new_video_title = "Record New Video";
+  static const String reload_button_title = "Reload";
   //Dialog
   static const String dialog_title = "Notification";
   static const String exit_app_message = "Do you want to exit app?";
@@ -509,6 +509,8 @@ class StringConstants {
   static const String icorrect_title = "ICORRECT";
 
   //Tab titles
+  static const String topic_tab_title = "Topics";
+  static const String num_of_question_title = "Num of questions";
   static const String test_detail_tab_title = "Test Detail";
   static const String correction_tab_title = "Correction";
   static const String my_exam_tab_title = "MY EXAM";
@@ -522,6 +524,7 @@ class StringConstants {
   static const String status_string = "Status";
 
   //Text
+  static const String start_pratice = "Start Practicing";
   static const String add_your_filter = "Add your filter!";
   static const String cue_card = "Cue Card";
   static const String another_tips = "Another tips";
@@ -613,6 +616,8 @@ class StringConstants {
       "Save your answers successfully!";
   static const String submit_test_success_message =
       "The test has been submitted successfully!";
+  static const String submit_test_success_message_with_code_5013 =
+      "The test has been submitted successfully!\nYou can't update it.";
   static const String submit_authen_success_message =
       "Submit file to authentication successfully. Waiting for confirmation!";
   static const String submit_authen_fail_message =
@@ -640,6 +645,8 @@ class StringConstants {
       ' and you will have to verify again at Video Authentication.';
 
   //Warning Message
+  static const String email_or_password_wrong_message =
+      "Opps! Something went wrong, email or password is not found.";
   static const String choose_filter_message =
       "You must choose at least one class and one status!";
   static const String no_data_filter_message =
@@ -706,7 +713,7 @@ class StringConstants {
   static const String submit_test_error_message =
       "Has an error when submit this test. Please try again later!";
   static const String submit_test_error_invalid_return_type_message =
-      "invalid_return_type_for_catch_error: Has an error when submit this test!";
+      "Has an error when submit this test!\n[Error: invalid type]";
   static const String submit_test_error_timeout =
       "TimeoutException: Has an error when submit this test!";
   static const String submit_test_error_socket =
@@ -837,8 +844,6 @@ class StringConstants {
   static const String k_required_topic = "required_topic[]";
   static const String k_is_predict = "is_predict";
   static const String k_has_order = "has_order";
-
-  static const String connectivity_name_none = "none";
 }
 
 const int timeout = 60;

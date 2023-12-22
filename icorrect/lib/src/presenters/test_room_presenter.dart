@@ -260,7 +260,8 @@ class TestRoomPresenter {
         Map<String, dynamic> json = jsonDecode(value) ?? {};
         dataLog[StringConstants.k_response] = json;
 
-        if (json[StringConstants.k_error_code] == 200) {
+        if (json[StringConstants.k_error_code] == 200 ||
+            json[StringConstants.k_error_code] == 5013) {
           //Add log
           Utils.prepareLogData(
             log: log,
@@ -275,8 +276,17 @@ class TestRoomPresenter {
           }
 
           _view!.onUpdateHasOrderStatus(hasOrder);
-          _view!.onSubmitTestSuccess(
-              Utils.multiLanguage(StringConstants.save_answer_success_message));
+
+          String message =
+              Utils.multiLanguage(StringConstants.submit_test_success_message);
+          if (json[StringConstants.k_error_code] == 5013) {
+            if (!isExam) {
+              message = Utils.multiLanguage(
+                  StringConstants.submit_test_success_message_with_code_5013);
+            }
+          }
+
+          _view!.onSubmitTestSuccess(message);
         } else {
           //Add log
           Utils.prepareLogData(
@@ -292,7 +302,7 @@ class TestRoomPresenter {
           }
 
           _view!.onSubmitTestFail(
-              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log
@@ -464,7 +474,7 @@ class TestRoomPresenter {
         }
       }
     }
-    
+
     if (kDebugMode) {
       print("DEBUG: formdata: ${formData.toString()}");
     }
@@ -553,7 +563,7 @@ class TestRoomPresenter {
           }
 
           _view!.onUpdateReAnswersFail(
-              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}$errorCode");
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
         //Add log

@@ -7,7 +7,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -47,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen>
   CircleLoading? _loading;
   Permission? _writeFilePermission;
   PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
-  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
@@ -141,8 +139,8 @@ class _LoginScreenState extends State<LoginScreen>
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isProcessing == false) {
-          connectivityService.checkConnectivity().then((connectivity) {
-            if (connectivity.name != StringConstants.connectivity_name_none) {
+          Utils.checkInternetConnection().then((isConnected) {
+            if (isConnected) {
               _authProvider.updateProcessingStatus(isProcessing: true);
 
               //Add firebase log
@@ -242,8 +240,8 @@ class _LoginScreenState extends State<LoginScreen>
     if (appConfigInfo.isEmpty) {
       _loginPresenter!.getAppConfigInfo(context);
     } else {
-      connectivityService.checkConnectivity().then((connectivity) {
-        if (connectivity.name != StringConstants.connectivity_name_none) {
+      Utils.checkInternetConnection().then((isConnected) {
+        if (isConnected) {
           _autoLogin();
         } else {
           _handleLoginError();
@@ -342,6 +340,18 @@ class _LoginScreenState extends State<LoginScreen>
     passwordController.text = "";
   }
 
+  void _finishLoginWithError(String message) {
+    _authProvider.updateProcessingStatus(isProcessing: false);
+    if (message == StringConstants.email_or_password_wrong_message) {
+      message = Utils.multiLanguage(message);
+    }
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.error,
+      isCenter: false,
+    );
+  }
+
   @override
   void onLoginComplete() {
     _authProvider.updateProcessingStatus(isProcessing: false);
@@ -354,27 +364,33 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   @override
-  void onLoginError(String message, String? email, String? password) {
-    connectivityService.checkConnectivity().then((connectivity) {
-      if (connectivity.name != StringConstants.connectivity_name_none) {
-        if (null != email && null != password) {
-          _authProvider.updateProcessingStatus(isProcessing: true);
+  void onLoginError(String message, int? errorCode) {
+    if (kDebugMode) {
+      print("DEBUG: onLoginError");
+    }
 
-          _loginPresenter!.login(
-            email,
-            password,
-            context,
-          );
+    Utils.checkInternetConnection().then((isConnected) {
+      if (null != errorCode) {
+        if (errorCode == 401) {
+          _finishLoginWithError(message);
         }
       } else {
-        _authProvider.updateProcessingStatus(isProcessing: false);
-
-        showDialog(
-          context: context,
-          builder: (builder) {
-            return MessageDialog.alertDialog(context, message);
-          },
-        );
+        String email = emailController.text.trim();
+        String password = passwordController.text.trim();
+        if (isConnected && email.isNotEmpty && password.isNotEmpty) {
+          if (kDebugMode) {
+            print("DEBUG: checkInternetConnection = $isConnected");
+            print("DEBUG: checkInternetConnection email = $email");
+            print("DEBUG: checkInternetConnection pass = $password");
+          }
+          _loginPresenter!.login(
+            emailController.text.trim(),
+            passwordController.text.trim(),
+            context,
+          );
+        } else {
+          _finishLoginWithError(message);
+        }
       }
     });
   }
@@ -388,6 +404,7 @@ class _LoginScreenState extends State<LoginScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
+      isCenter: false,
     );
   }
 

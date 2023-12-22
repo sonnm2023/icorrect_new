@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 
 abstract class LoginViewContract {
   void onLoginComplete();
-  void onLoginError(String message, String? email, String? password);
+  void onLoginError(String message, int? errorCode);
   void onGetAppConfigInfoSuccess();
   void onGetAppConfigInfoFail(String message);
 }
@@ -48,6 +48,9 @@ class LoginPresenter {
 
     Future.delayed(Duration(seconds: delayTime)).then((_) {
       _repository!.login(email, password).then((value) async {
+        if (kDebugMode) {
+          print("DEBUG: login response: $value");
+        }
         AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
         if (authModel.errorCode == 200) {
           //Add log
@@ -70,23 +73,20 @@ class LoginPresenter {
           );
           _view!.onLoginError(
             authModel.status,
-            email,
-            password,
+            authModel.errorCode,
           );
         } else {
           String message = '';
           if (authModel.message.isNotEmpty) {
             _view!.onLoginError(
               Utils.multiLanguage(StringConstants.network_error_message),
-              email,
-              password,
+              null,
             );
             message = StringConstants.network_error_message;
           } else {
             _view!.onLoginError(
               Utils.multiLanguage(StringConstants.common_error_message),
-              email,
-              password,
+              null,
             );
             message = '${authModel.errorCode}: ${authModel.status}';
           }
@@ -103,14 +103,12 @@ class LoginPresenter {
         if (onError is http.ClientException || onError is SocketException) {
           _view!.onLoginError(
             Utils.multiLanguage(StringConstants.network_error_message),
-            email,
-            password,
+            null,
           );
           message = StringConstants.network_error_message;
         } else {
           _view!.onLoginError(
             Utils.multiLanguage(StringConstants.common_error_message),
-            null,
             null,
           );
           message = StringConstants.common_error_message;
@@ -250,7 +248,6 @@ class LoginPresenter {
         _view!.onLoginError(
           Utils.multiLanguage(StringConstants.common_error_message),
           null,
-          null,
         );
       }
     }).catchError(
@@ -266,7 +263,6 @@ class LoginPresenter {
 
         _view!.onLoginError(
           Utils.multiLanguage(StringConstants.common_error_message),
-          null,
           null,
         );
       },

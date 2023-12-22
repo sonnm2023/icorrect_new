@@ -5,6 +5,7 @@ import 'package:icorrect/src/provider/my_tests_list_provider.dart';
 import 'package:icorrect/src/views/screen/my_tests_list/my_tests_list.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
+import 'package:icorrect/src/views/widget/rating_widget.dart';
 import 'package:provider/provider.dart';
 import '../../data_sources/constants.dart';
 import '../../data_sources/utils.dart';
@@ -50,8 +51,6 @@ Widget navbarItems({
           );*/
         },
       ),
-      //Comment for build release 20231129 - version 1.1.9 (build 1)
-      /*
       ListTile(
         title: Text(
           Utils.multiLanguage(
@@ -105,7 +104,6 @@ Widget navbarItems({
           );
         },
       ),
-     */
       ListTile(
         title: Text(
           Utils.multiLanguage(
@@ -183,6 +181,31 @@ Widget navbarItems({
           );
         },
       ),
+      //For test rating
+      ListTile(
+        title: Text(
+          "Rating",
+          style: CustomTextStyle.textWithCustomInfo(
+            context: context,
+            color: AppColor.defaultGrayColor,
+            fontsSize: FontsSize.fontSize_15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        leading: const Icon(
+          Icons.language,
+          color: AppColor.defaultGrayColor,
+        ),
+        onTap: () {
+          Utils.toggleDrawer();
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const RatingWidget(),
+            ),
+          );
+        },
+      ),
       ListTile(
         title: Text(
           Utils.multiLanguage(
@@ -201,7 +224,9 @@ Widget navbarItems({
         ),
         onTap: () {
           Utils.showLogoutConfirmDialog(
-              context: context, homeWorkPresenter: homeWorkPresenter);
+            context: context,
+            homeWorkPresenter: homeWorkPresenter,
+          );
         },
       ),
     ],

@@ -387,6 +387,10 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
       print("DEBUG: _showFullImage");
     }
 
+    //For test
+    // widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
+    // widget.simulatorTestProvider.setShowFullImage(true);
+
     if (widget.simulatorTestProvider.doingStatus == DoingStatus.finish) {
       widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
       widget.simulatorTestProvider.setShowFullImage(true);
@@ -396,6 +400,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
           StringConstants.wait_until_the_exam_finished_message,
         ),
         toastState: ToastStatesType.warning,
+        isCenter: true,
       );
     }
   }

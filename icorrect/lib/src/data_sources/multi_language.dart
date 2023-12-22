@@ -33,6 +33,7 @@ class MultiLanguage {
     StringConstants.submit_now_title: "Nộp Ngay",
     StringConstants.record_new_video_title: "Quay Video Mới",
     StringConstants.dialog_title: "Thông báo",
+    StringConstants.reload_button_title: "Tải lại",
     StringConstants.exit_app_message: "Bạn có muốn thoát khỏi ứng dụng?",
     StringConstants.quit_the_test_message:
         "Bài làm chưa hoàn thành! Bạn có chắc chắn muốn thoát?",
@@ -159,6 +160,8 @@ class MultiLanguage {
     StringConstants.progress_auth_content:
         "Gửi video xác thực thành công. Hãy chờ kết quả xác nhận từ giáo viên !",
     StringConstants.lock_auth_title: "Tính năng gửi mẫu xác thực đã bị khóa",
+    StringConstants.email_or_password_wrong_message:
+        "Email hoặc mật khẩu bị sai. Vui lòng thử lại !",
     StringConstants.lock_auth_content:
         "Vui lòng liên hệ với quản trị viên ICorrect để được hỗ trợ",
     StringConstants.error_auth_title: "Xác thực lỗi",
@@ -166,7 +169,9 @@ class MultiLanguage {
         "Xảy ra lỗi trong quá trình xác minh, vui lòng liên hệ với bộ phận hỗ trợ của ICorrect",
     StringConstants.save_answer_success_message:
         "Câu trả lời đã được cập nhật thành công!",
-    StringConstants.submit_test_success_message: "Nộp bài thành công !",
+    StringConstants.submit_test_success_message: "Nộp bài thành công!",
+    StringConstants.submit_test_success_message_with_code_5013:
+        "Nộp bài thành công!\nBạn không thể cập nhật thêm.",
     StringConstants.submit_authen_success_message:
         "Gửi Video để xác thực thành công.Chờ đợi sự xác nhận!",
     StringConstants.submit_authen_fail_message:
@@ -246,7 +251,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_message:
         "Có lỗi xảy ra khi nộp bài. Vui lòng thử lại!",
     StringConstants.submit_test_error_invalid_return_type_message:
-        "Invalid_return_type_for_catch_error: Có lỗi khi gửi bài kiểm tra này!",
+        "Có lỗi xảy ra khi nộp bài.!\n[Lỗi: không đúng định dạng]",
     StringConstants.submit_test_error_timeout:
         "TimeoutException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.submit_test_error_socket:
@@ -263,6 +268,9 @@ class MultiLanguage {
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng kiểm tra và thử lại!",
     StringConstants.change_password_success_message:
         "Thay đổi mật khẩu thành công!",
+    StringConstants.start_pratice: "Bắt Đầu Luyện Tập",
+    StringConstants.topic_tab_title: "Chủ Đề",
+    StringConstants.num_of_question_title: "Số Lượng Câu Hỏi",
     StringConstants.multi_language: "Đa Ngôn Ngữ",
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
@@ -337,6 +345,9 @@ class MultiLanguage {
   };
 
   static const Map<String, dynamic> EN = {
+    StringConstants.topic_tab_title: "Topics",
+    StringConstants.num_of_question_title: "Num of questions",
+    StringConstants.start_pratice: "Start Practicing",
     StringConstants.sign_in_button_title: "Sign In",
     StringConstants.sign_up_button_title: "Sign Up",
     StringConstants.forgot_password_button_title: "Forgot password?",
@@ -476,6 +487,8 @@ class MultiLanguage {
         "Confirm to submit your video !",
     StringConstants.confirm_submit_video_auth_content:
         "This video will be used to confirm when you do your exam. So you want submit this video ?",
+    StringConstants.email_or_password_wrong_message:
+        "Opps! Something went wrong, email or password is not found.",
     StringConstants.not_auth_title: "Not Authenticated",
     StringConstants.not_auth_content:
         "You need to record and send video for authentication",
@@ -497,6 +510,8 @@ class MultiLanguage {
         "Save your answers successfully!",
     StringConstants.submit_test_success_message:
         "The test has been submitted successfully!",
+    StringConstants.submit_test_success_message_with_code_5013:
+        "The test has been submitted successfully!\nYou can't update it.",
     StringConstants.submit_authen_success_message:
         "Submit file to authentication successfully. Waiting for confirmation!",
     StringConstants.submit_authen_fail_message:
@@ -574,7 +589,7 @@ class MultiLanguage {
     StringConstants.submit_test_error_message:
         "Has an error when submit this test. Please try again later!",
     StringConstants.submit_test_error_invalid_return_type_message:
-        "invalid_return_type_for_catch_error: Has an error when submit this test!",
+        "Has an error when submit this test!\n[Error: invalid type]",
     StringConstants.submit_test_error_timeout:
         "TimeoutException: Has an error when submit this test!",
     StringConstants.submit_test_error_socket:
@@ -654,6 +669,7 @@ class MultiLanguage {
         'Timeout to update your changes. Please try again !',
     StringConstants.search_title: "Search",
     StringConstants.select_your_language_title: 'Select your language',
-    StringConstants.prepare_compress_video_title: 'Preparing for submitting'
+    StringConstants.prepare_compress_video_title: 'Preparing for submitting',
+    StringConstants.reload_button_title: "Reload",
   };
 }

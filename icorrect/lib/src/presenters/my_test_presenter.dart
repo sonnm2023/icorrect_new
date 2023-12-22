@@ -57,6 +57,8 @@ class MyTestPresenter {
 
   TestDetailModel? testDetail;
   List<FileTopicModel>? filesTopic;
+  bool isDownloading = false;
+  CancelToken cancelToken = CancelToken();
 
   Future<void> initializeData() async {
     dio ??= Dio();
@@ -187,6 +189,9 @@ class MyTestPresenter {
     }
 
     questions.addAll(testDetailModel.part2.questionList);
+    if (testDetailModel.part3.followUp.isNotEmpty) {
+      questions.addAll(testDetailModel.part3.followUp);
+    }
     questions.addAll(testDetailModel.part3.questionList);
 
     for (var question in questions) {
@@ -280,6 +285,13 @@ class MyTestPresenter {
     _view!.downloadFilesFail(alertInfo);
   }
 
+  void pauseDownload() {
+    if (kDebugMode) {
+      print("DEBUG: Paused downloading by user");
+    }
+    cancelToken.cancel("Paused by user");
+  }
+
   Future downloadFiles({
     required BuildContext context,
     required String activityId,
@@ -287,6 +299,7 @@ class MyTestPresenter {
     required List<FileTopicModel> filesTopic,
   }) async {
     if (null != dio) {
+      isDownloading = true;
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
         FileTopicModel temp = filesTopic[index];
@@ -453,6 +466,7 @@ class MyTestPresenter {
         }
       }
     } else {
+      isDownloading = false;
       if (kDebugMode) {
         print("DEBUG: Dio is closed!");
       }
@@ -465,6 +479,7 @@ class MyTestPresenter {
     required TestDetailModel testDetail,
     required List<FileTopicModel> filesTopic,
   }) {
+    isDownloading = false;
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {

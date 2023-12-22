@@ -12,7 +12,6 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -92,7 +91,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   DateTime? _logEndTime;
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
-  final connectivityService = ConnectivityService();
   int _questionIndex = 0;
 
   @override
@@ -1077,6 +1075,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       msg: Utils.multiLanguage(
           StringConstants.wait_until_the_exam_finished_message),
       toastState: ToastStatesType.warning,
+      isCenter: true,
     );
   }
 
@@ -1334,6 +1333,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       showToastMsg(
         msg: Utils.multiLanguage(StringConstants.feature_not_available_message),
         toastState: ToastStatesType.warning,
+        isCenter: true,
       );
     } else {
       //Start to do the test
@@ -2237,7 +2237,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     Queue<TopicModel> queue = _simulatorTestProvider!.topicsQueue;
     //TODO
     int timeRecord = _getRecordTime(queue.first.numPart);
-    // int timeRecord = Utils.getRecordTime(queue.first.numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
     //Record the answer
     _timerProvider!.setCountDown(timeString);
@@ -2567,19 +2566,21 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
     _simulatorTestProvider!.setNeedRefreshActivityList(true);
 
-    if (_isExam) {
-      //Reset _questionIndex
-      _questionIndex = 0;
-    }
-
     //Send log
     Utils.sendLog();
 
-    //Delete file video record exam
-    _deleteFileVideoExam();
+    if (_isExam) {
+      //Reset _questionIndex
+      _questionIndex = 0;
+
+      //Delete file video record exam
+      _deleteFileVideoExam();
+    }
+
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
   }
 

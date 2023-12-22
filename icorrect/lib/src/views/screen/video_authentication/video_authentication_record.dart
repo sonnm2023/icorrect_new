@@ -539,14 +539,30 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     );
   }
 
-  void _onSubmitVideoAuth(File savedFile) {
-    _videoAuthProvider!.setIsSubmitLoading(true);
+  void _onSubmitVideoAuth(File savedFile) async {
+    Utils.checkInternetConnection().then((isConnected) {
+      if (isConnected) {
+        _videoAuthProvider!.setIsSubmitLoading(true);
 
-    _presenter!.submitAuth(
-      authFile: savedFile,
-      isUploadVideo: true,
-      context: context,
-    );
+        _presenter!.submitAuth(
+          authFile: savedFile,
+          isUploadVideo: true,
+          context: context,
+        );
+      } else {
+        _handleConnectionError();
+      }
+    });
+  }
+
+  void _handleConnectionError() {
+    //Show connect error here
+    if (kDebugMode) {
+      print("DEBUG: Connect error here!");
+    }
+    Utils.showConnectionErrorDialog(context);
+
+    Utils.addConnectionErrorLog(context);
   }
 
   void _cancelRecordingVideo({required bool isStop}) {

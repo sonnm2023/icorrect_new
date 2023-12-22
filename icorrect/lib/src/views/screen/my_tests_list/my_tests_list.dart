@@ -1,16 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/bank_list/bank_detail_list.dart';
 import 'package:icorrect/src/views/screen/my_tests_list/my_practice_test_detail.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/app_asset.dart';
 import '../../../../core/app_color.dart';
 import '../../../data_sources/constant_methods.dart';
 import '../../../data_sources/constants.dart';
@@ -67,17 +70,93 @@ class _MyTestsListState extends State<MyTestsList>
           width: w,
           height: h,
           child: Stack(
-            alignment: Alignment.bottomCenter,
             children: [
               SingleChildScrollView(
                 physics: const NeverScrollableScrollPhysics(),
                 child: _buildMainScreen(),
               ),
-              _loadingBottom()
+              _loadingBottom(),
+              Container(
+                alignment: Alignment.bottomRight,
+                margin: const EdgeInsets.all(15),
+                child: _languageSelectionButton(),
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _languageSelectionButton() {
+    return SpeedDial(
+      backgroundColor: AppColor.defaultYellowColor,
+      overlayColor: Colors.black,
+      overlayOpacity: 0.6,
+      spaceBetweenChildren: 10,
+      activeBackgroundColor: AppColor.defaultYellowColor,
+      activeIcon: Icons.close,
+      foregroundColor: Colors.white,
+      children: [
+        SpeedDialChild(
+          shape: const CircleBorder(),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BankDetailList(),
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.all(5),
+            color: Colors.green,
+            child: const Icon(Icons.book_outlined, color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+          labelWidget: Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Text(
+              "Lớp 7 Global Success",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        SpeedDialChild(
+          shape: const CircleBorder(),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BankDetailList(),
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.all(5),
+            color: Colors.orange,
+            child: const Text("IELTS",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                )),
+          ),
+          backgroundColor: Colors.orange,
+          labelWidget: Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: const Text(
+              "IELTS Bank",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            ),
+          ),
+        )
+      ],
+      child: const Icon(Icons.menu_rounded, color: Colors.white),
     );
   }
 
@@ -123,7 +202,7 @@ class _MyTestsListState extends State<MyTestsList>
         Consumer<MyTestsListProvider>(builder: (context, provider, child) {
           return Container(
             height: h,
-            padding: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(bottom: 150),
             child: NotificationListener<ScrollEndNotification>(
                 onNotification: (scrollEnd) {
                   final metrics = scrollEnd.metrics;
@@ -438,6 +517,7 @@ class _MyTestsListState extends State<MyTestsList>
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
     _myTestsListProvider!.removeTestAt(indexDeleted);
   }

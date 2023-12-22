@@ -6,7 +6,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/core/connectivity_service.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
@@ -64,7 +63,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   StreamSubscription? connection;
   bool isOffline = false;
   CircleLoading? _loading;
-  final connectivityService = ConnectivityService();
   bool _isExam = false;
 
   TabBar get _tabBar {
@@ -609,6 +607,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               msg: Utils.multiLanguage(
                   StringConstants.can_not_delete_files_message),
               toastState: ToastStatesType.warning,
+              isCenter: true,
             );
           }
         },
@@ -797,6 +796,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -822,6 +822,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.error,
+      isCenter: true,
     );
   }
 
@@ -840,6 +841,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
+      isCenter: true,
     );
 
     Navigator.pop(context, 'refresh');
