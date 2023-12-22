@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/screen/bank_list/topics_bank_list.dart';
-
-import '../../../../core/app_color.dart';
-import '../../../data_sources/constants.dart';
-import '../../../data_sources/utils.dart';
 
 class BankDetailList extends StatefulWidget {
   const BankDetailList({super.key});
@@ -58,11 +56,14 @@ class _BankDetailListState extends State<BankDetailList> {
               height: 50,
               width: w,
               alignment: Alignment.center,
-              child: Text(Utils.multiLanguage(StringConstants.start_pratice),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 18)),
+              child: Text(
+                Utils.multiLanguage(StringConstants.start_pratice),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
             )
           ],
         ),
@@ -112,11 +113,14 @@ class _BankDetailListState extends State<BankDetailList> {
       isScrollable: false,
       indicatorPadding: const EdgeInsets.only(top: 10),
       indicator: const UnderlineTabIndicator(
-          borderSide: BorderSide(
-            width: 3.0,
-            color: AppColor.defaultPurpleColor,
-          ),
-          insets: EdgeInsets.symmetric(horizontal: 100.0)),
+        borderSide: BorderSide(
+          width: 3.0,
+          color: AppColor.defaultPurpleColor,
+        ),
+        insets: EdgeInsets.symmetric(
+          horizontal: 100.0,
+        ),
+      ),
       tabs: _tabsLabel(),
     );
   }

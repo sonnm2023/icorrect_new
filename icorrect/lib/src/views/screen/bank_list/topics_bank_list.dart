@@ -43,11 +43,14 @@ class _TopicsBankListState extends State<TopicsBankList> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Text("Selected (4/6)",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold)),
+            child: Text(
+              "Selected (4/6)",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           )
         ],
       ),
@@ -67,11 +70,14 @@ class _TopicsBankListState extends State<TopicsBankList> {
               children: [
                 Icon(Icons.check_box, color: AppColor.defaultPurpleColor),
                 const SizedBox(width: 10),
-                Text("Unit 1: Family Life",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold))
+                Text(
+                  "Unit 1: Family Life",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
               ],
             ),
           ),
