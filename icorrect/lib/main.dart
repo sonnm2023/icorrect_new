@@ -20,6 +20,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
+import 'package:icorrect/src/provider/rating_provider.dart';
 import 'package:icorrect/src/provider/re_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
@@ -119,6 +120,7 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(create: (_) => VideoAuthProvider()),
         ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),
+        ChangeNotifierProvider(create: (_) => RatingProvider()),
       ],
       child: MaterialApp(
         supportedLocales: _localization.supportedLocales,
