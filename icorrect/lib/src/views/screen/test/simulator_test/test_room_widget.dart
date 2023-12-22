@@ -2566,16 +2566,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
     _simulatorTestProvider!.setNeedRefreshActivityList(true);
 
-    if (_isExam) {
-      //Reset _questionIndex
-      _questionIndex = 0;
-    }
-
     //Send log
     Utils.sendLog();
 
-    //Delete file video record exam
-    _deleteFileVideoExam();
+    if (_isExam) {
+      //Reset _questionIndex
+      _questionIndex = 0;
+
+      //Delete file video record exam
+      _deleteFileVideoExam();
+    }
+
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
