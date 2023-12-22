@@ -129,8 +129,15 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           print("DEBUG: connect via 3G/4G");
         }
         if (_simulatorTestPresenter!.isDownloading) {
+          String? activityId;
+          if (widget.homeWorkModel != null) {
+            activityId = widget.homeWorkModel!.activityId.toString();
+          }
+
           _simulatorTestPresenter!.reDownloadFiles(
-              context, widget.homeWorkModel!.activityId.toString());
+            context,
+            activityId,
+          );
         }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
