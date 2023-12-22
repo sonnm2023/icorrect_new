@@ -169,7 +169,9 @@ class MultiLanguage {
         "Xảy ra lỗi trong quá trình xác minh, vui lòng liên hệ với bộ phận hỗ trợ của ICorrect",
     StringConstants.save_answer_success_message:
         "Câu trả lời đã được cập nhật thành công!",
-    StringConstants.submit_test_success_message: "Nộp bài thành công !",
+    StringConstants.submit_test_success_message: "Nộp bài thành công!",
+    StringConstants.submit_test_success_message_with_code_5013:
+        "Nộp bài thành công! Bạn không thể cập nhật thêm.",
     StringConstants.submit_authen_success_message:
         "Gửi Video để xác thực thành công.Chờ đợi sự xác nhận!",
     StringConstants.submit_authen_fail_message:
@@ -502,6 +504,8 @@ class MultiLanguage {
         "Save your answers successfully!",
     StringConstants.submit_test_success_message:
         "The test has been submitted successfully!",
+    StringConstants.submit_test_success_message_with_code_5013:
+        "The test has been submitted successfully! You can't update it.",
     StringConstants.submit_authen_success_message:
         "Submit file to authentication successfully. Waiting for confirmation!",
     StringConstants.submit_authen_fail_message:

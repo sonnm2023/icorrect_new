@@ -613,6 +613,8 @@ class StringConstants {
       "Save your answers successfully!";
   static const String submit_test_success_message =
       "The test has been submitted successfully!";
+  static const String submit_test_success_message_with_code_5013 =
+      "The test has been submitted successfully! You can't update it.";
   static const String submit_authen_success_message =
       "Submit file to authentication successfully. Waiting for confirmation!";
   static const String submit_authen_fail_message =
@@ -640,7 +642,8 @@ class StringConstants {
       ' and you will have to verify again at Video Authentication.';
 
   //Warning Message
-  static const String email_or_password_wrong_message = "Opps! Something went wrong, email or password is not found.";
+  static const String email_or_password_wrong_message =
+      "Opps! Something went wrong, email or password is not found.";
   static const String choose_filter_message =
       "You must choose at least one class and one status!";
   static const String no_data_filter_message =
