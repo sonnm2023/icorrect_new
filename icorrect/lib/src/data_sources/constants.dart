@@ -614,7 +614,7 @@ class StringConstants {
   static const String submit_test_success_message =
       "The test has been submitted successfully!";
   static const String submit_test_success_message_with_code_5013 =
-      "The test has been submitted successfully! You can't update it.";
+      "The test has been submitted successfully!\nYou can't update it.";
   static const String submit_authen_success_message =
       "Submit file to authentication successfully. Waiting for confirmation!";
   static const String submit_authen_fail_message =

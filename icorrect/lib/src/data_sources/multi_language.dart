@@ -171,7 +171,7 @@ class MultiLanguage {
         "Câu trả lời đã được cập nhật thành công!",
     StringConstants.submit_test_success_message: "Nộp bài thành công!",
     StringConstants.submit_test_success_message_with_code_5013:
-        "Nộp bài thành công! Bạn không thể cập nhật thêm.",
+        "Nộp bài thành công!\nBạn không thể cập nhật thêm.",
     StringConstants.submit_authen_success_message:
         "Gửi Video để xác thực thành công.Chờ đợi sự xác nhận!",
     StringConstants.submit_authen_fail_message:
@@ -505,7 +505,7 @@ class MultiLanguage {
     StringConstants.submit_test_success_message:
         "The test has been submitted successfully!",
     StringConstants.submit_test_success_message_with_code_5013:
-        "The test has been submitted successfully! You can't update it.",
+        "The test has been submitted successfully!\nYou can't update it.",
     StringConstants.submit_authen_success_message:
         "Submit file to authentication successfully. Waiting for confirmation!",
     StringConstants.submit_authen_fail_message:
