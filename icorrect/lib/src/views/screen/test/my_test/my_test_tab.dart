@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -71,7 +70,6 @@ class _MyTestTabState extends State<MyTestTab>
     connection = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      // when every connection status is changed.
       if (result == ConnectivityResult.none) {
         isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
@@ -79,8 +77,20 @@ class _MyTestTabState extends State<MyTestTab>
           print("DEBUG: connect via 3G/4G");
         }
         if (_presenter!.isDownloading) {
-          _presenter!.reDownloadFiles(
-              context, widget.homeWorkModel!.activityId.toString());
+          String activityId = "";
+          if (widget.homeWorkModel != null) {
+            activityId = widget.homeWorkModel!.activityId.toString();
+          } else if (widget.practiceTestId != null) {
+            activityId = widget.practiceTestId!;
+          } else {
+            if (kDebugMode) {
+              print(
+                  "DEBUG: Can not continue to download with empty activityId");
+            }
+            return;
+          }
+
+          _presenter!.reDownloadFiles(context, activityId);
         }
         isOffline = false;
       } else if (result == ConnectivityResult.wifi) {

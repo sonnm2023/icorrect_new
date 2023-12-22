@@ -244,6 +244,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         ? [
             MyTestTab(
                 homeWorkModel: widget.homeWorkModel,
+                practiceTestId: null,
                 provider: _myTestProvider!),
             ResponseTab(
                 homeWorkModel: widget.homeWorkModel,
@@ -258,6 +259,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         : [
             MyTestTab(
                 homeWorkModel: widget.homeWorkModel,
+                practiceTestId: null,
                 provider: _myTestProvider!),
             HighLightTab(
                 provider: _myTestProvider!,
@@ -273,9 +275,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: Utils.multiLanguage(
-            StringConstants.confirm_to_go_out_screen
-          ),
+          title: Utils.multiLanguage(StringConstants.confirm_to_go_out_screen),
           message: Utils.multiLanguage(
               StringConstants.re_answer_not_be_save_message),
           cancelButtonTitle:
