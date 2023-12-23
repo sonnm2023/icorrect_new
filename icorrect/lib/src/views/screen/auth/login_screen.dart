@@ -18,7 +18,6 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/email_input_widget.dart';
@@ -55,8 +54,8 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //For debug
-    // emailController.text = "testbase04@testing.com";
-    // passwordController.text = "123456";
+    emailController.text = "testbase06@testing.com";
+    passwordController.text = "123456";
 
     _checkPermission();
   }
