@@ -6,10 +6,14 @@ import '../../data_sources/utils.dart';
 
 class PasswordInputWidget extends StatelessWidget {
   const PasswordInputWidget(
-      {super.key, required this.passwordController, required this.type});
+      {super.key,
+      required this.passwordController,
+      required this.type,
+      required this.focusNode});
 
   final TextEditingController passwordController;
   final PasswordType type;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +56,7 @@ class PasswordInputWidget extends StatelessWidget {
       keyboardType: TextInputType.text,
       hintText: Utils.multiLanguage(text),
       upHintText: Utils.multiLanguage(text),
+      focusNode: focusNode,
     );
   }
 }

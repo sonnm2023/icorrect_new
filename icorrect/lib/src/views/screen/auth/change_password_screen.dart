@@ -27,6 +27,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   bool isAvailable = false;
   ChangePasswordPresenter? _changePasswordPresenter;
   late AuthProvider _authProvider;
+  final FocusNode _currentPasswordFocusNode = FocusNode();
+  final FocusNode _newPasswordFocusNode = FocusNode();
+  final FocusNode _confirmNewPasswordFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -101,14 +104,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                       PasswordInputWidget(
                         passwordController: currentPasswordController,
                         type: PasswordType.currentPassword,
+                        focusNode: _currentPasswordFocusNode,
                       ),
                       PasswordInputWidget(
                         passwordController: newPasswordController,
                         type: PasswordType.newPassword,
+                        focusNode: _newPasswordFocusNode,
                       ),
                       PasswordInputWidget(
                         passwordController: confirmNewPasswordController,
                         type: PasswordType.confirmNewPassword,
+                        focusNode: _confirmNewPasswordFocusNode,
                       ),
                       const SizedBox(height: 20),
                       _buildSaveButton(),
@@ -129,6 +135,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
       onPressed: () async {
+        _hideKeyboard();
+
         if (newPasswordController.text.trim() ==
             currentPasswordController.text.trim()) {
           showToastMsg(
@@ -171,6 +179,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
       onPressed: () {
+        _hideKeyboard();
+
         Navigator.of(context).pop();
       },
       background: AppColor.defaultWhiteColor,
@@ -181,6 +191,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       radius: 20,
       hasBorder: true,
     );
+  }
+
+  void _hideKeyboard() {
+    _currentPasswordFocusNode.unfocus();
+    _newPasswordFocusNode.unfocus();
+    _confirmNewPasswordFocusNode.unfocus();
   }
 
   @override

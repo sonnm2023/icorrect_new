@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/widget/auth_form_field.dart';
 
-import '../../data_sources/utils.dart';
-
 class EmailInputWidget extends StatelessWidget {
-  const EmailInputWidget({super.key, required this.emailController});
+  const EmailInputWidget(
+      {super.key, required this.emailController, required this.focusNode});
 
   final TextEditingController emailController;
+  final FocusNode focusNode;
 
   final String regexEmail =
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#\$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
@@ -20,6 +21,7 @@ class EmailInputWidget extends StatelessWidget {
         child: Image.asset('assets/images/ic_email.png', width: 1, height: 1),
       ),
       autofocus: false,
+      focusNode: focusNode,
       textInputAction: TextInputAction.next,
       validator: (value) {
         if (emailController.text.isEmpty) {

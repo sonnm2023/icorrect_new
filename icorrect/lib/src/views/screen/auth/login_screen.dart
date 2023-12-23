@@ -18,7 +18,6 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/screen/home/homework_screen.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/contact_info_widget.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/email_input_widget.dart';
@@ -97,10 +96,12 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           EmailInputWidget(
                             emailController: emailController,
+                            focusNode: FocusNode(),
                           ),
                           PasswordInputWidget(
                             passwordController: passwordController,
                             type: PasswordType.password,
+                            focusNode: FocusNode(),
                           ),
                           _buildSignInButton(),
                           // _buildSignUpButton(),
