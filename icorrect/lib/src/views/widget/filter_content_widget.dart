@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
@@ -32,16 +33,40 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
   late List<NewClassModel> _listSelectedClass = [];
   late List<HomeWorkStatusModel> _listSelectedStatus = [];
 
+  late List<NewClassModel> _originalListSelectedClass = [];
+  late List<HomeWorkStatusModel> _originalListSelectedStatus = [];
+
   @override
   void initState() {
     super.initState();
 
     _listSelectedClass = widget.homeWorkProvider.listSelectedClassFilter;
     _listSelectedStatus = widget.homeWorkProvider.listSelectedStatusFilter;
+    _originalListSelectedClass
+        .addAll(widget.homeWorkProvider.listSelectedClassFilter);
+    _originalListSelectedStatus
+        .addAll(widget.homeWorkProvider.listSelectedStatusFilter);
   }
 
   @override
   Widget build(BuildContext context) {
+    return SizedBox(
+      height: CustomSize.size_400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Expanded(
+            child: _buildContent(),
+          ),
+          _buildButtons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -234,5 +259,99 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     } else {
       return false;
     }
+  }
+
+  Widget _buildButtons() {
+    double w = MediaQuery.of(context).size.width / 2;
+
+    return Row(
+      children: [
+        Container(
+          height: CustomSize.size_50,
+          width: w,
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
+              right: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
+            ),
+          ),
+          child: InkWell(
+            onTap: () {
+              //Reset selected status to original data
+              _resetSelectedData();
+              Navigator.pop(context);
+            },
+            child: Center(
+              child: Text(
+                Utils.multiLanguage(StringConstants.close_button_title),
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultGrayColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          height: CustomSize.size_50,
+          width: w,
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: AppColor.defaultGraySlightColor,
+                width: 1,
+              ),
+            ),
+          ),
+          child: InkWell(
+            onTap: () {
+              bool isValid = widget.homeWorkProvider.checkFilterSelected();
+              widget.homeWorkProvider.setProcessingStatus(isProcessing: true);
+              if (isValid) {
+                widget.homeWorkProvider.filterHomeWork(context);
+                Navigator.pop(context);
+              } else {
+                widget.homeWorkProvider
+                    .setProcessingStatus(isProcessing: false);
+                widget.homeWorkProvider.updateFilterString(
+                    Utils.multiLanguage(StringConstants.default_filter_title));
+                showToastMsg(
+                  msg: Utils.multiLanguage(
+                      StringConstants.choose_filter_message),
+                  toastState: ToastStatesType.warning,
+                  isCenter: true,
+                );
+              }
+            },
+            child: Center(
+              child: Text(
+                Utils.multiLanguage(StringConstants.done_button_title),
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
+                  color: AppColor.defaultPurpleColor,
+                  fontsSize: FontsSize.fontSize_14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _resetSelectedData() {
+    widget.homeWorkProvider
+        .setListSelectedClassFilter(_originalListSelectedClass);
+    widget.homeWorkProvider
+        .setListSelectedStatusFilter(_originalListSelectedStatus);
   }
 }
