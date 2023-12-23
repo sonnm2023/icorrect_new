@@ -201,116 +201,120 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return WillPopScope(child: Consumer<SimulatorTestProvider>(
-      builder: (context, simulatorTest, child) {
-        if (simulatorTest.isShowConfirmSaveTest) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _showConfirmSaveTestBeforeExit();
-          });
-        }
-        if (simulatorTest.submitStatus == SubmitStatus.success &&
-            widget.homeWorkModel != null) {
-          return Stack(
-            children: [
-              DefaultTabController(
-                length: 3,
-                child: Scaffold(
-                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
-                  appBar: AppBar(
-                    elevation: 0.0,
-                    iconTheme: const IconThemeData(
-                      color: AppColor.defaultPurpleColor,
-                    ),
-                    centerTitle: true,
-                    leading: GestureDetector(
-                      onTap: () {
-                        _backButtonTapped();
-                      },
-                      child: const Icon(Icons.arrow_back_rounded,
-                          color: AppColor.defaultPurpleColor),
-                    ),
-                    title: Text(
-                      (widget.homeWorkModel != null)
-                          ? widget.homeWorkModel!.activityName
-                          : "",
-                      style: CustomTextStyle.textWithCustomInfo(
-                        context: context,
+    return WillPopScope(
+      child: Consumer<SimulatorTestProvider>(
+        builder: (context, simulatorTestProvider, child) {
+          if (simulatorTestProvider.isShowConfirmSaveTest) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showConfirmSaveTestBeforeExit();
+            });
+          }
+          if (simulatorTestProvider.submitStatus == SubmitStatus.success &&
+              widget.homeWorkModel != null) {
+            return Stack(
+              children: [
+                DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                    key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                    appBar: AppBar(
+                      elevation: 0.0,
+                      iconTheme: const IconThemeData(
                         color: AppColor.defaultPurpleColor,
-                        fontsSize: FontsSize.fontSize_18,
-                        fontWeight: FontWeight.w800,
                       ),
-                    ),
-                    bottom: PreferredSize(
-                      preferredSize: const Size.fromHeight(CustomSize.size_40),
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: AppColor.defaultPurpleColor,
+                      centerTitle: true,
+                      leading: GestureDetector(
+                        onTap: () {
+                          _backButtonTapped();
+                        },
+                        child: const Icon(Icons.arrow_back_rounded,
+                            color: AppColor.defaultPurpleColor),
+                      ),
+                      title: Text(
+                        (widget.homeWorkModel != null)
+                            ? widget.homeWorkModel!.activityName
+                            : "",
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultPurpleColor,
+                          fontsSize: FontsSize.fontSize_18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      bottom: PreferredSize(
+                        preferredSize:
+                            const Size.fromHeight(CustomSize.size_40),
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: AppColor.defaultPurpleColor,
+                              ),
                             ),
                           ),
+                          child: _tabBar,
                         ),
-                        child: _tabBar,
                       ),
+                      backgroundColor: AppColor.defaultWhiteColor,
                     ),
-                    backgroundColor: AppColor.defaultWhiteColor,
-                  ),
-                  body: TabBarView(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: SafeArea(
-                          left: true,
-                          top: true,
-                          right: true,
-                          bottom: true,
-                          child: _buildBody(),
-                        ),
-                      ),
-                      _buildHighLightTab(),
-                      _buildOtherTab(),
-                    ],
-                  ),
-                ),
-              ),
-              _buildFullImage(),
-            ],
-          );
-        } else {
-          return Stack(
-            children: [
-              Scaffold(
-                key: GlobalScaffoldKey.simulatorTestScaffoldKey,
-                body: Align(
-                  alignment: Alignment.topLeft,
-                  child: SafeArea(
-                    left: true,
-                    top: true,
-                    right: true,
-                    bottom: true,
-                    child: Stack(
+                    body: TabBarView(
                       children: [
-                        _buildBody(),
-                        _buildDownloadAgain(),
-                        BackButtonWidget(
-                          backButtonTapped: _backButtonTapped,
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: SafeArea(
+                            left: true,
+                            top: true,
+                            right: true,
+                            bottom: true,
+                            child: _buildBody(simulatorTestProvider),
+                          ),
                         ),
+                        _buildHighLightTab(),
+                        _buildOtherTab(),
                       ],
                     ),
                   ),
                 ),
-              ),
-              _buildFullImage(),
-            ],
-          );
-        }
+                _buildFullImage(),
+              ],
+            );
+          } else {
+            return Stack(
+              children: [
+                Scaffold(
+                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                  body: Align(
+                    alignment: Alignment.topLeft,
+                    child: SafeArea(
+                      left: true,
+                      top: true,
+                      right: true,
+                      bottom: true,
+                      child: Stack(
+                        children: [
+                          _buildBody(simulatorTestProvider),
+                          _buildDownloadAgain(),
+                          BackButtonWidget(
+                            backButtonTapped: _backButtonTapped,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                _buildFullImage(),
+              ],
+            );
+          }
+        },
+      ),
+      onWillPop: () async {
+        _backButtonTapped();
+        return false;
       },
-    ), onWillPop: () async {
-      _backButtonTapped();
-      return false;
-    });
+    );
   }
 
   Widget _buildFullImage() {
@@ -622,55 +626,101 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  Widget _buildBody() {
-    return Consumer<SimulatorTestProvider>(
-      builder: (context, provider, child) {
-        if (kDebugMode) {
-          print("DEBUG: SimulatorTest --- build -- buildBody");
-        }
+  Widget _buildBody(SimulatorTestProvider provider) {
+    if (kDebugMode) {
+      print("DEBUG: SimulatorTest --- build -- buildBody");
+    }
 
-        if (provider.isDownloadProgressing) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const DownloadProgressingWidget(),
-              Visibility(
-                visible: provider.startNowAvailable,
-                child: StartNowButtonWidget(
-                  startNowButtonTapped: () {
-                    _startToDoTest();
-                  },
-                ),
-              ),
-            ],
-          );
-        }
-
-        if (provider.isGettingTestDetail) {
-          return const DefaultLoadingIndicator(
-            color: AppColor.defaultPurpleColor,
-          );
-        } else {
-          return SizedBox(
-            child: Stack(
-              children: [
-                TestRoomWidget(
-                  homeWorkModel: widget.homeWorkModel,
-                  simulatorTestPresenter: _simulatorTestPresenter!,
-                ),
-                Visibility(
-                  visible: provider.submitStatus == SubmitStatus.submitting,
-                  child: const DefaultLoadingIndicator(
-                    color: AppColor.defaultPurpleColor,
-                  ),
-                ),
-              ],
+    if (provider.isDownloadProgressing) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const DownloadProgressingWidget(),
+          Visibility(
+            visible: provider.startNowAvailable,
+            child: StartNowButtonWidget(
+              startNowButtonTapped: () {
+                _startToDoTest();
+              },
             ),
-          );
-        }
-      },
-    );
+          ),
+        ],
+      );
+    }
+
+    if (provider.isGettingTestDetail) {
+      return const DefaultLoadingIndicator(
+        color: AppColor.defaultPurpleColor,
+      );
+    } else {
+      return SizedBox(
+        child: Stack(
+          children: [
+            TestRoomWidget(
+              homeWorkModel: widget.homeWorkModel,
+              simulatorTestPresenter: _simulatorTestPresenter!,
+            ),
+            Visibility(
+              visible: provider.submitStatus == SubmitStatus.submitting,
+              child: const DefaultLoadingIndicator(
+                color: AppColor.defaultPurpleColor,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
+
+  // Widget _buildBody() {
+  //   return Consumer<SimulatorTestProvider>(
+  //     builder: (context, provider, child) {
+  //       if (kDebugMode) {
+  //         print("DEBUG: SimulatorTest --- build -- buildBody");
+  //       }
+
+  //       if (provider.isDownloadProgressing) {
+  //         return Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             const DownloadProgressingWidget(),
+  //             Visibility(
+  //               visible: provider.startNowAvailable,
+  //               child: StartNowButtonWidget(
+  //                 startNowButtonTapped: () {
+  //                   _startToDoTest();
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       }
+
+  //       if (provider.isGettingTestDetail) {
+  //         return const DefaultLoadingIndicator(
+  //           color: AppColor.defaultPurpleColor,
+  //         );
+  //       } else {
+  //         return SizedBox(
+  //           child: Stack(
+  //             children: [
+  //               TestRoomWidget(
+  //                 homeWorkModel: widget.homeWorkModel,
+  //                 simulatorTestPresenter: _simulatorTestPresenter!,
+  //               ),
+  //               Visibility(
+  //                 visible: provider.submitStatus == SubmitStatus.submitting,
+  //                 child: const DefaultLoadingIndicator(
+  //                   color: AppColor.defaultPurpleColor,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _buildDownloadAgain() {
     return Consumer<SimulatorTestProvider>(

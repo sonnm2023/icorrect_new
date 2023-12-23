@@ -31,9 +31,6 @@ class SimulatorTestProvider with ChangeNotifier {
   int get timeRecordCounting => _timeRecordCounting;
   void setTimeRecordCounting(int count) {
     _timeRecordCounting = count;
-    if (!isDisposed) {
-      notifyListeners();
-    }
   }
 
   bool _visibleCameraLive = true;

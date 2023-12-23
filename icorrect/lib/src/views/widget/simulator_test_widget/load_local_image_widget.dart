@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:provider/provider.dart';
 
 class LoadLocalImageWidget extends StatefulWidget {
   final String imageUrl;
@@ -40,33 +38,7 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
       StringConstants.load_image_error_message,
     );
 
-    return Consumer<SimulatorTestProvider>(
-      builder: (context, provider, child) {
-        if (provider.isVisibleSaveTheTest ||
-            provider.submitStatus == SubmitStatus.success) {
-          return _buildImageWidget(loadImageErrorMessage);
-        } else {
-          if (localImagePath == null) {
-            return SizedBox(
-              child: Text(loadImageErrorMessage),
-            );
-          }
-
-          if (widget.isInRow) {
-            return SizedBox(
-              width: 50,
-              height: 50,
-              child: Image.file(
-                File(localImagePath!),
-                fit: BoxFit.fitHeight,
-              ),
-            );
-          } else {
-            return _buildImageWidget(loadImageErrorMessage);
-          }
-        }
-      },
-    );
+    return _buildImageWidget(loadImageErrorMessage);
   }
 
   Widget _buildImageWidget(String messageLoadImg) {
@@ -74,7 +46,8 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
       return FutureBuilder<void>(
         future: _getLocalImagePath(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.hasError) {
             return const SizedBox(
               width: 15,
               height: 15,
@@ -85,8 +58,6 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
                 ),
               ),
             );
-          } else if (snapshot.hasError) {
-            return Text(messageLoadImg);
           } else {
             return SizedBox(
               width: 50,

@@ -2390,7 +2390,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _simulatorTestProvider!.setTimeRecordCounting(timeCounting);
       }
       _timerProvider!.setCountDown(countDownString);
-      _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
+      if (_simulatorTestProvider!.isLessThan2Second) {
+        _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
+      }
     }
   }
 
