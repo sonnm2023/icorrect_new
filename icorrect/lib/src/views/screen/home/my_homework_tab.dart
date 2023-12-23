@@ -8,7 +8,6 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
@@ -134,110 +133,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       context: context,
       isDismissible: true,
       builder: (BuildContext context) {
-        return SizedBox(
-          height: CustomSize.size_400,
-          child: _buildFilterBottomSheet(),
-        );
+        return FilterContentWidget(homeWorkProvider: widget.homeWorkProvider);
       },
-    );
-  }
-
-  Widget _buildFilterBottomSheet() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Expanded(
-          child: FilterContentWidget(homeWorkProvider: widget.homeWorkProvider),
-        ),
-        _buildButtons(),
-      ],
-    );
-  }
-
-  Widget _buildButtons() {
-    double w = MediaQuery.of(context).size.width / 2;
-
-    return Row(
-      children: [
-        Container(
-          height: CustomSize.size_50,
-          width: w,
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: AppColor.defaultGraySlightColor,
-                width: 1,
-              ),
-              right: BorderSide(
-                color: AppColor.defaultGraySlightColor,
-                width: 1,
-              ),
-            ),
-          ),
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Center(
-              child: Text(
-                Utils.multiLanguage(StringConstants.close_button_title),
-                style: CustomTextStyle.textWithCustomInfo(
-                  context: context,
-                  color: AppColor.defaultGrayColor,
-                  fontsSize: FontsSize.fontSize_14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-        Container(
-          height: CustomSize.size_50,
-          width: w,
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: AppColor.defaultGraySlightColor,
-                width: 1,
-              ),
-            ),
-          ),
-          child: InkWell(
-            onTap: () {
-              bool isValid = widget.homeWorkProvider.checkFilterSelected();
-              widget.homeWorkProvider.setProcessingStatus(isProcessing: true);
-              if (isValid) {
-                widget.homeWorkProvider.filterHomeWork(context);
-                Navigator.pop(context);
-              } else {
-                widget.homeWorkProvider
-                    .setProcessingStatus(isProcessing: false);
-                widget.homeWorkProvider.updateFilterString(
-                    Utils.multiLanguage(StringConstants.default_filter_title));
-                showToastMsg(
-                  msg: Utils.multiLanguage(
-                      StringConstants.choose_filter_message),
-                  toastState: ToastStatesType.warning,
-                  isCenter: true,
-                );
-              }
-            },
-            child: Center(
-              child: Text(
-                Utils.multiLanguage(StringConstants.done_button_title),
-                style: CustomTextStyle.textWithCustomInfo(
-                  context: context,
-                  color: AppColor.defaultPurpleColor,
-                  fontsSize: FontsSize.fontSize_14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
