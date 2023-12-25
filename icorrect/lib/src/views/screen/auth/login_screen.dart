@@ -268,6 +268,8 @@ class _LoginScreenState extends State<LoginScreen>
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
         _authProvider.updateProcessingStatus(isProcessing: false);
+        _hideLoading();
+
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => HomeWorkScreen(),
@@ -343,6 +345,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _finishLoginWithError(String message) {
     _authProvider.updateProcessingStatus(isProcessing: false);
+    _hideLoading();
+
     if (message == StringConstants.email_or_password_wrong_message) {
       message = Utils.multiLanguage(message);
     }
@@ -353,9 +357,15 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  void _hideLoading() {
+    if (_loading == null) return;
+    _loading!.hide();
+  }
+
   @override
   void onLoginComplete() {
     _authProvider.updateProcessingStatus(isProcessing: false);
+    _hideLoading();
 
     _resetTextFieldControllers();
 
