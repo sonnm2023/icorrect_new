@@ -1790,7 +1790,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _redownload() async {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
-    _simulatorTestProvider!.setIsReDownload(true);
     _setVisibleRecord(false, null, null);
 
     if (null != _videoPlayerController) {
@@ -2685,6 +2684,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onReDownload() {
+    _isReDownload = true;
+    _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
     _simulatorTestProvider!.setNeedDownloadAgain(true);
   }
 
