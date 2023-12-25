@@ -3,9 +3,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:video_compress/video_compress.dart';
 
-import '../models/auth_models/topic_id.dart';
-// import 'package:video_compress/video_compress.dart';
-
 class AuthProvider with ChangeNotifier {
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
@@ -71,10 +68,9 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
 
 ////////////////////////////////////////////////////////////////////////////////
-  Queue<GlobalKey<ScaffoldState>> _scaffoldKeys = Queue();
+  final Queue<GlobalKey<ScaffoldState>> _scaffoldKeys = Queue();
   Queue<GlobalKey<ScaffoldState>> get scaffoldKeys => _scaffoldKeys;
   void setQueueScaffoldKeys(GlobalKey<ScaffoldState> key,
       {Queue<GlobalKey<ScaffoldState>>? scaffoldKeys}) {
