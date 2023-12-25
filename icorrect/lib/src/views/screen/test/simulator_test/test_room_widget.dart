@@ -820,7 +820,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
               _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
               _isReDownload == false &&
-              _simulatorTestProvider!.visibleRecord == false) {
+              _simulatorTestProvider!.visibleRecord == false &&
+              _simulatorTestProvider!.needDownloadAgain == false) {
             _videoPlayerController!.play();
           } else if (_simulatorTestProvider!.visibleRecord == true) {
             _reRecordAnswer();
@@ -1789,7 +1790,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _redownload() async {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
-    _simulatorTestProvider!.setIsReDownload(true);
     _setVisibleRecord(false, null, null);
 
     if (null != _videoPlayerController) {
@@ -2686,6 +2686,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onReDownload() {
+    _isReDownload = true;
+    _simulatorTestProvider!.setPlayingIndexWhenReDownload(_playingIndex);
     _simulatorTestProvider!.setNeedDownloadAgain(true);
   }
 
