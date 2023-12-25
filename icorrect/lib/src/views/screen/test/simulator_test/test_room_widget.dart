@@ -820,7 +820,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
               _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
               _isReDownload == false &&
-              _simulatorTestProvider!.visibleRecord == false) {
+              _simulatorTestProvider!.visibleRecord == false &&
+              _simulatorTestProvider!.needDownloadAgain == false) {
             _videoPlayerController!.play();
           } else if (_simulatorTestProvider!.visibleRecord == true) {
             _reRecordAnswer();
