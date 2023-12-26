@@ -67,7 +67,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
   Record? _recordController;
-  late FlutterSoundRecorder _recorder;
+  // FlutterSoundRecorder? _flutterSoundRecorder;
   CameraService? _cameraService;
 
   Timer? _countDown;
@@ -100,11 +100,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _audioPlayerController = AudioPlayers.AudioPlayer();
 
-    if (Platform.isIOS) {
-      _recordController = Record();
-    } else {
-      _recorder = FlutterSoundRecorder();
-    }
+    //TODO
+    // if (Platform.isIOS) {
+    //   _recordController = Record();
+    // } else {
+    //   _flutterSoundRecorder = FlutterSoundRecorder();
+    // }
+    _recordController = Record();
 
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
@@ -707,19 +709,26 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         int numPart = _simulatorTestProvider!.currentQuestion.numPart;
 
         //TODO
-        if (Platform.isIOS) {
-          if (numPart == PartOfTest.part2.get &&
-              await _recordController!.isRecording()) {
-            _recordController!.pause();
-          } else {
-            _recordController!.stop();
-          }
+        // if (Platform.isIOS) {
+        //   if (numPart == PartOfTest.part2.get &&
+        //       await _recordController!.isRecording()) {
+        //     _recordController!.pause();
+        //   } else {
+        //     _recordController!.stop();
+        //   }
+        // } else {
+        //   if (numPart == PartOfTest.part2.get &&
+        //       _flutterSoundRecorder!.isRecording) {
+        //     _flutterSoundRecorder!.pauseRecorder();
+        //   } else {
+        //     _stopRecord();
+        //   }
+        // }
+        if (numPart == PartOfTest.part2.get &&
+            await _recordController!.isRecording()) {
+          _recordController!.pause();
         } else {
-          if (numPart == PartOfTest.part2.get && _recorder.isRecording) {
-            _recorder.pauseRecorder();
-          } else {
-            _stopRecord();
-          }
+          _recordController!.stop();
         }
 
         if (null != _countDown) {
@@ -1822,25 +1831,30 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _stopRecord() async {
-    if (Platform.isIOS) {
-      String? path = await _recordController!.stop(); //TODO
-      if (kDebugMode) {
-        print("DEBUG: RECORD FILE PATH: $path");
-      }
-    } else {
-      if (_recorder.isRecording) {
-        String? recordFilePath = await _recorder.stopRecorder();
-        await _recorder.closeRecorder();
-        if (recordFilePath != null) {
-          if (kDebugMode) {
-            print("DEBUG: recordFilePath: $recordFilePath");
-          }
-        } else {
-          if (kDebugMode) {
-            print("DEBUG: recordFilePath: FAIL");
-          }
-        }
-      }
+    //TODO
+    // if (Platform.isIOS) {
+    //   String? path = await _recordController!.stop();
+    //   if (kDebugMode) {
+    //     print("DEBUG: RECORD FILE PATH: $path");
+    //   }
+    // } else {
+    //   if (_flutterSoundRecorder!.isRecording) {
+    //     String? recordFilePath = await _flutterSoundRecorder!.stopRecorder();
+    //     await _flutterSoundRecorder!.closeRecorder();
+    //     if (recordFilePath != null) {
+    //       if (kDebugMode) {
+    //         print("DEBUG: recordFilePath: $recordFilePath");
+    //       }
+    //     } else {
+    //       if (kDebugMode) {
+    //         print("DEBUG: recordFilePath: FAIL");
+    //       }
+    //     }
+    //   }
+    // }
+    String? path = await _recordController!.stop();
+    if (kDebugMode) {
+      print("DEBUG: RECORD FILE PATH: $path");
     }
   }
 
@@ -1870,23 +1884,30 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
     try {
-      if (Platform.isIOS) {
-        await _recordController!.start(
-          path: path,
-          encoder:
-              Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-          bitRate: 128000,
-          samplingRate: 44100,
-        );
-      } else {
-        await _recorder.openRecorder();
-        await _recorder.startRecorder(
-          codec: Codec.pcm16WAV,
-          toFile: path,
-          sampleRate: 44100,
-          bitRate: 128000,
-        );
-      }
+      //TODO
+      // if (Platform.isIOS) {
+      //   await _recordController!.start(
+      //     path: path,
+      //     encoder:
+      //         Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+      //     bitRate: 128000,
+      //     samplingRate: 44100,
+      //   );
+      // } else {
+      //   await _flutterSoundRecorder!.openRecorder();
+      //   await _flutterSoundRecorder!.startRecorder(
+      //     codec: Codec.pcm16WAV,
+      //     toFile: path,
+      //     sampleRate: 44100,
+      //     bitRate: 128000,
+      //   );
+      // }
+      await _recordController!.start(
+        path: path,
+        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
 
       List<FileTopicModel> temp = _currentQuestion!.answers;
       if (!_checkAnswerFileExist(newFileName, temp)) {
@@ -1928,22 +1949,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: RECORD AS FILE PATH: $path");
     }
 
-    if (Platform.isIOS) {
-      await _recordController!.start(
-        path: path,
-        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
-    } else {
-      await _recorder.openRecorder();
-      await _recorder.startRecorder(
-        codec: Codec.pcm16WAV,
-        toFile: path,
-        sampleRate: 44100,
-        bitRate: 128000,
-      );
-    }
+    //TODO
+    // if (Platform.isIOS) {
+    //   await _recordController!.start(
+    //     path: path,
+    //     encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+    //     bitRate: 128000,
+    //     samplingRate: 44100,
+    //   );
+    // } else {
+    //   await _flutterSoundRecorder!.openRecorder();
+    //   await _flutterSoundRecorder!.startRecorder(
+    //     codec: Codec.pcm16WAV,
+    //     toFile: path,
+    //     sampleRate: 44100,
+    //     bitRate: 128000,
+    //   );
+    // }
+    await _recordController!.start(
+      path: path,
+      encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+      bitRate: 128000,
+      samplingRate: 44100,
+    );
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
@@ -2302,14 +2330,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _countDown!.cancel();
       }
 
-      if (Platform.isIOS) {
-        if (await _recordController!.isPaused()) {
-          _recordController!.resume();
-        }
-      } else {
-        if (_recorder.isPaused) {
-          _recorder.resumeRecorder();
-        }
+      //TODO
+      // if (Platform.isIOS) {
+      //   if (await _recordController!.isPaused()) {
+      //     _recordController!.resume();
+      //   }
+      // } else {
+      //   if (_flutterSoundRecorder!.isPaused) {
+      //     _flutterSoundRecorder!.resumeRecorder();
+      //   }
+      // }
+      if (await _recordController!.isPaused()) {
+        _recordController!.resume();
       }
 
       _simulatorTestProvider!.setIsLessThan2Second(true);
@@ -2753,12 +2785,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     Utils.sendLog();
 
     Fluttertoast.showToast(
-        msg: msg,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        gravity: ToastGravity.CENTER,
-        fontSize: 18,
-        toastLength: Toast.LENGTH_LONG);
+      msg: msg,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      gravity: ToastGravity.CENTER,
+      fontSize: 18,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 
   @override
@@ -2786,5 +2819,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void onUpdateHasOrderStatus(bool hasOrder) {
     _simulatorTestProvider!.setHasOrderStatus(hasOrder);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    //TODO
+    // properties.add(DiagnosticsProperty<FlutterSoundRecorder>(
+    //     '_flutterSoundRecorder', _flutterSoundRecorder));
+    properties.add(
+        DiagnosticsProperty<Record>('_recordController', _recordController));
   }
 }
