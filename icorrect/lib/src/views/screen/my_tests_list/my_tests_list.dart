@@ -51,9 +51,12 @@ class _MyTestsListState extends State<MyTestsList>
     int pageNum = 1;
     _loading!.show(context: context, isViewAIResponse: false);
     _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: false);
-    Future.delayed(Duration.zero, () {
-      _myTestsListProvider!.setPageNum(pageNum);
-    });
+    Future.delayed(
+      Duration.zero,
+      () {
+        _myTestsListProvider!.setPageNum(pageNum);
+      },
+    );
   }
 
   @override
@@ -66,7 +69,7 @@ class _MyTestsListState extends State<MyTestsList>
         top: true,
         right: true,
         bottom: true,
-        child: Container(
+        child: SizedBox(
           width: w,
           height: h,
           child: Stack(
@@ -76,11 +79,11 @@ class _MyTestsListState extends State<MyTestsList>
                 child: _buildMainScreen(),
               ),
               _loadingBottom(),
-              Container(
-                alignment: Alignment.bottomRight,
-                margin: const EdgeInsets.all(15),
-                child: _languageSelectionButton(),
-              )
+              // Container(
+              //   alignment: Alignment.bottomRight,
+              //   margin: const EdgeInsets.all(15),
+              //   child: _languageSelectionButton(),
+              // )
             ],
           ),
         ),
@@ -104,7 +107,7 @@ class _MyTestsListState extends State<MyTestsList>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => BankDetailList(),
+                builder: (_) => const BankDetailList(),
               ),
             );
           },
@@ -131,19 +134,21 @@ class _MyTestsListState extends State<MyTestsList>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => BankDetailList(),
+                builder: (_) => const BankDetailList(),
               ),
             );
           },
           child: Container(
             margin: const EdgeInsets.all(5),
             color: Colors.orange,
-            child: const Text("IELTS",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                )),
+            child: const Text(
+              "IELTS",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           backgroundColor: Colors.orange,
           labelWidget: Container(
@@ -199,11 +204,12 @@ class _MyTestsListState extends State<MyTestsList>
         ),
         const CustomDivider(),
         const SizedBox(height: 20),
-        Consumer<MyTestsListProvider>(builder: (context, provider, child) {
-          return Container(
-            height: h,
-            padding: const EdgeInsets.only(bottom: 150),
-            child: NotificationListener<ScrollEndNotification>(
+        Consumer<MyTestsListProvider>(
+          builder: (context, provider, child) {
+            return Container(
+              height: h,
+              padding: const EdgeInsets.only(bottom: 150),
+              child: NotificationListener<ScrollEndNotification>(
                 onNotification: (scrollEnd) {
                   final metrics = scrollEnd.metrics;
                   if (metrics.atEdge) {
@@ -222,21 +228,24 @@ class _MyTestsListState extends State<MyTestsList>
                   return false;
                 },
                 child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: provider.myTestsList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      MyPracticeTestModel myTestModel =
-                          provider.myTestsList[index];
-                      return InkWell(
-                        onTap: () {
-                          _onClickToTestDetail(myTestModel);
-                        },
-                        child: _myTestItem(myTestModel, index),
-                      );
-                    })),
-          );
-        })
+                  shrinkWrap: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: provider.myTestsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    MyPracticeTestModel myTestModel =
+                        provider.myTestsList[index];
+                    return InkWell(
+                      onTap: () {
+                        _onClickToTestDetail(myTestModel);
+                      },
+                      child: _myTestItem(myTestModel, index),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        )
       ],
     );
   }
@@ -343,40 +352,48 @@ class _MyTestsListState extends State<MyTestsList>
   }
 
   Widget _loadingBottom() {
-    return Consumer<MyTestsListProvider>(builder: (context, provider, child) {
-      return Visibility(
+    return Consumer<MyTestsListProvider>(
+      builder: (context, provider, child) {
+        return Visibility(
           visible: provider.showLoadingBottom,
-          child: Container(
-            color: Colors.white,
-            height: 50,
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 4,
-                      backgroundColor: AppColor.defaultLightGrayColor,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColor.defaultPurpleColor,
-                      ),
-                    )),
-                const SizedBox(width: 10),
-                Text(
-                  "${Utils.multiLanguage(StringConstants.loading_title)}....",
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultPurpleColor,
-                    fontsSize: FontsSize.fontSize_15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
+          child: Positioned(
+            left: 0,
+            bottom: 0,
+            right: 0,
+            child: Container(
+              color: Colors.white,
+              height: 50,
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 4,
+                        backgroundColor: AppColor.defaultLightGrayColor,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColor.defaultPurpleColor,
+                        ),
+                      )),
+                  const SizedBox(width: 10),
+                  Text(
+                    "${Utils.multiLanguage(StringConstants.loading_title)}....",
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ));
-    });
+          ),
+        );
+      },
+    );
   }
 
   void _startLoadMoreData() {
