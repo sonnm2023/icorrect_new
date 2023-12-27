@@ -1,26 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
-import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/provider/my_tests_list_provider.dart';
 import 'package:icorrect/src/views/screen/bank_list/bank_detail_list.dart';
 import 'package:icorrect/src/views/screen/my_tests_list/my_practice_test_detail.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../core/app_asset.dart';
-import '../../../../core/app_color.dart';
-import '../../../data_sources/constant_methods.dart';
-import '../../../data_sources/constants.dart';
-import '../../../data_sources/utils.dart';
-import '../../../provider/my_tests_list_provider.dart';
-import '../other_views/dialog/custom_alert_dialog.dart';
-import '../other_views/dialog/message_dialog.dart';
 
 class MyTestsList extends StatefulWidget {
   const MyTestsList({super.key});
@@ -51,9 +46,12 @@ class _MyTestsListState extends State<MyTestsList>
     int pageNum = 1;
     _loading!.show(context: context, isViewAIResponse: false);
     _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: false);
-    Future.delayed(Duration.zero, () {
-      _myTestsListProvider!.setPageNum(pageNum);
-    });
+    Future.delayed(
+      Duration.zero,
+      () {
+        _myTestsListProvider!.setPageNum(pageNum);
+      },
+    );
   }
 
   @override
@@ -66,7 +64,7 @@ class _MyTestsListState extends State<MyTestsList>
         top: true,
         right: true,
         bottom: true,
-        child: Container(
+        child: SizedBox(
           width: w,
           height: h,
           child: Stack(
@@ -104,7 +102,7 @@ class _MyTestsListState extends State<MyTestsList>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => BankDetailList(),
+                builder: (_) => const BankDetailList(),
               ),
             );
           },
@@ -131,7 +129,7 @@ class _MyTestsListState extends State<MyTestsList>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => BankDetailList(),
+                builder: (_) => const BankDetailList(),
               ),
             );
           },
@@ -199,11 +197,12 @@ class _MyTestsListState extends State<MyTestsList>
         ),
         const CustomDivider(),
         const SizedBox(height: 20),
-        Consumer<MyTestsListProvider>(builder: (context, provider, child) {
-          return Container(
-            height: h,
-            padding: const EdgeInsets.only(bottom: 150),
-            child: NotificationListener<ScrollEndNotification>(
+        Consumer<MyTestsListProvider>(
+          builder: (context, provider, child) {
+            return Container(
+              height: h,
+              padding: const EdgeInsets.only(bottom: 150),
+              child: NotificationListener<ScrollEndNotification>(
                 onNotification: (scrollEnd) {
                   final metrics = scrollEnd.metrics;
                   if (metrics.atEdge) {
@@ -222,21 +221,24 @@ class _MyTestsListState extends State<MyTestsList>
                   return false;
                 },
                 child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: provider.myTestsList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      MyPracticeTestModel myTestModel =
-                          provider.myTestsList[index];
-                      return InkWell(
-                        onTap: () {
-                          _onClickToTestDetail(myTestModel);
-                        },
-                        child: _myTestItem(myTestModel, index),
-                      );
-                    })),
-          );
-        })
+                  shrinkWrap: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: provider.myTestsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    MyPracticeTestModel myTestModel =
+                        provider.myTestsList[index];
+                    return InkWell(
+                      onTap: () {
+                        _onClickToTestDetail(myTestModel);
+                      },
+                      child: _myTestItem(myTestModel, index),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        )
       ],
     );
   }
@@ -343,40 +345,48 @@ class _MyTestsListState extends State<MyTestsList>
   }
 
   Widget _loadingBottom() {
-    return Consumer<MyTestsListProvider>(builder: (context, provider, child) {
-      return Visibility(
+    return Consumer<MyTestsListProvider>(
+      builder: (context, provider, child) {
+        return Visibility(
           visible: provider.showLoadingBottom,
-          child: Container(
-            color: Colors.white,
-            height: 50,
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 4,
-                      backgroundColor: AppColor.defaultLightGrayColor,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColor.defaultPurpleColor,
-                      ),
-                    )),
-                const SizedBox(width: 10),
-                Text(
-                  "${Utils.multiLanguage(StringConstants.loading_title)}....",
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultPurpleColor,
-                    fontsSize: FontsSize.fontSize_15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
+          child: Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              color: Colors.white,
+              height: 50,
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 4,
+                        backgroundColor: AppColor.defaultLightGrayColor,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColor.defaultPurpleColor,
+                        ),
+                      )),
+                  const SizedBox(width: 10),
+                  Text(
+                    "${Utils.multiLanguage(StringConstants.loading_title)}....",
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ));
-    });
+          ),
+        );
+      },
+    );
   }
 
   void _startLoadMoreData() {
@@ -390,9 +400,12 @@ class _MyTestsListState extends State<MyTestsList>
         _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: true);
         _myTestsListProvider!.setPageNum(pageNum);
       } else {
-        Future.delayed(const Duration(seconds: 1), () {
-          _myTestsListProvider!.setShowLoadingBottom(false);
-        });
+        Future.delayed(
+          const Duration(seconds: 1),
+          () {
+            _myTestsListProvider!.setShowLoadingBottom(false);
+          },
+        );
       }
       _myTestsListProvider!.setShowLoadingBottom(true);
     }
