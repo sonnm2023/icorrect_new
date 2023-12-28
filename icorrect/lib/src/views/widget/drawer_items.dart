@@ -182,30 +182,30 @@ Widget navbarItems({
         },
       ),
       //For test rating
-      ListTile(
-        title: Text(
-          "Rating",
-          style: CustomTextStyle.textWithCustomInfo(
-            context: context,
-            color: AppColor.defaultGrayColor,
-            fontsSize: FontsSize.fontSize_15,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        leading: const Icon(
-          Icons.language,
-          color: AppColor.defaultGrayColor,
-        ),
-        onTap: () {
-          Utils.toggleDrawer();
+      // ListTile(
+      //   title: Text(
+      //     "Rating",
+      //     style: CustomTextStyle.textWithCustomInfo(
+      //       context: context,
+      //       color: AppColor.defaultGrayColor,
+      //       fontsSize: FontsSize.fontSize_15,
+      //       fontWeight: FontWeight.w400,
+      //     ),
+      //   ),
+      //   leading: const Icon(
+      //     Icons.language,
+      //     color: AppColor.defaultGrayColor,
+      //   ),
+      //   onTap: () {
+      //     Utils.toggleDrawer();
 
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const RatingWidget(),
-            ),
-          );
-        },
-      ),
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(
+      //         builder: (context) => const RatingWidget(),
+      //       ),
+      //     );
+      //   },
+      // ),
       ListTile(
         title: Text(
           Utils.multiLanguage(

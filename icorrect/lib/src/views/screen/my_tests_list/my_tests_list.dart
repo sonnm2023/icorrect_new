@@ -73,11 +73,11 @@ class _MyTestsListState extends State<MyTestsList>
                 physics: const NeverScrollableScrollPhysics(),
                 child: _buildMainScreen(),
               ),
-              _loadingBottom(),
+              _buildLoadmore(),
               Container(
                 alignment: Alignment.bottomRight,
                 margin: const EdgeInsets.all(15),
-                child: _languageSelectionButton(),
+                child: _buildShowingListBankButton(),
               )
             ],
           ),
@@ -86,7 +86,7 @@ class _MyTestsListState extends State<MyTestsList>
     );
   }
 
-  Widget _languageSelectionButton() {
+  Widget _buildShowingListBankButton() {
     return SpeedDial(
       backgroundColor: AppColor.defaultYellowColor,
       overlayColor: Colors.black,
@@ -136,12 +136,14 @@ class _MyTestsListState extends State<MyTestsList>
           child: Container(
             margin: const EdgeInsets.all(5),
             color: Colors.orange,
-            child: const Text("IELTS",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                )),
+            child: const Text(
+              "IELTS",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           backgroundColor: Colors.orange,
           labelWidget: Container(
@@ -344,7 +346,7 @@ class _MyTestsListState extends State<MyTestsList>
     );
   }
 
-  Widget _loadingBottom() {
+  Widget _buildLoadmore() {
     return Consumer<MyTestsListProvider>(
       builder: (context, provider, child) {
         return Visibility(
