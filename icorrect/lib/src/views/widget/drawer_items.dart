@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/my_tests_list_provider.dart';
+import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/my_tests_list/my_tests_list.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
+import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
 import 'package:icorrect/src/views/widget/rating_widget.dart';
 import 'package:provider/provider.dart';
-import '../../data_sources/constants.dart';
-import '../../data_sources/utils.dart';
-import '../../provider/homework_provider.dart';
-import '../screen/auth/change_password_screen.dart';
-import '../screen/practice/practice_screen.dart';
 
 Widget navbarItems({
   required BuildContext context,
