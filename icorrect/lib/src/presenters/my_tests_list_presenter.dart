@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/repositories/practice_repository.dart';
+import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import '../data_sources/constants.dart';
 import '../data_sources/dependency_injection.dart';
 import '../models/my_practice_test_model/my_practice_response_model.dart';
@@ -13,6 +14,8 @@ abstract class MyTestsListConstract {
   void getMyTestListFail(String message);
   void deleteTestSuccess(String message, int indexDeleted);
   void deleteTestFail(String message);
+  void getBankListSuccess(List<BankModel> banks);
+  void getBankListFail(String message);
 }
 
 class MyTestsListPresenter {
@@ -63,5 +66,32 @@ class MyTestsListPresenter {
     }).catchError((error) {
       _view!.deleteTestFail(StringConstants.common_error_message);
     });
+  }
+
+  Future getBankList() async {
+    assert(_view != null && _repository != null);
+    _repository!.getBankList().then((value) async {
+      if (kDebugMode) {
+        print("DEBUG:getBankList: $value ");
+      }
+      Map<String, dynamic> dataMap = jsonDecode(value);
+      if (dataMap[StringConstants.k_error_code] == 200) {
+        List<BankModel> banks = await _generateList(dataMap["data"]);
+        _view!.getBankListSuccess(banks);
+      } else {
+        _view!.getBankListFail(StringConstants.common_error_message);
+      }
+    }).catchError((error) {
+      _view!.getBankListFail(StringConstants.common_error_message);
+    });
+  }
+
+  Future<List<BankModel>> _generateList(List<dynamic> data) async {
+    List<BankModel> temp = [];
+    for (int i = 0; i < data.length; i++) {
+      BankModel item = BankModel.fromJson(data[i]);
+      temp.add(item);
+    }
+    return temp;
   }
 }

@@ -5,6 +5,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
@@ -40,18 +41,24 @@ class _MyTestsListState extends State<MyTestsList>
         Provider.of<MyTestsListProvider>(context, listen: false);
 
     _getMyTestsList();
+    _getBankList();
   }
 
   void _getMyTestsList() {
     int pageNum = 1;
     _loading!.show(context: context, isViewAIResponse: false);
     _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: false);
+
     Future.delayed(
       Duration.zero,
       () {
         _myTestsListProvider!.setPageNum(pageNum);
       },
     );
+  }
+
+  void _getBankList() {
+    _presenter!.getBankList();
   }
 
   @override
@@ -69,16 +76,9 @@ class _MyTestsListState extends State<MyTestsList>
           height: h,
           child: Stack(
             children: [
-              SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: _buildMainScreen(),
-              ),
+              _buildMainScreen(),
               _buildLoadmore(),
-              Container(
-                alignment: Alignment.bottomRight,
-                margin: const EdgeInsets.all(15),
-                child: _buildShowingListBankButton(),
-              )
+              _buildBankListButton(),
             ],
           ),
         ),
@@ -86,205 +86,215 @@ class _MyTestsListState extends State<MyTestsList>
     );
   }
 
-  Widget _buildShowingListBankButton() {
-    return SpeedDial(
-      backgroundColor: AppColor.defaultYellowColor,
-      overlayColor: Colors.black,
-      overlayOpacity: 0.6,
-      spaceBetweenChildren: 10,
-      activeBackgroundColor: AppColor.defaultYellowColor,
-      activeIcon: Icons.close,
-      foregroundColor: Colors.white,
-      children: [
-        SpeedDialChild(
-          shape: const CircleBorder(),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const BankDetailList(),
-              ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.all(5),
-            color: Colors.green,
-            child: const Icon(Icons.book_outlined, color: Colors.white),
+  Widget _buildBankListButton() {
+    return Consumer<MyTestsListProvider>(builder: (context, provider, child) {
+      return Visibility(
+        visible: provider.banks.isNotEmpty,
+        child: Container(
+          alignment: Alignment.bottomRight,
+          margin: const EdgeInsets.all(15),
+          child: SpeedDial(
+            backgroundColor: AppColor.defaultYellowColor,
+            overlayColor: Colors.black,
+            overlayOpacity: 0.6,
+            spaceBetweenChildren: 10,
+            activeBackgroundColor: AppColor.defaultYellowColor,
+            activeIcon: Icons.close,
+            foregroundColor: Colors.white,
+            children: _generateBankListUI(),
+            child: const Icon(Icons.menu_rounded, color: Colors.white),
           ),
-          backgroundColor: Colors.green,
-          labelWidget: Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: const Text(
-              "Lớp 7 Global Success",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+        ),
+      );
+    });
+  }
+
+  void _gotoBankDetailWithId(int bankId) {
+    if (kDebugMode) {
+      print("DEBUG: you choosed bank id = $bankId");
+    }
+
+    //TODO:
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => const BankDetailList(),
+    //   ),
+    // );
+  }
+
+  List<SpeedDialChild> _generateBankListUI() {
+    if (_myTestsListProvider!.banks.isEmpty) return [];
+
+    List<SpeedDialChild> list = [];
+    for (int i = 0; i < _myTestsListProvider!.banks.length; i++) {
+      BankModel bank = _myTestsListProvider!.banks[i];
+
+      SpeedDialChild temp = SpeedDialChild(
+        shape: const CircleBorder(),
+        onTap: () {
+          _gotoBankDetailWithId(bank.id!);
+        },
+        child: Container(
+          margin: const EdgeInsets.all(5),
+          child: Text(
+            "#${bank.id!.toString()}",
+            style: const TextStyle(
+              fontSize: 15,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        SpeedDialChild(
-          shape: const CircleBorder(),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const BankDetailList(),
-              ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.all(5),
-            color: Colors.orange,
-            child: const Text(
-              "IELTS",
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+        backgroundColor: i % 2 != 0 ? Colors.orange : Colors.green,
+        labelWidget: Container(
+          margin: const EdgeInsets.only(right: 10),
+          child: Text(
+            bank.title != null ? bank.title! : "",
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor: Colors.orange,
-          labelWidget: Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: const Text(
-              "IELTS Bank",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-            ),
-          ),
-        )
-      ],
-      child: const Icon(Icons.menu_rounded, color: Colors.white),
-    );
+        ),
+      );
+
+      list.add(temp);
+    }
+    return list;
   }
 
   Widget _buildMainScreen() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 10),
-          padding: const EdgeInsets.all(10),
-          child: Stack(
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_outlined,
-                    color: AppColor.defaultPurpleColor,
-                    size: 25,
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.all(10),
+            child: Stack(
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Icon(
+                      Icons.arrow_back_outlined,
+                      color: AppColor.defaultPurpleColor,
+                      size: 25,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                child: Text(
-                  Utils.multiLanguage(StringConstants.my_test_title),
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultPurpleColor,
-                    fontsSize: FontsSize.fontSize_18,
-                    fontWeight: FontWeight.w800,
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    Utils.multiLanguage(StringConstants.my_test_title),
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
+                      color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_18,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
-        ),
-        const CustomDivider(),
-        const SizedBox(height: 20),
-        Consumer<MyTestsListProvider>(
-          builder: (context, provider, child) {
-            return Container(
-              height: h,
-              padding: const EdgeInsets.only(bottom: 150),
-              child: NotificationListener<ScrollEndNotification>(
-                onNotification: (scrollEnd) {
-                  final metrics = scrollEnd.metrics;
-                  if (metrics.atEdge) {
-                    bool isTop = metrics.pixels == 0;
-                    if (isTop) {
-                      if (kDebugMode) {
-                        print("DEBUG :Scroll To Top");
-                      }
-                    } else {
-                      _startLoadMoreData();
-                      if (kDebugMode) {
-                        print("DEBUG :Scroll To Bottom");
+          const CustomDivider(),
+          const SizedBox(height: 20),
+          Consumer<MyTestsListProvider>(
+            builder: (context, provider, child) {
+              return Container(
+                height: h,
+                padding: const EdgeInsets.only(bottom: 150),
+                child: NotificationListener<ScrollEndNotification>(
+                  onNotification: (scrollEnd) {
+                    final metrics = scrollEnd.metrics;
+                    if (metrics.atEdge) {
+                      bool isTop = metrics.pixels == 0;
+                      if (isTop) {
+                        if (kDebugMode) {
+                          print("DEBUG :Scroll To Top");
+                        }
+                      } else {
+                        _startLoadMoreData();
+                        if (kDebugMode) {
+                          print("DEBUG :Scroll To Bottom");
+                        }
                       }
                     }
-                  }
-                  return false;
-                },
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: provider.myTestsList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    MyPracticeTestModel myTestModel =
-                        provider.myTestsList[index];
-                    return InkWell(
-                      onTap: () {
-                        _onClickToTestDetail(myTestModel);
-                      },
-                      child: _myTestItem(myTestModel, index),
-                    );
+                    return false;
                   },
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: provider.myTestsList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      MyPracticeTestModel myTestModel =
+                          provider.myTestsList[index];
+                      return InkWell(
+                        onTap: () {
+                          _onClickToTestDetail(myTestModel);
+                        },
+                        child: _myTestItem(myTestModel, index),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            );
-          },
-        )
-      ],
+              );
+            },
+          )
+        ],
+      ),
     );
   }
 
   Widget _myTestItem(MyPracticeTestModel myTestModel, int index) {
     Map<String, String> dataString = _getMyTestItem(myTestModel.type);
+    String title = Utils.generateTitle(myTestModel);
+
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-          border: Border.all(color: AppColor.defaultPurpleColor, width: 1),
-          borderRadius: BorderRadius.circular(10)),
+        border: Border.all(color: AppColor.defaultPurpleColor, width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Container(
-                width: CustomSize.size_50,
-                height: CustomSize.size_50,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2.0,
-                    color: AppColor.defaultPurpleColor,
-                  ),
-                  borderRadius: BorderRadius.circular(CustomSize.size_100),
-                ),
-                child: Text(
-                  dataString[StringConstants.k_data] ?? "I",
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultPurpleColor,
-                    fontsSize: FontsSize.fontSize_16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
+              // Container(
+              //   width: CustomSize.size_50,
+              //   height: CustomSize.size_50,
+              //   alignment: Alignment.center,
+              //   decoration: BoxDecoration(
+              //     border: Border.all(
+              //       width: 2.0,
+              //       color: AppColor.defaultPurpleColor,
+              //     ),
+              //     borderRadius: BorderRadius.circular(CustomSize.size_100),
+              //   ),
+              //   child: Text(
+              //     dataString[StringConstants.k_data] ?? "I",
+              //     style: CustomTextStyle.textWithCustomInfo(
+              //       context: context,
+              //       color: AppColor.defaultPurpleColor,
+              //       fontsSize: FontsSize.fontSize_16,
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    dataString[StringConstants.k_title] ?? "",
+                    title,
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
                       color: AppColor.defaultPurpleColor,
@@ -295,8 +305,11 @@ class _MyTestsListState extends State<MyTestsList>
                   const SizedBox(height: 5),
                   Row(
                     children: [
-                      const Icon(Icons.av_timer, color: Colors.red),
-                      const SizedBox(width: 5),
+                      const Icon(
+                        Icons.access_time,
+                        color: AppColor.defaultGrayColor,
+                      ),
+                      const SizedBox(width: 1),
                       Text(
                         "00:0${myTestModel.duration}",
                         style: CustomTextStyle.textWithCustomInfo(
@@ -535,5 +548,25 @@ class _MyTestsListState extends State<MyTestsList>
       isCenter: true,
     );
     _myTestsListProvider!.removeTestAt(indexDeleted);
+  }
+
+  @override
+  void getBankListFail(String message) {
+    if (kDebugMode) {
+      print("DEBUG: getBankListFail");
+    }
+
+    //Not show list of bank button or disable this button
+    _myTestsListProvider!.updateStatusShowBankListButton(isShow: false);
+  }
+
+  @override
+  void getBankListSuccess(List<BankModel> banks) {
+    if (kDebugMode) {
+      print("DEBUG: getBankListSuccess. Banks = ${banks.length}");
+    }
+
+    _myTestsListProvider!.setBankList(banks);
+    _myTestsListProvider!.updateStatusShowBankListButton(isShow: true);
   }
 }

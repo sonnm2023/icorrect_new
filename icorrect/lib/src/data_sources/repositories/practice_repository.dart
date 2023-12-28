@@ -10,6 +10,7 @@ abstract class PracticeRepository {
   Future<String> getMyPracticeTestList(String pageNum);
   Future<String> deleteTest(String testId);
   Future<String> getMyPracticeTestDetail(String testId);
+  Future<String> getBankList();
 }
 
 class PracticeReporitoryImpl implements PracticeRepository {
@@ -73,6 +74,21 @@ class PracticeReporitoryImpl implements PracticeRepository {
   @override
   Future<String> getMyPracticeTestDetail(String testId) {
     String url = getMyPracticeTestDetailEP(testId);
+    return AppRepository.init()
+        .sendRequest(
+          RequestMethod.get,
+          url,
+          true,
+        )
+        .timeout(const Duration(seconds: timeout))
+        .then((http.Response response) {
+      return response.body;
+    });
+  }
+
+  @override
+  Future<String> getBankList() {
+    String url = '$apiDomain$bankListEP';
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,

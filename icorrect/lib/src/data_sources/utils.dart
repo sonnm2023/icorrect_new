@@ -18,6 +18,7 @@ import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
@@ -1216,5 +1217,11 @@ class Utils {
       ratingText = "Good";
     }
     return ratingText;
+  }
+
+  static String generateTitle(MyPracticeTestModel myPracticeTestModel) {
+    String title = "";
+    title = "${myPracticeTestModel.bankTitle}(#${myPracticeTestModel.id})";
+    return title;
   }
 }

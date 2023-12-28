@@ -118,6 +118,8 @@ String getMyPracticeTestDetailEP(String testId) {
   return '$icorrectDomain/api/v1/ielts-test/show/$testId';
 }
 
+const String bankListEP = '/api/v1/ielts-test/banks/student'; //API 143
+
 class RequestMethod {
   static const post = 'POST';
   static const get = 'GET';

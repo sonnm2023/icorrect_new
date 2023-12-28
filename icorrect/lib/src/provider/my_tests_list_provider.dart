@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 
 import '../models/my_practice_test_model/my_practice_response_model.dart';
 import '../models/my_practice_test_model/my_practice_test_model.dart';
@@ -74,6 +75,35 @@ class MyTestsListProvider extends ChangeNotifier {
   bool get showLoadingBottom => _showLoadingBottom;
   void setShowLoadingBottom(bool isShow) {
     _showLoadingBottom = isShow;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  final List<BankModel> _banks = [];
+  List<BankModel> get banks => _banks;
+
+  void setBankList(List<BankModel> list) {
+    clearBankList();
+    _banks.addAll(list);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void clearBankList() {
+    if (_banks.isNotEmpty) {
+      _banks.clear();
+    }
+  }
+
+  bool _showBankListButton = false;
+  bool get showBankListButton => _showBankListButton;
+
+  void updateStatusShowBankListButton({required bool isShow}) {
+    _showBankListButton = isShow;
+
     if (!isDisposed) {
       notifyListeners();
     }
