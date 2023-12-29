@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 
 class MyPracticeTopicsProvider extends ChangeNotifier {
@@ -41,5 +43,21 @@ class MyPracticeTopicsProvider extends ChangeNotifier {
         topic.isExpanded = false;
       }
     }
+  }
+
+  int getTotalSelectedSubTopics() {
+    int count = 0;
+    for (var topic in _topics) {
+      count += topic.subTopics!.where((subTopic) => subTopic.isSelected).length;
+    }
+    return count;
+  }
+
+  int getTotalSubTopics() {
+    int count = 0;
+    for (var topic in _topics) {
+      count += topic.subTopics!.length;
+    }
+    return count;
   }
 }

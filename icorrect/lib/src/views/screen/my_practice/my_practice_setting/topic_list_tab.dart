@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 import 'package:icorrect/src/presenters/my_practice_topic_list_presenter.dart';
@@ -22,7 +24,6 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
   MyPracticeTopicListPresenter? _presenter;
   CircleLoading? _loading;
   MyPracticeTopicsProvider? _myPracticeTopicsProvider;
-  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -57,29 +58,40 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
   }
 
   Widget _buildSelectionInfo() {
-    return Container(
-      color: AppColor.defaultGraySlightColor,
-      padding: const EdgeInsets.all(10),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Icon(Icons.check_box, color: AppColor.defaultPurpleColor),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Text(
-              "Selected (4/6)",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
+    return Consumer<MyPracticeTopicsProvider>(
+        builder: (context, provider, child) {
+      int selectedTopics = provider.getTotalSelectedSubTopics();
+      int topics = provider.getTotalSubTopics();
+      bool isEmpty = selectedTopics == 0;
+
+      return Container(
+        color: AppColor.defaultGraySlightColor,
+        padding: const EdgeInsets.all(10),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Icon(
+                isEmpty ? Icons.check_box_outline_blank : Icons.check_box,
+                color: AppColor.defaultPurpleColor,
               ),
             ),
-          )
-        ],
-      ),
-    );
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                context.formatString(
+                    StringConstants.selected_topics, [selectedTopics, topics]),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildTopicList() {
@@ -104,6 +116,27 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
     return true;
   }
 
+  void _topicTapped(Topic topic) {
+    setState(() {
+      final bool newValue =
+          !topic.subTopics!.every((subTopic) => subTopic.isSelected);
+      for (int i = 0; i < topic.subTopics!.length; i++) {
+        topic.subTopics![i].isSelected = newValue;
+      }
+    });
+  }
+
+  void _subTopicTapped(Topic topic, SubTopics subTopic) {
+    setState(() {
+      subTopic.isSelected = !subTopic.isSelected;
+      topic.subTopics!.every(
+        (subTopic) => subTopic.isSelected,
+      )
+          ? topic.isSelected = true
+          : topic.isSelected = false;
+    });
+  }
+
   Widget _buildTopicItem(Topic topic) {
     bool hasSubTopic = _hasSubTopic(topic);
 
@@ -118,23 +151,29 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    if (kDebugMode) {
-                      print("DEBUG: select of unselect this topic");
-                    }
+                    _topicTapped(topic);
                   },
                   child: SizedBox(
                     height: 50,
                     child: Row(
                       children: [
-                        const Icon(Icons.check_box,
-                            color: AppColor.defaultPurpleColor),
+                        Checkbox(
+                          value: topic.subTopics!
+                              .every((subTopic) => subTopic.isSelected),
+                          onChanged: (value) {
+                            _topicTapped(topic);
+                          },
+                          activeColor: AppColor.defaultPurpleColor,
+                        ),
                         const SizedBox(width: 10),
-                        Text(
-                          topic.title!,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            topic.title!,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -148,11 +187,13 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                         if (kDebugMode) {
                           print("DEBUG: Expand sub topic");
                         }
-                        setState(() {
-                          // _myPracticeTopicsProvider!
-                          //     .resetExpandedStatusOfOthers(topic);
-                          topic.isExpanded = !topic.isExpanded;
-                        });
+                        setState(
+                          () {
+                            // _myPracticeTopicsProvider!
+                            //     .resetExpandedStatusOfOthers(topic);
+                            topic.isExpanded = !topic.isExpanded;
+                          },
+                        );
                       },
                       child: SizedBox(
                         width: 60,
@@ -182,13 +223,13 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
         ),
         if (topic.isExpanded)
           ...topic.subTopics!.map((subTopic) {
-            return _buildSubTopicItem(subTopic);
+            return _buildSubTopicItem(topic, subTopic);
           }).toList(),
       ],
     );
   }
 
-  Widget _buildSubTopicItem(SubTopics subTopic) {
+  Widget _buildSubTopicItem(Topic topic, SubTopics subTopic) {
     return Column(
       children: [
         Container(
@@ -200,16 +241,19 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    if (kDebugMode) {
-                      print("DEBUG: select of unselect this sub topic");
-                    }
+                    _subTopicTapped(topic, subTopic);
                   },
                   child: SizedBox(
                     height: 50,
                     child: Row(
                       children: [
-                        const Icon(Icons.check_box,
-                            color: AppColor.defaultPurpleColor),
+                        Checkbox(
+                          value: subTopic.isSelected,
+                          onChanged: (value) {
+                            _subTopicTapped(topic, subTopic);
+                          },
+                          activeColor: AppColor.defaultPurpleColor,
+                        ),
                         const SizedBox(width: 10),
                         Text(
                           subTopic.title!,
