@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,15 +11,15 @@ import '../../widget/divider.dart';
 import '../other_views/dialog/confirm_dialog.dart';
 import '../test/my_test/my_test_tab.dart';
 
-class MyPracticeTestDetail extends StatefulWidget {
+class MyPracticeDetail extends StatefulWidget {
   String testId;
-  MyPracticeTestDetail({required this.testId, super.key});
+  MyPracticeDetail({required this.testId, super.key});
 
   @override
-  State<MyPracticeTestDetail> createState() => _MyPracticeTestDetailState();
+  State<MyPracticeDetail> createState() => _MyPracticeDetailState();
 }
 
-class _MyPracticeTestDetailState extends State<MyPracticeTestDetail> {
+class _MyPracticeDetailState extends State<MyPracticeDetail> {
   double w = 0, h = 0;
   MyTestProvider? _myTestProvider;
 

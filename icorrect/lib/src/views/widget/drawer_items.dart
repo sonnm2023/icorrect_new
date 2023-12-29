@@ -6,7 +6,7 @@ import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/my_tests_list_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
-import 'package:icorrect/src/views/screen/my_tests_list/my_tests_list.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_list.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
@@ -100,7 +100,7 @@ Widget navbarItems({
             MaterialPageRoute(
                 builder: (context) => ChangeNotifierProvider(
                     create: (_) => MyTestsListProvider(),
-                    child: const MyTestsList())),
+                    child: const MyPracticeList())),
           );
         },
       ),

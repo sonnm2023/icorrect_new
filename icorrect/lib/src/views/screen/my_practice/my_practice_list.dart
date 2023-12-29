@@ -11,21 +11,21 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_mode
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
 import 'package:icorrect/src/provider/my_tests_list_provider.dart';
 import 'package:icorrect/src/views/screen/bank_list/bank_detail_list.dart';
-import 'package:icorrect/src/views/screen/my_tests_list/my_practice_test_detail.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
-class MyTestsList extends StatefulWidget {
-  const MyTestsList({super.key});
+class MyPracticeList extends StatefulWidget {
+  const MyPracticeList({super.key});
 
   @override
-  State<MyTestsList> createState() => _MyTestsListState();
+  State<MyPracticeList> createState() => _MyPracticeListState();
 }
 
-class _MyTestsListState extends State<MyTestsList>
+class _MyPracticeListState extends State<MyPracticeList>
     implements MyTestsListConstract {
   double w = 0, h = 0;
   MyTestsListPresenter? _presenter;
@@ -532,7 +532,7 @@ class _MyTestsListState extends State<MyTestsList>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            MyPracticeTestDetail(testId: myTestModel.id.toString()),
+            MyPracticeDetail(testId: myTestModel.id.toString()),
       ),
     );
   }
