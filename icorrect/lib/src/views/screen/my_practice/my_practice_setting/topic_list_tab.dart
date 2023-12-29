@@ -20,6 +20,7 @@ class TopicListTabScreen extends StatefulWidget {
 }
 
 class _TopicListTabScreenState extends State<TopicListTabScreen>
+    with AutomaticKeepAliveClientMixin<TopicListTabScreen>
     implements MyPracticeTopicListViewContract {
   MyPracticeTopicListPresenter? _presenter;
   CircleLoading? _loading;
@@ -81,7 +82,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
               child: Text(
                 context.formatString(
                     StringConstants.selected_topics, [selectedTopics, topics]),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
@@ -296,4 +297,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
     }
     _myPracticeTopicsProvider!.setTopicList(topics);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

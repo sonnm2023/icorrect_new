@@ -634,6 +634,13 @@ class StringConstants {
   static const String out_the_exam = 'Out the exam';
   static const String go_to_setting = 'Go to setting';
   static const String select_your_language_title = 'Select your language';
+  static const String number_of_topics = 'Number of topics';
+  static const String number_question_of_part_1 = 'Number question of Part 1';
+  static const String number_question_of_part_2 = 'Number question of Part 2';
+  static const String cue_card_time_of_part_2 = 'Cue card time of Part 2';
+  static const String speed_of_first_time = 'Speed of the first time';
+  static const String speed_of_second_time = 'Speed of the second time';
+  static const String speed_of_third_time = 'Speed of the third time';
 
   //Compress video message
   static const String cancel_and_text = "Cancel and Later";

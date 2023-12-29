@@ -318,6 +318,13 @@ class MultiLanguage {
         'Hết thời gian lưu các câu trả lời. Hãy thử lại !',
     StringConstants.search_title: "Tìm Kiếm",
     StringConstants.select_your_language_title: 'Chọn Ngôn Ngữ',
+    StringConstants.number_of_topics: 'Số chủ đề nói',
+    StringConstants.number_question_of_part_1: 'Số câu hỏi Part 1',
+    StringConstants.number_question_of_part_2: 'Số câu hỏi Part 2',
+    StringConstants.cue_card_time_of_part_2: 'Thời gian chờ Part 2',
+    StringConstants.speed_of_first_time: 'Tốc độ phát câu hỏi lần 1',
+    StringConstants.speed_of_second_time: 'Tốc độ phát câu hỏi lần 2',
+    StringConstants.speed_of_third_time: 'Tốc độ phát câu hỏi lần 3',
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -671,5 +678,12 @@ class MultiLanguage {
     StringConstants.select_your_language_title: 'Select your language',
     StringConstants.prepare_compress_video_title: 'Preparing for submitting',
     StringConstants.reload_button_title: "Reload",
+    StringConstants.number_of_topics: 'Number of topics',
+    StringConstants.number_question_of_part_1: 'Number question of Part 1',
+    StringConstants.number_question_of_part_2: 'Number question of Part 2',
+    StringConstants.cue_card_time_of_part_2: 'Cue card time of Part 2',
+    StringConstants.speed_of_first_time: 'Speed of the first time',
+    StringConstants.speed_of_second_time: 'Speed of the second time',
+    StringConstants.speed_of_third_time: 'Speed of the third time',
   };
 }

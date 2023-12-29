@@ -17,7 +17,8 @@ class MyPracticeSettingScreen extends StatefulWidget {
       _MyPracticeSettingScreenState();
 }
 
-class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen> {
+class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
+    with AutomaticKeepAliveClientMixin<MyPracticeSettingScreen> {
   TabBar get _tabBar {
     return TabBar(
       physics: const BouncingScrollPhysics(),
@@ -40,17 +41,13 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     double screenWidth = MediaQuery.of(context).size.width;
 
     return DefaultTabController(
@@ -154,4 +151,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen> {
       const SettingTabScreen(),
     ];
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

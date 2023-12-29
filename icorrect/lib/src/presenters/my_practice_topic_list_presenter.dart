@@ -12,18 +12,6 @@ import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart
 abstract class MyPracticeTopicListViewContract {
   void onGetListTopicOfBankSuccess(List<Topic> topics);
   void onGetListTopicOfBankError(String message);
-  // void onGetListHomeworkComplete(List<ActivitiesModel> homeworks,
-  //     List<NewClassModel> classes, String serverCurrentTime);
-
-  // void onGetListHomeworkError(String message);
-
-  // void onLogoutComplete();
-
-  // void onLogoutError(String message);
-
-  // void onUpdateCurrentUserInfo(UserDataModel userDataModel);
-
-  // void onRefreshListHomework();
 }
 
 class MyPracticeTopicListPresenter {
@@ -43,7 +31,7 @@ class MyPracticeTopicListPresenter {
           action: LogEvent.callApiGetListTopicOfBank);
     }
 
-    Future<List<Topic>> _generateList(List<dynamic> data) async {
+    Future<List<Topic>> generateList(List<dynamic> data) async {
       List<Topic> temp = [];
       for (int i = 0; i < data.length; i++) {
         Topic item = Topic.fromJson(data[i]);
@@ -60,7 +48,7 @@ class MyPracticeTopicListPresenter {
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
         List<Topic> topics =
-            await _generateList(dataMap[StringConstants.k_data]);
+            await generateList(dataMap[StringConstants.k_data]);
 
         Utils.prepareLogData(
           log: log,
