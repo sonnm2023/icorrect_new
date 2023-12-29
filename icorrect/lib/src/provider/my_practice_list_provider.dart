@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
-
-import '../models/my_practice_test_model/my_practice_response_model.dart';
-import '../models/my_practice_test_model/my_practice_test_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 
 class MyPracticeListProvider extends ChangeNotifier {
   bool isDisposed = false;

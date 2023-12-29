@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
-import 'package:icorrect/src/presenters/my_practice_setting_presenter.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/setting_tab.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/topic_list_tab.dart';
 
@@ -17,8 +17,7 @@ class MyPracticeSettingScreen extends StatefulWidget {
       _MyPracticeSettingScreenState();
 }
 
-class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
-    implements MyPracticeSettingViewContract {
+class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen> {
   TabBar get _tabBar {
     return TabBar(
       physics: const BouncingScrollPhysics(),
@@ -43,14 +42,6 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   @override
   void initState() {
     super.initState();
-    // _homeWorkPresenter = HomeWorkPresenter(this);
-
-    // _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
-    // _simulatorTestProvider =
-    //     Provider.of<SimulatorTestProvider>(context, listen: false);
-    // _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    // _getListHomeWork();
   }
 
   @override
@@ -124,9 +115,9 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
                   color: AppColor.defaultPurpleColor,
                 ),
                 alignment: Alignment.center,
-                child: const Text(
-                  "Bắt đầu luyện tập",
-                  style: TextStyle(
+                child: Text(
+                  Utils.multiLanguage(StringConstants.start_to_pratice),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: FontsSize.fontSize_16,
@@ -144,13 +135,12 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     return [
       Tab(
         child: Text(
-          "Topics",
+          Utils.multiLanguage(StringConstants.topic_tab_title),
         ),
       ),
       Tab(
         child: Text(
-          // Utils.multiLanguage(StringConstants.response_tab_title),
-          "Setting",
+          Utils.multiLanguage(StringConstants.practice_setting),
         ),
       ),
     ];
@@ -158,8 +148,10 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
   _tabBarView() {
     return [
-      TopicListTabScreen(),
-      SettingTabScreen(),
+      TopicListTabScreen(
+        selectedBank: widget.selectedBank,
+      ),
+      const SettingTabScreen(),
     ];
   }
 }

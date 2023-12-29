@@ -11,7 +11,7 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_mode
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
-import 'package:icorrect/src/views/screen/my_practice/my_practice_setting.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/my_practice_setting.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';

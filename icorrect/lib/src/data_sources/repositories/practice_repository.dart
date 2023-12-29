@@ -11,6 +11,7 @@ abstract class PracticeRepository {
   Future<String> deleteTest(String testId);
   Future<String> getMyPracticeTestDetail(String testId);
   Future<String> getBankList();
+  Future<String> getListTopicOfBank(String distributeCode);
 }
 
 class PracticeReporitoryImpl implements PracticeRepository {
@@ -89,6 +90,21 @@ class PracticeReporitoryImpl implements PracticeRepository {
   @override
   Future<String> getBankList() {
     String url = '$apiDomain$bankListEP';
+    return AppRepository.init()
+        .sendRequest(
+          RequestMethod.get,
+          url,
+          true,
+        )
+        .timeout(const Duration(seconds: timeout))
+        .then((http.Response response) {
+      return response.body;
+    });
+  }
+
+  @override
+  Future<String> getListTopicOfBank(String distributeCode) {
+    String url = getListTopicOfBankEP(distributeCode);
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,

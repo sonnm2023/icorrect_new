@@ -408,6 +408,8 @@ class LogEvent {
   static const String callApiSubmitAuth = 'call_api_submit_auth';
   static const String callApiTestPosition = 'call_api_test_position';
   static const String crash_bug_audio_record = 'crash_bug_audio_record';
+  static const String callApiGetListTopicOfBank =
+      'call_api_get_list_topic_of_bank';
 
   //Action log event
   static const String actionLogin = 'action_login';
@@ -510,7 +512,7 @@ class StringConstants {
 
   //Tab titles
   static const String topic_tab_title = "Topics";
-  static const String num_of_question_title = "Num of questions";
+  static const String practice_setting = "Setting";
   static const String test_detail_tab_title = "Test Detail";
   static const String correction_tab_title = "Correction";
   static const String my_exam_tab_title = "MY EXAM";
@@ -524,7 +526,7 @@ class StringConstants {
   static const String status_string = "Status";
 
   //Text
-  static const String start_pratice = "Start Practicing";
+  static const String start_to_pratice = "Start to practice";
   static const String add_your_filter = "Add your filter!";
   static const String cue_card = "Cue Card";
   static const String another_tips = "Another tips";

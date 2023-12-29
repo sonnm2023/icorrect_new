@@ -57,7 +57,7 @@ class _BankDetailListState extends State<BankDetailList> {
               width: w,
               alignment: Alignment.center,
               child: Text(
-                Utils.multiLanguage(StringConstants.start_pratice),
+                Utils.multiLanguage(StringConstants.start_to_pratice),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -142,7 +142,7 @@ class _BankDetailListState extends State<BankDetailList> {
       Tab(
         height: 40,
         child: Text(
-          Utils.multiLanguage(StringConstants.num_of_question_title),
+          Utils.multiLanguage(StringConstants.practice_setting),
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,

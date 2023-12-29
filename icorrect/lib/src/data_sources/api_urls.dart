@@ -120,6 +120,10 @@ String getMyPracticeTestDetailEP(String testId) {
 
 const String bankListEP = '/api/v1/ielts-test/banks/student'; //API 143
 
+String getListTopicOfBankEP(String distributeCode) {
+  return '$icorrectDomain//api/v1/ielts-test/banks/$distributeCode/topics'; //API 144
+}
+
 class RequestMethod {
   static const post = 'POST';
   static const get = 'GET';
