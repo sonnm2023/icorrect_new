@@ -255,6 +255,11 @@ class _MyTestsListState extends State<MyTestsList>
   Widget _myTestItem(MyPracticeTestModel myTestModel, int index) {
     Map<String, String> dataString = _getMyTestItem(myTestModel.type);
     String title = Utils.generateTitle(myTestModel);
+    double score = Utils.generateScore(myTestModel);
+    Color scoreColor = AppColor.defaultGrayColor;
+    if (score > 0) {
+      scoreColor = Colors.amber;
+    }
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -264,96 +269,128 @@ class _MyTestsListState extends State<MyTestsList>
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              // Container(
-              //   width: CustomSize.size_50,
-              //   height: CustomSize.size_50,
-              //   alignment: Alignment.center,
-              //   decoration: BoxDecoration(
-              //     border: Border.all(
-              //       width: 2.0,
-              //       color: AppColor.defaultPurpleColor,
-              //     ),
-              //     borderRadius: BorderRadius.circular(CustomSize.size_100),
-              //   ),
-              //   child: Text(
-              //     dataString[StringConstants.k_data] ?? "I",
-              //     style: CustomTextStyle.textWithCustomInfo(
-              //       context: context,
-              //       color: AppColor.defaultPurpleColor,
-              //       fontsSize: FontsSize.fontSize_16,
-              //       fontWeight: FontWeight.w600,
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: CustomTextStyle.textWithCustomInfo(
-                      context: context,
-                      color: AppColor.defaultPurpleColor,
-                      fontsSize: FontsSize.fontSize_16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.access_time,
-                        color: AppColor.defaultGrayColor,
-                      ),
-                      const SizedBox(width: 1),
-                      Text(
-                        "00:0${myTestModel.duration}",
+          Container(
+            width: CustomSize.size_50,
+            height: CustomSize.size_50,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 2.0,
+                color: AppColor.defaultPurpleColor,
+              ),
+              borderRadius: BorderRadius.circular(CustomSize.size_100),
+            ),
+            child: Text(
+              dataString[StringConstants.k_data] ?? "I",
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultPurpleColor,
+                fontsSize: FontsSize.fontSize_16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
-                          color: AppColor.defaultGrayColor,
+                          color: AppColor.defaultPurpleColor,
                           fontsSize: FontsSize.fontSize_16,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ],
+                      ),
+                    ),
+                    Text(
+                      _getDate(myTestModel.createdAt),
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultGrayColor,
+                        fontsSize: FontsSize.fontSize_15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          color: AppColor.defaultGrayColor,
+                        ),
+                        const SizedBox(width: 1),
+                        Text(
+                          "00:0${myTestModel.duration}",
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultGrayColor,
+                            fontsSize: FontsSize.fontSize_16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.star,
+                            color: scoreColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          "$score",
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultGrayColor,
+                            fontsSize: FontsSize.fontSize_16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _onClickDeleteTest(myTestModel.id, index);
+                      },
+                      child: Container(
+                        width: 80,
+                        height: 35,
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          Utils.multiLanguage(
+                              StringConstants.delete_action_title),
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultPurpleColor,
+                            fontsSize: FontsSize.fontSize_16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                _getDate(myTestModel.createdAt),
-                style: CustomTextStyle.textWithCustomInfo(
-                  context: context,
-                  color: AppColor.defaultGrayColor,
-                  fontsSize: FontsSize.fontSize_15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 5),
-              InkWell(
-                onTap: () {
-                  _onClickDeleteTest(myTestModel.id, index);
-                },
-                child: Text(
-                  Utils.multiLanguage(StringConstants.delete_action_title),
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultPurpleColor,
-                    fontsSize: FontsSize.fontSize_16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              )
-            ],
-          )
         ],
       ),
     );

@@ -1224,4 +1224,24 @@ class Utils {
     title = "${myPracticeTestModel.bankTitle}(#${myPracticeTestModel.id})";
     return title;
   }
+
+  static double generateScore(MyPracticeTestModel myPracticeTestModel) {
+    if (myPracticeTestModel.aiScore <= 0.0) {
+      if (myPracticeTestModel.overallScore <= 0.0) {
+        return 0.0;
+      } else {
+        return myPracticeTestModel.overallScore;
+      }
+    } else {
+      if (myPracticeTestModel.overallScore <= 0.0) {
+        return myPracticeTestModel.aiScore;
+      } else {
+        if (myPracticeTestModel.overallScore >= myPracticeTestModel.aiScore) {
+          return myPracticeTestModel.overallScore;
+        } else {
+          return myPracticeTestModel.aiScore;
+        }
+      }
+    }
+  }
 }
