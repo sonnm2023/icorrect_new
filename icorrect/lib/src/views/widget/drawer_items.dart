@@ -4,7 +4,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/provider/my_tests_list_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_list.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
@@ -99,7 +99,7 @@ Widget navbarItems({
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => ChangeNotifierProvider(
-                    create: (_) => MyTestsListProvider(),
+                    create: (_) => MyPracticeListProvider(),
                     child: const MyPracticeList())),
           );
         },

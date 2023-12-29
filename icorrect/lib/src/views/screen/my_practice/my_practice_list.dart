@@ -9,7 +9,7 @@ import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
-import 'package:icorrect/src/provider/my_tests_list_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/screen/bank_list/bank_detail_list.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
@@ -30,15 +30,15 @@ class _MyPracticeListState extends State<MyPracticeList>
   double w = 0, h = 0;
   MyTestsListPresenter? _presenter;
   CircleLoading? _loading;
-  MyTestsListProvider? _myTestsListProvider;
+  MyPracticeListProvider? _myPracticeListProvider;
 
   @override
   void initState() {
     super.initState();
     _presenter = MyTestsListPresenter(this);
     _loading = CircleLoading();
-    _myTestsListProvider =
-        Provider.of<MyTestsListProvider>(context, listen: false);
+    _myPracticeListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
 
     _getMyTestsList();
     _getBankList();
@@ -52,7 +52,7 @@ class _MyPracticeListState extends State<MyPracticeList>
     Future.delayed(
       Duration.zero,
       () {
-        _myTestsListProvider!.setPageNum(pageNum);
+        _myPracticeListProvider!.setPageNum(pageNum);
       },
     );
   }
@@ -87,7 +87,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   Widget _buildBankListButton() {
-    return Consumer<MyTestsListProvider>(builder: (context, provider, child) {
+    return Consumer<MyPracticeListProvider>(builder: (context, provider, child) {
       return Visibility(
         visible: provider.banks.isNotEmpty,
         child: Container(
@@ -124,11 +124,11 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   List<SpeedDialChild> _generateBankListUI() {
-    if (_myTestsListProvider!.banks.isEmpty) return [];
+    if (_myPracticeListProvider!.banks.isEmpty) return [];
 
     List<SpeedDialChild> list = [];
-    for (int i = 0; i < _myTestsListProvider!.banks.length; i++) {
-      BankModel bank = _myTestsListProvider!.banks[i];
+    for (int i = 0; i < _myPracticeListProvider!.banks.length; i++) {
+      BankModel bank = _myPracticeListProvider!.banks[i];
 
       SpeedDialChild temp = SpeedDialChild(
         shape: const CircleBorder(),
@@ -205,7 +205,7 @@ class _MyPracticeListState extends State<MyPracticeList>
           ),
           const CustomDivider(),
           const SizedBox(height: 20),
-          Consumer<MyTestsListProvider>(
+          Consumer<MyPracticeListProvider>(
             builder: (context, provider, child) {
               return Container(
                 height: h,
@@ -397,7 +397,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   Widget _buildLoadmore() {
-    return Consumer<MyTestsListProvider>(
+    return Consumer<MyPracticeListProvider>(
       builder: (context, provider, child) {
         return Visibility(
           visible: provider.showLoadingBottom,
@@ -442,24 +442,24 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   void _startLoadMoreData() {
-    if (!_myTestsListProvider!.showLoadingBottom) {
+    if (!_myPracticeListProvider!.showLoadingBottom) {
       MyPracticeResponseModel practiceResponseModel =
-          _myTestsListProvider!.myPracticeResponseModel;
-      int pageNum = _myTestsListProvider!.pageNum;
+          _myPracticeListProvider!.myPracticeResponseModel;
+      int pageNum = _myPracticeListProvider!.pageNum;
       int lastPage = practiceResponseModel.myPracticeDataModel.lastPage;
       if (pageNum < lastPage) {
         pageNum = pageNum + 1;
         _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: true);
-        _myTestsListProvider!.setPageNum(pageNum);
+        _myPracticeListProvider!.setPageNum(pageNum);
       } else {
         Future.delayed(
           const Duration(seconds: 1),
           () {
-            _myTestsListProvider!.setShowLoadingBottom(false);
+            _myPracticeListProvider!.setShowLoadingBottom(false);
           },
         );
       }
-      _myTestsListProvider!.setShowLoadingBottom(true);
+      _myPracticeListProvider!.setShowLoadingBottom(true);
     }
   }
 
@@ -540,7 +540,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   @override
   void getMyTestListFail(String message) {
     _loading!.hide();
-    _myTestsListProvider!.setShowLoadingBottom(false);
+    _myPracticeListProvider!.setShowLoadingBottom(false);
 
     showDialog(
       context: context,
@@ -554,20 +554,20 @@ class _MyPracticeListState extends State<MyPracticeList>
   void getMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
       List<MyPracticeTestModel> practiceTests, bool isLoadMore) {
     if (isLoadMore) {
-      _myTestsListProvider!.setShowLoadingBottom(false);
-      _myTestsListProvider!.addMyTestsList(practiceTests);
+      _myPracticeListProvider!.setShowLoadingBottom(false);
+      _myPracticeListProvider!.addMyTestsList(practiceTests);
     } else {
       _loading!.hide();
-      _myTestsListProvider!.setMyTestsList(practiceTests);
+      _myPracticeListProvider!.setMyTestsList(practiceTests);
     }
 
-    _myTestsListProvider!.setMyPracticeResponseModel(practiceResponseModel);
+    _myPracticeListProvider!.setMyPracticeResponseModel(practiceResponseModel);
   }
 
   @override
   void deleteTestFail(String message) {
     _loading!.hide();
-    _myTestsListProvider!.setShowLoadingBottom(false);
+    _myPracticeListProvider!.setShowLoadingBottom(false);
     showDialog(
       context: context,
       builder: (builder) {
@@ -584,7 +584,7 @@ class _MyPracticeListState extends State<MyPracticeList>
       toastState: ToastStatesType.success,
       isCenter: true,
     );
-    _myTestsListProvider!.removeTestAt(indexDeleted);
+    _myPracticeListProvider!.removeTestAt(indexDeleted);
   }
 
   @override
@@ -594,7 +594,7 @@ class _MyPracticeListState extends State<MyPracticeList>
     }
 
     //Not show list of bank button or disable this button
-    _myTestsListProvider!.updateStatusShowBankListButton(isShow: false);
+    _myPracticeListProvider!.updateStatusShowBankListButton(isShow: false);
   }
 
   @override
@@ -603,7 +603,7 @@ class _MyPracticeListState extends State<MyPracticeList>
       print("DEBUG: getBankListSuccess. Banks = ${banks.length}");
     }
 
-    _myTestsListProvider!.setBankList(banks);
-    _myTestsListProvider!.updateStatusShowBankListButton(isShow: true);
+    _myPracticeListProvider!.setBankList(banks);
+    _myPracticeListProvider!.updateStatusShowBankListButton(isShow: true);
   }
 }
