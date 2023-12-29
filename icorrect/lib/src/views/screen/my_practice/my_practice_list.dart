@@ -10,8 +10,8 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
-import 'package:icorrect/src/views/screen/bank_list/bank_detail_list.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_setting.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
@@ -87,40 +87,43 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   Widget _buildBankListButton() {
-    return Consumer<MyPracticeListProvider>(builder: (context, provider, child) {
-      return Visibility(
-        visible: provider.banks.isNotEmpty,
-        child: Container(
-          alignment: Alignment.bottomRight,
-          margin: const EdgeInsets.all(15),
-          child: SpeedDial(
-            backgroundColor: AppColor.defaultYellowColor,
-            overlayColor: Colors.black,
-            overlayOpacity: 0.6,
-            spaceBetweenChildren: 10,
-            activeBackgroundColor: AppColor.defaultYellowColor,
-            activeIcon: Icons.close,
-            foregroundColor: Colors.white,
-            children: _generateBankListUI(),
-            child: const Icon(Icons.menu_rounded, color: Colors.white),
+    return Consumer<MyPracticeListProvider>(
+      builder: (context, provider, child) {
+        return Visibility(
+          visible: provider.banks.isNotEmpty,
+          child: Container(
+            alignment: Alignment.bottomRight,
+            margin: const EdgeInsets.all(15),
+            child: SpeedDial(
+              backgroundColor: AppColor.defaultYellowColor,
+              overlayColor: Colors.black,
+              overlayOpacity: 0.6,
+              spaceBetweenChildren: 10,
+              activeBackgroundColor: AppColor.defaultYellowColor,
+              activeIcon: Icons.close,
+              foregroundColor: Colors.white,
+              children: _generateBankListUI(),
+              child: const Icon(Icons.menu_rounded, color: Colors.white),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
-  void _gotoBankDetailWithId(int bankId) {
+  void _gotoBankDetailWithId(BankModel bank) {
     if (kDebugMode) {
-      print("DEBUG: you choosed bank id = $bankId");
+      print("DEBUG: you choosed bank id = ${bank.id}");
     }
 
-    //TODO:
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => const BankDetailList(),
-    //   ),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MyPracticeSettingScreen(
+          selectedBank: bank,
+        ),
+      ),
+    );
   }
 
   List<SpeedDialChild> _generateBankListUI() {
@@ -133,7 +136,7 @@ class _MyPracticeListState extends State<MyPracticeList>
       SpeedDialChild temp = SpeedDialChild(
         shape: const CircleBorder(),
         onTap: () {
-          _gotoBankDetailWithId(bank.id!);
+          _gotoBankDetailWithId(bank);
         },
         child: Container(
           margin: const EdgeInsets.all(5),
