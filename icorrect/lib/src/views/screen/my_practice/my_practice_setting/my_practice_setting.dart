@@ -1,13 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/setting_tab.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/topic_list_tab.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class MyPracticeSettingScreen extends StatefulWidget {
@@ -23,27 +29,23 @@ class MyPracticeSettingScreen extends StatefulWidget {
 class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     with
         AutomaticKeepAliveClientMixin<MyPracticeSettingScreen>,
-        SingleTickerProviderStateMixin {
-  late TabController _tabController;
+        SingleTickerProviderStateMixin
+    implements ActionAlertListener {
+  // late TabController _tabController;
 
   MyPracticeTopicsProvider? _myPracticeTopicsProvider;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
-    _tabController.addListener(_handleTabChange);
+    // _tabController = TabController(vsync: this, length: 2);
     _myPracticeTopicsProvider =
         Provider.of<MyPracticeTopicsProvider>(context, listen: false);
   }
 
-  void _handleTabChange() {
-    _tabController.animateTo(0);
-  }
-
   @override
   void dispose() {
-    _tabController.dispose();
+    // _tabController.dispose();
     super.dispose();
   }
 
@@ -55,7 +57,6 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        key: GlobalScaffoldKey.myPracticeSettingScreenScaffoldKey,
         appBar: AppBar(
           elevation: 0.0,
           iconTheme: const IconThemeData(
@@ -89,7 +90,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
                 ),
               ),
               child: TabBar(
-                controller: _tabController,
+                // controller: _tabController,
                 physics: const BouncingScrollPhysics(),
                 isScrollable: false,
                 indicator: const UnderlineTabIndicator(
@@ -132,9 +133,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
                 bool isValidData = _checkSettings();
                 if (isValidData) {
-                  if (kDebugMode) {
-                    print("DEBUG: Start to do practice");
-                  }
+                  _prepareData();
                 }
               },
               child: Container(
@@ -229,6 +228,135 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     return true;
   }
 
+  void _prepareData() {
+    String bank_code = widget.selectedBank.bankDistributeCode!;
+    int amount_topics = _myPracticeTopicsProvider!.settings[0].value.toInt();
+    int amount_questions_part1 =
+        _myPracticeTopicsProvider!.settings[1].value.toInt();
+    int amount_questions_part2 =
+        _myPracticeTopicsProvider!.settings[2].value.toInt();
+    double take_note_time = _myPracticeTopicsProvider!.settings[3].value;
+    double normal_speed = _myPracticeTopicsProvider!.settings[4].value;
+    double first_repeat_speed = _myPracticeTopicsProvider!.settings[5].value;
+    double second_repeat_speed = _myPracticeTopicsProvider!.settings[6].value;
+
+    List<int> topics = [];
+    List<int> subTopics = [];
+
+    for (int i = 0; i < _myPracticeTopicsProvider!.topics.length; i++) {
+      Topic t = _myPracticeTopicsProvider!.topics[i];
+      if (t.isSelected) {
+        topics.add(t.id!);
+      }
+
+      if (t.subTopics!.isNotEmpty) {
+        for (int j = 0; j < t.subTopics!.length; j++) {
+          SubTopics s = t.subTopics![j];
+          if (s.isSelected) {
+            subTopics.add(s.id!);
+
+            if (!topics.contains(t.id!)) {
+              topics.add(t.id!);
+            }
+          }
+        }
+      }
+
+      Map<String, dynamic> data = {};
+      data["bank_code"] = bank_code;
+      data["amount_topics"] = amount_topics;
+      data["amount_questions_part1"] = amount_questions_part1;
+      data["amount_questions_part2"] = amount_questions_part2;
+      data["take_note_time"] = take_note_time;
+      data["normal_speed"] = normal_speed;
+      data["first_repeat_speed"] = first_repeat_speed;
+      data["second_repeat_speed"] = second_repeat_speed;
+      data["topics"] = topics;
+      data["sub_topics"] = subTopics;
+
+      if (kDebugMode) {
+        print("DEBUG: _prepareData");
+      }
+      _onClickStartToPractice(data);
+    }
+  }
+
+  Future _onClickStartToPractice(Map<String, dynamic> data) async {
+    _requestMicroPermission(data);
+  }
+
+  Future _requestMicroPermission(Map<String, dynamic> data) async {
+    try {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.microphone,
+      ].request();
+
+      if (statuses[Permission.microphone]! ==
+          PermissionStatus.permanentlyDenied) {
+        _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        return;
+      }
+
+      if (statuses[Permission.microphone]! == PermissionStatus.denied) {
+        if (_myPracticeTopicsProvider!.permissionDeniedTime >= 1) {
+          _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
+        } else {
+          _myPracticeTopicsProvider!.setPermissionDeniedTime();
+        }
+      } else {
+        _myPracticeTopicsProvider!.resetPermissionDeniedTime();
+        _goToTestScreen(data);
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print("DEBUG: Permission error ${e.toString()}");
+      }
+    }
+  }
+
+  void _showConfirmDeniedDialog(AlertInfo alertInfo) {
+    if (false == _myPracticeTopicsProvider!.dialogShowing) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertsDialog.init().showDialog(
+            context,
+            alertInfo,
+            this,
+            keyInfo: StringClass.permissionDenied,
+          );
+        },
+      );
+      _myPracticeTopicsProvider!.setDialogShowing(true);
+    }
+  }
+
+  Future<void> _goToTestScreen(Map<String, dynamic> data) async {
+    if (kDebugMode) {
+      print("DEBUG: _goToTestScreen");
+    }
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SimulatorTestScreen(
+          data: data,
+        ),
+      ),
+    );
+  }
+
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void onAlertExit(String keyInfo) {
+    // TODO: implement onAlertExit
+  }
+
+  @override
+  void onAlertNextStep(String keyInfo) {
+    // TODO: implement onAlertNextStep
+  }
 }

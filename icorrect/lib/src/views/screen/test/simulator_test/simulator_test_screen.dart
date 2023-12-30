@@ -36,17 +36,21 @@ import 'package:video_compress/video_compress.dart';
 import '../../../../provider/auth_provider.dart';
 
 class SimulatorTestScreen extends StatefulWidget {
-  const SimulatorTestScreen(
-      {super.key,
-      this.homeWorkModel,
-      this.testOption,
-      this.topicsId,
-      this.isPredict});
+  const SimulatorTestScreen({
+    super.key,
+    this.homeWorkModel,
+    this.testOption,
+    this.topicsId,
+    this.isPredict,
+    this.data,
+  });
 
   final ActivitiesModel? homeWorkModel;
   final int? testOption;
   final List<int>? topicsId;
   final int? isPredict;
+  final Map<String, dynamic>? data; //fromMyPractice
+
   @override
   State<SimulatorTestScreen> createState() => _SimulatorTestScreenState();
 }
@@ -672,56 +676,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  // Widget _buildBody() {
-  //   return Consumer<SimulatorTestProvider>(
-  //     builder: (context, provider, child) {
-  //       if (kDebugMode) {
-  //         print("DEBUG: SimulatorTest --- build -- buildBody");
-  //       }
-
-  //       if (provider.isDownloadProgressing) {
-  //         return Column(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             const DownloadProgressingWidget(),
-  //             Visibility(
-  //               visible: provider.startNowAvailable,
-  //               child: StartNowButtonWidget(
-  //                 startNowButtonTapped: () {
-  //                   _startToDoTest();
-  //                 },
-  //               ),
-  //             ),
-  //           ],
-  //         );
-  //       }
-
-  //       if (provider.isGettingTestDetail) {
-  //         return const DefaultLoadingIndicator(
-  //           color: AppColor.defaultPurpleColor,
-  //         );
-  //       } else {
-  //         return SizedBox(
-  //           child: Stack(
-  //             children: [
-  //               TestRoomWidget(
-  //                 homeWorkModel: widget.homeWorkModel,
-  //                 simulatorTestPresenter: _simulatorTestPresenter!,
-  //               ),
-  //               Visibility(
-  //                 visible: provider.submitStatus == SubmitStatus.submitting,
-  //                 child: const DefaultLoadingIndicator(
-  //                   color: AppColor.defaultPurpleColor,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
-
   Widget _buildDownloadAgain() {
     return Consumer<SimulatorTestProvider>(
       builder: (context, provider, child) {
@@ -743,6 +697,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _simulatorTestPresenter!.getTestDetailByHomeWork(
             context: context,
             homeworkId: widget.homeWorkModel!.activityId.toString());
+      } else if (widget.data != null) {
+        _simulatorTestPresenter!.getTestDetailByMyPractice(
+          context: context,
+          data: widget.data!,
+        );
       } else {
         _simulatorTestPresenter!.getTestDetailByPractice(
             context: context,

@@ -124,6 +124,8 @@ String getListTopicOfBankEP(String distributeCode) {
   return '$icorrectDomain//api/v1/ielts-test/banks/$distributeCode/topics'; //API 144
 }
 
+const String customPracticeEP = 'api/v1/ielts-test/practices/custom'; //API 145
+
 class RequestMethod {
   static const post = 'POST';
   static const get = 'GET';

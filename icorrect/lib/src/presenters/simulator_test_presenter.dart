@@ -315,6 +315,92 @@ class SimulatorTestPresenter {
     );
   }
 
+  Future getTestDetailByMyPractice(
+      {required BuildContext context,
+      required Map<String, dynamic> data}) async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetTestDetail);
+    }
+
+    _testRepository!
+        .getTestDetailFromMyPractice(data: data)
+        .then((value) async {
+      Map<String, dynamic> map = jsonDecode(value);
+      if (kDebugMode) {
+        print('DEBUG create practice test : ${map.toString()}');
+      }
+      if (map[StringConstants.k_error_code] == 200) {
+        Map<String, dynamic> dataMap = map[StringConstants.k_data];
+        TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
+        tempTestDetailModel = TestDetailModel.fromJson(dataMap);
+        testDetail = TestDetailModel.fromJson(dataMap);
+
+        _prepareTopicList(tempTestDetailModel);
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: jsonDecode(value),
+          message: null,
+          status: LogEvent.success,
+        );
+
+        //Save file info for re download
+        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
+
+        _view!.onPrepareListVideoSource(filesTopic!);
+
+        List<FileTopicModel> tempFilesTopic =
+            _prepareFileTopicListForDownload(tempTestDetailModel);
+
+        if (imageFiles.isNotEmpty) {
+          //Download images
+          _prepareDownloadImages(
+            context: context,
+            testDetail: tempTestDetailModel,
+            filesTopic: tempFilesTopic,
+          );
+        } else {
+          //Download video
+          downloadFiles(
+            context: context,
+            testDetail: tempTestDetailModel,
+            filesTopic: tempFilesTopic,
+          );
+        }
+
+        _view!.onGetTestDetailComplete(
+            tempTestDetailModel, tempFilesTopic.length);
+      } else {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message:
+              "Loading pratice detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
+      }
+    }).catchError(
+      // ignore: invalid_return_type_for_catch_error
+      (onError) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
+      },
+    );
+  }
+
   //Prepare list of topic for save into provider
   void _prepareTopicList(TestDetailModel testDetail) {
     List<TopicModel> topicsList = [];

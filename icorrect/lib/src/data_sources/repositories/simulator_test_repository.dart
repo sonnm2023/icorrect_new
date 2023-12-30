@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -26,6 +28,8 @@ abstract class SimulatorTestRepository {
     required String user,
     required String pass,
   });
+  Future<String> getTestDetailFromMyPractice(
+      {required Map<String, dynamic> data});
 }
 
 class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
@@ -143,5 +147,30 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             print("DEBUG: error: ${onError.toString()}");
           }
         });
+  }
+
+  @override
+  Future<String> getTestDetailFromMyPractice(
+      {required Map<String, dynamic> data}) {
+    String url = '$apiDomain$customPracticeEP';
+
+    var body = json.encode(data);
+
+    if (kDebugMode) {
+      print("DEBUG: $body");
+    }
+
+    return AppRepository.init()
+        .sendRequest(
+          RequestMethod.post,
+          url,
+          true,
+          body: body,
+        )
+        .timeout(const Duration(seconds: timeout))
+        .then((http.Response response) {
+      final String jsonBody = response.body;
+      return jsonBody;
+    });
   }
 }

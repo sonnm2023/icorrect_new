@@ -15,6 +15,7 @@ class AppRepository {
       {Object? body, Encoding? encoding}) async {
     Map<String, String> headers = {
       'Accept': 'application/json',
+      'Content-Type': 'application/json',
     };
 
     if (hasToken == true) {
