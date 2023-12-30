@@ -27,6 +27,7 @@ class AuthRepositoryImpl implements AuthRepository {
           RequestMethod.post,
           url,
           false,
+          false,
           body: <String, String>{
             StringConstants.k_email: email,
             StringConstants.k_password: password
@@ -54,6 +55,7 @@ class AuthRepositoryImpl implements AuthRepository {
           RequestMethod.post,
           url,
           true,
+          false,
           body: <String, String>{
             StringConstants.k_device_id: deviceId,
             StringConstants.k_app_version: appVersion,
@@ -75,6 +77,7 @@ class AuthRepositoryImpl implements AuthRepository {
           RequestMethod.post,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -96,6 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
           RequestMethod.post,
           url,
           true,
+          false,
           body: <String, String>{
             StringConstants.k_old_password: oldPassword,
             StringConstants.k_password: newPassword,
@@ -118,6 +122,7 @@ class AuthRepositoryImpl implements AuthRepository {
         .sendRequest(
           RequestMethod.get,
           url,
+          false,
           false,
         )
         .timeout(const Duration(seconds: timeout))

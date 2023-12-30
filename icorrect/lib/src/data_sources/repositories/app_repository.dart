@@ -11,12 +11,18 @@ class AppRepository {
   static final AppRepository _repositories = AppRepository._();
   factory AppRepository.init() => _repositories;
 
-  Future<http.Response> sendRequest(method, String url, bool hasToken,
+  Future<http.Response> sendRequest(
+      method, String url, bool hasToken, bool isFromMyPractice,
       {Object? body, Encoding? encoding}) async {
     Map<String, String> headers = {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
     };
+    if (isFromMyPractice) {
+      headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      };
+    }
 
     if (hasToken == true) {
       String token = await Utils.getAccessToken();

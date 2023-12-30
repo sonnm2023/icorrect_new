@@ -205,6 +205,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return WillPopScope(
       child: Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTestProvider, child) {
@@ -288,7 +289,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             return Stack(
               children: [
                 Scaffold(
-                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                  // key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                   body: Align(
                     alignment: Alignment.topLeft,
                     child: SafeArea(

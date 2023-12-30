@@ -23,7 +23,7 @@ class MyTestImpl implements MyTestRepository {
       getMyPracticeTestDetailEP(testId);
     }
     return AppRepository.init()
-        .sendRequest(RequestMethod.get, url, true)
+        .sendRequest(RequestMethod.get, url, true, false)
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
@@ -35,7 +35,7 @@ class MyTestImpl implements MyTestRepository {
   Future<String> getResponse(String orderId) {
     String url = responseEP(orderId);
     return AppRepository.init()
-        .sendRequest(RequestMethod.get, url, true)
+        .sendRequest(RequestMethod.get, url, true, false)
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
@@ -53,7 +53,7 @@ class MyTestImpl implements MyTestRepository {
     }
 
     return AppRepository.init()
-        .sendRequest(RequestMethod.get, url, true)
+        .sendRequest(RequestMethod.get, url, true, false)
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
@@ -89,7 +89,7 @@ class MyTestImpl implements MyTestRepository {
     String url = getTestDetailWithIdEP(testId);
 
     return AppRepository.init()
-        .sendRequest(RequestMethod.get, url, true)
+        .sendRequest(RequestMethod.get, url, true, false)
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;

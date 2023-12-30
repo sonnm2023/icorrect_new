@@ -103,8 +103,17 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                           size: 30,
                         ),
                         onPressed: () {
-                          _myPracticeTopicsProvider!
-                              .updateSettings(index, true);
+                          if (index == 2) {
+                            if (_myPracticeTopicsProvider!
+                                    .settings[index].value <
+                                1) {
+                              _myPracticeTopicsProvider!
+                                  .updateSettings(index, true);
+                            }
+                          } else {
+                            _myPracticeTopicsProvider!
+                                .updateSettings(index, true);
+                          }
                         },
                       ),
                     ],

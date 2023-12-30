@@ -48,6 +48,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           RequestMethod.post,
           url,
           true,
+          false,
           body: <String, String>{
             StringConstants.k_activity_id: homeworkId,
             StringConstants.k_distribute_code: distributeCode,
@@ -89,6 +90,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           RequestMethod.post,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -128,6 +130,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           RequestMethod.post,
           testPositionApi,
           false,
+          false,
           body: <String, String>{
             StringConstants.k_email: email,
             StringConstants.k_activity_id: activityId,
@@ -164,6 +167,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .sendRequest(
           RequestMethod.post,
           url,
+          true,
           true,
           body: body,
         )

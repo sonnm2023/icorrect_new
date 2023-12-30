@@ -18,6 +18,7 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
           RequestMethod.get,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -25,9 +26,9 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
       return jsonBody;
     });
   }
-  
+
   @override
-  Future<String> submitAuth(http.MultipartRequest multiRequest) async{
+  Future<String> submitAuth(http.MultipartRequest multiRequest) async {
     return await multiRequest
         .send()
         .timeout(const Duration(seconds: timeout))

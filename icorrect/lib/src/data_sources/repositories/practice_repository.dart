@@ -35,6 +35,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           RequestMethod.get,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -50,6 +51,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           RequestMethod.get,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -65,6 +67,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           RequestMethod.delete,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -80,6 +83,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           RequestMethod.get,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -95,6 +99,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           RequestMethod.get,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
@@ -110,6 +115,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           RequestMethod.get,
           url,
           true,
+          false,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
