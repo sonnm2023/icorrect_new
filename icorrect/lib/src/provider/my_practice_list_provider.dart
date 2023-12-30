@@ -107,4 +107,19 @@ class MyPracticeListProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool _isNeedRefreshList = false;
+  bool get isNeedRefreshList => _isNeedRefreshList;
+
+  void setIsNeedRefreshList(bool isRefresh) {
+    _isNeedRefreshList = isRefresh;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void resetIsNeedRefreshList() {
+    _isNeedRefreshList = false;
+  }
 }

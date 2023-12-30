@@ -337,13 +337,17 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       print("DEBUG: _goToTestScreen");
     }
 
-    await Navigator.push(
+    // await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (_) => SimulatorTestScreen(
+    //       data: data,
+    //     ),
+    //   ),
+    // );
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => SimulatorTestScreen(
-          data: data,
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => SimulatorTestScreen(data: data)),
     );
   }
 

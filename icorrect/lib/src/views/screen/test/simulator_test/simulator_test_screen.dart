@@ -18,6 +18,7 @@ import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
@@ -171,10 +172,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     _loading = CircleLoading();
 
-    Future.delayed(Duration.zero, () {
-      _authProvider!
-          .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
-    });
+    // Future.delayed(Duration.zero, () {
+    //   _authProvider!
+    //       .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
+    // });
 
     _prepareBeforeSimulatorTest();
   }
@@ -221,7 +222,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 DefaultTabController(
                   length: 3,
                   child: Scaffold(
-                    key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                    // key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                     appBar: AppBar(
                       elevation: 0.0,
                       iconTheme: const IconThemeData(
@@ -412,6 +413,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
       } else {
         //Go back List homework screen
+        if (widget.data != null) {
+          Provider.of<MyPracticeListProvider>(context, listen: false)
+              .setIsNeedRefreshList(true);
+        }
+
         Navigator.pop(context, StringConstants.k_refresh);
       }
     } else {
@@ -901,7 +907,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _simulatorTestProvider!.setIsReDownload(true);
         _simulatorTestProvider!.setStartNowStatus(false);
         _simulatorTestPresenter!.reDownloadFiles(
-            context, widget.homeWorkModel!.activityId.toString());
+            context,
+            widget.homeWorkModel != null
+                ? widget.homeWorkModel!.activityId.toString()
+                : null);
       }
     }
   }

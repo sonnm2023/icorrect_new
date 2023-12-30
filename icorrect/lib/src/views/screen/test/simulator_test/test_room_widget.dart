@@ -1413,6 +1413,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             if (kDebugMode) {
               print("DEBUG: onPlayEndOfTakeNote(fileName)");
             }
+            // _testRoomPresenter!.playEndOfTakeNoteFile(topicModel);
+            _playNextPart();
             break;
           }
         case 3:

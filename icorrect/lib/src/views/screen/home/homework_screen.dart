@@ -227,8 +227,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   bool _isBackFromTestRoom(GlobalKey<ScaffoldState> key) {
-    return key == GlobalScaffoldKey.simulatorTestScaffoldKey &&
-        _simulatorTestProvider!.submitStatus == SubmitStatus.success;
+    // return key == GlobalScaffoldKey.simulatorTestScaffoldKey &&
+    return _simulatorTestProvider!.submitStatus == SubmitStatus.success;
   }
 
   Future<void> _pullToRefresh() async {
