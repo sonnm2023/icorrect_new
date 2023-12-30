@@ -662,6 +662,8 @@ class StringConstants {
       "You must choose at least one class and one status!";
   static const String no_data_filter_message =
       "No data, please choose other filter!";
+  static const String my_practice_no_data_message =
+      "There are currently no practice sessions.!";
   static const String test_correction_wait_response_message =
       "Please wait until the response from examiners is finish!";
   static const String nothing_problem_message = "Nothing Problem in here";

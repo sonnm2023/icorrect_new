@@ -122,4 +122,13 @@ class MyPracticeListProvider extends ChangeNotifier {
   void resetIsNeedRefreshList() {
     _isNeedRefreshList = false;
   }
+
+  bool _isProcessing = false;
+  bool get isProcessing => _isProcessing;
+  void setIsProcessing(bool isProcessing) {
+    _isProcessing = isProcessing;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 }

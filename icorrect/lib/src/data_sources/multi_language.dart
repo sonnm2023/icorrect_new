@@ -190,6 +190,8 @@ class MultiLanguage {
         "Bạn phải chọn ít nhất một lớp và một trạng thái!",
     StringConstants.no_data_filter_message:
         "Không có dữ liệu với các điều kiện lọc hiện tại !",
+    StringConstants.my_practice_no_data_message:
+        "Hiện tại chưa có bài luyện tập nào!",
     StringConstants.test_correction_wait_response_message:
         "Chưa có điểm, vui lòng chờ kết quả từ giáo viên !",
     StringConstants.nothing_problem_message: "Chưa có vấn đề được ghi nhận !",
@@ -545,6 +547,8 @@ class MultiLanguage {
         "You must choose at least one class and one status!",
     StringConstants.no_data_filter_message:
         "No data, please choose other filter!",
+    StringConstants.my_practice_no_data_message:
+        "There are currently no practice sessions!",
     StringConstants.test_correction_wait_response_message:
         "Please wait until the response from examiners is finish!",
     StringConstants.nothing_problem_message: "Nothing Problem in here",

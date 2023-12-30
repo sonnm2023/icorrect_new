@@ -16,6 +16,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
+import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:provider/provider.dart';
 
 class MyPracticeList extends StatefulWidget {
@@ -53,6 +54,7 @@ class _MyPracticeListState extends State<MyPracticeList>
       Duration.zero,
       () {
         _myPracticeListProvider!.setPageNum(pageNum);
+        _myPracticeListProvider!.setIsProcessing(true);
       },
     );
   }
@@ -176,7 +178,7 @@ class _MyPracticeListState extends State<MyPracticeList>
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: const EdgeInsets.only(top: 10),
@@ -215,6 +217,18 @@ class _MyPracticeListState extends State<MyPracticeList>
           const SizedBox(height: 20),
           Consumer<MyPracticeListProvider>(
             builder: (context, provider, child) {
+              if (provider.myTestsList.isEmpty && !provider.isProcessing) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 100),
+                    NoDataWidget(
+                      msg: Utils.multiLanguage(
+                          StringConstants.my_practice_no_data_message),
+                      reloadCallBack: _reloadCallBack,
+                    ),
+                  ],
+                );
+              }
               return Container(
                 height: h,
                 padding: const EdgeInsets.only(bottom: 150),
@@ -545,10 +559,18 @@ class _MyPracticeListState extends State<MyPracticeList>
     );
   }
 
+  void _reloadCallBack() async {
+    if (kDebugMode) {
+      print("DEBUG: MyPracticeList - _reloadCallBack");
+    }
+    _getMyTestsList();
+  }
+
   @override
   void getMyTestListFail(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
+    _myPracticeListProvider!.setIsProcessing(false);
 
     showDialog(
       context: context,
@@ -570,6 +592,7 @@ class _MyPracticeListState extends State<MyPracticeList>
     }
 
     _myPracticeListProvider!.setMyPracticeResponseModel(practiceResponseModel);
+    _myPracticeListProvider!.setIsProcessing(false);
   }
 
   @override
