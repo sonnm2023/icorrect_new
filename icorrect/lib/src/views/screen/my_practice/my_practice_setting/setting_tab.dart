@@ -42,8 +42,10 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
-                    child: Text(Utils.multiLanguage(
-                        _myPracticeTopicsProvider!.settings[index].title)),
+                    child: Text(
+                      Utils.multiLanguage(
+                          _myPracticeTopicsProvider!.settings[index].title),
+                    ),
                   ),
                   Row(
                     children: [
@@ -53,8 +55,18 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                           size: 30,
                         ),
                         onPressed: () {
-                          _myPracticeTopicsProvider!
-                              .updateSettings(index, false);
+                          if (index > 3) {
+                            if (_myPracticeTopicsProvider!
+                                    .settings[index].value >
+                                _myPracticeTopicsProvider!
+                                    .settings[index].step) {
+                              _myPracticeTopicsProvider!
+                                  .updateSettings(index, false);
+                            }
+                          } else {
+                            _myPracticeTopicsProvider!
+                                .updateSettings(index, false);
+                          }
                         },
                       ),
                       Consumer<MyPracticeTopicsProvider>(

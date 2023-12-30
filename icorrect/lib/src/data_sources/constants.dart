@@ -311,6 +311,8 @@ class GlobalScaffoldKey {
       GlobalKey<ScaffoldState>(debugLabel: 'SimulatorTestScaffoldKey');
   static final practiceScreenScaffoldKey =
       GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
+  static final myPracticeSettingScreenScaffoldKey = GlobalKey<ScaffoldState>(
+      debugLabel: 'MyPracticeSettingScreenScaffoldKey');
 }
 
 class FontsSize {
@@ -776,6 +778,14 @@ class StringConstants {
   static const String timeout_update_answer_message =
       'Timeout to update your changes. Please try again !';
   static const String search_title = "Search";
+  static const String my_practice_selected_topic_error_message =
+      'You must choose at least 1 topic!';
+  static const String my_practice_setting_number_topic_error_message =
+      'You must set up at least 1 topic!';
+  static const String my_practice_setting_number_question_error_message =
+      'You must set up at least 1 question!';
+  static const String my_practice_setting_take_note_time_error_message =
+      'You must set up the take note time greater than 0 second!';
 
   static const String out_of_date_title = "Out Of Date";
   static const String not_completed_title = "Not Completed";

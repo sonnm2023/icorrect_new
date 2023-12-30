@@ -325,6 +325,14 @@ class MultiLanguage {
     StringConstants.speed_of_first_time: 'Tốc độ phát câu hỏi lần 1',
     StringConstants.speed_of_second_time: 'Tốc độ phát câu hỏi lần 2',
     StringConstants.speed_of_third_time: 'Tốc độ phát câu hỏi lần 3',
+    StringConstants.my_practice_selected_topic_error_message:
+        'Bạn phải chọn ít nhất 1 chủ đề!',
+    StringConstants.my_practice_setting_number_topic_error_message:
+        'Bạn phải thiết lập ít nhất 1 chủ đề!',
+    StringConstants.my_practice_setting_number_question_error_message:
+        'Bạn phải thiết lập ít nhất 1 câu hỏi!',
+    StringConstants.my_practice_setting_take_note_time_error_message:
+        'Bạn phải thiết lập thời gian chờ Part 2 lớn hơn 0!',
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -685,5 +693,13 @@ class MultiLanguage {
     StringConstants.speed_of_first_time: 'Speed of the first time',
     StringConstants.speed_of_second_time: 'Speed of the second time',
     StringConstants.speed_of_third_time: 'Speed of the third time',
+    StringConstants.my_practice_selected_topic_error_message:
+        'You must choose at least 1 topic!',
+    StringConstants.my_practice_setting_number_topic_error_message:
+        'You must set up at least 1 topic!',
+    StringConstants.my_practice_setting_number_question_error_message:
+        'You must set up at least 1 question!',
+    StringConstants.my_practice_setting_take_note_time_error_message:
+        'You must set up the take note time greater than 0 second!',
   };
 }
