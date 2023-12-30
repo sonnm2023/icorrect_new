@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
 

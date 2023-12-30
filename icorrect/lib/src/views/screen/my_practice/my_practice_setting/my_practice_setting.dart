@@ -126,6 +126,10 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
             ),
             InkWell(
               onTap: () {
+                if (_myPracticeTopicsProvider!.settings.isEmpty) {
+                  return;
+                }
+
                 bool isValidData = _checkSettings();
                 if (isValidData) {
                   if (kDebugMode) {
