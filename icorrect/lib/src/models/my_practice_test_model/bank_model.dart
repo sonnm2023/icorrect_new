@@ -2,8 +2,9 @@ class BankModel {
   int? _id;
   String? _bankDistributeCode;
   String? _title;
+  int? _type; //0: IELTS, 1: Class
 
-  BankModel({int? id, String? bankDistributeCode, String? title}) {
+  BankModel({int? id, String? bankDistributeCode, String? title, int? type}) {
     if (id != null) {
       this._id = id;
     }
@@ -12,6 +13,9 @@ class BankModel {
     }
     if (title != null) {
       this._title = title;
+    }
+    if (type != null) {
+      this._type = type;
     }
   }
 
@@ -22,11 +26,14 @@ class BankModel {
       _bankDistributeCode = bankDistributeCode;
   String? get title => _title;
   set title(String? title) => _title = title;
+  int? get type => _type;
+  set type(int? type) => _type = type;
 
   BankModel.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _bankDistributeCode = json['bank_distribute_code'];
     _title = json['title'];
+    _type = json['type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +41,7 @@ class BankModel {
     data['id'] = this._id;
     data['bank_distribute_code'] = this._bankDistributeCode;
     data['title'] = this._title;
+    data['type'] = this._type;
     return data;
   }
 }

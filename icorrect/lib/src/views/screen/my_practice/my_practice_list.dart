@@ -132,6 +132,18 @@ class _MyPracticeListState extends State<MyPracticeList>
     List<SpeedDialChild> list = [];
     for (int i = 0; i < _myPracticeListProvider!.banks.length; i++) {
       BankModel bank = _myPracticeListProvider!.banks[i];
+      Icon icon = const Icon(
+        Icons.class_outlined,
+        color: AppColor.defaultPurpleColor,
+      ); //Default Class bank icon
+      Color bgColor = Colors.green; //Default Class bank color
+      if (bank.type == 0) {
+        icon = const Icon(
+          Icons.comment_bank,
+          color: AppColor.defaultPurpleColor,
+        ); //IELTS bank icon
+        bgColor = Colors.amber;
+      }
 
       SpeedDialChild temp = SpeedDialChild(
         shape: const CircleBorder(),
@@ -140,16 +152,9 @@ class _MyPracticeListState extends State<MyPracticeList>
         },
         child: Container(
           margin: const EdgeInsets.all(5),
-          child: Text(
-            "#${bank.id!.toString()}",
-            style: const TextStyle(
-              fontSize: 15,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: icon,
         ),
-        backgroundColor: i % 2 != 0 ? Colors.orange : Colors.green,
+        backgroundColor: bgColor,
         labelWidget: Container(
           margin: const EdgeInsets.only(right: 10),
           child: Text(
@@ -359,7 +364,7 @@ class _MyPracticeListState extends State<MyPracticeList>
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          "$score",
+                          score == 0.0 ? "NA" : "$score",
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultGrayColor,
