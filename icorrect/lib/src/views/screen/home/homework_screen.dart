@@ -599,10 +599,14 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     //Send log
     Utils.sendLog();
 
-    // Navigator.of(context).pop();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
+          child: const LoginScreen(),
+        ),
+      ),
     );
   }
 

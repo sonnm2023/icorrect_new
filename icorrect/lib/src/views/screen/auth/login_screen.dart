@@ -272,7 +272,6 @@ class _LoginScreenState extends State<LoginScreen>
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
         _authProvider.updateLoginStatus(isLogining: false);
-        _hideLoading();
 
         Navigator.pushReplacement(
           context,
@@ -349,7 +348,6 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _finishLoginWithError(String message) {
     _authProvider.updateLoginStatus(isLogining: false);
-    _hideLoading();
 
     if (message == StringConstants.email_or_password_wrong_message) {
       message = Utils.multiLanguage(message);
@@ -361,15 +359,9 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  void _hideLoading() {
-    if (_loading == null) return;
-    _loading!.hide();
-  }
-
   @override
   void onLoginComplete() {
     _authProvider.updateLoginStatus(isLogining: false);
-    _hideLoading();
 
     _resetTextFieldControllers();
 
