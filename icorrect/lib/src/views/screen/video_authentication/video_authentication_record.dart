@@ -174,7 +174,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  _onBackPress();
+                                  _onBackButtonTapped();
                                 },
                                 child: const Icon(
                                   Icons.arrow_back_rounded,
@@ -321,7 +321,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
             ),
           ),
           onWillPop: () async {
-            _onBackPress();
+            _onBackButtonTapped();
             return false;
           },
         );
@@ -329,7 +329,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     );
   }
 
-  Future _onBackPress() async {
+  Future _onBackButtonTapped() async {
     if (_videoRecording()) {
       _backWhenRecordingVideo();
     } else if (_videoAuthProvider!.savedFile.existsSync()) {

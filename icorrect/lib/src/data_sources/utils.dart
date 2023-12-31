@@ -3,13 +3,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -19,25 +19,19 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
+import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/models/ui_models/user_authen_status.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/views/widget/drawer_items.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
-
-import '../../core/app_asset.dart';
-import '../../core/app_color.dart';
-import '../models/my_test_models/student_result_model.dart';
-import '../models/ui_models/user_authen_status.dart';
-import '../provider/homework_provider.dart';
-import '../views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'api_urls.dart';
 
 class Utils {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -604,143 +598,6 @@ class Utils {
     }
 
     return "";
-  }
-
-  static Widget navbar({
-    required BuildContext context,
-    required HomeWorkPresenter? homeWorkPresenter,
-  }) {
-    return Drawer(
-      backgroundColor: AppColor.defaultWhiteColor,
-      child:
-          navbarItems(context: context, homeWorkPresenter: homeWorkPresenter),
-    );
-  }
-
-  static Widget drawHeader(BuildContext context, UserDataModel user) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: CustomSize.size_30,
-        horizontal: CustomSize.size_10,
-      ),
-      color: AppColor.defaultPurpleColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: CustomSize.size_60,
-            height: CustomSize.size_60,
-            child: CircleAvatar(
-              child: Consumer<HomeWorkProvider>(
-                  builder: (context, homeWorkProvider, child) {
-                return CachedNetworkImage(
-                  imageUrl:
-                      fileEP(homeWorkProvider.currentUser.profileModel.avatar),
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(CustomSize.size_100),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.transparent,
-                          BlendMode.colorBurn,
-                        ),
-                      ),
-                    ),
-                  ),
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => CircleAvatar(
-                    child: Image.asset(
-                      AppAsset.defaultAvt,
-                      width: CustomSize.size_40,
-                      height: CustomSize.size_40,
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-          Container(
-            width: CustomSize.size_200,
-            margin: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_10,
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.size_10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.profileModel.displayName.toString(),
-                  style: CustomTextStyle.textWithCustomInfo(
-                    context: context,
-                    color: AppColor.defaultAppColor,
-                    fontsSize: FontsSize.fontSize_15,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                //TODO: Cần check kỹ và giải thích cho việc dùng các gói VIP ...
-                /*
-                const SizedBox(height: CustomSize.size_5),
-                Row(
-                  children: [
-                    Text(
-                      "Dimond: ${user.profileModel.wallet.usd.toString()}",
-                      style: CustomTextStyle.textWhite_14,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: CustomSize.size_10,
-                      ),
-                      child: const Image(
-                        width: CustomSize.size_20,
-                        image: AssetImage(AppAsset.dimond),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: CustomSize.size_5),
-                Row(
-                  children: [
-                    Text(
-                      "Gold: ${user.profileModel.pointTotal.toString()}",
-                      style: CustomTextStyle.textWhite_14,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: CustomSize.size_10,
-                      ),
-                      child: const Image(
-                        width: CustomSize.size_20,
-                        image: AssetImage(
-                          AppAsset.gold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                */
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  static void toggleDrawer() async {
-    if (GlobalKey<ScaffoldState>().currentState != null) {
-      if (GlobalKey<ScaffoldState>().currentState!.isDrawerOpen) {
-        GlobalKey<ScaffoldState>().currentState!.openEndDrawer();
-      } else {
-        GlobalKey<ScaffoldState>().currentState!.openDrawer();
-      }
-    }
   }
 
   static void showLogoutConfirmDialog({

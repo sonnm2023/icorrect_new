@@ -2,9 +2,19 @@
 
 import 'dart:io';
 import 'dart:core';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_asset.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
+import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
+import 'package:icorrect/src/views/screen/auth/login_screen.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_list.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
+import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
+import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -91,13 +101,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _onBackPress();
+        _onBackButtonTapped();
         return false;
       },
       child: MaterialApp(
         theme: ThemeData(
           brightness: Brightness.light,
-          // add tabBarTheme
           tabBarTheme: const TabBarTheme(
             labelColor: AppColor.defaultPurpleColor,
             labelStyle: TextStyle(
@@ -160,9 +169,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                             height: 50,
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(100)),
-                                color: Colors.white),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100)),
+                              color: Colors.white,
+                            ),
                             child: const CircularProgressIndicator(
                               strokeWidth: 4,
                               backgroundColor: AppColor.defaultLightGrayColor,
@@ -180,8 +190,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ),
               ],
             ),
-            drawer: Utils.navbar(
-                context: context, homeWorkPresenter: _homeWorkPresenter),
+            // drawer: Utils.navbar(
+            //     context: context, homeWorkPresenter: _homeWorkPresenter),
+            drawer: _buildDrawer(),
             drawerEnableOpenDragGesture: false,
           ),
         ),
@@ -189,7 +200,276 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  Future _onBackPress() async {
+  Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        children: [
+          ListTile(
+            title: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: CustomSize.size_10,
+                horizontal: CustomSize.size_5,
+              ),
+              color: AppColor.defaultPurpleColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: CustomSize.size_60,
+                    height: CustomSize.size_60,
+                    child: CircleAvatar(
+                      child: Consumer<HomeWorkProvider>(
+                          builder: (context, homeWorkProvider, child) {
+                        return CachedNetworkImage(
+                          imageUrl: fileEP(
+                              homeWorkProvider.currentUser.profileModel.avatar),
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(CustomSize.size_100),
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.transparent,
+                                  BlendMode.colorBurn,
+                                ),
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => CircleAvatar(
+                            child: Image.asset(
+                              AppAsset.defaultAvt,
+                              width: CustomSize.size_40,
+                              height: CustomSize.size_40,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Consumer<HomeWorkProvider>(
+                    builder: (context, provider, child) {
+                      return Flexible(
+                        child: Text(
+                          provider.currentUser.profileModel.displayName
+                              .toString(),
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultAppColor,
+                            fontsSize: FontsSize.fontSize_15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+            ),
+            onTap: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+            },
+          ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.home_menu_item_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.home_outlined,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeDrawer();
+            },
+          ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.practice_menu_item_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.menu_book,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PracticeScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.my_test_menu_item_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.list_alt,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const MyPracticeList(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.change_password_menu_item_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.password_outlined,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ChangePasswordScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.video_authen_menu_item_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.video_camera_front_outlined,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const UserAuthDetailStatus(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.multi_language,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.language,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (builder) {
+                  return const LanguageSelectionDialog();
+                },
+              );
+            },
+          ),
+          //For test rating
+          // ListTile(
+          //   title: Text(
+          //     "Rating",
+          //     style: CustomTextStyle.textWithCustomInfo(
+          //       context: context,
+          //       color: AppColor.defaultGrayColor,
+          //       fontsSize: FontsSize.fontSize_15,
+          //       fontWeight: FontWeight.w400,
+          //     ),
+          //   ),
+          //   leading: const Icon(
+          //     Icons.language,
+          //     color: AppColor.defaultGrayColor,
+          //   ),
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (context) => const RatingWidget(),
+          //       ),
+          //     );
+          //   },
+          // ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.logout_menu_item_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.logout_outlined,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              Utils.showLogoutConfirmDialog(
+                context: context,
+                homeWorkPresenter: _homeWorkPresenter,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future _onBackButtonTapped() async {
     if (_authProvider.isShowDialog) {
       GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
       _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
@@ -322,7 +602,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     //Send log
     Utils.sendLog();
 
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
 
   @override

@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
@@ -7,6 +8,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/change_password_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/password_input_widget.dart';
 import 'package:provider/provider.dart';
@@ -20,41 +22,27 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     implements ChangePasswordViewContract {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController currentPasswordController;
-  late TextEditingController newPasswordController;
-  late TextEditingController confirmNewPasswordController;
+  final _formKey = GlobalKey<FormState>(debugLabel: "ChangePasswordScreen");
   bool isAvailable = false;
   ChangePasswordPresenter? _changePasswordPresenter;
   late AuthProvider _authProvider;
+  CircleLoading? _loading;
+  late TextEditingController currentPasswordController;
+  late TextEditingController newPasswordController;
+  late TextEditingController confirmNewPasswordController;
   final FocusNode _currentPasswordFocusNode = FocusNode();
   final FocusNode _newPasswordFocusNode = FocusNode();
   final FocusNode _confirmNewPasswordFocusNode = FocusNode();
 
   @override
   void initState() {
+    super.initState();
+    _changePasswordPresenter = ChangePasswordPresenter(this);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _loading = CircleLoading();
     currentPasswordController = TextEditingController(text: '');
     newPasswordController = TextEditingController(text: '');
     confirmNewPasswordController = TextEditingController(text: '');
-
-    _changePasswordPresenter = ChangePasswordPresenter(this);
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    /*
-    confirmNewPasswordController.addListener(() {
-    if (confirmNewPasswordController.text.trim() != newPasswordController.text.trim()) {
-        showToastMsg(
-          msg: "Confirm new password must be equal new password!",
-          toastState: ToastStates.error,
-        );
-
-        setState(() {
-          isAvailable = true;
-        });
-      }
-    });
-    */
-    super.initState();
   }
 
   @override
@@ -62,12 +50,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     currentPasswordController.dispose();
     newPasswordController.dispose();
     confirmNewPasswordController.dispose();
-    // _authProvider.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("DEBUG: ChangePasswordScreen - build");
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -90,41 +80,55 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         ),
       ),
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.all(CustomSize.size_30),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PasswordInputWidget(
-                        passwordController: currentPasswordController,
-                        type: PasswordType.currentPassword,
-                        focusNode: _currentPasswordFocusNode,
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: const EdgeInsets.all(CustomSize.size_30),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PasswordInputWidget(
+                            passwordController: currentPasswordController,
+                            type: PasswordType.currentPassword,
+                            focusNode: _currentPasswordFocusNode,
+                          ),
+                          PasswordInputWidget(
+                            passwordController: newPasswordController,
+                            type: PasswordType.newPassword,
+                            focusNode: _newPasswordFocusNode,
+                          ),
+                          PasswordInputWidget(
+                            passwordController: confirmNewPasswordController,
+                            type: PasswordType.confirmNewPassword,
+                            focusNode: _confirmNewPasswordFocusNode,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildSaveButton(),
+                          const SizedBox(height: 10),
+                          _buildCancelButton(),
+                        ],
                       ),
-                      PasswordInputWidget(
-                        passwordController: newPasswordController,
-                        type: PasswordType.newPassword,
-                        focusNode: _newPasswordFocusNode,
-                      ),
-                      PasswordInputWidget(
-                        passwordController: confirmNewPasswordController,
-                        type: PasswordType.confirmNewPassword,
-                        focusNode: _confirmNewPasswordFocusNode,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildSaveButton(),
-                      const SizedBox(height: 10),
-                      _buildCancelButton(),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
+            // Consumer<AuthProvider>(
+            //   builder: (context, authProvider, child) {
+            //     if (authProvider.isChanging) {
+            //       _loading!.show(context: context, isViewAIResponse: false);
+            //     } else {
+            //       _loading!.hide();
+            //     }
+            //     return Container();
+            //   },
+            // ),
           ],
         ),
       ),
@@ -141,7 +145,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             currentPasswordController.text.trim()) {
           showToastMsg(
             msg: Utils.multiLanguage(
-                StringConstants.old_password_equals_new_password_error_message),
+              StringConstants.old_password_equals_new_password_error_message,
+            ),
             toastState: ToastStatesType.error,
             isCenter: false,
           );
@@ -149,14 +154,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             confirmNewPasswordController.text.trim()) {
           showToastMsg(
             msg: Utils.multiLanguage(
-                StringConstants.confirm_new_password_error_message),
+              StringConstants.confirm_new_password_error_message,
+            ),
             toastState: ToastStatesType.error,
             isCenter: false,
           );
         } else {
           if (_formKey.currentState!.validate() &&
-              _authProvider.isProcessing == false) {
-            _authProvider.updateProcessingStatus(isProcessing: true);
+              _authProvider.isChanging == false) {
+            _authProvider.updateChangePasswordStatus(isChanging: true);
 
             _changePasswordPresenter!.changePassword(
               context,
@@ -200,8 +206,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   }
 
   @override
-  void onChangePasswordComplete(String message) {
-    _authProvider.updateProcessingStatus(isProcessing: false);
+  void onChangePasswordSuccess(String message) {
+    _authProvider.updateChangePasswordStatus(isChanging: false);
+    _loading!.hide();
 
     //Show error message
     showToastMsg(
@@ -216,7 +223,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordError(String message) {
-    _authProvider.updateProcessingStatus(isProcessing: false);
+    _authProvider.updateChangePasswordStatus(isChanging: false);
+    _loading!.hide();
 
     //Show error message
     showToastMsg(

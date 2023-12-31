@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:video_compress/video_compress.dart';
 
 class AuthProvider with ChangeNotifier {
-  bool _isProcessing = false;
-  bool get isProcessing => _isProcessing;
   bool isDisposed = false;
 
   @override
@@ -55,8 +53,21 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void updateProcessingStatus({required bool isProcessing}) {
-    _isProcessing = isProcessing;
+  //For Login
+  bool _isLogining = false;
+  bool get isLogining => _isLogining;
+
+  void updateLoginStatus({required bool isLogining}) {
+    _isLogining = isLogining;
+    notifyListeners();
+  }
+
+  //For Change password
+  bool _isChanging = false;
+  bool get isChanging => _isChanging;
+
+  void updateChangePasswordStatus({required bool isChanging}) {
+    _isChanging = isChanging;
     notifyListeners();
   }
 

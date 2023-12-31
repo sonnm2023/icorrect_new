@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen>
     implements LoginViewContract, ActionAlertListener {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(debugLabel: "LoginScreen");
 
   LoginPresenter? _loginPresenter;
   late AuthProvider _authProvider;
@@ -54,8 +54,8 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //For debug
-    // emailController.text = "testbase06@testing.com";
-    // passwordController.text = "123456";
+    emailController.text = "testbase06@testing.com";
+    passwordController.text = "123456";
 
     _checkPermission();
   }
@@ -70,6 +70,10 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("DEBUG: LoginScreen - build");
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -119,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
-                if (authProvider.isProcessing) {
+                if (authProvider.isLogining) {
                   _loading!.show(context: context, isViewAIResponse: false);
                 } else {
                   _loading!.hide();
@@ -139,10 +143,10 @@ class _LoginScreenState extends State<LoginScreen>
       onPressed: () async {
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
-            _authProvider.isProcessing == false) {
+            _authProvider.isLogining == false) {
           Utils.checkInternetConnection().then((isConnected) {
             if (isConnected) {
-              _authProvider.updateProcessingStatus(isProcessing: true);
+              _authProvider.updateLoginStatus(isLogining: true);
 
               //Add firebase log
               Utils.addFirebaseLog(
@@ -255,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen>
     String token = await Utils.getAccessToken();
 
     if (token.isNotEmpty) {
-      _authProvider.updateProcessingStatus(isProcessing: true);
+      _authProvider.updateLoginStatus(isLogining: true);
 
       UserDataModel? currentUser = await Utils.getCurrentUser();
       if (null == currentUser) {
@@ -267,14 +271,14 @@ class _LoginScreenState extends State<LoginScreen>
 
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
-        _authProvider.updateProcessingStatus(isProcessing: false);
+        _authProvider.updateLoginStatus(isLogining: false);
         _hideLoading();
 
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.pushReplacement(
+          context,
           MaterialPageRoute(
             builder: (_) => HomeWorkScreen(),
           ),
-          ModalRoute.withName('/'),
         );
       });
     }
@@ -344,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _finishLoginWithError(String message) {
-    _authProvider.updateProcessingStatus(isProcessing: false);
+    _authProvider.updateLoginStatus(isLogining: false);
     _hideLoading();
 
     if (message == StringConstants.email_or_password_wrong_message) {
@@ -364,12 +368,13 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void onLoginComplete() {
-    _authProvider.updateProcessingStatus(isProcessing: false);
+    _authProvider.updateLoginStatus(isLogining: false);
     _hideLoading();
 
     _resetTextFieldControllers();
 
-    Navigator.of(context).push(
+    Navigator.pushReplacement(
+      context,
       MaterialPageRoute(builder: (context) => HomeWorkScreen()),
     );
   }

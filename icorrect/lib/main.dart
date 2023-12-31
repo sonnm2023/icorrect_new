@@ -19,6 +19,7 @@ import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/rating_provider.dart';
@@ -98,30 +99,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => MyTestProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => TimerProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => PlayAnswerProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ReAnswerProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SimulatorTestProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => HomeWorkProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => MyTestProvider()),
+        ChangeNotifierProvider(create: (_) => TimerProvider()),
+        ChangeNotifierProvider(create: (_) => PlayAnswerProvider()),
+        ChangeNotifierProvider(create: (_) => ReAnswerProvider()),
+        ChangeNotifierProvider(create: (_) => SimulatorTestProvider()),
+        ChangeNotifierProvider(create: (_) => HomeWorkProvider()),
         ChangeNotifierProvider(create: (_) => VideoAuthProvider()),
         ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),
         ChangeNotifierProvider(create: (_) => RatingProvider()),
+        ChangeNotifierProvider(create: (_) => MyPracticeListProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeTopicsProvider()),
       ],
       child: MaterialApp(
