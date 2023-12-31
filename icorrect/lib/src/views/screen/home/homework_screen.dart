@@ -273,9 +273,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ],
               ),
             ),
-            onTap: () {
-              Navigator.popUntil(context, (route) => route.isFirst);
-            },
           ),
           ListTile(
             title: Text(
