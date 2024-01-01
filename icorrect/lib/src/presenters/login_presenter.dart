@@ -21,7 +21,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:http/http.dart' as http;
 
 abstract class LoginViewContract {
-  void onLoginComplete();
+  void onLoginSuccess();
   void onLoginError(String message, int? errorCode);
   void onGetAppConfigInfoSuccess();
   void onGetAppConfigInfoFail(String message);
@@ -234,7 +234,7 @@ class LoginPresenter {
         //Set userid for firebase
         setUserInformation(userDataModel.userInfoModel.id.toString());
 
-        _view!.onLoginComplete();
+        _view!.onLoginSuccess();
       } else {
         //Add log
         Utils.prepareLogData(
