@@ -59,16 +59,20 @@ class AuthProvider with ChangeNotifier {
 
   void updateLoginStatus({required bool isLogining}) {
     _isLogining = isLogining;
-    notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   //For Change password
   bool _isChanging = false;
   bool get isChanging => _isChanging;
 
-  void updateChangePasswordStatus({required bool isChanging}) {
+  Future<void> updateChangePasswordStatus({required bool isChanging}) async {
     _isChanging = isChanging;
-    notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   bool _isRecordAnswer = false;

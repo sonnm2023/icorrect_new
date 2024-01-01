@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_list.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
+import 'package:icorrect/src/views/widget/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -40,6 +40,7 @@ class HomeWorkScreen extends StatefulWidget {
 }
 
 class _HomeWorkScreenState extends State<HomeWorkScreen>
+    with AutomaticKeepAliveClientMixin
     implements HomeWorkViewContract {
   // TabBar get _tabBar => const TabBar(
   //       indicatorColor: defaultPurpleColor,
@@ -99,6 +100,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return WillPopScope(
       onWillPop: () async {
         _onBackButtonTapped();
@@ -159,30 +162,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                           "DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
                     }
                     if (homeWorkProvider.isProcessing) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.black.withOpacity(0.2),
-                        child: Center(
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100)),
-                              color: Colors.white,
-                            ),
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 4,
-                              backgroundColor: AppColor.defaultLightGrayColor,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColor.defaultPurpleColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                      return const LoadingWidget();
                     } else {
                       return Container();
                     }
@@ -190,8 +170,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                 ),
               ],
             ),
-            // drawer: Utils.navbar(
-            //     context: context, homeWorkPresenter: _homeWorkPresenter),
             drawer: _buildDrawer(),
             drawerEnableOpenDragGesture: false,
           ),
@@ -361,7 +339,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const ChangePasswordScreen(),
+                  builder: (context) => ChangeNotifierProvider(
+                    create: (_) => AuthProvider(),
+                    child: const ChangePasswordScreen(),
+                  ),
                 ),
               );
             },
@@ -644,4 +625,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     }
     _getListHomeWork();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

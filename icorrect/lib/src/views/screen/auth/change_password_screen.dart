@@ -50,6 +50,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     currentPasswordController.dispose();
     newPasswordController.dispose();
     confirmNewPasswordController.dispose();
+    _authProvider.dispose();
     super.dispose();
   }
 
@@ -119,16 +120,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                 ),
               ],
             ),
-            // Consumer<AuthProvider>(
-            //   builder: (context, authProvider, child) {
-            //     if (authProvider.isChanging) {
-            //       _loading!.show(context: context, isViewAIResponse: false);
-            //     } else {
-            //       _loading!.hide();
-            //     }
-            //     return Container();
-            //   },
-            // ),
+            Consumer<AuthProvider>(
+              builder: (context, authProvider, child) {
+                if (context.select((AuthProvider value) => value.isChanging)) {
+                  _loading!.show(context: context, isViewAIResponse: false);
+                } else {
+                  _loading!.hide();
+                }
+                // if (authProvider.isChanging) {
+                //   _loading!.show(context: context, isViewAIResponse: false);
+                // } else {
+                //   _loading!.hide();
+                // }
+                return Container();
+              },
+            ),
           ],
         ),
       ),
@@ -163,12 +169,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
           if (_formKey.currentState!.validate() &&
               _authProvider.isChanging == false) {
             _authProvider.updateChangePasswordStatus(isChanging: true);
+            Utils.checkInternetConnection().then(
+              (isConnected) {
+                if (isConnected) {
+                  //Add firebase log
+                  Utils.addFirebaseLog(
+                    eventName: "button_click",
+                    parameters: {
+                      "button_name": "change password",
+                    },
+                  );
 
-            _changePasswordPresenter!.changePassword(
-              context,
-              currentPasswordController.text.trim(),
-              newPasswordController.text.trim(),
-              confirmNewPasswordController.text.trim(),
+                  _changePasswordPresenter!.changePassword(
+                    context,
+                    currentPasswordController.text.trim(),
+                    newPasswordController.text.trim(),
+                    confirmNewPasswordController.text.trim(),
+                  );
+                } else {
+                  _handleError();
+                }
+              },
             );
           }
         }
@@ -179,6 +200,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       height: CustomSize.size_50,
       radius: 20,
     );
+  }
+
+  void _handleError() {
+    //Show connect error here
+    if (kDebugMode) {
+      print("DEBUG: Connect error here!");
+    }
+    _authProvider.updateChangePasswordStatus(isChanging: false);
+    Utils.showConnectionErrorDialog(context);
+    Utils.addConnectionErrorLog(context);
   }
 
   Widget _buildCancelButton() {
@@ -207,30 +238,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordSuccess(String message) {
-    _authProvider.updateChangePasswordStatus(isChanging: false);
-    _loading!.hide();
+    _authProvider.updateChangePasswordStatus(isChanging: false).then((value) {
+      //Show error message
+      showToastMsg(
+        msg: message,
+        toastState: ToastStatesType.success,
+        isCenter: false,
+      );
 
-    //Show error message
-    showToastMsg(
-      msg: message,
-      toastState: ToastStatesType.success,
-      isCenter: false,
-    );
-
-    //Go back login screen
-    Navigator.of(context).pop();
+      //Go back login screen
+      Navigator.of(context).pop();
+    });
   }
 
   @override
   void onChangePasswordError(String message) {
-    _authProvider.updateChangePasswordStatus(isChanging: false);
-    _loading!.hide();
-
-    //Show error message
-    showToastMsg(
-      msg: message,
-      toastState: ToastStatesType.error,
-      isCenter: false,
-    );
+    _authProvider.updateChangePasswordStatus(isChanging: false).then((value) {
+      //Show error message
+      showToastMsg(
+        msg: message,
+        toastState: ToastStatesType.error,
+        isCenter: false,
+      );
+    });
   }
 }

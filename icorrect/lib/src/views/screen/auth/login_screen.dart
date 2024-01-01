@@ -123,11 +123,16 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
-                if (authProvider.isLogining) {
+                if (context.select((AuthProvider value) => value.isLogining)) {
                   _loading!.show(context: context, isViewAIResponse: false);
                 } else {
                   _loading!.hide();
                 }
+                // if (authProvider.isLogining) {
+                //   _loading!.show(context: context, isViewAIResponse: false);
+                // } else {
+                //   _loading!.hide();
+                // }
                 return Container();
               },
             ),
@@ -144,10 +149,9 @@ class _LoginScreenState extends State<LoginScreen>
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isLogining == false) {
+          _authProvider.updateLoginStatus(isLogining: true);
           Utils.checkInternetConnection().then((isConnected) {
             if (isConnected) {
-              _authProvider.updateLoginStatus(isLogining: true);
-
               //Add firebase log
               Utils.addFirebaseLog(
                 eventName: "button_click",
@@ -162,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen>
                 context,
               );
             } else {
-              _handleLoginError();
+              _handleError();
             }
           });
         }
@@ -249,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen>
         if (isConnected) {
           _autoLogin();
         } else {
-          _handleLoginError();
+          _handleError();
         }
       });
     }
@@ -283,13 +287,13 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  void _handleLoginError() {
+  void _handleError() {
     //Show connect error here
     if (kDebugMode) {
       print("DEBUG: Connect error here!");
     }
+    _authProvider.updateLoginStatus(isLogining: false);
     Utils.showConnectionErrorDialog(context);
-
     Utils.addConnectionErrorLog(context);
   }
 
