@@ -44,12 +44,14 @@ class _LoginScreenState extends State<LoginScreen>
   CircleLoading? _loading;
   Permission? _writeFilePermission;
   PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
+  late AuthProvider _authProvider;
 
   @override
   void initState() {
     super.initState();
     _loading = CircleLoading();
     _loginPresenter = LoginPresenter(this);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //For debug
     emailController.text = "testbase06@testing.com";
@@ -62,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen>
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    _authProvider.resetPermissionDeniedTime();
     super.dispose();
   }
 
@@ -70,8 +73,6 @@ class _LoginScreenState extends State<LoginScreen>
     if (kDebugMode) {
       print("DEBUG: LoginScreen - build");
     }
-
-    AuthProvider provider = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
       body: SafeArea(
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen>
                             type: PasswordType.password,
                             focusNode: FocusNode(),
                           ),
-                          _buildSignInButton(provider),
+                          _buildSignInButton(),
                           // _buildSignUpButton(),
                           // _buildForgotPasswordButton(),
                           Expanded(
@@ -136,13 +137,14 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _buildSignInButton(AuthProvider provider) {
+  Widget _buildSignInButton() {
     return DefaultMaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 1),
       onPressed: () async {
         FocusManager.instance.primaryFocus?.unfocus();
-        if (_formKey.currentState!.validate() && provider.isLogining == false) {
-          provider.updateLoginStatus(isLogining: true);
+        if (_formKey.currentState!.validate() &&
+            _authProvider.isLogining == false) {
+          _authProvider.updateLoginStatus(isLogining: true);
           Utils.checkInternetConnection().then((isConnected) {
             if (isConnected) {
               //Add firebase log
@@ -183,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _requestPermission(
       Permission permission, BuildContext context) async {
-    Provider.of<AuthProvider>(context, listen: false).setPermissionDeniedTime();
+    _authProvider.setPermissionDeniedTime();
     // ignore: unused_local_variable
     final status = await permission.request();
     _listenForPermissionStatus(context);
@@ -206,9 +208,7 @@ class _LoginScreenState extends State<LoginScreen>
       _writeFilePermissionStatus = await _writeFilePermission!.status;
 
       if (_writeFilePermissionStatus == PermissionStatus.denied) {
-        if (Provider.of<AuthProvider>(context, listen: false)
-                .permissionDeniedTime >
-            2) {
+        if (_authProvider.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
       } else if (_writeFilePermissionStatus ==
@@ -221,8 +221,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _showConfirmDialog() {
-    if (false ==
-        Provider.of<AuthProvider>(context, listen: false).dialogShowing) {
+    if (false == _authProvider.dialogShowing) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -235,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen>
           );
         },
       );
-      Provider.of<AuthProvider>(context, listen: false).setDialogShowing(true);
+      _authProvider.setDialogShowing(true);
     }
   }
 
@@ -257,10 +256,9 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _autoLogin() async {
     String token = await Utils.getAccessToken();
-    AuthProvider provider = Provider.of<AuthProvider>(context, listen: false);
 
     if (token.isNotEmpty) {
-      provider.updateLoginStatus(isLogining: true);
+      _authProvider.updateLoginStatus(isLogining: true);
 
       UserDataModel? currentUser = await Utils.getCurrentUser();
       if (null == currentUser) {
@@ -272,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen>
 
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
-        provider.updateLoginStatus(isLogining: false);
+        _authProvider.updateLoginStatus(isLogining: false);
 
         Navigator.pushReplacement(
           context,
@@ -289,8 +287,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (kDebugMode) {
       print("DEBUG: Connect error here!");
     }
-    Provider.of<AuthProvider>(context, listen: false)
-        .updateLoginStatus(isLogining: false);
+    _authProvider.updateLoginStatus(isLogining: false);
     Utils.showConnectionErrorDialog(context);
     Utils.addConnectionErrorLog(context);
   }
@@ -348,8 +345,8 @@ class _LoginScreenState extends State<LoginScreen>
     passwordController.text = "";
   }
 
-  void _finishLoginWithError(String message, AuthProvider provider) {
-    provider.updateLoginStatus(isLogining: false);
+  void _finishLoginWithError(String message) {
+    _authProvider.updateLoginStatus(isLogining: false);
 
     if (message == StringConstants.email_or_password_wrong_message) {
       message = Utils.multiLanguage(message);
@@ -363,8 +360,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void onLoginSuccess() {
-    Provider.of<AuthProvider>(context, listen: false)
-        .updateLoginStatus(isLogining: false);
+    _authProvider.updateLoginStatus(isLogining: false);
 
     _resetTextFieldControllers();
 
@@ -380,11 +376,10 @@ class _LoginScreenState extends State<LoginScreen>
       print("DEBUG: onLoginError");
     }
 
-    AuthProvider provider = Provider.of<AuthProvider>(context, listen: false);
     Utils.checkInternetConnection().then((isConnected) {
       if (null != errorCode) {
         if (errorCode == 401) {
-          _finishLoginWithError(message, provider);
+          _finishLoginWithError(message);
         }
       } else {
         String email = emailController.text.trim();
@@ -401,7 +396,7 @@ class _LoginScreenState extends State<LoginScreen>
             context,
           );
         } else {
-          _finishLoginWithError(message, provider);
+          _finishLoginWithError(message);
         }
       }
     });

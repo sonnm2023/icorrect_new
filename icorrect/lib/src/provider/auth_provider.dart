@@ -140,6 +140,10 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  void resetPermissionDeniedTime() {
+    _permissionDeniedTime = 0;
+  }
+
   bool _dialogShowing = false;
   bool get dialogShowing => _dialogShowing;
   void setDialogShowing(bool isShowing) {
