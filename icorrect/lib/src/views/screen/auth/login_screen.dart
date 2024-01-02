@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen>
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
             _authProvider.isLogining == false) {
-          _authProvider.updateLoginStatus(isLogining: true);
+          _authProvider.updateLoginStatus(processing: true);
           Utils.checkInternetConnection().then((isConnected) {
             if (isConnected) {
               //Add firebase log
@@ -258,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen>
     String token = await Utils.getAccessToken();
 
     if (token.isNotEmpty) {
-      _authProvider.updateLoginStatus(isLogining: true);
+      _authProvider.updateLoginStatus(processing: true);
 
       UserDataModel? currentUser = await Utils.getCurrentUser();
       if (null == currentUser) {
@@ -270,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen>
 
       //Has login
       Timer(const Duration(milliseconds: 2000), () async {
-        _authProvider.updateLoginStatus(isLogining: false);
+        _authProvider.updateLoginStatus(processing: false);
 
         Navigator.pushReplacement(
           context,
@@ -287,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (kDebugMode) {
       print("DEBUG: Connect error here!");
     }
-    _authProvider.updateLoginStatus(isLogining: false);
+    _authProvider.updateLoginStatus(processing: false);
     Utils.showConnectionErrorDialog(context);
     Utils.addConnectionErrorLog(context);
   }
@@ -346,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _finishLoginWithError(String message) {
-    _authProvider.updateLoginStatus(isLogining: false);
+    _authProvider.updateLoginStatus(processing: false);
 
     if (message == StringConstants.email_or_password_wrong_message) {
       message = Utils.multiLanguage(message);
@@ -360,7 +360,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void onLoginSuccess() {
-    _authProvider.updateLoginStatus(isLogining: false);
+    _authProvider.updateLoginStatus(processing: false);
 
     _resetTextFieldControllers();
 

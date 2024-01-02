@@ -57,8 +57,8 @@ class AuthProvider with ChangeNotifier {
   bool _isLogining = false;
   bool get isLogining => _isLogining;
 
-  void updateLoginStatus({required bool isLogining}) {
-    _isLogining = isLogining;
+  void updateLoginStatus({required bool processing}) {
+    _isLogining = processing;
     if (!isDisposed) {
       notifyListeners();
     }
@@ -68,8 +68,8 @@ class AuthProvider with ChangeNotifier {
   bool _isChanging = false;
   bool get isChanging => _isChanging;
 
-  Future<void> updateChangePasswordStatus({required bool isChanging}) async {
-    _isChanging = isChanging;
+  Future<void> updateChangePasswordStatus({required bool processing}) async {
+    _isChanging = processing;
     if (!isDisposed) {
       notifyListeners();
     }

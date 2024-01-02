@@ -3,6 +3,7 @@ import 'package:icorrect/core/app_color.dart';
 
 class CircleLoading {
   OverlayEntry? _loadingEntry;
+  bool isShowing = false;
 
   void show({required BuildContext context, required bool isViewAIResponse}) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -24,7 +25,7 @@ class CircleLoading {
       OverlayEntry(
         builder: (BuildContext context) {
           //double h = isViewAIResponse ? 50 : 0;
-          double height = MediaQuery.of(context).size.height ;
+          double height = MediaQuery.of(context).size.height;
 
           return Stack(
             children: <Widget>[

@@ -21,12 +21,13 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen>
+    with AutomaticKeepAliveClientMixin
     implements ChangePasswordViewContract {
   final _formKey = GlobalKey<FormState>(debugLabel: "ChangePasswordScreen");
   bool isAvailable = false;
   ChangePasswordPresenter? _changePasswordPresenter;
-  late AuthProvider _authProvider;
-  CircleLoading? _loading;
+  // CircleLoading? _loading;
+  // late AuthProvider _authProvider;
   late TextEditingController currentPasswordController;
   late TextEditingController newPasswordController;
   late TextEditingController confirmNewPasswordController;
@@ -38,8 +39,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
   void initState() {
     super.initState();
     _changePasswordPresenter = ChangePasswordPresenter(this);
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
-    _loading = CircleLoading();
+    // _loading = CircleLoading();
+    // _authProvider = Provider.of<AuthProvider>(context, listen: false);
     currentPasswordController = TextEditingController(text: '');
     newPasswordController = TextEditingController(text: '');
     confirmNewPasswordController = TextEditingController(text: '');
@@ -50,15 +51,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     currentPasswordController.dispose();
     newPasswordController.dispose();
     confirmNewPasswordController.dispose();
-    _authProvider.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     if (kDebugMode) {
       print("DEBUG: ChangePasswordScreen - build");
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -81,61 +84,61 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         ),
       ),
       body: SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Padding(
-                    padding: const EdgeInsets.all(CustomSize.size_30),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PasswordInputWidget(
-                            passwordController: currentPasswordController,
-                            type: PasswordType.currentPassword,
-                            focusNode: _currentPasswordFocusNode,
-                          ),
-                          PasswordInputWidget(
-                            passwordController: newPasswordController,
-                            type: PasswordType.newPassword,
-                            focusNode: _newPasswordFocusNode,
-                          ),
-                          PasswordInputWidget(
-                            passwordController: confirmNewPasswordController,
-                            type: PasswordType.confirmNewPassword,
-                            focusNode: _confirmNewPasswordFocusNode,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildSaveButton(),
-                          const SizedBox(height: 10),
-                          _buildCancelButton(),
-                        ],
+        child: LayoutBuilder(
+          builder: (context, constraints) => Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Padding(
+                      padding: const EdgeInsets.all(CustomSize.size_30),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PasswordInputWidget(
+                              passwordController: currentPasswordController,
+                              type: PasswordType.currentPassword,
+                              focusNode: _currentPasswordFocusNode,
+                            ),
+                            PasswordInputWidget(
+                              passwordController: newPasswordController,
+                              type: PasswordType.newPassword,
+                              focusNode: _newPasswordFocusNode,
+                            ),
+                            PasswordInputWidget(
+                              passwordController: confirmNewPasswordController,
+                              type: PasswordType.confirmNewPassword,
+                              focusNode: _confirmNewPasswordFocusNode,
+                            ),
+                            const SizedBox(height: 20),
+                            _buildSaveButton(),
+                            const SizedBox(height: 10),
+                            _buildCancelButton(),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
-                if (context.select((AuthProvider value) => value.isChanging)) {
-                  _loading!.show(context: context, isViewAIResponse: false);
-                } else {
-                  _loading!.hide();
-                }
-                // if (authProvider.isChanging) {
-                //   _loading!.show(context: context, isViewAIResponse: false);
-                // } else {
-                //   _loading!.hide();
-                // }
-                return Container();
-              },
-            ),
-          ],
+                ],
+              ),
+              // Consumer<AuthProvider>(
+              //   builder: (context, authProvider, child) {
+              //     // if (context
+              //     //         .select((AuthProvider value) => value.isChanging) &&
+              //     //     _loading!.isShowing) {
+              //     if (authProvider.isChanging) {
+              //       _loading!.show(context: context, isViewAIResponse: false);
+              //     } else {
+              //       _loading!.hide();
+              //     }
+              //     return Container();
+              //   },
+              // ),
+            ],
+          ),
         ),
       ),
     );
@@ -166,9 +169,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
             isCenter: false,
           );
         } else {
-          if (_formKey.currentState!.validate() &&
-              _authProvider.isChanging == false) {
-            _authProvider.updateChangePasswordStatus(isChanging: true);
+          if (_formKey.currentState!.validate()) {
+            // &&
+            //     _authProvider.isChanging == false) {
+            //   _authProvider.updateChangePasswordStatus(processing: true);
             Utils.checkInternetConnection().then(
               (isConnected) {
                 if (isConnected) {
@@ -179,7 +183,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                       "button_name": "change password",
                     },
                   );
-
                   _changePasswordPresenter!.changePassword(
                     context,
                     currentPasswordController.text.trim(),
@@ -207,7 +210,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     if (kDebugMode) {
       print("DEBUG: Connect error here!");
     }
-    _authProvider.updateChangePasswordStatus(isChanging: false);
+    // _authProvider.updateChangePasswordStatus(processing: false);
     Utils.showConnectionErrorDialog(context);
     Utils.addConnectionErrorLog(context);
   }
@@ -238,28 +241,48 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordSuccess(String message) {
-    _authProvider.updateChangePasswordStatus(isChanging: false).then((value) {
-      //Show error message
-      showToastMsg(
-        msg: message,
-        toastState: ToastStatesType.success,
-        isCenter: false,
-      );
+    // _loading!.isShowing = false;
+    // _loading!.hide();
+    // _authProvider.updateChangePasswordStatus(processing: false).then((value) {
+    //   //Show error message
+    //   showToastMsg(
+    //     msg: message,
+    //     toastState: ToastStatesType.success,
+    //     isCenter: false,
+    //   );
 
-      //Go back login screen
-      Navigator.of(context).pop();
-    });
+    //   //Go back login screen
+    //   Navigator.of(context).pop();
+    // });
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.success,
+      isCenter: false,
+    );
+
+    //Go back login screen
+    Navigator.of(context).pop();
   }
 
   @override
   void onChangePasswordError(String message) {
-    _authProvider.updateChangePasswordStatus(isChanging: false).then((value) {
-      //Show error message
-      showToastMsg(
-        msg: message,
-        toastState: ToastStatesType.error,
-        isCenter: false,
-      );
-    });
+    // _loading!.isShowing = false;
+    // _loading!.hide();
+    //Show error message
+    // _authProvider.updateChangePasswordStatus(processing: false).then((value) {
+    //   showToastMsg(
+    //     msg: message,
+    //     toastState: ToastStatesType.error,
+    //     isCenter: false,
+    //   );
+    // });
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.error,
+      isCenter: false,
+    );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

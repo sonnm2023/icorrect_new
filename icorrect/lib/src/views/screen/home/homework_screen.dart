@@ -95,6 +95,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void dispose() {
+    _authProvider.resetPermissionDeniedTime();
     super.dispose();
   }
 
@@ -148,27 +149,35 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               ),
               backgroundColor: AppColor.defaultWhiteColor,
             ),
-            body: Stack(
-              children: [
-                MyHomeWorkTab(
-                  homeWorkProvider: _homeWorkProvider,
-                  homeWorkPresenter: _homeWorkPresenter!,
-                  pullToRefreshCallBack: _pullToRefresh,
-                ),
-                Consumer<HomeWorkProvider>(
-                  builder: (context, homeWorkProvider, child) {
-                    if (kDebugMode) {
-                      print(
-                          "DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
-                    }
-                    if (homeWorkProvider.isProcessing) {
-                      return const LoadingWidget();
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-              ],
+            body: Builder(
+              builder: (BuildContext context) {
+                return SafeArea(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => Stack(
+                      children: [
+                        MyHomeWorkTab(
+                          homeWorkProvider: _homeWorkProvider,
+                          homeWorkPresenter: _homeWorkPresenter!,
+                          pullToRefreshCallBack: _pullToRefresh,
+                        ),
+                        Consumer<HomeWorkProvider>(
+                          builder: (context, homeWorkProvider, child) {
+                            if (kDebugMode) {
+                              print(
+                                  "DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
+                            }
+                            if (homeWorkProvider.isProcessing) {
+                              return const LoadingWidget();
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
             drawer: _buildDrawer(),
             drawerEnableOpenDragGesture: false,
@@ -339,10 +348,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => ChangeNotifierProvider(
-                    create: (_) => AuthProvider(),
-                    child: const ChangePasswordScreen(),
-                  ),
+                  builder: (context) => const ChangePasswordScreen(),
                 ),
               );
             },
@@ -583,10 +589,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider(
-          create: (_) => AuthProvider(),
-          child: const LoginScreen(),
-        ),
+        builder: (context) => const LoginScreen(),
       ),
     );
   }
