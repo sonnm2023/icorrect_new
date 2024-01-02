@@ -356,7 +356,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   @override
-  void downloadFilesFail(AlertInfo alertInfo) {
+  void onDownloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
     Fluttertoast.showToast(
       msg: alertInfo.description,
@@ -368,7 +368,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   @override
-  void downloadFilesSuccess(TestDetailModel testDetail, String nameFile,
+  void onDownloadFilesSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total) {
     widget.provider.setTotal(total);
     widget.provider.updateDownloadingPercent(percent);
@@ -429,7 +429,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   @override
-  void getMyTestFail(AlertInfo alertInfo) {
+  void onGetMyTestFail(AlertInfo alertInfo) {
     _loading!.hide();
 
     Fluttertoast.showToast(
@@ -444,7 +444,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   @override
-  void getMyTestSuccess(List<QuestionTopicModel> questions) {
+  void onGetMyTestSuccess(List<QuestionTopicModel> questions) {
     _loading!.hide();
     widget.provider.setAnswerOfQuestions(questions);
   }

@@ -248,7 +248,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   }
 
   @override
-  void getIELTSTopicsFail(String message) {
+  void onGetIELTSTopicsFail(String message) {
     _loading!.hide();
     showDialog(
       context: context,
@@ -259,7 +259,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   }
 
   @override
-  void getIELTSTopicsSuccess(List<IELTSTopicModel> topicsList) {
+  void onGetIELTSTopicsSuccess(List<IELTSTopicModel> topicsList) {
     _loading!.hide();
     _ieltsTopicsProvider!.setIELTSTopics(topicsList);
 

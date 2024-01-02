@@ -17,8 +17,8 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 abstract class VideoAuthenticationContract {
   void onCountRecording(Duration currentCount, String strCount);
   void onFinishRecording();
-  void submitAuthSuccess(File savedFile, String message);
-  void submitAuthFail(String message);
+  void onSubmitAuthSuccess(File savedFile, String message);
+  void onSubmitAuthError(String message);
 }
 
 class VideoAuthenticationPresenter {
@@ -87,14 +87,14 @@ class VideoAuthenticationPresenter {
             status: LogEvent.success,
           );
 
-          _view!.submitAuthSuccess(
+          _view!.onSubmitAuthSuccess(
               authFile, StringConstants.submit_authen_success_message);
         } else {
           List<String> categoriesList = List<String>.from(isUploadVideo
               ? json['data']['video'] ?? []
               : json['data']['audio'] ?? []);
 
-          _view!.submitAuthFail(
+          _view!.onSubmitAuthError(
               Utils.multiLanguage(StringConstants.submit_authen_fail_message));
           //Add log
           Utils.prepareLogData(
@@ -114,7 +114,7 @@ class VideoAuthenticationPresenter {
         message: StringConstants.submit_authen_fail_timeout_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail(Utils.multiLanguage(
+      _view!.onSubmitAuthError(Utils.multiLanguage(
           StringConstants.submit_authen_fail_timeout_message));
     } on SocketException {
       //Add log
@@ -124,7 +124,7 @@ class VideoAuthenticationPresenter {
         message: StringConstants.submit_authen_fail_socket_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail(Utils.multiLanguage(
+      _view!.onSubmitAuthError(Utils.multiLanguage(
           StringConstants.submit_authen_fail_socket_message));
     } on http.ClientException {
       //Add log
@@ -134,7 +134,7 @@ class VideoAuthenticationPresenter {
         message: StringConstants.submit_authen_fail_client_message,
         status: LogEvent.failed,
       );
-      _view!.submitAuthFail(Utils.multiLanguage(
+      _view!.onSubmitAuthError(Utils.multiLanguage(
           StringConstants.submit_authen_fail_client_message));
     }
   }

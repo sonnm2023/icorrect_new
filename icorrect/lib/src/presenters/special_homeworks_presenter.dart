@@ -11,8 +11,8 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 
 abstract class SpecialHomeworksContracts {
-  void getSpecialHomeWork(List<StudentResultModel> studentsResults);
-  void getSpecialHomeWorksFail(String message);
+  void onGetSpecialHomeWorkSuccess(List<StudentResultModel> studentsResults);
+  void onGetSpecialHomeWorksError(String message);
 }
 
 class SpecialHomeworksPresenter {
@@ -60,7 +60,7 @@ class SpecialHomeworksPresenter {
             status: LogEvent.success,
           );
 
-          _view!.getSpecialHomeWork(results);
+          _view!.onGetSpecialHomeWorkSuccess(results);
         } else {
           //Add log
           Utils.prepareLogData(
@@ -70,7 +70,7 @@ class SpecialHomeworksPresenter {
             status: LogEvent.failed,
           );
 
-          _view!.getSpecialHomeWorksFail(
+          _view!.onGetSpecialHomeWorksError(
               StringConstants.get_special_homework_error_message);
         }
       } else {
@@ -82,7 +82,7 @@ class SpecialHomeworksPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.getSpecialHomeWorksFail(
+        _view!.onGetSpecialHomeWorksError(
             StringConstants.get_special_homework_error_message);
       }
     }).catchError((onError) {
@@ -100,7 +100,7 @@ class SpecialHomeworksPresenter {
       } else {
         message = StringConstants.common_error_message;
       }
-      _view!.getSpecialHomeWorksFail(message);
+      _view!.onGetSpecialHomeWorksError(message);
 
       if (kDebugMode) {
         print("DEBUG: getSpecialHomeWorks ${onError.toString()}");

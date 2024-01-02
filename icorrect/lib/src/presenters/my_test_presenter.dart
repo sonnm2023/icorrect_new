@@ -23,15 +23,15 @@ import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class MyTestContract {
-  void getMyTestSuccess(List<QuestionTopicModel> questions);
+  void onGetMyTestSuccess(List<QuestionTopicModel> questions);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
-  void downloadFilesFail(AlertInfo alertInfo);
-  void getMyTestFail(AlertInfo alertInfo);
+  void onDownloadFilesFail(AlertInfo alertInfo);
+  void onGetMyTestFail(AlertInfo alertInfo);
   void onCountDown(String time, bool isLessThan2Seconds);
-  void finishCountDown();
-  void updateAnswersSuccess(String message);
-  void updateAnswerFail(AlertInfo info);
+  void onFinishCountDown();
+  void onUpdateAnswersSuccess(String message);
+  void onUpdateAnswerFail(AlertInfo info);
   void onReDownload();
   void onTryAgainToDownload();
 }
@@ -127,7 +127,7 @@ class MyTestPresenter {
             filesTopic: tempFilesTopic,
           );
 
-          _view!.getMyTestSuccess(_getQuestionsAnswer(testDetailModel));
+          _view!.onGetMyTestSuccess(_getQuestionsAnswer(testDetailModel));
         } else {
           //Add log
           Utils.prepareLogData(
@@ -138,7 +138,7 @@ class MyTestPresenter {
             status: LogEvent.failed,
           );
 
-          _view!.getMyTestFail(AlertClass.notResponseLoadTestAlert);
+          _view!.onGetMyTestFail(AlertClass.notResponseLoadTestAlert);
         }
       } else {
         //Add log
@@ -149,7 +149,7 @@ class MyTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.getMyTestFail(AlertClass.getTestDetailAlert);
+        _view!.onGetMyTestFail(AlertClass.getTestDetailAlert);
       }
     }).catchError(
         // ignore: invalid_return_type_for_catch_error
@@ -165,7 +165,7 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.getMyTestFail(AlertClass.getTestDetailAlert);
+      _view!.onGetMyTestFail(AlertClass.getTestDetailAlert);
     });
   }
 
@@ -282,7 +282,7 @@ class MyTestPresenter {
   }
 
   void downloadFailure(AlertInfo alertInfo) {
-    _view!.downloadFilesFail(alertInfo);
+    _view!.onDownloadFilesFail(alertInfo);
   }
 
   void pauseDownload() {
@@ -375,7 +375,7 @@ class MyTestPresenter {
                   status: LogEvent.failed,
                 );
 
-                _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+                _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(
                   context: context,
                   activityId: activityId,
@@ -398,7 +398,7 @@ class MyTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                 context: context,
                 activityId: activityId,
@@ -415,7 +415,7 @@ class MyTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                 context: context,
                 activityId: activityId,
@@ -432,7 +432,7 @@ class MyTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                 context: context,
                 activityId: activityId,
@@ -449,7 +449,7 @@ class MyTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                 context: context,
                 activityId: activityId,
@@ -528,7 +528,7 @@ class MyTestPresenter {
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
-        _view!.finishCountDown();
+        _view!.onFinishCountDown();
       }
     });
   }
@@ -575,7 +575,7 @@ class MyTestPresenter {
             status: LogEvent.success,
           );
 
-          _view!.updateAnswersSuccess(
+          _view!.onUpdateAnswersSuccess(
               StringConstants.save_answer_success_message);
         } else {
           //Add log
@@ -586,7 +586,7 @@ class MyTestPresenter {
             status: LogEvent.failed,
           );
 
-          _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+          _view!.onUpdateAnswerFail(AlertClass.errorWhenUpdateAnswer(
               StringConstants.update_answer_error_message));
         }
       }).catchError((onError) {
@@ -598,7 +598,7 @@ class MyTestPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+        _view!.onUpdateAnswerFail(AlertClass.errorWhenUpdateAnswer(
             StringConstants.update_answer_error_message));
       });
     } on TimeoutException {
@@ -610,7 +610,7 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.timeOutUpdateAnswer);
+      _view!.onUpdateAnswerFail(AlertClass.timeOutUpdateAnswer);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -620,7 +620,7 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+      _view!.onUpdateAnswerFail(AlertClass.errorWhenUpdateAnswer(
           "SocketException: Has an error when update my answer!"));
     } on http.ClientException {
       //Add log
@@ -631,7 +631,7 @@ class MyTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.updateAnswerFail(AlertClass.errorWhenUpdateAnswer(
+      _view!.onUpdateAnswerFail(AlertClass.errorWhenUpdateAnswer(
           "ClientException: Has an error when update my answer!"));
     }
   }

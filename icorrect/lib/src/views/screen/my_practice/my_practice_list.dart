@@ -567,7 +567,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void getMyTestListFail(String message) {
+  void onGetMyTestListFail(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
@@ -581,7 +581,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void getMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
+  void onGetMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
       List<MyPracticeTestModel> practiceTests, bool isLoadMore) {
     if (isLoadMore) {
       _myPracticeListProvider!.setShowLoadingBottom(false);
@@ -596,7 +596,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void deleteTestFail(String message) {
+  void onDeleteTestFail(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     showDialog(
@@ -608,7 +608,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void deleteTestSuccess(String message, int indexDeleted) {
+  void onDeleteTestSuccess(String message, int indexDeleted) {
     _loading!.hide();
     showToastMsg(
       msg: Utils.multiLanguage(message),
@@ -619,7 +619,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void getBankListFail(String message) {
+  void onGetBankListFail(String message) {
     if (kDebugMode) {
       print("DEBUG: getBankListFail");
     }
@@ -629,7 +629,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void getBankListSuccess(List<BankModel> banks) {
+  void onGetBankListSuccess(List<BankModel> banks) {
     if (kDebugMode) {
       print("DEBUG: getBankListSuccess. Banks = ${banks.length}");
     }

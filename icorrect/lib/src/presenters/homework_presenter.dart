@@ -14,17 +14,12 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
-  void onGetListHomeworkComplete(List<ActivitiesModel> homeworks,
+  void onGetListHomeworkSuccess(List<ActivitiesModel> homeworks,
       List<NewClassModel> classes, String serverCurrentTime);
-
   void onGetListHomeworkError(String message);
-
-  void onLogoutComplete();
-
+  void onLogoutSuccess();
   void onLogoutError(String message);
-
   void onUpdateCurrentUserInfo(UserDataModel userDataModel);
-
   void onRefreshListHomework();
 }
 
@@ -81,7 +76,7 @@ class HomeWorkPresenter {
           status: LogEvent.success,
         );
 
-        _view!.onGetListHomeworkComplete(
+        _view!.onGetListHomeworkSuccess(
             homeworks, classes, dataMap[StringConstants.k_current_time]);
       } else {
         //Add log
@@ -164,7 +159,7 @@ class HomeWorkPresenter {
           status: LogEvent.success,
         );
 
-        _view!.onLogoutComplete();
+        _view!.onLogoutSuccess();
       } else {
         //Add log
         Utils.prepareLogData(

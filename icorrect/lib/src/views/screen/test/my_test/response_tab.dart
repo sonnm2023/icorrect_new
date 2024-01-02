@@ -481,7 +481,7 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   @override
-  void getSuccessResponse(ResultResponseModel responseModel) {
+  void onGetResponseSuccess(ResultResponseModel responseModel) {
     _loading!.hide();
     widget.provider.setResultResponseModel(responseModel);
     if (kDebugMode) {
@@ -490,7 +490,7 @@ class _ResponseTabState extends State<ResponseTab>
   }
 
   @override
-  void getErrorResponse({required String message, required bool isError}) {
+  void onGetResponseError({required String message, required bool isError}) {
     _loading!.hide();
     if (isError) {
       Fluttertoast.showToast(

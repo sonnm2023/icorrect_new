@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -21,8 +20,8 @@ class HomeWorkProvider with ChangeNotifier {
 
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
-  void setProcessingStatus({required bool isProcessing}) {
-    _isProcessing = isProcessing;
+  void setProcessingStatus({required bool processing}) {
+    _isProcessing = processing;
 
     notifyListeners();
   }
@@ -301,7 +300,7 @@ class HomeWorkProvider with ChangeNotifier {
     }
 
     prepareToUpdateFilterString();
-    setProcessingStatus(isProcessing: false);
+    setProcessingStatus(processing: false);
   }
 
   void prepareToUpdateFilterString() {

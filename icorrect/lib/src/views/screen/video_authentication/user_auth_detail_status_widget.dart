@@ -73,11 +73,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
     return Scaffold(
-        body: SafeArea(
-          left: true,
-          top: true,
-          right: true,
-          bottom: true,
+      body: SafeArea(
+        left: true,
+        top: true,
+        right: true,
+        bottom: true,
         child: Consumer<UserAuthDetailProvider>(
           builder: (context, provider, child) {
             if (provider.startGetUserAuthDetail) {
@@ -471,7 +471,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   @override
-  void getUserAuthDetailFail(String message) {
+  void onGetUserAuthDetailError(String message) {
     _circleLoading!.hide();
     _provider!.setStartGetUserAuthDetail(false);
     showDialog(
@@ -483,7 +483,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   @override
-  void getUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel) {
+  void onGetUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel) {
     _provider!.setStartGetUserAuthDetail(false);
     _circleLoading!.hide();
     _provider!.setUserAuthenModel(userAuthenDetailModel);

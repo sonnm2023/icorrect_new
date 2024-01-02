@@ -500,7 +500,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
   }
 
   @override
-  void getSuccessResponse(ResultResponseModel responseModel) {
+  void onGetResponseSuccess(ResultResponseModel responseModel) {
     _loading!.hide();
     widget.provider.setResultResponseModel(responseModel);
     if (kDebugMode) {
@@ -509,7 +509,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
   }
 
   @override
-  void getErrorResponse({required String message, required bool isError}) {
+  void onGetResponseError({required String message, required bool isError}) {
     _loading!.hide();
     if (isError) {
       Fluttertoast.showToast(

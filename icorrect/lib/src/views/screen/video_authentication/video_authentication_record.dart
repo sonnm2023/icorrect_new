@@ -625,7 +625,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   }
 
   @override
-  void submitAuthFail(String message) {
+  void onSubmitAuthError(String message) {
     _videoAuthProvider!.setIsSubmitLoading(false);
     _loading!.hide();
 
@@ -638,7 +638,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   }
 
   @override
-  void submitAuthSuccess(File savedFile, String message) {
+  void onSubmitAuthSuccess(File savedFile, String message) {
     _loading!.hide();
 
     _deleteFile(File(savedFile.path)).then(

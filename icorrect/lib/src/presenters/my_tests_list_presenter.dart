@@ -1,21 +1,21 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/practice_repository.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
-import '../data_sources/constants.dart';
-import '../data_sources/dependency_injection.dart';
-import '../models/my_practice_test_model/my_practice_response_model.dart';
-import '../models/my_practice_test_model/my_practice_test_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 
 abstract class MyTestsListConstract {
-  void getMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
+  void onGetMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
       List<MyPracticeTestModel> practiceTests, bool isLoadMore);
-  void getMyTestListFail(String message);
-  void deleteTestSuccess(String message, int indexDeleted);
-  void deleteTestFail(String message);
-  void getBankListSuccess(List<BankModel> banks);
-  void getBankListFail(String message);
+  void onGetMyTestListFail(String message);
+  void onDeleteTestSuccess(String message, int indexDeleted);
+  void onDeleteTestFail(String message);
+  void onGetBankListSuccess(List<BankModel> banks);
+  void onGetBankListFail(String message);
 }
 
 class MyTestsListPresenter {
@@ -37,15 +37,15 @@ class MyTestsListPresenter {
       if (dataMap[StringConstants.k_error_code] == 200) {
         MyPracticeResponseModel practiceResponseModel =
             MyPracticeResponseModel.fromJson(dataMap);
-        _view!.getMyTestsListSuccess(
+        _view!.onGetMyTestsListSuccess(
             practiceResponseModel,
             practiceResponseModel.myPracticeDataModel.myPracticeTests,
             isLoadMore);
       } else {
-        _view!.getMyTestListFail(StringConstants.common_error_message);
+        _view!.onGetMyTestListFail(StringConstants.common_error_message);
       }
     }).catchError((error) {
-      _view!.getMyTestListFail(StringConstants.common_error_message);
+      _view!.onGetMyTestListFail(StringConstants.common_error_message);
     });
   }
 
@@ -58,13 +58,13 @@ class MyTestsListPresenter {
       }
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
-        _view!.deleteTestSuccess(
+        _view!.onDeleteTestSuccess(
             StringConstants.delete_test_success_message, index);
       } else {
-        _view!.deleteTestFail(StringConstants.common_error_message);
+        _view!.onDeleteTestFail(StringConstants.common_error_message);
       }
     }).catchError((error) {
-      _view!.deleteTestFail(StringConstants.common_error_message);
+      _view!.onDeleteTestFail(StringConstants.common_error_message);
     });
   }
 
@@ -77,12 +77,12 @@ class MyTestsListPresenter {
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
         List<BankModel> banks = await _generateList(dataMap["data"]);
-        _view!.getBankListSuccess(banks);
+        _view!.onGetBankListSuccess(banks);
       } else {
-        _view!.getBankListFail(StringConstants.common_error_message);
+        _view!.onGetBankListFail(StringConstants.common_error_message);
       }
     }).catchError((error) {
-      _view!.getBankListFail(StringConstants.common_error_message);
+      _view!.onGetBankListFail(StringConstants.common_error_message);
     });
   }
 

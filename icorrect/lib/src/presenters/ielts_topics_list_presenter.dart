@@ -10,8 +10,8 @@ import '../data_sources/constants.dart';
 import '../data_sources/dependency_injection.dart';
 
 abstract class IELTSTopicsListConstract {
-  void getIELTSTopicsSuccess(List<IELTSTopicModel> topicsList);
-  void getIELTSTopicsFail(String message);
+  void onGetIELTSTopicsSuccess(List<IELTSTopicModel> topicsList);
+  void onGetIELTSTopicsFail(String message);
 }
 
 class IELTSTopicsListPresenter {
@@ -34,13 +34,13 @@ class IELTSTopicsListPresenter {
       if (dataMap[StringConstants.k_error_code] == 200) {
         IELTSListResultModel resultModel =
             IELTSListResultModel.fromJson(dataMap);
-        _view!.getIELTSTopicsSuccess(resultModel.topics);
+        _view!.onGetIELTSTopicsSuccess(resultModel.topics);
       } else {
-        _view!.getIELTSTopicsFail(
+        _view!.onGetIELTSTopicsFail(
             Utils.multiLanguage(StringConstants.common_error_message));
       }
     }).catchError((error) {
-      _view!.getIELTSTopicsFail(
+      _view!.onGetIELTSTopicsFail(
           Utils.multiLanguage(StringConstants.common_error_message));
     });
   }

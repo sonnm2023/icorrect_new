@@ -10,8 +10,8 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/user_authentication/user_authentication_detail.dart';
 
 abstract class UserAuthDetailContract {
-  void getUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel);
-  void getUserAuthDetailFail(String message);
+  void onGetUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel);
+  void onGetUserAuthDetailError(String message);
   void userNotFoundWhenLoadAuth(String message);
 }
 
@@ -52,7 +52,7 @@ class UserAuthDetailPresenter {
         if (data.isNotEmpty) {
           UserAuthenDetailModel userAuthenDetailModel =
               UserAuthenDetailModel.fromJson(data);
-          _view!.getUserAuthDetailSuccess(userAuthenDetailModel);
+          _view!.onGetUserAuthDetailSuccess(userAuthenDetailModel);
         } else {
           //Add log
           Utils.prepareLogData(
@@ -73,7 +73,7 @@ class UserAuthDetailPresenter {
           message: StringConstants.get_authen_user_fail_message,
           status: LogEvent.failed,
         );
-        _view!.getUserAuthDetailFail(
+        _view!.onGetUserAuthDetailError(
             Utils.multiLanguage(StringConstants.get_authen_user_fail_message));
       }
     }).catchError((e) {
@@ -84,7 +84,7 @@ class UserAuthDetailPresenter {
         message: "An Error : ${e.toString()}!",
         status: LogEvent.failed,
       );
-      _view!.getUserAuthDetailFail(
+      _view!.onGetUserAuthDetailError(
           Utils.multiLanguage(StringConstants.get_authen_user_fail_message));
     });
   }

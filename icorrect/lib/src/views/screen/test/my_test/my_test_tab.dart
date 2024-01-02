@@ -724,7 +724,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void finishCountDown() {
+  void onFinishCountDown() {
     _onFinishReanswer(widget.provider.currentQuestion);
   }
 
@@ -749,13 +749,13 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void getMyTestSuccess(List<QuestionTopicModel> questions) {
+  void onGetMyTestSuccess(List<QuestionTopicModel> questions) {
     _loading!.hide();
     widget.provider.setAnswerOfQuestions(questions);
   }
 
   @override
-  void downloadFilesFail(AlertInfo alertInfo) {
+  void onDownloadFilesFail(AlertInfo alertInfo) {
     _loading!.hide();
     Fluttertoast.showToast(
       msg: alertInfo.description,
@@ -770,7 +770,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void getMyTestFail(AlertInfo alertInfo) {
+  void onGetMyTestFail(AlertInfo alertInfo) {
     _loading!.hide();
     Fluttertoast.showToast(
         msg: alertInfo.description,
@@ -784,17 +784,13 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void onAlertExit(String keyInfo) {
-    // TODO: implement onAlertExit
-  }
+  void onAlertExit(String keyInfo) {}
 
   @override
-  void onAlertNextStep(String keyInfo) {
-    // TODO: implement onAlertNextStep
-  }
+  void onAlertNextStep(String keyInfo) {}
 
   @override
-  void updateAnswersSuccess(String message) {
+  void onUpdateAnswersSuccess(String message) {
     widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
@@ -812,7 +808,7 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void updateAnswerFail(AlertInfo info) {
+  void onUpdateAnswerFail(AlertInfo info) {
     if (kDebugMode) {
       print("DEBUG: updateAnswerFail ${info.description.toString()}");
     }

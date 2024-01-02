@@ -19,11 +19,11 @@ import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class OtherStudentTestContract {
-  void getMyTestSuccess(List<QuestionTopicModel> questions);
-  void getMyTestFail(AlertInfo alertInfo);
-  void downloadFilesSuccess(TestDetailModel testDetail, String nameFile,
+  void onGetMyTestSuccess(List<QuestionTopicModel> questions);
+  void onGetMyTestFail(AlertInfo alertInfo);
+  void onDownloadFilesSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
-  void downloadFilesFail(AlertInfo alertInfo);
+  void onDownloadFilesFail(AlertInfo alertInfo);
   void onReDownload();
   void onTryAgainToDownload();
 }
@@ -92,18 +92,18 @@ class OtherStudentTestPresenter {
 
           downloadFiles(testDetailModel, tempFilesTopic);
 
-          _view!.getMyTestSuccess(_getQuestionsAnswer(testDetailModel));
+          _view!.onGetMyTestSuccess(_getQuestionsAnswer(testDetailModel));
         } else {
-          _view!.getMyTestFail(AlertClass.notResponseLoadTestAlert);
+          _view!.onGetMyTestFail(AlertClass.notResponseLoadTestAlert);
         }
       } else {
-        _view!.getMyTestFail(AlertClass.getTestDetailAlert);
+        _view!.onGetMyTestFail(AlertClass.getTestDetailAlert);
       }
     }).catchError(
         // ignore: invalid_return_type_for_catch_error
 
         (onError) {
-      _view!.getMyTestFail(AlertClass.getTestDetailAlert);
+      _view!.onGetMyTestFail(AlertClass.getTestDetailAlert);
     });
   }
 
@@ -171,7 +171,7 @@ class OtherStudentTestPresenter {
   }
 
   void downloadFailure(AlertInfo alertInfo) {
-    _view!.downloadFilesFail(alertInfo);
+    _view!.onDownloadFilesFail(alertInfo);
   }
 
   Future downloadFiles(
@@ -219,29 +219,29 @@ class OtherStudentTestPresenter {
                   print('DEBUG: Save Path: $savePath');
                 }
                 double percent = _getPercent(index + 1, filesTopic.length);
-                _view!.downloadFilesSuccess(testDetail, fileTopic, percent,
+                _view!.onDownloadFilesSuccess(testDetail, fileTopic, percent,
                     index + 1, filesTopic.length);
               } else {
-                _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+                _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(testDetail, filesTopic);
                 break loop;
               }
             } on TimeoutException {
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             } on SocketException {
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             } on http.ClientException {
-              _view!.downloadFilesFail(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadFilesFail(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(testDetail, filesTopic);
               break loop;
             }
           } else {
             double percent = _getPercent(index + 1, filesTopic.length);
-            _view!.downloadFilesSuccess(
+            _view!.onDownloadFilesSuccess(
                 testDetail, fileTopic, percent, index + 1, filesTopic.length);
           }
         }

@@ -10,8 +10,8 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/my_test_models/result_response_model.dart';
 
 abstract class ResponseContracts {
-  void getSuccessResponse(ResultResponseModel responseModel);
-  void getErrorResponse({required String message, required bool isError});
+  void onGetResponseSuccess(ResultResponseModel responseModel);
+  void onGetResponseError({required String message, required bool isError});
 }
 
 class ResponsePresenter {
@@ -54,7 +54,7 @@ class ResponsePresenter {
           status: LogEvent.success,
         );
 
-        _view!.getSuccessResponse(responseModel);
+        _view!.onGetResponseSuccess(responseModel);
       } else {
         //Add log
         Utils.prepareLogData(
@@ -64,7 +64,7 @@ class ResponsePresenter {
           status: LogEvent.failed,
         );
 
-        _view!.getErrorResponse(
+        _view!.onGetResponseError(
           message: Utils.multiLanguage(
               StringConstants.load_result_response_error_message),
           isError: false,
@@ -80,7 +80,7 @@ class ResponsePresenter {
       );
 
       // ignore: invalid_return_type_for_catch_error
-      _view!.getErrorResponse(
+      _view!.onGetResponseError(
         message:
             Utils.multiLanguage(StringConstants.can_not_load_response_message),
         isError: true,

@@ -200,7 +200,7 @@ class _HighLightTabState extends State<HighLightTab>
   }
 
   @override
-  void getSpecialHomeWork(List<StudentResultModel> studentsResults) {
+  void onGetSpecialHomeWorkSuccess(List<StudentResultModel> studentsResults) {
     if (kDebugMode) {
       print('DEBUG: getSpecialHomeWork ${studentsResults.length}');
     }
@@ -209,7 +209,7 @@ class _HighLightTabState extends State<HighLightTab>
   }
 
   @override
-  void getSpecialHomeWorksFail(String message) {
+  void onGetSpecialHomeWorksError(String message) {
     _loading?.hide();
     // Fluttertoast.showToast(
     //   msg: message,

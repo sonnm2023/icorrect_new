@@ -569,7 +569,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onGetListHomeworkError(String message) {
-    _homeWorkProvider.setProcessingStatus(isProcessing: false);
+    _homeWorkProvider.setProcessingStatus(processing: false);
 
     //Show error message
     showToastMsg(
@@ -580,8 +580,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onLogoutComplete() {
-    _homeWorkProvider.setProcessingStatus(isProcessing: false);
+  void onLogoutSuccess() {
+    _homeWorkProvider.setProcessingStatus(processing: false);
 
     //Send log
     Utils.sendLog();
@@ -596,7 +596,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onLogoutError(String message) {
-    _homeWorkProvider.setProcessingStatus(isProcessing: false);
+    _homeWorkProvider.setProcessingStatus(processing: false);
 
     //Show error message
     showToastMsg(
@@ -609,11 +609,11 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
     _homeWorkProvider.setCurrentUser(userDataModel);
-    _homeWorkProvider.setProcessingStatus(isProcessing: true);
+    _homeWorkProvider.setProcessingStatus(processing: true);
   }
 
   @override
-  void onGetListHomeworkComplete(List<ActivitiesModel> activities,
+  void onGetListHomeworkSuccess(List<ActivitiesModel> activities,
       List<NewClassModel> classes, String serverCurrentTime) async {
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
