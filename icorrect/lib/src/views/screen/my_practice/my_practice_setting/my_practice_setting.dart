@@ -337,14 +337,6 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       print("DEBUG: _goToTestScreen");
     }
 
-    // await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (_) => SimulatorTestScreen(
-    //       data: data,
-    //     ),
-    //   ),
-    // );
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => SimulatorTestScreen(data: data)),
@@ -355,12 +347,8 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   bool get wantKeepAlive => true;
 
   @override
-  void onAlertExit(String keyInfo) {
-    // TODO: implement onAlertExit
-  }
+  void onAlertExit(String keyInfo) {}
 
   @override
-  void onAlertNextStep(String keyInfo) {
-    // TODO: implement onAlertNextStep
-  }
+  void onAlertNextStep(String keyInfo) {}
 }

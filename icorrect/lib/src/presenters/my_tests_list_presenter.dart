@@ -11,11 +11,11 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_mode
 abstract class MyTestsListConstract {
   void onGetMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
       List<MyPracticeTestModel> practiceTests, bool isLoadMore);
-  void onGetMyTestListFail(String message);
+  void onGetMyTestListError(String message);
   void onDeleteTestSuccess(String message, int indexDeleted);
-  void onDeleteTestFail(String message);
+  void onDeleteTestError(String message);
   void onGetBankListSuccess(List<BankModel> banks);
-  void onGetBankListFail(String message);
+  void onGetBankListError(String message);
 }
 
 class MyTestsListPresenter {
@@ -42,10 +42,10 @@ class MyTestsListPresenter {
             practiceResponseModel.myPracticeDataModel.myPracticeTests,
             isLoadMore);
       } else {
-        _view!.onGetMyTestListFail(StringConstants.common_error_message);
+        _view!.onGetMyTestListError(StringConstants.common_error_message);
       }
     }).catchError((error) {
-      _view!.onGetMyTestListFail(StringConstants.common_error_message);
+      _view!.onGetMyTestListError(StringConstants.common_error_message);
     });
   }
 
@@ -61,10 +61,10 @@ class MyTestsListPresenter {
         _view!.onDeleteTestSuccess(
             StringConstants.delete_test_success_message, index);
       } else {
-        _view!.onDeleteTestFail(StringConstants.common_error_message);
+        _view!.onDeleteTestError(StringConstants.common_error_message);
       }
     }).catchError((error) {
-      _view!.onDeleteTestFail(StringConstants.common_error_message);
+      _view!.onDeleteTestError(StringConstants.common_error_message);
     });
   }
 
@@ -79,10 +79,10 @@ class MyTestsListPresenter {
         List<BankModel> banks = await _generateList(dataMap["data"]);
         _view!.onGetBankListSuccess(banks);
       } else {
-        _view!.onGetBankListFail(StringConstants.common_error_message);
+        _view!.onGetBankListError(StringConstants.common_error_message);
       }
     }).catchError((error) {
-      _view!.onGetBankListFail(StringConstants.common_error_message);
+      _view!.onGetBankListError(StringConstants.common_error_message);
     });
   }
 
