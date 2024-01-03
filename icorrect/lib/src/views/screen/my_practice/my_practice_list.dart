@@ -567,7 +567,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void onGetMyTestListFail(String message) {
+  void onGetMyTestListError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
@@ -596,7 +596,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void onDeleteTestFail(String message) {
+  void onDeleteTestError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     showDialog(
@@ -619,7 +619,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void onGetBankListFail(String message) {
+  void onGetBankListError(String message) {
     if (kDebugMode) {
       print("DEBUG: getBankListFail");
     }
