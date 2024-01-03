@@ -50,6 +50,8 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Column(
       children: [
         _buildSelectionInfo(),
