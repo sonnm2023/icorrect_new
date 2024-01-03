@@ -78,7 +78,7 @@ class _MyPracticeListState extends State<MyPracticeList>
           height: h,
           child: Stack(
             children: [
-              _buildMainScreen(),
+              _buildList(),
               _buildLoadmore(),
               _buildBankListButton(),
             ],
@@ -105,7 +105,7 @@ class _MyPracticeListState extends State<MyPracticeList>
               activeIcon: Icons.close,
               foregroundColor: Colors.white,
               children: _generateBankListUI(),
-              child: const Icon(Icons.menu_rounded, color: Colors.white),
+              child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
         );
@@ -135,13 +135,13 @@ class _MyPracticeListState extends State<MyPracticeList>
     for (int i = 0; i < _myPracticeListProvider!.banks.length; i++) {
       BankModel bank = _myPracticeListProvider!.banks[i];
       Icon icon = const Icon(
-        Icons.class_outlined,
+        Icons.book,
         color: AppColor.defaultPurpleColor,
       ); //Default Class bank icon
       Color bgColor = Colors.green; //Default Class bank color
       if (bank.type == 0) {
         icon = const Icon(
-          Icons.comment_bank,
+          Icons.library_books,
           color: AppColor.defaultPurpleColor,
         ); //IELTS bank icon
         bgColor = Colors.amber;
@@ -174,7 +174,7 @@ class _MyPracticeListState extends State<MyPracticeList>
     return list;
   }
 
-  Widget _buildMainScreen() {
+  Widget _buildList() {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       child: Column(
@@ -567,7 +567,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void onGetMyTestListFail(String message) {
+  void onGetMyTestListError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
@@ -596,7 +596,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void onDeleteTestFail(String message) {
+  void onDeleteTestError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     showDialog(
@@ -619,7 +619,7 @@ class _MyPracticeListState extends State<MyPracticeList>
   }
 
   @override
-  void onGetBankListFail(String message) {
+  void onGetBankListError(String message) {
     if (kDebugMode) {
       print("DEBUG: getBankListFail");
     }

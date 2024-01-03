@@ -89,12 +89,12 @@ class MyPracticeTopicsProvider extends ChangeNotifier {
     ),
     SettingModel(
       title: StringConstants.speed_of_second_time,
-      value: 1,
+      value: 0.85,
       step: 0.05,
     ),
     SettingModel(
       title: StringConstants.speed_of_third_time,
-      value: 1,
+      value: 0.75,
       step: 0.05,
     ),
   ];
