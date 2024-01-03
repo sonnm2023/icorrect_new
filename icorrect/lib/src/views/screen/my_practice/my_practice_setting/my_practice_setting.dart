@@ -34,6 +34,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   // late TabController _tabController;
 
   MyPracticeTopicsProvider? _myPracticeTopicsProvider;
+  bool isCheckingData = false;
 
   @override
   void initState() {
@@ -128,12 +129,14 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
             InkWell(
               onTap: () {
                 if (_myPracticeTopicsProvider!.settings.isEmpty) {
-                  return;
+                  _myPracticeTopicsProvider!.initSettings();
                 }
 
-                bool isValidData = _checkSettings();
-                if (isValidData) {
-                  _prepareData();
+                if (isCheckingData == false) {
+                  bool isValidData = _checkSettings();
+                  if (isValidData) {
+                    _prepareData();
+                  }
                 }
               },
               child: Container(
@@ -178,12 +181,16 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     //Check selected topics
     int selectedTopics = _myPracticeTopicsProvider!.getTotalSelectedSubTopics();
     if (selectedTopics == 0) {
+      isCheckingData = true;
       showToastMsg(
         msg: Utils.multiLanguage(
             StringConstants.my_practice_selected_topic_error_message),
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
+      Future.delayed(const Duration(seconds: 1), () {
+        isCheckingData = false;
+      });
       return false;
     }
 

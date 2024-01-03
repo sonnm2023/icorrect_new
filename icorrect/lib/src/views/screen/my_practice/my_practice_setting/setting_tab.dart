@@ -20,6 +20,9 @@ class _SettingTabScreenState extends State<SettingTabScreen>
     super.initState();
     _myPracticeTopicsProvider =
         Provider.of<MyPracticeTopicsProvider>(context, listen: false);
+    if (_myPracticeTopicsProvider!.settings.isNotEmpty) {
+      _myPracticeTopicsProvider!.clearSettings();
+    }
     _myPracticeTopicsProvider!.initSettings();
   }
 

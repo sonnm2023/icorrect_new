@@ -1720,19 +1720,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       switch (_countRepeat) {
         case 0:
           {
-            _videoPlayerController!.setPlaybackSpeed(
+            await _videoPlayerController!.setPlaybackSpeed(
                 _simulatorTestProvider!.currentTestDetail.normalSpeed);
             break;
           }
         case 1:
           {
-            _videoPlayerController!.setPlaybackSpeed(
+            await _videoPlayerController!.setPlaybackSpeed(
                 _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
             break;
           }
         case 2:
           {
-            _videoPlayerController!.setPlaybackSpeed(
+            await _videoPlayerController!.setPlaybackSpeed(
                 _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
             break;
           }
@@ -1757,6 +1757,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             }
 
             _videoPlayerController!.loadVideoSource(value).then((_) {
+              if (kDebugMode) {
+                print(
+                    "DEBUG: play video with speed ${_videoPlayerController!.playbackInfo!.speed}");
+              }
               _videoPlayerController!.play();
 
               if (!isIntroduceVideo) {
