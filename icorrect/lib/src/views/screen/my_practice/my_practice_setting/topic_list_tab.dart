@@ -62,38 +62,62 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
 
   Widget _buildSelectionInfo() {
     return Consumer<MyPracticeTopicsProvider>(
-        builder: (context, provider, child) {
-      int selectedTopics = provider.getTotalSelectedSubTopics();
-      int topics = provider.getTotalSubTopics();
-      bool isEmpty = selectedTopics == 0;
+      builder: (context, provider, child) {
+        int selectedTopics = provider.getTotalSelectedSubTopics();
+        int topics = provider.getTotalSubTopics();
+        bool isEmpty = selectedTopics == 0;
 
-      return Container(
-        color: AppColor.defaultGraySlightColor,
-        padding: const EdgeInsets.all(10),
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Icon(
-                isEmpty ? Icons.check_box_outline_blank : Icons.check_box,
-                color: AppColor.defaultPurpleColor,
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                context.formatString(
-                    StringConstants.selected_topics, [selectedTopics, topics]),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
+        return Container(
+          color: AppColor.defaultGraySlightColor,
+          // padding: const EdgeInsets.all(5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: 60,
+                child: Checkbox(
+                  value: !isEmpty,
+                  onChanged: (value) {
+                    _selectAllTopics(value!, provider.topics);
+                  },
+                  activeColor: AppColor.defaultPurpleColor,
                 ),
               ),
-            )
-          ],
-        ),
-      );
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      context.formatString(StringConstants.selected_topics,
+                          [selectedTopics, topics]),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 60),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _selectAllTopics(bool isSelected, List<Topic> topics) {
+    setState(() {
+      for (int i = 0; i < topics.length; i++) {
+        topics[i].isSelected = isSelected;
+        if (topics[i].subTopics != null) {
+          for (int j = 0; j < topics[i].subTopics!.length; j++) {
+            topics[i].subTopics![j].isSelected = isSelected;
+          }
+        }
+      }
     });
   }
 
@@ -122,7 +146,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
   void _topicTapped(Topic topic) {
     setState(() {
       final bool newValue =
-          !topic.subTopics!.every((subTopic) => subTopic.isSelected);
+          !topic.subTopics!.any((subTopic) => subTopic.isSelected);
       for (int i = 0; i < topic.subTopics!.length; i++) {
         topic.subTopics![i].isSelected = newValue;
       }
@@ -162,7 +186,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                       children: [
                         Checkbox(
                           value: topic.subTopics!
-                              .every((subTopic) => subTopic.isSelected),
+                              .any((subTopic) => subTopic.isSelected),
                           onChanged: (value) {
                             _topicTapped(topic);
                           },
