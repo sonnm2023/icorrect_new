@@ -5,7 +5,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
+import 'package:icorrect/src/models/homework_models/activity_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
@@ -70,16 +70,16 @@ class HomeWorkProvider with ChangeNotifier {
   }
 
   //List status (original) for filtering
-  final List<HomeWorkStatusModel> _listStatusForFilter = [
-    HomeWorkStatusModel.fromJson(FilterJsonData.selectAll),
-    HomeWorkStatusModel.fromJson(FilterJsonData.submitted),
-    HomeWorkStatusModel.fromJson(FilterJsonData.corrected),
-    HomeWorkStatusModel.fromJson(FilterJsonData.notCompleted),
-    HomeWorkStatusModel.fromJson(FilterJsonData.late),
-    HomeWorkStatusModel.fromJson(FilterJsonData.outOfDate),
-    HomeWorkStatusModel.fromJson(FilterJsonData.loadedTest),
+  final List<ActivityStatusModel> _listStatusForFilter = [
+    ActivityStatusModel.fromJson(FilterJsonData.selectAll),
+    ActivityStatusModel.fromJson(FilterJsonData.submitted),
+    ActivityStatusModel.fromJson(FilterJsonData.corrected),
+    ActivityStatusModel.fromJson(FilterJsonData.notCompleted),
+    ActivityStatusModel.fromJson(FilterJsonData.late),
+    ActivityStatusModel.fromJson(FilterJsonData.outOfDate),
+    ActivityStatusModel.fromJson(FilterJsonData.loadedTest),
   ];
-  List<HomeWorkStatusModel> get listStatusForFilter => _listStatusForFilter;
+  List<ActivityStatusModel> get listStatusForFilter => _listStatusForFilter;
 
   //List selected class
   final List<NewClassModel> _listSelectedClassFilter = [];
@@ -96,10 +96,10 @@ class HomeWorkProvider with ChangeNotifier {
   }
 
   //List selected class
-  final List<HomeWorkStatusModel> _listSelectedStatusFilter = [];
-  List<HomeWorkStatusModel> get listSelectedStatusFilter =>
+  final List<ActivityStatusModel> _listSelectedStatusFilter = [];
+  List<ActivityStatusModel> get listSelectedStatusFilter =>
       _listSelectedStatusFilter;
-  void setListSelectedStatusFilter(List<HomeWorkStatusModel> list) {
+  void setListSelectedStatusFilter(List<ActivityStatusModel> list) {
     _listSelectedStatusFilter.clear();
     _listSelectedStatusFilter.addAll(list);
 
@@ -147,7 +147,7 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  void addSelectedStatus(HomeWorkStatusModel s) {
+  void addSelectedStatus(ActivityStatusModel s) {
     if (!_checkStatusExits(s)) {
       _listSelectedStatusFilter.add(s);
 
@@ -155,13 +155,13 @@ class HomeWorkProvider with ChangeNotifier {
     }
   }
 
-  void removeSelectedStatus(HomeWorkStatusModel s) {
+  void removeSelectedStatus(ActivityStatusModel s) {
     _listSelectedStatusFilter.remove(s);
 
     notifyListeners();
   }
 
-  bool _checkStatusExits(HomeWorkStatusModel s) {
+  bool _checkStatusExits(ActivityStatusModel s) {
     if (_listSelectedStatusFilter.isEmpty) return false;
 
     bool hasSelectAll = _listSelectedStatusFilter
@@ -220,8 +220,8 @@ class HomeWorkProvider with ChangeNotifier {
         .getString(key: AppSharedKeys.listStatusFilter);
     if (jsonString2.isNotEmpty) {
       Iterable temp = jsonDecode(jsonString2);
-      List<HomeWorkStatusModel> temp1 = List<HomeWorkStatusModel>.from(
-          temp.map((e) => HomeWorkStatusModel.fromJson(e)));
+      List<ActivityStatusModel> temp1 = List<ActivityStatusModel>.from(
+          temp.map((e) => ActivityStatusModel.fromJson(e)));
       setListSelectedStatusFilter(temp1);
     }
 

@@ -3,7 +3,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/homework_models/homework_status_model.dart';
+import 'package:icorrect/src/models/homework_models/activity_status_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 
@@ -31,10 +31,10 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
         ],
       );
   late List<NewClassModel> _listSelectedClass = [];
-  late List<HomeWorkStatusModel> _listSelectedStatus = [];
+  late List<ActivityStatusModel> _listSelectedStatus = [];
 
   late List<NewClassModel> _originalListSelectedClass = [];
-  late List<HomeWorkStatusModel> _originalListSelectedStatus = [];
+  late List<ActivityStatusModel> _originalListSelectedStatus = [];
 
   @override
   void initState() {
@@ -136,7 +136,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     );
   }
 
-  Widget _buildStatusFilterRow(HomeWorkStatusModel subject) {
+  Widget _buildStatusFilterRow(ActivityStatusModel subject) {
     bool isSelected = _checkSelectedStatus(subject);
     IconData icon =
         isSelected ? Icons.check_box_outlined : Icons.square_outlined;
@@ -179,7 +179,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     setState(() {});
   }
 
-  void _removeSelectedStatus(HomeWorkStatusModel subject) {
+  void _removeSelectedStatus(ActivityStatusModel subject) {
     //Remove select all
     bool hasSelectAll = _listSelectedStatus
         .map((e) => e.id)
@@ -247,7 +247,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
     }
   }
 
-  bool _checkSelectedStatus(HomeWorkStatusModel subject) {
+  bool _checkSelectedStatus(ActivityStatusModel subject) {
     if (_listSelectedStatus.isEmpty) return false;
 
     bool hasSelectAll = _listSelectedStatus

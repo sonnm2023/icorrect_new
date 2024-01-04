@@ -43,7 +43,7 @@ class MyHomeWorkTab extends StatefulWidget {
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
-  ActivitiesModel? _selectedHomeWorkModel;
+  ActivitiesModel? _selectedActivityModel;
   final FlutterLocalization localization = FlutterLocalization.instance;
   @override
   void dispose() {
@@ -310,7 +310,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           widget.homeWorkProvider.setPermissionDeniedTime();
         }
       } else {
-        _selectedHomeWorkModel = homeWorkModel;
+        _selectedActivityModel = homeWorkModel;
         widget.homeWorkProvider.resetPermissionDeniedTime();
         _gotoHomeworkDetail();
       }
@@ -356,7 +356,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               widget.homeWorkProvider.setPermissionDeniedTime();
             }
           } else {
-            _selectedHomeWorkModel = homeWorkModel;
+            _selectedActivityModel = homeWorkModel;
             widget.homeWorkProvider.resetPermissionDeniedTime();
             _gotoHomeworkDetail();
           }
@@ -429,13 +429,13 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   }
 
   void _gotoHomeworkDetail() async {
-    if (_selectedHomeWorkModel!.activityStatus == 99) {
+    if (_selectedActivityModel!.activityStatus == 99) {
       _showActivityIsLoadedDialog(context);
     } else {
       Utils.checkInternetConnection().then((isConnected) async {
         if (isConnected) {
           Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
-            _selectedHomeWorkModel!,
+            _selectedActivityModel!,
             widget.homeWorkProvider.serverCurrentTime,
           );
 
@@ -447,7 +447,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               context,
               MaterialPageRoute(
                 builder: (_) => SimulatorTestScreen(
-                  homeWorkModel: _selectedHomeWorkModel!,
+                  activitiesModel: _selectedActivityModel!,
                   testOption: null,
                   topicsId: null,
                   isPredict: null,
@@ -466,7 +466,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => MyTestScreen(
-                  homeWorkModel: _selectedHomeWorkModel!,
+                  activitiesModel: _selectedActivityModel!,
                   isFromSimulatorTest: false,
                 ),
               ),

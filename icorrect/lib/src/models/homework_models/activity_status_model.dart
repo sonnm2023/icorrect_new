@@ -1,17 +1,15 @@
 import 'dart:convert';
 
-import 'package:icorrect/src/data_sources/utils.dart';
+ActivityStatusModel homeworkStatusModelFromJson(String str) =>
+    ActivityStatusModel.fromJson(json.decode(str));
+String homeworkStatusModelToJson(ActivityStatusModel data) =>
+    json.encode(data.toJson());
 
-HomeWorkStatusModel homeworkStatusModelFromJson(String str) => HomeWorkStatusModel.fromJson(json.decode(str));
-String homeworkStatusModelToJson(HomeWorkStatusModel data) => json.encode(data.toJson());
-
-class HomeWorkStatusModel {
+class ActivityStatusModel {
   int? _id = 0;
   String? _name;
 
-  HomeWorkStatusModel(
-      {required int id,
-        String? name}) {
+  ActivityStatusModel({required int id, String? name}) {
     _id = id;
     _name = name;
   }
@@ -21,7 +19,7 @@ class HomeWorkStatusModel {
   String get name => _name ?? "";
   set name(String name) => _name = name;
 
-  HomeWorkStatusModel.fromJson(Map<String, dynamic> json) {
+  ActivityStatusModel.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _name = json['name'];
   }

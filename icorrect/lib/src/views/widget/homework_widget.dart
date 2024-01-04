@@ -12,7 +12,6 @@ class HomeWorkWidget extends StatelessWidget {
       required this.callBack,
       required this.homeWorkProvider});
 
-  // final HomeWorkModel homeWorkModel;
   final ActivitiesModel homeWorkModel;
   final Function callBack;
   final HomeWorkProvider homeWorkProvider;

@@ -38,14 +38,14 @@ import 'package:video_compress/video_compress.dart';
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({
     super.key,
-    required this.homeWorkModel,
+    required this.activitiesModel,
     required this.testOption,
     required this.topicsId,
     required this.isPredict,
     required this.data,
   });
 
-  final ActivitiesModel? homeWorkModel; //From Main screen
+  final ActivitiesModel? activitiesModel; //From Main screen
   final int? testOption; //From Practice screen
   final List<int>? topicsId; //From Practice screen
   final int? isPredict; //From Practice screen
@@ -133,8 +133,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
         if (_simulatorTestPresenter!.isDownloading) {
           String? activityId;
-          if (widget.homeWorkModel != null) {
-            activityId = widget.homeWorkModel!.activityId.toString();
+          if (widget.activitiesModel != null) {
+            activityId = widget.activitiesModel!.activityId.toString();
           }
 
           _simulatorTestPresenter!.reDownloadFiles(
@@ -177,19 +177,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _prepareBeforeSimulatorTest();
   }
 
-  Future _prepareBeforeSimulatorTest() async {
-    if (widget.homeWorkModel != null) {
-      _isExam = widget.homeWorkModel!.activityType == ActivityType.exam.name ||
-          widget.homeWorkModel!.activityType == ActivityType.test.name;
-    } else {
-      _isExam = false;
-    }
-
-    // Utils.testCrashBug();
-
-    _getTestDetail();
-  }
-
   @override
   void dispose() {
     _simulatorTestPresenter!.pauseDownload();
@@ -213,7 +200,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             });
           }
           if (simulatorTestProvider.submitStatus == SubmitStatus.success &&
-              widget.homeWorkModel != null) {
+              widget.activitiesModel != null) {
             return Stack(
               children: [
                 DefaultTabController(
@@ -234,8 +221,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                             color: AppColor.defaultPurpleColor),
                       ),
                       title: Text(
-                        (widget.homeWorkModel != null)
-                            ? widget.homeWorkModel!.activityName
+                        (widget.activitiesModel != null)
+                            ? widget.activitiesModel!.activityName
                             : "",
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
@@ -338,14 +325,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildHighLightTab() {
     return HighLightTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.homeWorkModel!,
+      homeWorkModel: widget.activitiesModel!,
     );
   }
 
   Widget _buildOtherTab() {
     return OtherTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.homeWorkModel!,
+      homeWorkModel: widget.activitiesModel!,
     );
   }
 
@@ -378,12 +365,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 String savedVideoPath = _simulatorTestPresenter!
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
-                if (widget.homeWorkModel != null) {
+                if (widget.activitiesModel != null) {
                   _simulatorTestPresenter!.submitTest(
                     context: buildContext,
                     testId: _simulatorTestProvider!.currentTestDetail.testId
                         .toString(),
-                    activityId: widget.homeWorkModel!.activityId.toString(),
+                    activityId: widget.activitiesModel!.activityId.toString(),
                     questions: _simulatorTestProvider!.questionList,
                     isExam: _isExam,
                     videoConfirmFile: videoConfirmFile,
@@ -558,8 +545,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
           String activityId = "";
-          if (widget.homeWorkModel != null) {
-            activityId = widget.homeWorkModel!.activityId.toString();
+          if (widget.activitiesModel != null) {
+            activityId = widget.activitiesModel!.activityId.toString();
           }
           _simulatorTestPresenter!.submitTest(
             context: context,
@@ -665,7 +652,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         child: Stack(
           children: [
             TestRoomWidget(
-              homeWorkModel: widget.homeWorkModel,
+              homeWorkModel: widget.activitiesModel,
               simulatorTestPresenter: _simulatorTestPresenter!,
             ),
             Visibility(
@@ -695,12 +682,26 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
+  Future _prepareBeforeSimulatorTest() async {
+    if (widget.activitiesModel != null) {
+      _isExam =
+          widget.activitiesModel!.activityType == ActivityType.exam.name ||
+              widget.activitiesModel!.activityType == ActivityType.test.name;
+    } else {
+      _isExam = false;
+    }
+
+    // Utils.testCrashBug();
+
+    _getTestDetail();
+  }
+
   void _getTestDetail() async {
     _simulatorTestPresenter!.initializeData().then((_) {
-      if (widget.homeWorkModel != null) {
+      if (widget.activitiesModel != null) {
         _simulatorTestPresenter!.getTestDetailByHomeWork(
             context: context,
-            homeworkId: widget.homeWorkModel!.activityId.toString());
+            homeworkId: widget.activitiesModel!.activityId.toString());
       } else if (widget.data != null) {
         _simulatorTestPresenter!.getTestDetailByMyPractice(
           context: context,
@@ -783,9 +784,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setTotal(total);
     _simulatorTestProvider!.updateDownloadingIndex(index);
     _simulatorTestProvider!.updateDownloadingPercent(percent);
-    if (widget.homeWorkModel != null) {
+    if (widget.activitiesModel != null) {
       _simulatorTestProvider!
-          .setActivityType(widget.homeWorkModel!.activityType);
+          .setActivityType(widget.activitiesModel!.activityType);
     } else {
       _simulatorTestProvider!.setActivityType(ActivityType.practice.name);
     }
@@ -905,8 +906,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         _simulatorTestProvider!.setStartNowStatus(false);
         _simulatorTestPresenter!.reDownloadFiles(
             context,
-            widget.homeWorkModel != null
-                ? widget.homeWorkModel!.activityId.toString()
+            widget.activitiesModel != null
+                ? widget.activitiesModel!.activityId.toString()
                 : null);
       }
     }
@@ -944,10 +945,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   void onUpdateHasOrderStatus(bool hasOrder) {
     _simulatorTestProvider!.setHasOrderStatus(hasOrder);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

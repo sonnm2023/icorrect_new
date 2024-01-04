@@ -350,7 +350,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       context,
       MaterialPageRoute(
         builder: (context) => SimulatorTestScreen(
-          homeWorkModel: null,
+          activitiesModel: null,
           testOption: null,
           topicsId: null,
           isPredict: null,
