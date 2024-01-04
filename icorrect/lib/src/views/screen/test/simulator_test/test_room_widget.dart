@@ -8,7 +8,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
@@ -67,7 +66,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   NativeVideoPlayerController? _videoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
   Record? _recordController;
-  // FlutterSoundRecorder? _flutterSoundRecorder;
   CameraService? _cameraService;
 
   Timer? _countDown;
@@ -99,21 +97,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     super.initState();
 
     _audioPlayerController = AudioPlayers.AudioPlayer();
-
-    //TODO
-    // if (Platform.isIOS) {
-    //   _recordController = Record();
-    // } else {
-    //   _flutterSoundRecorder = FlutterSoundRecorder();
-    // }
     _recordController = Record();
-
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
     _playAnswerProvider =
         Provider.of<PlayAnswerProvider>(context, listen: false);
-
     _testRoomPresenter = TestRoomPresenter(this);
     _loading = CircleLoading();
 
@@ -1717,27 +1706,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_playingIndex == 0) {
       _videoPlayerController!.play();
     } else {
-      switch (_countRepeat) {
-        case 0:
-          {
-            await _videoPlayerController!.setPlaybackSpeed(
-                _simulatorTestProvider!.currentTestDetail.normalSpeed);
-            break;
-          }
-        case 1:
-          {
-            await _videoPlayerController!.setPlaybackSpeed(
-                _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed);
-            break;
-          }
-        case 2:
-          {
-            await _videoPlayerController!.setPlaybackSpeed(
-                _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed);
-            break;
-          }
-      }
-
       _createVideoSource(currentPlayingFile.url).then((value) async {
         if (kDebugMode) {
           print(
@@ -1761,6 +1729,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 print(
                     "DEBUG: play video with speed ${_videoPlayerController!.playbackInfo!.speed}");
               }
+              double speed = _getSpeedOfPlaying(_countRepeat);
+              _videoPlayerController!.setPlaybackSpeed(speed);
               _videoPlayerController!.play();
 
               if (!isIntroduceVideo) {
@@ -1801,6 +1771,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         }
       }
     }
+  }
+
+  double _getSpeedOfPlaying(int countRepeat) {
+    double speed = 1.0;
+    switch (countRepeat) {
+      case 0:
+        {
+          speed = _simulatorTestProvider!.currentTestDetail.normalSpeed;
+          break;
+        }
+      case 1:
+        {
+          speed = _simulatorTestProvider!.currentTestDetail.firstRepeatSpeed;
+          break;
+        }
+      case 2:
+        {
+          speed = _simulatorTestProvider!.currentTestDetail.secondRepeatSpeed;
+          break;
+        }
+    }
+
+    return speed;
   }
 
   void _redownload() async {
