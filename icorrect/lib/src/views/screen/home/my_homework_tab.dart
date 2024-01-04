@@ -18,6 +18,7 @@ import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/new_logic/simulator_test_screen_new.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:icorrect/src/views/widget/homework_widget.dart';
@@ -446,7 +447,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             final result = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => SimulatorTestScreen(
+                builder: (_) => SimulatorTestScreenNew(
                   homeWorkModel: _selectedHomeWorkModel!,
                 ),
               ),

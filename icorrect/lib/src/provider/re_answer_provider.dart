@@ -17,10 +17,12 @@ class ReAnswerProvider with ChangeNotifier {
   }
 
   String? _strCount;
+  int? _numCount;
   String get strCount => _strCount ?? '00:00';
-  void setCountDown(String strCount) {
+  int get numCount => _numCount ?? 0;
+  void setCountDown(String strCount, int numCount) {
     _strCount = strCount;
-
+    _numCount = numCount;
     if (!isDisposed) {
       notifyListeners();
     }

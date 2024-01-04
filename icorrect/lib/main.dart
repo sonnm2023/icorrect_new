@@ -29,6 +29,7 @@ import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/new_logic/simulator_test_provider_new.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:http/http.dart' as http;
@@ -105,6 +106,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => PlayAnswerProvider()),
         ChangeNotifierProvider(create: (_) => ReAnswerProvider()),
         ChangeNotifierProvider(create: (_) => SimulatorTestProvider()),
+        ChangeNotifierProvider(create: (_) => SimulatorTestProviderNew()),
         ChangeNotifierProvider(create: (_) => HomeWorkProvider()),
         ChangeNotifierProvider(create: (_) => VideoAuthProvider()),
         ChangeNotifierProvider(create: (_) => UserAuthDetailProvider()),

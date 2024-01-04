@@ -292,6 +292,18 @@ class AlertClass {
 
   static AlertInfo errorWhenUpdateAnswer(String message) =>
       AlertInfo(Utils.multiLanguage(StringConstants.warning_title), message);
+
+  static AlertInfo submitTestSuccess = AlertInfo(
+      Utils.multiLanguage("notification_title"),
+      Utils.multiLanguage("save_test_success_message"));
+
+  static AlertInfo failToSubmitAndContactAdmin = AlertInfo(
+      Utils.multiLanguage(StringConstants.warning_title),
+      Utils.multiLanguage("fail_to_submit_and_contact_admin_message"));
+
+  static AlertInfo networkFailToSubmit = AlertInfo(
+      Utils.multiLanguage(StringConstants.warning_title),
+      Utils.multiLanguage("network_fail_to_submit"));
 }
 
 class GlobalScaffoldKey {

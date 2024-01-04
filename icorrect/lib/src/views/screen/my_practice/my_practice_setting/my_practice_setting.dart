@@ -12,6 +12,7 @@ import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/setting_tab.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/topic_list_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/new_logic/simulator_test_screen_new.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -348,6 +349,11 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       context,
       MaterialPageRoute(builder: (context) => SimulatorTestScreen(data: data)),
     );
+    //TODO
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => SimulatorTestScreenNew(data: data)),
+    // );
   }
 
   @override

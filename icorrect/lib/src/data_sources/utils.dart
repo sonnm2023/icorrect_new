@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_asset.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
@@ -485,7 +486,39 @@ class Utils {
         fileExtension == 'aac') {
       return StringClass.audio;
     }
+
+    if (fileExtension == 'png' ||
+        fileExtension == 'jpg' ||
+        fileExtension == 'svg' ||
+        fileExtension == 'webp' ||
+        fileExtension == 'gif') {
+      return "image";
+    }
     return '';
+  }
+
+  static MediaType mediaType(String filePath) {
+    String fileExtension = filePath.split('.').last.toLowerCase();
+    if (fileExtension == 'mp4' ||
+        fileExtension == 'mov' ||
+        fileExtension == 'avi') {
+      return MediaType.video;
+    }
+    if (fileExtension == 'wav' ||
+        fileExtension == 'mp3' ||
+        fileExtension == 'aac' ||
+        fileExtension == 'm4a') {
+      return MediaType.audio;
+    }
+
+    if (fileExtension == 'png' ||
+        fileExtension == 'jpg' ||
+        fileExtension == 'svg' ||
+        fileExtension == 'webp' ||
+        fileExtension == 'gif') {
+      return MediaType.image;
+    }
+    return MediaType.video;
   }
 
   static Future<String> generateAudioFileName() async {
@@ -1100,5 +1133,118 @@ class Utils {
         }
       }
     }
+  }
+
+  static Future<http.MultipartRequest> formDataRequestSubmit({
+    required String testId,
+    required String activityId,
+    required List<QuestionTopicModel> questions,
+    required bool isUpdate,
+    required bool isExam,
+    File? videoConfirmFile,
+    List<Map<String, dynamic>>? logAction,
+  }) async {
+    String url = isExam ? submitExam() : submitHomeWorkV2EP();
+    if (activityId.isEmpty) {
+      url = submitPractice();
+    }
+
+    http.MultipartRequest request =
+        http.MultipartRequest(RequestMethod.post, Uri.parse(url));
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ${await getAccessToken()}'
+    });
+
+    Map<String, String> formData = {};
+    formData.addEntries([MapEntry('test_id', testId)]);
+    if (activityId.isNotEmpty) {
+      formData.addEntries([MapEntry('is_update', isUpdate ? '1' : '0')]);
+      formData.addEntries([MapEntry('activity_id', activityId)]);
+    }
+
+    formData.addEntries([const MapEntry('os', "pc_flutter")]);
+    formData.addEntries([const MapEntry('app_version', '1.1.0')]);
+
+    if (null != logAction) {
+      if (logAction.isNotEmpty) {
+        formData.addEntries([MapEntry('log_action', jsonEncode(logAction))]);
+      } else {
+        formData.addEntries([const MapEntry('log_action', '[]')]);
+      }
+    }
+
+    String format = '';
+    String reanswerFormat = '';
+    String endFormat = '';
+    for (QuestionTopicModel q in questions) {
+      String questionId = q.id.toString();
+
+      if (kDebugMode) {
+        print("DEBUG: num part : ${q.numPart.toString()}");
+      }
+      if (q.numPart == PartOfTest.introduce.get) {
+        format = 'introduce[$questionId]';
+        reanswerFormat = 'reanswer_introduce[$questionId]';
+      }
+
+      if (q.type == PartOfTest.part1.get) {
+        format = 'part1[$questionId]';
+        reanswerFormat = 'reanswer_part1[$questionId]';
+      }
+
+      if (q.type == PartOfTest.part2.get) {
+        format = 'part2[$questionId]';
+        reanswerFormat = 'reanswer_part2[$questionId]';
+      }
+
+      if (q.type == PartOfTest.part3.get && !q.isFollowUpQuestion()) {
+        format = 'part3[$questionId]';
+        reanswerFormat = 'reanswer_part3[$questionId]';
+      }
+      if (q.type == PartOfTest.part3.get && q.isFollowUpQuestion()) {
+        format = 'followup[$questionId]';
+        reanswerFormat = 'reanswer_followup[$questionId]';
+      }
+
+      formData
+          .addEntries([MapEntry(reanswerFormat, q.reAnswerCount.toString())]);
+
+      for (int i = 0; i < q.answers.length; i++) {
+        endFormat = '$format[$i]';
+        File audioFile = File(await FileStorageHelper.getFilePath(
+            q.answers.elementAt(i).url.toString(), MediaType.audio, null));
+        if (kDebugMode) {
+          print(
+              '$i .DEBUG: audio file submit : $audioFile, had exist: ${audioFile.existsSync()}');
+        }
+        if (await audioFile.exists()) {
+          if (kDebugMode) {
+            formData.addEntries([MapEntry(endFormat, audioFile.path)]);
+          }
+          request.files.add(
+              await http.MultipartFile.fromPath(endFormat, audioFile.path));
+        }
+      }
+    }
+
+    if (null != videoConfirmFile) {
+      String fileName = videoConfirmFile.path.split('/').last;
+      formData.addEntries([MapEntry('video_confirm', fileName)]);
+      request.files.add(await http.MultipartFile.fromPath(
+          'video_confirm', videoConfirmFile.path));
+    }
+
+    request.fields.addAll(formData);
+
+    return request;
+  }
+
+  static formattedTime({required int timeInSecond}) {
+    int sec = timeInSecond % 60;
+    int min = (timeInSecond / 60).floor();
+    String minute = min.toString().length <= 1 ? "0$min" : "$min";
+    String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
+    return "$minute:$second";
   }
 }
