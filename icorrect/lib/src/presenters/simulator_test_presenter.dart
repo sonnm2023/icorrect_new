@@ -27,14 +27,14 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 abstract class SimulatorTestViewContract {
-  void onGetTestDetailComplete(TestDetailModel testDetailModel, int total);
+  void onGetTestDetailSuccess(TestDetailModel testDetailModel, int total);
   void onGetTestDetailError(String message);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
-  void onDownloadFailure(AlertInfo info);
+  void onDownloadError(AlertInfo info);
   void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onSubmitTestSuccess(String msg);
-  void onSubmitTestFail(String msg);
+  void onSubmitTestError(String msg);
   void onReDownload();
   void onTryAgainToDownload();
   void onHandleBackButtonSystemTapped();
@@ -193,8 +193,10 @@ class SimulatorTestPresenter {
           );
         }
 
-        _view!.onGetTestDetailComplete(
-            tempTestDetailModel, tempFilesTopic.length);
+        _view!.onGetTestDetailSuccess(
+          tempTestDetailModel,
+          tempFilesTopic.length,
+        );
       } else {
         //Add log
         Utils.prepareLogData(
@@ -286,8 +288,10 @@ class SimulatorTestPresenter {
           );
         }
 
-        _view!.onGetTestDetailComplete(
-            tempTestDetailModel, tempFilesTopic.length);
+        _view!.onGetTestDetailSuccess(
+          tempTestDetailModel,
+          tempFilesTopic.length,
+        );
       } else {
         //Add log
         Utils.prepareLogData(
@@ -372,8 +376,10 @@ class SimulatorTestPresenter {
           );
         }
 
-        _view!.onGetTestDetailComplete(
-            tempTestDetailModel, tempFilesTopic.length);
+        _view!.onGetTestDetailSuccess(
+          tempTestDetailModel,
+          tempFilesTopic.length,
+        );
       } else {
         //Add log
         Utils.prepareLogData(
@@ -521,7 +527,7 @@ class SimulatorTestPresenter {
   }
 
   void downloadFailure(AlertInfo alertInfo) {
-    _view!.onDownloadFailure(alertInfo);
+    _view!.onDownloadError(alertInfo);
   }
 
   Future<bool> _downloadAndSaveImage(
@@ -746,7 +752,7 @@ class SimulatorTestPresenter {
                   status: LogEvent.failed,
                 );
 
-                _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+                _view!.onDownloadError(AlertClass.downloadVideoErrorAlert);
                 reDownloadAutomatic(
                     context: context,
                     activityId: activityId,
@@ -768,7 +774,7 @@ class SimulatorTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadError(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                   context: context,
                   activityId: activityId,
@@ -787,7 +793,7 @@ class SimulatorTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadError(AlertClass.downloadVideoErrorAlert);
               reDownloadAutomatic(
                   context: context,
                   activityId: activityId,
@@ -806,7 +812,7 @@ class SimulatorTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadError(AlertClass.downloadVideoErrorAlert);
               //Download again
               reDownloadAutomatic(
                   context: context,
@@ -826,7 +832,7 @@ class SimulatorTestPresenter {
                 status: LogEvent.failed,
               );
 
-              _view!.onDownloadFailure(AlertClass.downloadVideoErrorAlert);
+              _view!.onDownloadError(AlertClass.downloadVideoErrorAlert);
               //Download again
               reDownloadAutomatic(
                   context: context,
@@ -981,7 +987,7 @@ class SimulatorTestPresenter {
           if (json[StringConstants.k_error_code] != null) {
             errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
           }
-          _view!.onSubmitTestFail(
+          _view!.onSubmitTestError(
               "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
@@ -994,7 +1000,7 @@ class SimulatorTestPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onSubmitTestFail(Utils.multiLanguage(
+        _view!.onSubmitTestError(Utils.multiLanguage(
             StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
@@ -1006,7 +1012,7 @@ class SimulatorTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
+      _view!.onSubmitTestError(
           Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
@@ -1017,7 +1023,7 @@ class SimulatorTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
+      _view!.onSubmitTestError(
           Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
@@ -1028,7 +1034,7 @@ class SimulatorTestPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
+      _view!.onSubmitTestError(
           Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }

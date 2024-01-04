@@ -755,7 +755,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onDownloadFailure(AlertInfo info) {
+  void onDownloadError(AlertInfo info) {
     if (kDebugMode) {
       print("DEBUG: onDownloadFailure");
     }
@@ -805,7 +805,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onGetTestDetailComplete(TestDetailModel testDetailModel, int total) {
+  void onGetTestDetailSuccess(TestDetailModel testDetailModel, int total) {
     _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
     _simulatorTestProvider!.setDownloadProgressingStatus(true);
     _simulatorTestProvider!.setTotal(total);
@@ -830,7 +830,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onSubmitTestFail(String msg) {
+  void onSubmitTestError(String msg) {
     if (null != _loading) {
       _loading!.hide();
     }
