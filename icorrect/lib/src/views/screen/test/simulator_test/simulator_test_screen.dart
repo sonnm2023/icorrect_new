@@ -63,8 +63,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   HomeWorkProvider? _homeWorkProvider;
   AuthProvider? _authProvider;
 
-  StreamSubscription? connection;
-  bool isOffline = false;
+  StreamSubscription? _connection;
+  bool _isOffline = false;
   CircleLoading? _loading;
   bool _isExam = false;
 
@@ -121,12 +121,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void initState() {
-    connection = Connectivity()
+    super.initState();
+
+    _connection = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       // when every connection status is changed.
       if (result == ConnectivityResult.none) {
-        isOffline = true;
+        _isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
         if (kDebugMode) {
           print("DEBUG: connect via 3G/4G");
@@ -142,24 +144,22 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             activityId,
           );
         }
-        isOffline = false;
+        _isOffline = false;
       } else if (result == ConnectivityResult.wifi) {
         if (kDebugMode) {
           print("DEBUG: connect via WIFI");
         }
-        isOffline = false;
+        _isOffline = false;
       } else if (result == ConnectivityResult.ethernet) {
-        isOffline = false;
+        _isOffline = false;
       } else if (result == ConnectivityResult.bluetooth) {
-        isOffline = false;
+        _isOffline = false;
       }
 
       if (kDebugMode) {
-        print("DEBUG: CONNECT INTERNET === ${!isOffline}");
+        print("DEBUG: CONNECT INTERNET === ${!_isOffline}");
       }
     });
-
-    super.initState();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _simulatorTestPresenter = SimulatorTestPresenter(this);
@@ -169,18 +169,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     _loading = CircleLoading();
 
+    _getActivityType();
+    _getTestDetail();
+
     Future.delayed(Duration.zero, () {
       _authProvider!
           .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
     });
-
-    _prepareBeforeSimulatorTest();
   }
 
   @override
   void dispose() {
     _simulatorTestPresenter!.pauseDownload();
-    connection!.cancel();
+    _connection!.cancel();
     _simulatorTestPresenter!.closeClientRequest();
     _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
     _simulatorTestProvider!.resetAll();
@@ -682,7 +683,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  Future _prepareBeforeSimulatorTest() async {
+  void _getActivityType() {
+    //Create a crash bug for testing
+    // Utils.testCrashBug();
+
     if (widget.activitiesModel != null) {
       _isExam =
           widget.activitiesModel!.activityType == ActivityType.exam.name ||
@@ -690,10 +694,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     } else {
       _isExam = false;
     }
-
-    // Utils.testCrashBug();
-
-    _getTestDetail();
   }
 
   void _getTestDetail() async {
@@ -893,7 +893,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onTryAgainToDownload() {
     //Check internet connection status
-    if (isOffline) {
+    if (_isOffline) {
       _showCheckNetworkDialog();
     } else {
       if (null != _simulatorTestPresenter!.testDetail &&
