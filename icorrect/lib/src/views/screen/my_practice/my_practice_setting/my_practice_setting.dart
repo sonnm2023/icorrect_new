@@ -260,7 +260,9 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         for (int j = 0; j < t.subTopics!.length; j++) {
           SubTopics s = t.subTopics![j];
           if (s.isSelected) {
-            subTopics.add(s.id!);
+            if (!subTopics.contains(s.id)) {
+              subTopics.add(s.id!);
+            }
 
             if (!topics.contains(t.id!)) {
               topics.add(t.id!);
@@ -341,7 +343,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
   Future<void> _goToTestScreen(Map<String, dynamic> data) async {
     if (kDebugMode) {
-      print("DEBUG: _goToTestScreen");
+      print("DEBUG: _goToTestScreen $data");
     }
 
     Navigator.pushReplacement(
