@@ -74,6 +74,9 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
           final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: response data: $jsonBody");
+          }
           return jsonBody;
         });
   }
@@ -117,6 +120,9 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: response data: $jsonBody");
+      }
       return jsonBody;
     });
   }
@@ -145,6 +151,9 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: response data: $jsonBody");
+      }
       return jsonBody;
     });
   }
@@ -183,9 +192,15 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             .timeout(const Duration(seconds: timeout))
             .then((http.Response response) {
           final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: response data: $jsonBody");
+          }
           return jsonBody;
         });
       } else {
+        if (kDebugMode) {
+          print("DEBUG: Submit ERROR");
+        }
         return '';
       }
     });
@@ -229,6 +244,9 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then(
           (http.Response response) {
             final String jsonBody = response.body;
+            if (kDebugMode) {
+              print("DEBUG: response data: $jsonBody");
+            }
             return jsonBody;
           },
         )
