@@ -45,11 +45,11 @@ class SimulatorTestScreen extends StatefulWidget {
     required this.data,
   });
 
-  final ActivitiesModel? homeWorkModel;
-  final int? testOption;
-  final List<int>? topicsId;
-  final int? isPredict;
-  final Map<String, dynamic>? data; //fromMyPractice
+  final ActivitiesModel? homeWorkModel; //From Main screen
+  final int? testOption; //From Practice screen
+  final List<int>? topicsId; //From Practice screen
+  final int? isPredict; //From Practice screen
+  final Map<String, dynamic>? data; //From MyPractice
 
   @override
   State<SimulatorTestScreen> createState() => _SimulatorTestScreenState();
