@@ -2723,9 +2723,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   void onFinishForReAnswer() {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
@@ -2829,4 +2826,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     properties.add(
         DiagnosticsProperty<Record>('_recordController', _recordController));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

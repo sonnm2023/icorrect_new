@@ -6,6 +6,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/doing_test_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
@@ -234,7 +235,7 @@ class TestRoomPresenter {
           action: LogEvent.callApiSubmitTest);
     }
 
-    http.MultipartRequest multiRequest = await Utils.formDataRequest(
+    http.MultipartRequest multiRequest = await DoingTestService.formDataRequest(
       testId: testId,
       activityId: activityId,
       questions: questions,
@@ -369,7 +370,7 @@ class TestRoomPresenter {
           action: LogEvent.callApiUpdateAnswer);
     }
 
-    http.MultipartRequest multiRequest = await Utils.formDataRequest(
+    http.MultipartRequest multiRequest = await DoingTestService.formDataRequest(
       testId: testId,
       activityId: activityId,
       questions: reQuestions,
