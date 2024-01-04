@@ -249,7 +249,7 @@ class MultiLanguage {
     StringConstants.can_not_load_response_message:
         "Không thể tải kết quả của giáo viên !",
     StringConstants.load_detail_homework_error_message:
-        "Không thể tải thông tin bài tập !",
+        "Không thể tải thông tin bài tập!",
     StringConstants.submit_test_error_message:
         "Có lỗi xảy ra khi nộp bài. Vui lòng thử lại!",
     StringConstants.submit_test_error_invalid_return_type_message:

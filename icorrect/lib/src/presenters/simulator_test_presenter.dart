@@ -115,14 +115,16 @@ class SimulatorTestPresenter {
   bool isDownloading = false;
 
   //////////////////////GET TEST DETAIL FROM HOMEWORK///////////////////////////
-  void getTestDetailByHomeWork({
-    required BuildContext context,
-    required String homeworkId,
-  }) async {
+  void getTestDetailFromHomeWork(
+      {required BuildContext context, required String activityId}) async {
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser == null) {
       _view!.onGetTestDetailError(
-          StringConstants.load_detail_homework_error_message);
+        StringConstants.load_detail_homework_error_message,
+      );
+      if (kDebugMode) {
+        print("DEBUG: getTestDetailByHomeWork ERROR: currentUser == NULL");
+      }
       return;
     }
 
@@ -130,8 +132,10 @@ class SimulatorTestPresenter {
 
     LogModel? log;
     if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context,
-          action: LogEvent.callApiGetTestDetail);
+      log = await Utils.prepareToCreateLog(
+        context,
+        action: LogEvent.callApiGetTestDetail,
+      );
     }
 
     String platform = await Utils.getOS();
@@ -140,16 +144,17 @@ class SimulatorTestPresenter {
 
     _testRepository!
         .getTestDetailFromHomework(
-            homeworkId: homeworkId,
-            distributeCode: distributeCode,
-            platform: platform,
-            appVersion: appVersion,
-            deviceId: deviceId)
+      activityId: activityId,
+      distributeCode: distributeCode,
+      platform: platform,
+      appVersion: appVersion,
+      deviceId: deviceId,
+    )
         .then((value) async {
       Map<String, dynamic> map = jsonDecode(value);
       if (kDebugMode) {
         print(
-            'DEBUG activity id : ${homeworkId.toString()}, create test : ${map.toString()}');
+            'DEBUG activity id : ${activityId.toString()}, create test : ${map.toString()}');
       }
       if (map[StringConstants.k_error_code] == 200) {
         Map<String, dynamic> dataMap = map[StringConstants.k_data];
@@ -180,7 +185,7 @@ class SimulatorTestPresenter {
           _prepareDownloadImages(
             context: context,
             testDetail: tempTestDetailModel,
-            activityId: homeworkId,
+            activityId: activityId,
             filesTopic: tempFilesTopic,
           );
         } else {
@@ -188,7 +193,7 @@ class SimulatorTestPresenter {
           downloadFiles(
             context: context,
             testDetail: tempTestDetailModel,
-            activityId: homeworkId,
+            activityId: activityId,
             filesTopic: tempFilesTopic,
           );
         }
@@ -226,7 +231,7 @@ class SimulatorTestPresenter {
   }
 
   /////////////////////GET TEST DETAIL FROM PRACTICE //////////////////////////
-  Future getTestDetailByPractice(
+  Future getTestDetailFromPractice(
       {required BuildContext context,
       required int testOption,
       required List<int> topicsId,
@@ -320,7 +325,7 @@ class SimulatorTestPresenter {
     );
   }
 
-  Future getTestDetailByMyPractice(
+  Future getTestDetailFromMyPractice(
       {required BuildContext context,
       required Map<String, dynamic> data}) async {
     LogModel? log;

@@ -207,75 +207,35 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 DefaultTabController(
                   length: 3,
                   child: Scaffold(
-                    // key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                    key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                     appBar: AppBar(
                       elevation: 0.0,
                       iconTheme: const IconThemeData(
                         color: AppColor.defaultPurpleColor,
                       ),
                       centerTitle: true,
-                      leading: GestureDetector(
-                        onTap: () {
-                          _backButtonTapped();
-                        },
-                        child: const Icon(Icons.arrow_back_rounded,
-                            color: AppColor.defaultPurpleColor),
-                      ),
-                      title: Text(
-                        (widget.activitiesModel != null)
-                            ? widget.activitiesModel!.activityName
-                            : "",
-                        style: CustomTextStyle.textWithCustomInfo(
-                          context: context,
-                          color: AppColor.defaultPurpleColor,
-                          fontsSize: FontsSize.fontSize_18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      bottom: PreferredSize(
-                        preferredSize:
-                            const Size.fromHeight(CustomSize.size_40),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColor.defaultPurpleColor,
-                              ),
-                            ),
-                          ),
-                          child: _tabBar,
-                        ),
-                      ),
+                      leading: _buildBackButton(),
+                      title: _buildTitle(),
+                      bottom: _buildBottomNavigatorTabBar(),
                       backgroundColor: AppColor.defaultWhiteColor,
                     ),
                     body: TabBarView(
                       children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: SafeArea(
-                            left: true,
-                            top: true,
-                            right: true,
-                            bottom: true,
-                            child: _buildBody(simulatorTestProvider),
-                          ),
-                        ),
+                        _buildSimulatorTestTab(simulatorTestProvider),
                         _buildHighLightTab(),
                         _buildOtherTab(),
                       ],
                     ),
                   ),
                 ),
-                _buildFullImage(),
+                _buildFullImageView(),
               ],
             );
           } else {
             return Stack(
               children: [
                 Scaffold(
-                  // key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                   body: Align(
                     alignment: Alignment.topLeft,
                     child: SafeArea(
@@ -295,7 +255,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     ),
                   ),
                 ),
-                _buildFullImage(),
+                _buildFullImageView(),
               ],
             );
           }
@@ -308,7 +268,64 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  Widget _buildFullImage() {
+  Widget _buildBackButton() {
+    return GestureDetector(
+      onTap: () {
+        _backButtonTapped();
+      },
+      child: const Icon(
+        Icons.arrow_back_rounded,
+        color: AppColor.defaultPurpleColor,
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Text(
+      (widget.activitiesModel != null)
+          ? widget.activitiesModel!.activityName
+          : "",
+      style: CustomTextStyle.textWithCustomInfo(
+        context: context,
+        color: AppColor.defaultPurpleColor,
+        fontsSize: FontsSize.fontSize_18,
+        fontWeight: FontWeight.w800,
+      ),
+    );
+  }
+
+  PreferredSize _buildBottomNavigatorTabBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(CustomSize.size_40),
+      child: Container(
+        alignment: Alignment.center,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColor.defaultPurpleColor,
+            ),
+          ),
+        ),
+        child: _tabBar,
+      ),
+    );
+  }
+
+  Widget _buildSimulatorTestTab(SimulatorTestProvider simulatorTestProvider) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: SafeArea(
+        left: true,
+        top: true,
+        right: true,
+        bottom: true,
+        child: _buildBody(simulatorTestProvider),
+      ),
+    );
+  }
+
+  Widget _buildFullImageView() {
     return Consumer<SimulatorTestProvider>(
       builder: (context, simulatorTestProvider, child) {
         if (simulatorTestProvider.showFullImage) {
@@ -697,24 +714,31 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _getTestDetail() async {
-    _simulatorTestPresenter!.initializeData().then((_) {
-      if (widget.activitiesModel != null) {
-        _simulatorTestPresenter!.getTestDetailByHomeWork(
+    _simulatorTestPresenter!.initializeData().then(
+      (_) {
+        if (widget.activitiesModel != null) {
+          //From main screen
+          _simulatorTestPresenter!.getTestDetailFromHomeWork(
             context: context,
-            homeworkId: widget.activitiesModel!.activityId.toString());
-      } else if (widget.data != null) {
-        _simulatorTestPresenter!.getTestDetailByMyPractice(
-          context: context,
-          data: widget.data!,
-        );
-      } else {
-        _simulatorTestPresenter!.getTestDetailByPractice(
+            activityId: widget.activitiesModel!.activityId.toString(),
+          );
+        } else if (widget.data != null) {
+          //From my practice screen
+          _simulatorTestPresenter!.getTestDetailFromMyPractice(
+            context: context,
+            data: widget.data!,
+          );
+        } else {
+          //From practice screen
+          _simulatorTestPresenter!.getTestDetailFromPractice(
             context: context,
             testOption: widget.testOption ?? 0,
             topicsId: widget.topicsId ?? [],
-            isPredict: widget.isPredict ?? 0);
-      }
-    });
+            isPredict: widget.isPredict ?? 0,
+          );
+        }
+      },
+    );
   }
 
   void _startToDoTest() {
