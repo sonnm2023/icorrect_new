@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
@@ -34,16 +35,14 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button
 import 'package:provider/provider.dart';
 import 'package:video_compress/video_compress.dart';
 
-import '../../../../provider/auth_provider.dart';
-
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({
     super.key,
-    this.homeWorkModel,
-    this.testOption,
-    this.topicsId,
-    this.isPredict,
-    this.data,
+    required this.homeWorkModel,
+    required this.testOption,
+    required this.topicsId,
+    required this.isPredict,
+    required this.data,
   });
 
   final ActivitiesModel? homeWorkModel;
@@ -60,9 +59,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     with AutomaticKeepAliveClientMixin<SimulatorTestScreen>
     implements SimulatorTestViewContract {
   SimulatorTestPresenter? _simulatorTestPresenter;
-
   SimulatorTestProvider? _simulatorTestProvider;
-
+  HomeWorkProvider? _homeWorkProvider;
   AuthProvider? _authProvider;
 
   StreamSubscription? connection;
@@ -166,16 +164,15 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _simulatorTestPresenter = SimulatorTestPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    Provider.of<HomeWorkProvider>(context, listen: false)
-        .setSimulatorTestPresenter(_simulatorTestPresenter);
+    _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
+    _homeWorkProvider!.setSimulatorTestPresenter(_simulatorTestPresenter);
 
     _loading = CircleLoading();
 
-    // Future.delayed(Duration.zero, () {
-    //   _authProvider!
-    //       .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
-    // });
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
+    });
 
     _prepareBeforeSimulatorTest();
   }

@@ -448,6 +448,10 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               MaterialPageRoute(
                 builder: (_) => SimulatorTestScreen(
                   homeWorkModel: _selectedHomeWorkModel!,
+                  testOption: null,
+                  topicsId: null,
+                  isPredict: null,
+                  data: null,
                 ),
               ),
             );

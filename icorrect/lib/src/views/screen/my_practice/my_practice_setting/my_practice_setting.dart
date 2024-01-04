@@ -348,7 +348,15 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SimulatorTestScreen(data: data)),
+      MaterialPageRoute(
+        builder: (context) => SimulatorTestScreen(
+          homeWorkModel: null,
+          testOption: null,
+          topicsId: null,
+          isPredict: null,
+          data: data,
+        ),
+      ),
     );
   }
 

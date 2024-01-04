@@ -294,9 +294,11 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
       context,
       MaterialPageRoute(
         builder: (_) => SimulatorTestScreen(
+          homeWorkModel: null,
           testOption: testOption,
           topicsId: _provider!.getTopicsIdList(),
           isPredict: IELTSPredict.normalQuestion.get,
+          data: null,
         ),
       ),
     );
