@@ -44,8 +44,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
     String url = '$apiDomain$getTestHomeWorkInfoEP';
 
     if (kDebugMode) {
-      print(
-          'DEBUG: SimulatorTestRepositoryImpl - getTestDetailFromHomework: $url');
+      print('DEBUG: START - getTestDetailFromHomework: $url');
       var dataObj = {
         StringConstants.k_activity_id: activityId,
         StringConstants.k_distribute_code: distributeCode,
@@ -54,7 +53,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         StringConstants.k_device_id: deviceId,
       };
       String jsonString = json.encode(dataObj);
-      print("DEBUG: request data: $jsonString");
+      print("DEBUG: START - request data: $jsonString");
     }
 
     return AppRepository.init()
@@ -75,7 +74,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then((http.Response response) {
           final String jsonBody = response.body;
           if (kDebugMode) {
-            print("DEBUG: response data: $jsonBody");
+            print("DEBUG: END - response data: $jsonBody");
           }
           return jsonBody;
         });
@@ -121,7 +120,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then((http.Response response) {
       final String jsonBody = response.body;
       if (kDebugMode) {
-        print("DEBUG: response data: $jsonBody");
+        print("DEBUG: END - response data: $jsonBody");
       }
       return jsonBody;
     });
@@ -152,7 +151,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then((http.Response response) {
       final String jsonBody = response.body;
       if (kDebugMode) {
-        print("DEBUG: response data: $jsonBody");
+        print("DEBUG: END - response data: $jsonBody");
       }
       return jsonBody;
     });
@@ -193,13 +192,13 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             .then((http.Response response) {
           final String jsonBody = response.body;
           if (kDebugMode) {
-            print("DEBUG: response data: $jsonBody");
+            print("DEBUG: END - response data: $jsonBody");
           }
           return jsonBody;
         });
       } else {
         if (kDebugMode) {
-          print("DEBUG: Submit ERROR");
+          print("DEBUG: END - Submit ERROR");
         }
         return '';
       }
@@ -245,7 +244,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           (http.Response response) {
             final String jsonBody = response.body;
             if (kDebugMode) {
-              print("DEBUG: response data: $jsonBody");
+              print("DEBUG: END - response data: $jsonBody");
             }
             return jsonBody;
           },
@@ -254,7 +253,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .catchError(
           (onError) {
             if (kDebugMode) {
-              print("DEBUG: error: ${onError.toString()}");
+              print("DEBUG: END - error: ${onError.toString()}");
             }
           },
         );
