@@ -27,13 +27,11 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 abstract class SimulatorTestViewContract {
-  // void onGetTestDetailSuccess(TestDetailModel testDetailModel, int total); //TODO
-  void onGetTestDetailSuccess(TestDetailModel testDetailModel); //TODO
+  void onGetTestDetailSuccess(TestDetailModel testDetailModel);
   void onGetTestDetailError(String message);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
   void onDownloadError(AlertInfo info);
-  // void onSaveTopicListIntoProvider(List<TopicModel> list);
   void onSubmitTestSuccess(String msg);
   void onSubmitTestError(String msg);
   void onReDownload();
@@ -65,7 +63,6 @@ class SimulatorTestPresenter {
 
   TestDetailModel? testDetail;
   List<QuestionTopicModel>? allFilesTopic = [];
-  List<FileTopicModel>? filesTopic = [];
   List<FileTopicModel> imageFiles = [];
   CancelToken cancelToken = CancelToken();
   bool isDownloading = false;
@@ -106,15 +103,6 @@ class SimulatorTestPresenter {
     }
   }
 
-  String _getMaxDurationVideo(List<VideoExamRecordInfo> videosSaved) {
-    if (videosSaved.isNotEmpty) {
-      videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
-      VideoExamRecordInfo maxValue = videosSaved.last;
-      return maxValue.filePath ?? '';
-    }
-    return '';
-  }
-
   void getTestDetailFromHomeWork({
     required BuildContext context,
     required String activityId,
@@ -152,32 +140,68 @@ class SimulatorTestPresenter {
             appVersion: appVersion,
             deviceId: deviceId)
         .then((value) async {
-      Map<String, dynamic> map = jsonDecode(value);
-      if (map[StringConstants.k_error_code] == 200) {
-        Map<String, dynamic> dataMap = map[StringConstants.k_data];
-        testDetail = TestDetailModel.fromJson(dataMap);
-
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: null,
-          status: LogEvent.success,
-        );
-
-        _view!.onGetTestDetailSuccess(testDetail!);
-      } else {
+      _handleResponse(value, log);
+    }).catchError(
+      // ignore: invalid_return_type_for_catch_error
+      (onError) {
         //Add log
         Utils.prepareLogData(
           log: log,
           data: null,
-          message:
-              "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
+          message: onError.toString(),
           status: LogEvent.failed,
         );
 
         _view!.onGetTestDetailError(StringConstants.common_error_message);
-      }
+      },
+    );
+  }
+
+  Future getTestDetailFromPractice(
+      {required BuildContext context,
+      required int testOption,
+      required List<int> topicsId,
+      required int isPredict}) async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetTestDetail);
+    }
+
+    _testRepository!
+        .getTestDetailFromPractice(
+            testOption: testOption, topicsId: topicsId, isPredict: isPredict)
+        .then((value) async {
+      _handleResponse(value, log);
+    }).catchError(
+      // ignore: invalid_return_type_for_catch_error
+      (onError) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: onError.toString(),
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(StringConstants.common_error_message);
+      },
+    );
+  }
+
+  Future getTestDetailFromMyPractice(
+      {required BuildContext context,
+      required Map<String, dynamic> data}) async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.prepareToCreateLog(context,
+          action: LogEvent.callApiGetTestDetail);
+    }
+
+    _testRepository!
+        .getTestDetailFromMyPractice(data: data)
+        .then((value) async {
+      _handleResponse(value, log);
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
       (onError) {
@@ -196,21 +220,15 @@ class SimulatorTestPresenter {
 
   void prepareDataForDownload({
     required BuildContext context,
-    required String activityId,
+    required String? activityId,
     required TestDetailModel testDetail,
   }) {
     if (kDebugMode) {
       print("DEBUG: prepareDataForDownload");
     }
-    // _prepareTopicList(testDetail); //TODO
-
-    // filesTopic = _prepareFileTopicListForDownload(testDetail);
     _prepareFileTopicListForDownload(testDetail);
 
-    _view!.onPrepareListVideoSource(allFilesTopic!); //TODO
-
-    // List<FileTopicModel> tempFilesTopic =
-    //     _prepareFileTopicListForDownload(testDetail);
+    _view!.onPrepareListVideoSource(allFilesTopic!);
 
     if (imageFiles.isNotEmpty) {
       //Download images
@@ -218,7 +236,7 @@ class SimulatorTestPresenter {
         context: context,
         testDetail: testDetail,
         activityId: activityId,
-        list: allFilesTopic!, //tempFilesTopic,
+        list: allFilesTopic!,
       );
     } else {
       //Download video
@@ -226,274 +244,9 @@ class SimulatorTestPresenter {
         context: context,
         testDetail: testDetail,
         activityId: activityId,
-        list: allFilesTopic!, //tempFilesTopic,
+        list: allFilesTopic!,
       );
     }
-  }
-
-  Future getTestDetailFromPractice(
-      {required BuildContext context,
-      required int testOption,
-      required List<int> topicsId,
-      required int isPredict}) async {
-    //TODO
-    /*
-    LogModel? log;
-    if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context,
-          action: LogEvent.callApiGetTestDetail);
-    }
-
-    _testRepository!
-        .getTestDetailFromPractice(
-      testOption: testOption,
-      topicsId: topicsId,
-      isPredict: isPredict,
-    )
-        .then((value) async {
-      Map<String, dynamic> map = jsonDecode(value);
-      if (kDebugMode) {
-        print('DEBUG create practice test : ${map.toString()}');
-      }
-      if (map[StringConstants.k_error_code] == 200) {
-        Map<String, dynamic> dataMap = map[StringConstants.k_data];
-        TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
-        tempTestDetailModel = TestDetailModel.fromJson(dataMap);
-        testDetail = TestDetailModel.fromJson(dataMap);
-
-        _prepareTopicList(tempTestDetailModel);
-
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: null,
-          status: LogEvent.success,
-        );
-
-        //Save file info for re download
-        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
-
-        _view!.onPrepareListVideoSource(filesTopic!);
-
-        List<FileTopicModel> tempFilesTopic =
-            _prepareFileTopicListForDownload(tempTestDetailModel);
-
-        if (imageFiles.isNotEmpty) {
-          //Download images
-          _prepareDownloadImages(
-            context: context,
-            testDetail: tempTestDetailModel,
-            filesTopic: tempFilesTopic,
-          );
-        } else {
-          //Download video
-          downloadFiles(
-            context: context,
-            testDetail: tempTestDetailModel,
-            filesTopic: tempFilesTopic,
-          );
-        }
-
-        _view!.onGetTestDetailSuccess(
-          tempTestDetailModel,
-          // tempFilesTopic.length,
-        );
-      } else {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message:
-              "Loading pratice detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
-          status: LogEvent.failed,
-        );
-
-        _view!.onGetTestDetailError(StringConstants.common_error_message);
-      }
-    }).catchError(
-      // ignore: invalid_return_type_for_catch_error
-      (onError) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message: onError.toString(),
-          status: LogEvent.failed,
-        );
-
-        _view!.onGetTestDetailError(StringConstants.common_error_message);
-      },
-    );
-    */
-  }
-
-  Future getTestDetailFromMyPractice(
-      {required BuildContext context,
-      required Map<String, dynamic> data}) async {
-    //TODO
-    /*
-    LogModel? log;
-    if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context,
-          action: LogEvent.callApiGetTestDetail);
-    }
-
-    _testRepository!
-        .getTestDetailFromMyPractice(data: data)
-        .then((value) async {
-      Map<String, dynamic> map = jsonDecode(value);
-      if (kDebugMode) {
-        print('DEBUG create practice test : ${map.toString()}');
-      }
-      if (map[StringConstants.k_error_code] == 200) {
-        Map<String, dynamic> dataMap = map[StringConstants.k_data];
-        TestDetailModel tempTestDetailModel = TestDetailModel(testId: 0);
-        tempTestDetailModel = TestDetailModel.fromJson(dataMap);
-        testDetail = TestDetailModel.fromJson(dataMap);
-
-        _prepareTopicList(tempTestDetailModel);
-
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: jsonDecode(value),
-          message: null,
-          status: LogEvent.success,
-        );
-
-        //Save file info for re download
-        filesTopic = _prepareFileTopicListForDownload(tempTestDetailModel);
-
-        _view!.onPrepareListVideoSource(filesTopic!);
-
-        List<FileTopicModel> tempFilesTopic =
-            _prepareFileTopicListForDownload(tempTestDetailModel);
-
-        if (imageFiles.isNotEmpty) {
-          //Download images
-          _prepareDownloadImages(
-            context: context,
-            testDetail: tempTestDetailModel,
-            filesTopic: tempFilesTopic,
-          );
-        } else {
-          //Download video
-          downloadFiles(
-            context: context,
-            testDetail: tempTestDetailModel,
-            filesTopic: tempFilesTopic,
-          );
-        }
-
-        _view!.onGetTestDetailSuccess(
-          tempTestDetailModel,
-          // tempFilesTopic.length,
-        );
-      } else {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message:
-              "Loading pratice detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
-          status: LogEvent.failed,
-        );
-
-        _view!.onGetTestDetailError(StringConstants.common_error_message);
-      }
-    }).catchError(
-      // ignore: invalid_return_type_for_catch_error
-      (onError) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message: onError.toString(),
-          status: LogEvent.failed,
-        );
-
-        _view!.onGetTestDetailError(StringConstants.common_error_message);
-      },
-    );
-    */
-  }
-
-  //Prepare list of topic for save into provider
-  // void _prepareTopicList(TestDetailModel testDetail) {
-  //   List<TopicModel> topicsList = [];
-  //   //Introduce
-  //   if (0 != testDetail.introduce.id && testDetail.introduce.title.isNotEmpty) {
-  //     testDetail.introduce.numPart = PartOfTest.introduce.get;
-  //     topicsList.add(testDetail.introduce);
-  //   }
-
-  //   //Part 1
-  //   if (testDetail.part1.isNotEmpty) {
-  //     for (int i = 0; i < testDetail.part1.length; i++) {
-  //       testDetail.part1[i].numPart = PartOfTest.part1.get;
-  //     }
-  //     topicsList.addAll(testDetail.part1);
-  //   }
-
-  //   //Part 2
-  //   if (0 != testDetail.part2.id && testDetail.part2.title.isNotEmpty) {
-  //     testDetail.part2.numPart = PartOfTest.part2.get;
-  //     topicsList.add(testDetail.part2);
-  //   }
-
-  //   //Part 3
-  //   if (0 != testDetail.part3.id && testDetail.part3.title.isNotEmpty) {
-  //     if (testDetail.part3.questionList.isNotEmpty ||
-  //         testDetail.part3.fileEndOfTest.url.isNotEmpty) {
-  //       testDetail.part3.numPart = PartOfTest.part3.get;
-  //       topicsList.add(testDetail.part3);
-  //     }
-  //   }
-
-  //   _view!.onSaveTopicListIntoProvider(topicsList);
-  // }
-
-  // List<FileTopicModel> _prepareFileTopicListForDownload(
-  void _prepareFileTopicListForDownload(TestDetailModel testDetail) {
-    // List<FileTopicModel> filesTopic = [];
-    if (allFilesTopic != null) {
-      if (allFilesTopic!.isNotEmpty) {
-        allFilesTopic!.clear();
-      }
-    } else {
-      allFilesTopic = [];
-    }
-    // if (filesTopic != null) {
-    //   if (filesTopic!.isNotEmpty) {
-    //     filesTopic!.clear();
-    //   }
-    // }
-    //Introduce
-    allFilesTopic!
-        .addAll(getAllFilesOfTopic(testDetail.introduce, PartOfTest.introduce));
-    // filesTopic!.addAll(getAllFilesOfTopic(testDetail.introduce));
-
-    //Part 1
-    for (int i = 0; i < testDetail.part1.length; i++) {
-      TopicModel temp = testDetail.part1[i];
-      allFilesTopic!.addAll(getAllFilesOfTopic(temp, PartOfTest.part1));
-      // filesTopic!.addAll(getAllFilesOfTopic(temp));
-    }
-
-    //Part 2
-    allFilesTopic!
-        .addAll(getAllFilesOfTopic(testDetail.part2, PartOfTest.part2));
-    // filesTopic!.addAll(getAllFilesOfTopic(testDetail.part2));
-
-    //Part 3
-    allFilesTopic!
-        .addAll(getAllFilesOfTopic(testDetail.part3, PartOfTest.part3));
-    // filesTopic!.addAll(getAllFilesOfTopic(testDetail.part3));
-  }
-
-  double _getPercent(int downloaded, int total) {
-    return (downloaded / total);
   }
 
   List<QuestionTopicModel> getAllFilesOfTopic(
@@ -573,187 +326,8 @@ class SimulatorTestPresenter {
     return allFiles;
   }
 
-  // List<FileTopicModel> getAllFilesOfTopic(TopicModel topic) {
-  //   List<FileTopicModel> allFiles = [];
-  //   //Add introduce file
-  //   for (FileTopicModel file in topic.files) {
-  //     file.numPart = topic.numPart;
-  //     file.fileTopicType = FileTopicType.introduce;
-  //     allFiles.add(file);
-  //   }
-
-  //   for (QuestionTopicModel q in topic.followUp) {
-  //     q.files.first.fileTopicType = FileTopicType.followup;
-  //     q.files.first.numPart = topic.numPart;
-  //     allFiles.add(q.files.first);
-
-  //     for (FileTopicModel a in q.answers) {
-  //       a.numPart = topic.numPart;
-  //       a.fileTopicType = FileTopicType.answer;
-  //       allFiles.add(a);
-  //     }
-  //   }
-
-  //   //Add question files
-  //   for (QuestionTopicModel q in topic.questionList) {
-  //     if (q.files.isNotEmpty) {
-  //       //Add video url
-  //       q.files.first.fileTopicType = FileTopicType.question;
-  //       q.files.first.numPart = topic.numPart;
-  //       allFiles.add(q.files.first);
-
-  //       //Add image url
-  //       //For question has an image
-  //       bool hasImage = Utils.checkHasImage(question: q);
-  //       if (hasImage) {
-  //         imageFiles.add(q.files.elementAt(1));
-  //       }
-  //     }
-
-  //     for (FileTopicModel a in q.answers) {
-  //       a.numPart = topic.numPart;
-  //       a.fileTopicType = FileTopicType.answer;
-  //       allFiles.add(a);
-  //     }
-  //   }
-
-  //   if (topic.endOfTakeNote.url.isNotEmpty) {
-  //     topic.endOfTakeNote.fileTopicType = FileTopicType.end_of_take_note;
-  //     topic.endOfTakeNote.numPart = topic.numPart;
-  //     allFiles.add(topic.endOfTakeNote);
-  //   }
-
-  //   if (topic.fileEndOfTest.url.isNotEmpty) {
-  //     topic.fileEndOfTest.fileTopicType = FileTopicType.end_of_test;
-  //     topic.fileEndOfTest.numPart = topic.numPart;
-  //     allFiles.add(topic.fileEndOfTest);
-  //   }
-
-  //   return allFiles;
-  // }
-
   void downloadFailure(AlertInfo alertInfo) {
     _view!.onDownloadError(alertInfo);
-  }
-
-  Future<bool> _downloadAndSaveImage(
-    BuildContext context,
-    String? activityId,
-    String testId,
-    String imageUrl,
-  ) async {
-    //Add log
-    LogModel log =
-        await Utils.prepareToCreateLog(context, action: LogEvent.imageDownload);
-    //Add more information into log
-    Map<String, dynamic> imageFileDownloadInfo = {
-      StringConstants.k_test_id: testId,
-      StringConstants.k_image_url: imageUrl,
-    };
-    if (activityId != null) {
-      imageFileDownloadInfo
-          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
-    }
-    log.addData(
-        key: "image_file_download_info",
-        value: json.encode(imageFileDownloadInfo));
-
-    try {
-      String folderPath = await FileStorageHelper.getExternalDocumentPath();
-
-      final fileName = imageUrl.split('=').last;
-      final filePath = '$folderPath/$fileName';
-      File file = File(filePath);
-
-      if (await file.exists()) {
-        if (kDebugMode) {
-          print('Hình ảnh $fileName đã có tại: $filePath');
-        }
-        return true; // Trả về true khi tải thành công
-      } else {
-        if (kDebugMode) {
-          print('Tải và lưu hình ảnh tại $filePath');
-        }
-
-        final Response response = await dio!
-            .get(imageUrl, options: Options(responseType: ResponseType.bytes));
-        await file.writeAsBytes(response.data);
-
-        log.addData(key: "local_image_file_path", value: filePath);
-
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message: null,
-          status: LogEvent.success,
-        );
-
-        return true; // Trả về false khi có lỗi
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Download image file error: $e');
-      }
-
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: null,
-        message: 'Download image file error: $e',
-        status: LogEvent.failed,
-      );
-
-      return false; // Trả về false khi có lỗi
-    }
-  }
-
-  Future _prepareDownloadImages({
-    required BuildContext context,
-    String? activityId,
-    required TestDetailModel testDetail,
-    required List<QuestionTopicModel> list,
-  }) async {
-    if (null != dio) {
-      int imagesDownloaded = 0;
-      List<String> imageUrls = [];
-
-      for (FileTopicModel fileTopicModel in imageFiles) {
-        String url = downloadFileEP(fileTopicModel.url);
-        if (!imageUrls.contains(url)) {
-          imageUrls.add(url);
-        }
-      }
-
-      for (String imageUrl in imageUrls) {
-        await _downloadAndSaveImage(
-          context,
-          activityId,
-          testDetail.testId.toString(),
-          imageUrl,
-        ).then((isDownloaded) {
-          if (isDownloaded) {
-            imagesDownloaded++;
-            if (imagesDownloaded == imageUrls.length) {
-              if (kDebugMode) {
-                print('Đã tải hết ${imageUrls.length} hình ảnh');
-              }
-              //Start to download files (video)
-              downloadFiles(
-                context: context,
-                activityId: activityId,
-                testDetail: testDetail,
-                list: list,
-              );
-            }
-          }
-        });
-      }
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: Dio is closed!");
-      }
-    }
   }
 
   void pauseDownload() {
@@ -1151,5 +725,195 @@ class SimulatorTestPresenter {
 
   void handleBackButtonSystemTapped() {
     _view!.onHandleBackButtonSystemTapped();
+  }
+
+  String _getMaxDurationVideo(List<VideoExamRecordInfo> videosSaved) {
+    if (videosSaved.isNotEmpty) {
+      videosSaved.sort(((a, b) => a.duration!.compareTo(b.duration!)));
+      VideoExamRecordInfo maxValue = videosSaved.last;
+      return maxValue.filePath ?? '';
+    }
+    return '';
+  }
+
+  void _prepareFileTopicListForDownload(TestDetailModel testDetail) {
+    if (allFilesTopic != null) {
+      if (allFilesTopic!.isNotEmpty) {
+        allFilesTopic!.clear();
+      }
+    } else {
+      allFilesTopic = [];
+    }
+
+    //Introduce
+    allFilesTopic!
+        .addAll(getAllFilesOfTopic(testDetail.introduce, PartOfTest.introduce));
+
+    //Part 1
+    for (int i = 0; i < testDetail.part1.length; i++) {
+      TopicModel temp = testDetail.part1[i];
+      allFilesTopic!.addAll(getAllFilesOfTopic(temp, PartOfTest.part1));
+    }
+
+    //Part 2
+    allFilesTopic!
+        .addAll(getAllFilesOfTopic(testDetail.part2, PartOfTest.part2));
+
+    //Part 3
+    allFilesTopic!
+        .addAll(getAllFilesOfTopic(testDetail.part3, PartOfTest.part3));
+  }
+
+  double _getPercent(int downloaded, int total) {
+    return (downloaded / total);
+  }
+
+  Future<bool> _downloadAndSaveImage(
+    BuildContext context,
+    String? activityId,
+    String testId,
+    String imageUrl,
+  ) async {
+    //Add log
+    LogModel log =
+        await Utils.prepareToCreateLog(context, action: LogEvent.imageDownload);
+    //Add more information into log
+    Map<String, dynamic> imageFileDownloadInfo = {
+      StringConstants.k_test_id: testId,
+      StringConstants.k_image_url: imageUrl,
+    };
+    if (activityId != null) {
+      imageFileDownloadInfo
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    }
+    log.addData(
+        key: "image_file_download_info",
+        value: json.encode(imageFileDownloadInfo));
+
+    try {
+      String folderPath = await FileStorageHelper.getExternalDocumentPath();
+
+      final fileName = imageUrl.split('=').last;
+      final filePath = '$folderPath/$fileName';
+      File file = File(filePath);
+
+      if (await file.exists()) {
+        if (kDebugMode) {
+          print('Hình ảnh $fileName đã có tại: $filePath');
+        }
+        return true; // Trả về true khi tải thành công
+      } else {
+        if (kDebugMode) {
+          print('Tải và lưu hình ảnh tại $filePath');
+        }
+
+        final Response response = await dio!
+            .get(imageUrl, options: Options(responseType: ResponseType.bytes));
+        await file.writeAsBytes(response.data);
+
+        log.addData(key: "local_image_file_path", value: filePath);
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: null,
+          status: LogEvent.success,
+        );
+
+        return true; // Trả về false khi có lỗi
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Download image file error: $e');
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: null,
+        message: 'Download image file error: $e',
+        status: LogEvent.failed,
+      );
+
+      return false; // Trả về false khi có lỗi
+    }
+  }
+
+  Future _prepareDownloadImages({
+    required BuildContext context,
+    String? activityId,
+    required TestDetailModel testDetail,
+    required List<QuestionTopicModel> list,
+  }) async {
+    if (null != dio) {
+      int imagesDownloaded = 0;
+      List<String> imageUrls = [];
+
+      for (FileTopicModel fileTopicModel in imageFiles) {
+        String url = downloadFileEP(fileTopicModel.url);
+        if (!imageUrls.contains(url)) {
+          imageUrls.add(url);
+        }
+      }
+
+      for (String imageUrl in imageUrls) {
+        await _downloadAndSaveImage(
+          context,
+          activityId,
+          testDetail.testId.toString(),
+          imageUrl,
+        ).then((isDownloaded) {
+          if (isDownloaded) {
+            imagesDownloaded++;
+            if (imagesDownloaded == imageUrls.length) {
+              if (kDebugMode) {
+                print('Đã tải hết ${imageUrls.length} hình ảnh');
+              }
+              //Start to download files (video)
+              downloadFiles(
+                context: context,
+                activityId: activityId,
+                testDetail: testDetail,
+                list: list,
+              );
+            }
+          }
+        });
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: Dio is closed!");
+      }
+    }
+  }
+
+  void _handleResponse(String value, LogModel? log) {
+    Map<String, dynamic> map = jsonDecode(value);
+    if (map[StringConstants.k_error_code] == 200) {
+      Map<String, dynamic> dataMap = map[StringConstants.k_data];
+      testDetail = TestDetailModel.fromJson(dataMap);
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: jsonDecode(value),
+        message: null,
+        status: LogEvent.success,
+      );
+
+      _view!.onGetTestDetailSuccess(testDetail!);
+    } else {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: null,
+        message:
+            "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
+        status: LogEvent.failed,
+      );
+
+      _view!.onGetTestDetailError(StringConstants.common_error_message);
+    }
   }
 }

@@ -836,7 +836,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     _simulatorTestPresenter!.prepareDataForDownload(
       context: context,
-      activityId: widget.activitiesModel!.activityId.toString(),
+      activityId: widget.activitiesModel != null
+          ? widget.activitiesModel!.activityId.toString()
+          : null,
       testDetail: testDetai,
     );
   }
@@ -921,8 +923,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (_isOffline) {
       _showCheckNetworkDialog();
     } else {
-      if (null != _simulatorTestPresenter!.testDetail &&
-          null != _simulatorTestPresenter!.filesTopic) {
+      if (null != _simulatorTestPresenter!.testDetail) {
         updateStatusForReDownload();
         if (null == _simulatorTestPresenter!.dio) {
           _simulatorTestPresenter!.initializeData();
