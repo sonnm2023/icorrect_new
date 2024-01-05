@@ -32,7 +32,7 @@ class StudentTestProvider extends ChangeNotifier {
     }
   }
 
-  int _downloadingIndex = 1;
+  int _downloadingIndex = 0;
   int get downloadingIndex => _downloadingIndex;
   void updateDownloadingIndex(int index) {
     _downloadingIndex = index;

@@ -446,7 +446,7 @@ class _MyPracticeListState extends State<MyPracticeList>
                       )),
                   const SizedBox(width: 10),
                   Text(
-                    "${Utils.multiLanguage(StringConstants.loading_title)}....",
+                    "${Utils.multiLanguage(StringConstants.loading_title)}...",
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
                       color: AppColor.defaultPurpleColor,

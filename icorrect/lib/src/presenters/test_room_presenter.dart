@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -15,7 +14,6 @@ import 'package:icorrect/src/data_sources/repositories/simulator_test_repository
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 // ignore: depend_on_referenced_packages
@@ -26,7 +24,6 @@ abstract class TestRoomViewContract {
   void onPlayIntroduce();
   void onPlayEndOfTakeNote(String fileName);
   void onPlayEndOfTest(String fileName);
-  void onIntroduceFileEmpty();
   void onCountDown(
       String countDownString, bool isLessThan2Seconds, int timeCounting);
   void onCountDownForCueCard(String countDownString);
@@ -34,9 +31,9 @@ abstract class TestRoomViewContract {
   void onFinishForReAnswer();
   void onCountRecordingVideo(int currentCount);
   void onSubmitTestSuccess(String msg);
-  void onSubmitTestFail(String msg);
+  void onSubmitTestError(String msg);
   void onUpdateReAnswersSuccess(String msg);
-  void onUpdateReAnswersFail(String msg);
+  void onUpdateReAnswersError(String msg);
   void onClickSaveTheTest();
   void onFinishTheTest();
   void onReDownload();
@@ -49,32 +46,6 @@ class TestRoomPresenter {
 
   TestRoomPresenter(this._view) {
     _testRepository = Injector().getTestRepository();
-  }
-
-  Future<void> startPart(Queue<TopicModel> topicsQueue) async {
-    TopicModel currentPart = topicsQueue.first;
-
-    //Play introduce file of part
-    _playIntroduce(currentPart);
-  }
-
-  Future<void> _playIntroduce(TopicModel topicModel) async {
-    List<FileTopicModel> files = topicModel.files;
-    if (files.isNotEmpty) {
-      FileTopicModel file = files.first;
-      bool isExist = await FileStorageHelper.checkExistFile(
-          file.url, MediaType.video, null);
-      if (isExist) {
-        _view!.onPlayIntroduce();
-      } else {
-        _view!.onReDownload();
-      }
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: This topic has not introduce file");
-      }
-      _view!.onIntroduceFileEmpty();
-    }
   }
 
   Timer startCountDown(
@@ -143,6 +114,13 @@ class TestRoomPresenter {
       {required BuildContext context,
       required int count,
       required bool isPart2}) {
+    dynamic minutes = count ~/ 60;
+    dynamic seconds = count % 60;
+
+    dynamic minuteStr = minutes.toString().padLeft(2, '0');
+    dynamic secondStr = seconds.toString().padLeft(2, '0');
+    _view!.onCountDownForCueCard("$minuteStr:$secondStr");
+
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
     return Timer.periodic(oneSec, (Timer timer) {
@@ -152,13 +130,12 @@ class TestRoomPresenter {
         count = count - 1;
       }
 
-      dynamic minutes = count ~/ 60;
-      dynamic seconds = count % 60;
+      dynamic m = count ~/ 60;
+      dynamic s = count % 60;
 
-      dynamic minuteStr = minutes.toString().padLeft(2, '0');
-      dynamic secondStr = seconds.toString().padLeft(2, '0');
-
-      _view!.onCountDownForCueCard("$minuteStr:$secondStr");
+      dynamic mStr = m.toString().padLeft(2, '0');
+      dynamic sStr = s.toString().padLeft(2, '0');
+      _view!.onCountDownForCueCard("$mStr:$sStr");
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
@@ -302,7 +279,7 @@ class TestRoomPresenter {
             errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
           }
 
-          _view!.onSubmitTestFail(
+          _view!.onSubmitTestError(
               "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
@@ -315,7 +292,7 @@ class TestRoomPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onSubmitTestFail(Utils.multiLanguage(
+        _view!.onSubmitTestError(Utils.multiLanguage(
             StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
@@ -327,7 +304,7 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
+      _view!.onSubmitTestError(
           Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
@@ -338,7 +315,7 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
+      _view!.onSubmitTestError(
           Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
@@ -349,7 +326,7 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onSubmitTestFail(
+      _view!.onSubmitTestError(
           Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }
@@ -420,7 +397,7 @@ class TestRoomPresenter {
             errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
           }
 
-          _view!.onUpdateReAnswersFail(
+          _view!.onUpdateReAnswersError(
               "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
       }).catchError((onError) {
@@ -433,7 +410,7 @@ class TestRoomPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.onUpdateReAnswersFail(Utils.multiLanguage(
+        _view!.onUpdateReAnswersError(Utils.multiLanguage(
             StringConstants.submit_test_error_invalid_return_type_message));
       });
     } on TimeoutException {
@@ -445,7 +422,7 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(
+      _view!.onUpdateReAnswersError(
           Utils.multiLanguage(StringConstants.submit_test_error_timeout));
     } on SocketException {
       //Add log
@@ -456,7 +433,7 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.onUpdateReAnswersFail(
+      _view!.onUpdateReAnswersError(
           Utils.multiLanguage(StringConstants.submit_test_error_socket));
     } on http.ClientException {
       //Add log
@@ -466,7 +443,7 @@ class TestRoomPresenter {
         message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
-      _view!.onUpdateReAnswersFail(
+      _view!.onUpdateReAnswersError(
           Utils.multiLanguage(StringConstants.submit_test_error_client));
     }
   }

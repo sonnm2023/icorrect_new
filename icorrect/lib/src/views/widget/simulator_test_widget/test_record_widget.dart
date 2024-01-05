@@ -2,12 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../../../data_sources/utils.dart';
 
 class TestRecordWidget extends StatelessWidget {
   const TestRecordWidget(
@@ -24,12 +23,14 @@ class TestRecordWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
 
-    SimulatorTestProvider simulatorTestProvider =
-        Provider.of<SimulatorTestProvider>(context, listen: false);
+    QuestionTopicModel currentQuestion =
+        Provider.of<SimulatorTestProvider>(context, listen: false)
+            .currentQuestion;
 
-    QuestionTopicModel currentQuestion = simulatorTestProvider.currentQuestion;
-
-    bool isRepeat = false;
+    bool isRepeat = (currentQuestion.numPart == PartOfTest.part1.get ||
+            currentQuestion.numPart == PartOfTest.part3.get) &&
+        Provider.of<SimulatorTestProvider>(context, listen: false)
+            .enableRepeatButton;
 
     return Consumer<SimulatorTestProvider>(
       builder: (context, simulatorTestProvider, _) {
@@ -76,11 +77,13 @@ class TestRecordWidget extends StatelessWidget {
                           isRepeat: isRepeat,
                           question: currentQuestion,
                         ),
-                        _buildFinishButton(simulatorTestProvider,
-                            context: context,
-                            question: currentQuestion,
-                            isLess2Second:
-                                simulatorTestProvider.isLessThan2Second),
+                        _buildFinishButton(
+                          simulatorTestProvider,
+                          context: context,
+                          question: currentQuestion,
+                          isLess2Second:
+                              simulatorTestProvider.isLessThan2Second,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -111,15 +114,6 @@ class TestRecordWidget extends StatelessWidget {
               const SizedBox(width: 20),
             ],
           );
-        }
-
-        //Doing test - build Repeat button if has
-        if (simulatorTestProvider.topicsQueue.isNotEmpty) {
-          isRepeat = (simulatorTestProvider.topicsQueue.first.numPart ==
-                      PartOfTest.part1.get ||
-                  simulatorTestProvider.topicsQueue.first.numPart ==
-                      PartOfTest.part3.get) &&
-              simulatorTestProvider.enableRepeatButton;
         }
 
         return Visibility(

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -12,9 +11,8 @@ import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -126,7 +124,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _connection = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      // when every connection status is changed.
       if (result == ConnectivityResult.none) {
         _isOffline = true;
       } else if (result == ConnectivityResult.mobile) {
@@ -670,8 +667,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         child: Stack(
           children: [
             TestRoomWidget(
-              homeWorkModel: widget.activitiesModel,
+              activitiesModel: widget.activitiesModel,
               simulatorTestPresenter: _simulatorTestPresenter!,
+              isExam: _isExam,
             ),
             Visibility(
               visible: provider.submitStatus == SubmitStatus.submitting,
@@ -829,28 +827,31 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onGetTestDetailSuccess(TestDetailModel testDetailModel, int total) {
-    _simulatorTestProvider!.setCurrentTestDetail(testDetailModel);
+  void onGetTestDetailSuccess(TestDetailModel testDetai) {
+    if (kDebugMode) {
+      print("DEBUG: onGetTestDetailSuccess");
+    }
+    _simulatorTestProvider!.setCurrentTestDetail(testDetai);
     _simulatorTestProvider!.setDownloadProgressingStatus(true);
-    _simulatorTestProvider!.setTotal(total);
+
+    _simulatorTestPresenter!.prepareDataForDownload(
+      context: context,
+      activityId: widget.activitiesModel!.activityId.toString(),
+      testDetail: testDetai,
+    );
   }
 
   @override
   void onGetTestDetailError(String message) {
+    if (kDebugMode) {
+      print("DEBUG: onGetTestDetailError");
+    }
     //Show error message
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.error,
       isCenter: true,
     );
-  }
-
-  @override
-  void onSaveTopicListIntoProvider(List<TopicModel> list) {
-    _simulatorTestProvider!.setTopicsList(list);
-    Queue<TopicModel> queue = Queue<TopicModel>();
-    queue.addAll(list);
-    _simulatorTestProvider!.setTopicsQueue(queue);
   }
 
   @override
@@ -961,10 +962,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onPrepareListVideoSource(List<FileTopicModel> filesTopic) async {
-    for (int i = 0; i < filesTopic.length; i++) {
-      FileTopicModel fileTopicModel = filesTopic[i];
-      _simulatorTestProvider!.addVideoSource(fileTopicModel);
+  void onPrepareListVideoSource(List<QuestionTopicModel> list) async {
+    for (int i = 0; i < list.length; i++) {
+      QuestionTopicModel q = list[i];
+      _simulatorTestProvider!.addVideoSource(q);
     }
   }
 
