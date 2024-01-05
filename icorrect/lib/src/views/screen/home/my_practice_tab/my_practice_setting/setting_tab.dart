@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -13,22 +14,23 @@ class SettingTabScreen extends StatefulWidget {
 
 class _SettingTabScreenState extends State<SettingTabScreen>
     with AutomaticKeepAliveClientMixin<SettingTabScreen> {
-  MyPracticeTopicsProvider? _myPracticeTopicsProvider;
+  // MyPracticeTopicsProvider? _myPracticeTopicsProvider;
+  MyPracticeListProvider? _practiceListProvider;
 
   @override
   void initState() {
     super.initState();
-    _myPracticeTopicsProvider =
-        Provider.of<MyPracticeTopicsProvider>(context, listen: false);
-    if (_myPracticeTopicsProvider!.settings.isNotEmpty) {
-      _myPracticeTopicsProvider!.clearSettings();
+    _practiceListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
+    if (_practiceListProvider!.settings.isNotEmpty) {
+      _practiceListProvider!.clearSettings();
     }
-    _myPracticeTopicsProvider!.initSettings();
+    _practiceListProvider!.initSettings();
   }
 
   @override
   void dispose() {
-    _myPracticeTopicsProvider!.clearSettings();
+    _practiceListProvider!.clearSettings();
     super.dispose();
   }
 
@@ -36,7 +38,7 @@ class _SettingTabScreenState extends State<SettingTabScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return ListView.builder(
-      itemCount: _myPracticeTopicsProvider!.settings.length,
+      itemCount: _practiceListProvider!.settings.length,
       itemBuilder: (context, index) {
         return ListTile(
           title: Column(
@@ -47,7 +49,7 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                   Flexible(
                     child: Text(
                       Utils.multiLanguage(
-                          _myPracticeTopicsProvider!.settings[index].title),
+                          _practiceListProvider!.settings[index].title),
                     ),
                   ),
                   Row(
@@ -59,20 +61,17 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                         ),
                         onPressed: () {
                           if (index > 3) {
-                            if (_myPracticeTopicsProvider!
-                                    .settings[index].value >
-                                _myPracticeTopicsProvider!
-                                    .settings[index].step) {
-                              _myPracticeTopicsProvider!
+                            if (_practiceListProvider!.settings[index].value >
+                                _practiceListProvider!.settings[index].step) {
+                              _practiceListProvider!
                                   .updateSettings(index, false);
                             }
                           } else {
-                            _myPracticeTopicsProvider!
-                                .updateSettings(index, false);
+                            _practiceListProvider!.updateSettings(index, false);
                           }
                         },
                       ),
-                      Consumer<MyPracticeTopicsProvider>(
+                      Consumer<MyPracticeListProvider>(
                           builder: (context, provider, child) {
                         int fractionDigits = 0;
                         if (index > 3) fractionDigits = 2;
@@ -107,15 +106,13 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                         ),
                         onPressed: () {
                           if (index == 2) {
-                            if (_myPracticeTopicsProvider!
-                                    .settings[index].value <
+                            if (_practiceListProvider!.settings[index].value <
                                 1) {
-                              _myPracticeTopicsProvider!
+                              _practiceListProvider!
                                   .updateSettings(index, true);
                             }
                           } else {
-                            _myPracticeTopicsProvider!
-                                .updateSettings(index, true);
+                            _practiceListProvider!.updateSettings(index, true);
                           }
                         },
                       ),

@@ -549,6 +549,8 @@ class StringConstants {
   static const String practice_card_full_test_description =
       "You will take a full sample test of IELTS Speaking Test";
   static const String selected_topics = "Selected topic (%a/%a)";
+  static const String my_pratice_selected_topics = " Topics";
+  static const String my_pratice_selected_subtopics = " Sub Topics";
   static const String downloading = "Downloading...";
   static const String overview = "Overview";
   static const String show_less = "Show less";

@@ -8,6 +8,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/setting_tab.dart';
 import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/topic_list_tab.dart';
@@ -33,15 +34,15 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     implements ActionAlertListener {
   // late TabController _tabController;
 
-  MyPracticeTopicsProvider? _myPracticeTopicsProvider;
+  MyPracticeListProvider? _practiceListProvider;
   bool isCheckingData = false;
 
   @override
   void initState() {
     super.initState();
     // _tabController = TabController(vsync: this, length: 2);
-    _myPracticeTopicsProvider =
-        Provider.of<MyPracticeTopicsProvider>(context, listen: false);
+    _practiceListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
   }
 
   @override
@@ -128,8 +129,8 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
             ),
             InkWell(
               onTap: () {
-                if (_myPracticeTopicsProvider!.settings.isEmpty) {
-                  _myPracticeTopicsProvider!.initSettings();
+                if (_practiceListProvider!.settings.isEmpty) {
+                  _practiceListProvider!.initSettings();
                 }
 
                 if (isCheckingData == false) {
@@ -179,7 +180,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
   bool _checkSettings() {
     //Check selected topics
-    int selectedTopics = _myPracticeTopicsProvider!.getTotalSelectedSubTopics();
+    int selectedTopics = _practiceListProvider!.getTotalSelectedSubTopics();
     if (selectedTopics == 0) {
       isCheckingData = true;
       showToastMsg(
@@ -195,7 +196,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     }
 
     //Check setting: number of topics
-    double settingNumberOfTopics = _myPracticeTopicsProvider!.settings[0].value;
+    double settingNumberOfTopics = _practiceListProvider!.settings[0].value;
     if (settingNumberOfTopics == 0) {
       showToastMsg(
         msg: Utils.multiLanguage(
@@ -207,8 +208,8 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     }
 
     //Check number question of part 1, part 2
-    double numberQuestionPart1 = _myPracticeTopicsProvider!.settings[1].value;
-    double numberQuestionPart2 = _myPracticeTopicsProvider!.settings[2].value;
+    double numberQuestionPart1 = _practiceListProvider!.settings[1].value;
+    double numberQuestionPart2 = _practiceListProvider!.settings[2].value;
 
     if (numberQuestionPart1 == 0 && numberQuestionPart2 == 0) {
       showToastMsg(
@@ -221,7 +222,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     }
 
     //Check take note time
-    double takeNoteTime = _myPracticeTopicsProvider!.settings[3].value;
+    double takeNoteTime = _practiceListProvider!.settings[3].value;
     if (takeNoteTime == 0) {
       showToastMsg(
         msg: Utils.multiLanguage(
@@ -237,21 +238,21 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
   void _prepareData() {
     String bank_code = widget.selectedBank.bankDistributeCode!;
-    int amount_topics = _myPracticeTopicsProvider!.settings[0].value.toInt();
+    int amount_topics = _practiceListProvider!.settings[0].value.toInt();
     int amount_questions_part1 =
-        _myPracticeTopicsProvider!.settings[1].value.toInt();
+        _practiceListProvider!.settings[1].value.toInt();
     int amount_questions_part2 =
-        _myPracticeTopicsProvider!.settings[2].value.toInt();
-    double take_note_time = _myPracticeTopicsProvider!.settings[3].value;
-    double normal_speed = _myPracticeTopicsProvider!.settings[4].value;
-    double first_repeat_speed = _myPracticeTopicsProvider!.settings[5].value;
-    double second_repeat_speed = _myPracticeTopicsProvider!.settings[6].value;
+        _practiceListProvider!.settings[2].value.toInt();
+    double take_note_time = _practiceListProvider!.settings[3].value;
+    double normal_speed = _practiceListProvider!.settings[4].value;
+    double first_repeat_speed = _practiceListProvider!.settings[5].value;
+    double second_repeat_speed = _practiceListProvider!.settings[6].value;
 
     List<int> topics = [];
     List<int> subTopics = [];
 
-    for (int i = 0; i < _myPracticeTopicsProvider!.topics.length; i++) {
-      Topic t = _myPracticeTopicsProvider!.topics[i];
+    for (int i = 0; i < _practiceListProvider!.topics.length; i++) {
+      Topic t = _practiceListProvider!.topics[i];
       if (t.isSelected) {
         topics.add(t.id!);
       }
@@ -307,13 +308,13 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       }
 
       if (statuses[Permission.microphone]! == PermissionStatus.denied) {
-        if (_myPracticeTopicsProvider!.permissionDeniedTime >= 1) {
+        if (_practiceListProvider!.permissionDeniedTime >= 1) {
           _showConfirmDeniedDialog(AlertClass.microPermissionAlert);
         } else {
-          _myPracticeTopicsProvider!.setPermissionDeniedTime();
+          _practiceListProvider!.setPermissionDeniedTime();
         }
       } else {
-        _myPracticeTopicsProvider!.resetPermissionDeniedTime();
+        _practiceListProvider!.resetPermissionDeniedTime();
         _goToTestScreen(data);
       }
     } on PlatformException catch (e) {
@@ -324,7 +325,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   }
 
   void _showConfirmDeniedDialog(AlertInfo alertInfo) {
-    if (false == _myPracticeTopicsProvider!.dialogShowing) {
+    if (false == _practiceListProvider!.dialogShowing) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -337,7 +338,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
           );
         },
       );
-      _myPracticeTopicsProvider!.setDialogShowing(true);
+      _practiceListProvider!.setDialogShowing(true);
     }
   }
 

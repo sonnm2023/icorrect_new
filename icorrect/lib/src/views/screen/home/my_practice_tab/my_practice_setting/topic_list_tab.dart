@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 import 'package:icorrect/src/presenters/my_practice_topic_list_presenter.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:provider/provider.dart';
@@ -24,21 +26,24 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
     implements MyPracticeTopicListViewContract {
   MyPracticeTopicListPresenter? _presenter;
   CircleLoading? _loading;
-  MyPracticeTopicsProvider? _myPracticeTopicsProvider;
+  // MyPracticeTopicsProvider? _myPracticeTopicsProvider;
+  MyPracticeListProvider? _practiceListProvider;
 
   @override
   void initState() {
     super.initState();
     _presenter = MyPracticeTopicListPresenter(this);
     _loading = CircleLoading();
-    _myPracticeTopicsProvider =
-        Provider.of<MyPracticeTopicsProvider>(context, listen: false);
+    // _myPracticeTopicsProvider =
+    //     Provider.of<MyPracticeTopicsProvider>(context, listen: false);
+    _practiceListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
     _getTopicList();
   }
 
   @override
   void dispose() {
-    _myPracticeTopicsProvider!.clearTopicList();
+    _practiceListProvider!.clearTopicList();
     super.dispose();
   }
 
@@ -61,15 +66,15 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
   }
 
   Widget _buildSelectionInfo() {
-    return Consumer<MyPracticeTopicsProvider>(
-      builder: (context, provider, child) {
-        int selectedTopics = provider.getTotalSelectedSubTopics();
-        int topics = provider.getTotalSubTopics();
-        bool isEmpty = selectedTopics == 0;
+    return Consumer<MyPracticeListProvider>(
+      builder: (buildContext, provider, child) {
+        int selectedTopics = provider.getTotalSelectedTopics();
+        int totalTopics = provider.getTotalTopics();
+        int selectedSubTopics = provider.getTotalSelectedSubTopics();
+        int totalSubTopics = provider.getTotalSubTopics();
 
         return Container(
           color: AppColor.defaultGraySlightColor,
-          // padding: const EdgeInsets.all(5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -77,7 +82,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                 alignment: Alignment.centerLeft,
                 width: 60,
                 child: Checkbox(
-                  value: !isEmpty,
+                  value: selectedTopics > 0,
                   onChanged: (value) {
                     _selectAllTopics(value!, provider.topics);
                   },
@@ -89,8 +94,16 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      context.formatString(StringConstants.selected_topics,
-                          [selectedTopics, topics]),
+                      "($selectedTopics/$totalTopics)${Utils.multiLanguage(StringConstants.my_pratice_selected_topics)}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      "($selectedSubTopics/$totalSubTopics)${Utils.multiLanguage(StringConstants.my_pratice_selected_subtopics)}",
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 17,
@@ -122,7 +135,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
   }
 
   Widget _buildTopicList() {
-    return Consumer<MyPracticeTopicsProvider>(
+    return Consumer<MyPracticeListProvider>(
       builder: (context, provider, child) {
         return Expanded(
           child: ListView.builder(
@@ -166,6 +179,14 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
 
   Widget _buildTopicItem(Topic topic) {
     bool hasSubTopic = _hasSubTopic(topic);
+    String selectedSubTopicsInfo = "";
+    if (hasSubTopic) {
+      int temp = _practiceListProvider!
+          .getTotalSelectedSubTopicsWithTopicId(topic.id!);
+      if (temp > 0) {
+        selectedSubTopicsInfo = " ($temp/${topic.subTopics!.length})";
+      }
+    }
 
     return Column(
       children: [
@@ -201,7 +222,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                         const SizedBox(width: 10),
                         Flexible(
                           child: Text(
-                            topic.title!,
+                            "${topic.title!}$selectedSubTopicsInfo",
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 17,
@@ -333,7 +354,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
     if (kDebugMode) {
       print("DEBUG: implement onGetListTopicOfBankSuccess");
     }
-    _myPracticeTopicsProvider!.setTopicList(topics);
+    _practiceListProvider!.setTopicList(topics);
   }
 
   @override
