@@ -16,65 +16,65 @@ class NoDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          'assets/images/ic_emotion_sad.png',
-          width: 150,
-          height: 150,
-        ),
-        Text(
-          msg,
-          style: CustomTextStyle.textWithCustomInfo(
-            context: context,
-            color: AppColor.defaultBlackColor,
-            fontsSize: FontsSize.fontSize_15,
-            fontWeight: FontWeight.w400,
+    return Center(
+      child: Column(
+        children: [
+          Image.asset(
+            'assets/images/ic_emotion_sad.png',
+            width: 150,
+            height: 150,
           ),
-        ),
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () async {
-            if (kDebugMode) {
-              print("DEBUG: reload button tapped!");
-            }
-            Utils.checkInternetConnection().then((isConnected) {
-              if (isConnected) {
-                reloadCallBack();
-              } else {
-                Utils.showConnectionErrorDialog(context);
-
-                Utils.addConnectionErrorLog(context);
-              }
-            });
-          },
-          style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(AppColor.defaultPurpleColor),
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+          Text(
+            msg,
+            style: CustomTextStyle.textWithCustomInfo(
+              context: context,
+              color: AppColor.defaultBlackColor,
+              fontsSize: FontsSize.fontSize_15,
+              fontWeight: FontWeight.w400,
             ),
           ),
-          child: SizedBox(
-            width: 100,
-            height: 50,
-            child: Center(
-              child: Text(
-                Utils.multiLanguage(StringConstants.reload_button_title),
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () async {
+              if (kDebugMode) {
+                print("DEBUG: reload button tapped!");
+              }
+              Utils.checkInternetConnection().then((isConnected) {
+                if (isConnected) {
+                  reloadCallBack();
+                } else {
+                  Utils.showConnectionErrorDialog(context);
+
+                  Utils.addConnectionErrorLog(context);
+                }
+              });
+            },
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(AppColor.defaultPurpleColor),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),
-          ),
-        )
-      ],
+            child: SizedBox(
+              width: 100,
+              height: 50,
+              child: Center(
+                child: Text(
+                  Utils.multiLanguage(StringConstants.reload_button_title),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

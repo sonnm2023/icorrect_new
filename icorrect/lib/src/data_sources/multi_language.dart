@@ -67,7 +67,7 @@ class MultiLanguage {
     StringConstants.default_filter_title: "Thêm bộ lọc của bạn",
     StringConstants.repeat_question: "Yêu cầu nhắc lại câu hỏi !",
     StringConstants.change_password_screen_title: "Đổi mật khẩu",
-    StringConstants.my_homework_screen_title: "BÀI TẬP VỀ NHÀ CỦA TÔI",
+    StringConstants.my_homework_screen_title: "BÀI TẬP VỀ NHÀ",
     StringConstants.tips_screen_title: "Gợi ý trả lời câu hỏi",
     StringConstants.practice_screen_title: "LUYỆN TẬP",
     StringConstants.topics_screen_title: "Chủ Đề Luyện Tập",

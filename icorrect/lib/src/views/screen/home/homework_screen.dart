@@ -10,11 +10,10 @@ import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
-import 'package:icorrect/src/views/screen/my_practice/my_practice_list.dart';
+import 'package:icorrect/src/views/screen/home/my_practice_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
-import 'package:icorrect/src/views/widget/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -42,18 +41,27 @@ class HomeWorkScreen extends StatefulWidget {
 class _HomeWorkScreenState extends State<HomeWorkScreen>
     with AutomaticKeepAliveClientMixin
     implements HomeWorkViewContract {
-  // TabBar get _tabBar => const TabBar(
-  //       indicatorColor: defaultPurpleColor,
-  //       tabs: [
-  //         Tab(text: 'MY HOMEWORK'),
-  //         Tab(text: 'NEXT HOMEWORK'),
-  //       ],
-  //     );
-
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
   SimulatorTestProvider? _simulatorTestProvider;
+
+  List<Widget> _tabsLabel() {
+    return [
+      Tab(
+        child: Text(
+          Utils.multiLanguage(StringConstants.my_homework_screen_title)
+              .toUpperCase(),
+        ),
+      ),
+      Tab(
+        child: Text(
+          Utils.multiLanguage(StringConstants.my_test_menu_item_title)
+              .toUpperCase(),
+        ),
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -129,12 +137,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         ),
         debugShowCheckedModeBanner: false,
         home: DefaultTabController(
-          length: 1,
+          length: 2,
           child: Scaffold(
             key: widget.scaffoldKey,
             appBar: AppBar(
               title: Text(
-                Utils.multiLanguage(StringConstants.my_homework_screen_title),
+                Utils.multiLanguage(StringConstants.icorrect_title),
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,
@@ -147,43 +155,59 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               iconTheme: const IconThemeData(
                 color: AppColor.defaultPurpleColor,
               ),
-              backgroundColor: AppColor.defaultWhiteColor,
-            ),
-            body: Builder(
-              builder: (BuildContext context) {
-                return SafeArea(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => Stack(
-                      children: [
-                        MyHomeWorkTab(
-                          homeWorkProvider: _homeWorkProvider,
-                          homeWorkPresenter: _homeWorkPresenter!,
-                          pullToRefreshCallBack: _pullToRefresh,
-                        ),
-                        Consumer<HomeWorkProvider>(
-                          builder: (context, homeWorkProvider, child) {
-                            if (kDebugMode) {
-                              print(
-                                  "DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
-                            }
-                            if (homeWorkProvider.isProcessing) {
-                              return const LoadingWidget();
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(CustomSize.size_50),
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: AppColor.defaultPurpleColor,
+                      ),
                     ),
                   ),
-                );
-              },
+                  child: TabBar(
+                    physics: const BouncingScrollPhysics(),
+                    isScrollable: false,
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(
+                        width: 3.0,
+                        color: AppColor.defaultPurpleColor,
+                      ),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: AppColor.defaultPurpleColor,
+                    labelStyle: const TextStyle(
+                      fontSize: FontsSize.fontSize_16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelColor: AppColor.defaultBlackColor,
+                    tabs: _tabsLabel(),
+                  ),
+                ),
+              ),
+              backgroundColor: AppColor.defaultWhiteColor,
             ),
+            body: _buildBody(),
             drawer: _buildDrawer(),
             drawerEnableOpenDragGesture: false,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBody() {
+    return TabBarView(
+      children: [
+        MyHomeWorkTab(
+          homeWorkProvider: _homeWorkProvider,
+          homeWorkPresenter: _homeWorkPresenter!,
+          pullToRefreshCallBack: _pullToRefresh,
+        ),
+        const MyPracticeTab(),
+      ],
     );
   }
 
@@ -301,30 +325,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const PracticeScreen(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(
-              Utils.multiLanguage(
-                StringConstants.my_test_menu_item_title,
-              ),
-              style: CustomTextStyle.textWithCustomInfo(
-                context: context,
-                color: AppColor.defaultGrayColor,
-                fontsSize: FontsSize.fontSize_15,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            leading: const Icon(
-              Icons.list_alt,
-              color: AppColor.defaultGrayColor,
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const MyPracticeList(),
                 ),
               );
             },

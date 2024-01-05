@@ -16,6 +16,7 @@ import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/my_test/my_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
@@ -45,6 +46,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     implements ActionAlertListener {
   ActivitiesModel? _selectedActivityModel;
   final FlutterLocalization localization = FlutterLocalization.instance;
+  CircleLoading? _loading;
+
   @override
   void dispose() {
     super.dispose();
@@ -53,14 +56,33 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   @override
   void initState() {
     super.initState();
+    _loading = CircleLoading();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        _buildTopFilter(),
-        _buildListHomeWork(),
+        Column(
+          children: [
+            _buildTopFilter(),
+            _buildListHomeWork(),
+          ],
+        ),
+        Consumer<HomeWorkProvider>(
+          builder: (context, homeWorkProvider, child) {
+            if (kDebugMode) {
+              print(
+                  "DEBUG: HomeworkScreen: update UI with processing: ${homeWorkProvider.isProcessing}");
+            }
+            if (homeWorkProvider.isProcessing) {
+              _loading!.show(context: context, isViewAIResponse: false);
+            } else {
+              _loading!.hide();
+            }
+            return const SizedBox();
+          },
+        ),
       ],
     );
   }
