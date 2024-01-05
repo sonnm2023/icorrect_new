@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -136,18 +137,28 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
     List<SpeedDialChild> list = [];
     for (int i = 0; i < _myPracticeListProvider!.banks.length; i++) {
-      BankModel bank = _myPracticeListProvider!.banks[i];
-      Icon icon = const Icon(
-        Icons.book,
-        color: AppColor.defaultPurpleColor,
-      ); //Default Class bank icon
+      BankModel bank =
+          _myPracticeListProvider!.banks[i]; //Default Class bank icon
+      Widget child = const Image(
+        image: AssetImage(AppAsset.ic_book),
+        width: 25,
+        height: 25,
+        color: Colors.white,
+      );
       Color bgColor = Colors.green; //Default Class bank color
       if (bank.type == 0) {
-        icon = const Icon(
-          Icons.library_books,
-          color: AppColor.defaultPurpleColor,
-        ); //IELTS bank icon
-        bgColor = Colors.amber;
+        child = const Center(
+          child: Text(
+            "IELTS",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              color: Colors.white,
+            ),
+          ),
+        );
+        //IELTS bank icon
+        bgColor = const Color.fromARGB(255, 237, 125, 50);
       }
 
       SpeedDialChild temp = SpeedDialChild(
@@ -157,7 +168,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
         },
         child: Container(
           margin: const EdgeInsets.all(5),
-          child: icon,
+          child: child,
         ),
         backgroundColor: bgColor,
         labelWidget: Container(
@@ -226,7 +237,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                     onTap: () {
                       _onClickToTestDetail(myTestModel);
                     },
-                    child: _myTestItem(myTestModel, index),
+                    child: _buildItem(myTestModel, index),
                   );
                 },
               ),
@@ -237,7 +248,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  Widget _myTestItem(MyPracticeTestModel myTestModel, int index) {
+  Widget _buildItem(MyPracticeTestModel myTestModel, int index) {
     Map<String, String> dataString = _getMyTestItem(myTestModel.type);
     String title = Utils.generateTitle(myTestModel);
     double score = Utils.generateScore(myTestModel);
@@ -294,6 +305,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                         ),
                       ),
                     ),
+                    const SizedBox(width: 5),
                     Text(
                       _getDate(myTestModel.createdAt),
                       style: CustomTextStyle.textWithCustomInfo(

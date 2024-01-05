@@ -1078,7 +1078,7 @@ class Utils {
 
   static String generateTitle(MyPracticeTestModel myPracticeTestModel) {
     String title = "";
-    title = "${myPracticeTestModel.bankTitle}(#${myPracticeTestModel.id})";
+    title = "${myPracticeTestModel.bankTitle} (#${myPracticeTestModel.id})";
     return title;
   }
 

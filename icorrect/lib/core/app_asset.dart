@@ -14,4 +14,5 @@ class AppAsset {
   static const imgSecurity = 'assets/images/img_insurance.png';
   static const imgVietName = 'assets/images/img_vietname.png';
   static const imgEnglish = 'assets/images/img_english.png';
+  static const ic_book = 'assets/images/ic_book.png';
 }
