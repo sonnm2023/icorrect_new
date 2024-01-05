@@ -86,6 +86,10 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                   onChanged: (value) {
                     _selectAllTopics(value!, provider.topics);
                   },
+                  side: const BorderSide(
+                    color: AppColor.defaultGrayColor,
+                    width: 2,
+                  ),
                   activeColor: AppColor.defaultPurpleColor,
                 ),
               ),
@@ -206,18 +210,17 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                     child: Row(
                       children: [
                         Checkbox(
+                          tristate: true,
                           value: topic.subTopics!
                               .any((subTopic) => subTopic.isSelected),
                           onChanged: (value) {
                             _topicTapped(topic);
                           },
-                          fillColor: MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.selected)) {
-                              return AppColor.defaultPurpleColor;
-                            }
-                            return Colors.grey;
-                          }),
+                          side: const BorderSide(
+                            color: AppColor.defaultGrayColor,
+                            width: 2,
+                          ),
+                          activeColor: AppColor.defaultPurpleColor,
                         ),
                         const SizedBox(width: 10),
                         Flexible(
@@ -302,17 +305,16 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                     child: Row(
                       children: [
                         Checkbox(
+                          tristate: true,
                           value: subTopic.isSelected,
                           onChanged: (value) {
                             _subTopicTapped(topic, subTopic);
                           },
-                          fillColor: MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.selected)) {
-                              return AppColor.defaultPurpleColor;
-                            }
-                            return Colors.grey;
-                          }),
+                          side: const BorderSide(
+                            color: AppColor.defaultGrayColor,
+                            width: 2,
+                          ),
+                          activeColor: AppColor.defaultPurpleColor,
                         ),
                         const SizedBox(width: 10),
                         Text(
