@@ -67,12 +67,27 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Stack(
-      children: [
-        _buildList(),
-        _buildLoadmore(),
-        _buildBankListButton(),
-      ],
+    w = MediaQuery.of(context).size.width;
+    h = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body: SafeArea(
+        left: true,
+        top: true,
+        right: true,
+        bottom: true,
+        child: SizedBox(
+          width: w,
+          height: h,
+          child: Stack(
+            children: [
+              _buildList(),
+              _buildLoadmore(),
+              _buildBankListButton(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
