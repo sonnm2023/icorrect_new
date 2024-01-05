@@ -529,8 +529,11 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
-  void onGetMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
-      List<MyPracticeTestModel> practiceTests, bool isLoadMore) {
+  void onGetMyTestsListSuccess(
+    MyPracticeResponseModel practiceResponseModel,
+    List<MyPracticeTestModel> practiceTests,
+    bool isLoadMore,
+  ) {
     if (isLoadMore) {
       _myPracticeListProvider!.setShowLoadingBottom(false);
       _myPracticeListProvider!.addMyTestsList(practiceTests);
