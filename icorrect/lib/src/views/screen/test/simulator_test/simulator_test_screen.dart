@@ -41,6 +41,7 @@ class SimulatorTestScreen extends StatefulWidget {
     required this.topicsId,
     required this.isPredict,
     required this.data,
+    required this.onRefresh,
   });
 
   final ActivitiesModel? activitiesModel; //From Main screen
@@ -48,6 +49,7 @@ class SimulatorTestScreen extends StatefulWidget {
   final List<int>? topicsId; //From Practice screen
   final int? isPredict; //From Practice screen
   final Map<String, dynamic>? data; //From MyPractice
+  final Function? onRefresh; //For refresh My practice list if needed
 
   @override
   State<SimulatorTestScreen> createState() => _SimulatorTestScreenState();
@@ -411,11 +413,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           }
         }
       } else {
-        //Go back List homework screen
-        if (widget.data != null) {
-          Provider.of<MyPracticeListProvider>(context, listen: false)
-              .setIsNeedRefreshList(true);
-        }
+        //Call back refresh list of my practice if need
+        //For from My Practice Test
+        _callToRefesh();
 
         Navigator.pop(context, StringConstants.k_refresh);
       }
@@ -466,6 +466,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
             break;
           }
+      }
+    }
+  }
+
+  void _callToRefesh() {
+    if (widget.data != null) {
+      if (widget.onRefresh != null) {
+        widget.onRefresh!();
       }
     }
   }

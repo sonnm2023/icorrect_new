@@ -18,9 +18,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class MyPracticeSettingScreen extends StatefulWidget {
-  const MyPracticeSettingScreen({super.key, required this.selectedBank});
+  const MyPracticeSettingScreen(
+      {super.key, required this.selectedBank, required this.onRefresh});
 
   final BankModel selectedBank;
+  final Function onRefresh;
 
   @override
   State<MyPracticeSettingScreen> createState() =>
@@ -356,6 +358,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
           topicsId: null,
           isPredict: null,
           data: data,
+          onRefresh: widget.onRefresh,
         ),
       ),
     );

@@ -474,6 +474,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                   topicsId: null,
                   isPredict: null,
                   data: null,
+                  onRefresh: null,
                 ),
               ),
             );

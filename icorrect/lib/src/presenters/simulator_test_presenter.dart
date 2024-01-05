@@ -202,20 +202,22 @@ class SimulatorTestPresenter {
         .getTestDetailFromMyPractice(data: data)
         .then((value) async {
       _handleResponse(value, log);
-    }).catchError(
-      // ignore: invalid_return_type_for_catch_error
-      (onError) {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message: onError.toString(),
-          status: LogEvent.failed,
-        );
+    });
+    // .catchError(
+    //   // ignore: invalid_return_type_for_catch_error
+    //   (onError) {
+    //     //Add log
+    //     Utils.prepareLogData(
+    //       log: log,
+    //       data: null,
+    //       message: onError.toString(),
+    //       status: LogEvent.failed,
+    //     );
 
-        _view!.onGetTestDetailError(StringConstants.common_error_message);
-      },
-    );
+    //     //TODO: CHECK
+    //     _view!.onGetTestDetailError(StringConstants.common_error_message);
+    //   },
+    // );
   }
 
   void prepareDataForDownload({

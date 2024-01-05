@@ -1115,11 +1115,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
     _currentQuestion = null;
     _countDown!.cancel();
-    if (Platform.isIOS) {
-      _recordController!.stop();
-    } else {
-      _stopRecord();
-    }
+
+    _setVisibleRecord(false, null, null);
+    //TODO
+    // if (Platform.isIOS) {
+    //   _recordController!.stop();
+    // } else {
+    //   _stopRecord();
+    // }
   }
 
   void _resetEnableFinishStatus() {

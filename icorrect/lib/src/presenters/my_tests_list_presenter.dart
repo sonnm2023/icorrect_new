@@ -9,8 +9,11 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 
 abstract class MyTestsListConstract {
-  void onGetMyTestsListSuccess(MyPracticeResponseModel practiceResponseModel,
-      List<MyPracticeTestModel> practiceTests, bool isLoadMore);
+  void onGetMyTestsListSuccess(
+      {required MyPracticeResponseModel practiceResponseModel,
+      required List<MyPracticeTestModel> practiceTests,
+      required bool isLoadMore,
+      required bool isRefresh});
   void onGetMyTestListError(String message);
   void onDeleteTestSuccess(String message, int indexDeleted);
   void onDeleteTestError(String message);
@@ -26,8 +29,11 @@ class MyTestsListPresenter {
     _repository = Injector().getPracticeRepository();
   }
 
-  Future getMyTestLists(
-      {required int pageNum, required bool isLoadMore}) async {
+  Future getMyTestLists({
+    required int pageNum,
+    required bool isLoadMore,
+    required bool isRefresh,
+  }) async {
     assert(_view != null && _repository != null);
     _repository!.getMyPracticeTestList(pageNum.toString()).then((value) {
       if (kDebugMode) {
@@ -38,9 +44,12 @@ class MyTestsListPresenter {
         MyPracticeResponseModel practiceResponseModel =
             MyPracticeResponseModel.fromJson(dataMap);
         _view!.onGetMyTestsListSuccess(
-            practiceResponseModel,
-            practiceResponseModel.myPracticeDataModel.myPracticeTests,
-            isLoadMore);
+          practiceResponseModel: practiceResponseModel,
+          practiceTests:
+              practiceResponseModel.myPracticeDataModel.myPracticeTests,
+          isLoadMore: isLoadMore,
+          isRefresh: isRefresh,
+        );
       } else {
         _view!.onGetMyTestListError(StringConstants.common_error_message);
       }

@@ -299,6 +299,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
           topicsId: _provider!.getTopicsIdList(),
           isPredict: IELTSPredict.normalQuestion.get,
           data: null,
+          onRefresh: null,
         ),
       ),
     );

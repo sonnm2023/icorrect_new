@@ -45,6 +45,12 @@ class MyPracticeListProvider extends ChangeNotifier {
     }
   }
 
+  void clearOldDataMyTestsList() {
+    if (_myTestsList.isNotEmpty) {
+      _myTestsList.clear();
+    }
+  }
+
   void removeTestAt(int indexDeleted) {
     _myTestsList.removeAt(indexDeleted);
     if (!isDisposed) {
@@ -111,21 +117,6 @@ class MyPracticeListProvider extends ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
-  }
-
-  bool _isNeedRefreshList = false;
-  bool get isNeedRefreshList => _isNeedRefreshList;
-
-  void setIsNeedRefreshList(bool isRefresh) {
-    _isNeedRefreshList = isRefresh;
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void resetIsNeedRefreshList() {
-    _isNeedRefreshList = false;
   }
 
   bool _isProcessing = false;

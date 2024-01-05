@@ -42,14 +42,15 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
 
-    _getMyTestsList();
+    _getMyTestsList(isRefresh: false);
     _getBankList();
   }
 
-  void _getMyTestsList() {
+  void _getMyTestsList({required bool isRefresh}) {
     int pageNum = 1;
     _loading!.show(context: context, isViewAIResponse: false);
-    _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: false);
+    _presenter!.getMyTestLists(
+        pageNum: pageNum, isLoadMore: false, isRefresh: isRefresh);
 
     Future.delayed(
       Duration.zero,
@@ -127,9 +128,17 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       MaterialPageRoute(
         builder: (_) => MyPracticeSettingScreen(
           selectedBank: bank,
+          onRefresh: _refeshList,
         ),
       ),
     );
+  }
+
+  void _refeshList() {
+    if (kDebugMode) {
+      print("DEBUG: _refeshList Callback");
+    }
+    _getMyTestsList(isRefresh: true);
   }
 
   List<SpeedDialChild> _generateBankListUI() {
@@ -446,7 +455,8 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       int lastPage = practiceResponseModel.myPracticeDataModel.lastPage;
       if (pageNum < lastPage) {
         pageNum = pageNum + 1;
-        _presenter!.getMyTestLists(pageNum: pageNum, isLoadMore: true);
+        _presenter!.getMyTestLists(
+            pageNum: pageNum, isLoadMore: true, isRefresh: false);
         _myPracticeListProvider!.setPageNum(pageNum);
       } else {
         Future.delayed(
@@ -538,7 +548,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     if (kDebugMode) {
       print("DEBUG: MyPracticeList - _reloadCallBack");
     }
-    _getMyTestsList();
+    _getMyTestsList(isRefresh: true);
   }
 
   @override
@@ -553,24 +563,6 @@ class _MyPracticeTabState extends State<MyPracticeTab>
         return MessageDialog.alertDialog(context, Utils.multiLanguage(message));
       },
     );
-  }
-
-  @override
-  void onGetMyTestsListSuccess(
-    MyPracticeResponseModel practiceResponseModel,
-    List<MyPracticeTestModel> practiceTests,
-    bool isLoadMore,
-  ) {
-    if (isLoadMore) {
-      _myPracticeListProvider!.setShowLoadingBottom(false);
-      _myPracticeListProvider!.addMyTestsList(practiceTests);
-    } else {
-      _loading!.hide();
-      _myPracticeListProvider!.setMyTestsList(practiceTests);
-    }
-
-    _myPracticeListProvider!.setMyPracticeResponseModel(practiceResponseModel);
-    _myPracticeListProvider!.setIsProcessing(false);
   }
 
   @override
@@ -591,7 +583,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     showToastMsg(
       msg: Utils.multiLanguage(message),
       toastState: ToastStatesType.success,
-      isCenter: true,
+      isCenter: false,
     );
     _myPracticeListProvider!.removeTestAt(indexDeleted);
   }
@@ -614,6 +606,29 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
     _myPracticeListProvider!.setBankList(banks);
     _myPracticeListProvider!.updateStatusShowBankListButton(isShow: true);
+  }
+
+  @override
+  void onGetMyTestsListSuccess({
+    required MyPracticeResponseModel practiceResponseModel,
+    required List<MyPracticeTestModel> practiceTests,
+    required bool isLoadMore,
+    required bool isRefresh,
+  }) {
+    if (isRefresh) {
+      _myPracticeListProvider!.clearOldDataMyTestsList();
+    }
+
+    if (isLoadMore) {
+      _myPracticeListProvider!.setShowLoadingBottom(false);
+      _myPracticeListProvider!.addMyTestsList(practiceTests);
+    } else {
+      _loading!.hide();
+      _myPracticeListProvider!.setMyTestsList(practiceTests);
+    }
+
+    _myPracticeListProvider!.setMyPracticeResponseModel(practiceResponseModel);
+    _myPracticeListProvider!.setIsProcessing(false);
   }
 
   @override
