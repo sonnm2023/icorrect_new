@@ -10,23 +10,23 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
-import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
-import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/my_practice_setting.dart';
+import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_detail.dart';
+import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/my_practice_setting.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
-import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:provider/provider.dart';
 
-class MyPracticeList extends StatefulWidget {
-  const MyPracticeList({super.key});
+class MyPracticeTab extends StatefulWidget {
+  const MyPracticeTab({super.key});
 
   @override
-  State<MyPracticeList> createState() => _MyPracticeListState();
+  State<MyPracticeTab> createState() => _MyPracticeTabState();
 }
 
-class _MyPracticeListState extends State<MyPracticeList>
+class _MyPracticeTabState extends State<MyPracticeTab>
+    with AutomaticKeepAliveClientMixin
     implements MyTestsListConstract {
   double w = 0, h = 0;
   MyTestsListPresenter? _presenter;
@@ -65,26 +65,14 @@ class _MyPracticeListState extends State<MyPracticeList>
 
   @override
   Widget build(BuildContext context) {
-    w = MediaQuery.of(context).size.width;
-    h = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: SafeArea(
-        left: true,
-        top: true,
-        right: true,
-        bottom: true,
-        child: SizedBox(
-          width: w,
-          height: h,
-          child: Stack(
-            children: [
-              _buildList(),
-              _buildLoadmore(),
-              _buildBankListButton(),
-            ],
-          ),
-        ),
-      ),
+    super.build(context);
+
+    return Stack(
+      children: [
+        _buildList(),
+        _buildLoadmore(),
+        _buildBankListButton(),
+      ],
     );
   }
 
@@ -177,99 +165,59 @@ class _MyPracticeListState extends State<MyPracticeList>
   Widget _buildList() {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.all(10),
-            child: Stack(
+      child: Consumer<MyPracticeListProvider>(
+        builder: (context, provider, child) {
+          if (provider.myTestsList.isEmpty && !provider.isProcessing) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_outlined,
-                      color: AppColor.defaultPurpleColor,
-                      size: 25,
-                    ),
-                  ),
+                const SizedBox(height: 100),
+                NoDataWidget(
+                  msg: Utils.multiLanguage(
+                      StringConstants.my_practice_no_data_message),
+                  reloadCallBack: _reloadCallBack,
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    Utils.multiLanguage(StringConstants.my_test_title),
-                    style: CustomTextStyle.textWithCustomInfo(
-                      context: context,
-                      color: AppColor.defaultPurpleColor,
-                      fontsSize: FontsSize.fontSize_18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                )
               ],
-            ),
-          ),
-          const CustomDivider(),
-          const SizedBox(height: 20),
-          Consumer<MyPracticeListProvider>(
-            builder: (context, provider, child) {
-              if (provider.myTestsList.isEmpty && !provider.isProcessing) {
-                return Column(
-                  children: [
-                    const SizedBox(height: 100),
-                    NoDataWidget(
-                      msg: Utils.multiLanguage(
-                          StringConstants.my_practice_no_data_message),
-                      reloadCallBack: _reloadCallBack,
-                    ),
-                  ],
-                );
-              }
-              return Container(
-                height: h,
-                padding: const EdgeInsets.only(bottom: 150),
-                child: NotificationListener<ScrollEndNotification>(
-                  onNotification: (scrollEnd) {
-                    final metrics = scrollEnd.metrics;
-                    if (metrics.atEdge) {
-                      bool isTop = metrics.pixels == 0;
-                      if (isTop) {
-                        if (kDebugMode) {
-                          print("DEBUG :Scroll To Top");
-                        }
-                      } else {
-                        _startLoadMoreData();
-                        if (kDebugMode) {
-                          print("DEBUG :Scroll To Bottom");
-                        }
-                      }
+            );
+          }
+          return Container(
+            height: h,
+            padding: const EdgeInsets.only(bottom: 150),
+            child: NotificationListener<ScrollEndNotification>(
+              onNotification: (scrollEnd) {
+                final metrics = scrollEnd.metrics;
+                if (metrics.atEdge) {
+                  bool isTop = metrics.pixels == 0;
+                  if (isTop) {
+                    if (kDebugMode) {
+                      print("DEBUG :Scroll To Top");
                     }
-                    return false;
-                  },
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: provider.myTestsList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      MyPracticeTestModel myTestModel =
-                          provider.myTestsList[index];
-                      return InkWell(
-                        onTap: () {
-                          _onClickToTestDetail(myTestModel);
-                        },
-                        child: _myTestItem(myTestModel, index),
-                      );
+                  } else {
+                    _startLoadMoreData();
+                    if (kDebugMode) {
+                      print("DEBUG :Scroll To Bottom");
+                    }
+                  }
+                }
+                return false;
+              },
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: provider.myTestsList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  MyPracticeTestModel myTestModel = provider.myTestsList[index];
+                  return InkWell(
+                    onTap: () {
+                      _onClickToTestDetail(myTestModel);
                     },
-                  ),
-                ),
-              );
-            },
-          )
-        ],
+                    child: _myTestItem(myTestModel, index),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -637,4 +585,7 @@ class _MyPracticeListState extends State<MyPracticeList>
     _myPracticeListProvider!.setBankList(banks);
     _myPracticeListProvider!.updateStatusShowBankListButton(isShow: true);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

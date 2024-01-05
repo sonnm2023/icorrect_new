@@ -190,7 +190,13 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                           onChanged: (value) {
                             _topicTapped(topic);
                           },
-                          activeColor: AppColor.defaultPurpleColor,
+                          fillColor: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return AppColor.defaultPurpleColor;
+                            }
+                            return Colors.grey;
+                          }),
                         ),
                         const SizedBox(width: 10),
                         Flexible(
@@ -279,7 +285,13 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
                           onChanged: (value) {
                             _subTopicTapped(topic, subTopic);
                           },
-                          activeColor: AppColor.defaultPurpleColor,
+                          fillColor: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return AppColor.defaultPurpleColor;
+                            }
+                            return Colors.grey;
+                          }),
                         ),
                         const SizedBox(width: 10),
                         Text(
