@@ -21,6 +21,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
     if (kDebugMode) {
       print('DEBUG: HomeWorkRepositoryImpl - url :$url');
     }
+
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,
@@ -30,6 +31,10 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response data: $jsonBody");
+      }
       return response.body;
     });
   }

@@ -206,8 +206,20 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           homeWorkPresenter: _homeWorkPresenter!,
           pullToRefreshCallBack: _pullToRefresh,
         ),
-        const MyPracticeTab(),
+        // const MyPracticeTab(),
+        _buildComingSoonFeature(),
       ],
+    );
+  }
+
+  Widget _buildComingSoonFeature() {
+    return const SizedBox(
+      child: Center(
+        child: Text(
+          "This feature is coming soon!",
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 
