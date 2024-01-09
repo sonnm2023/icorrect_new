@@ -211,7 +211,7 @@ class MyPracticeListProvider extends ChangeNotifier {
     SettingModel(
       title: StringConstants.cue_card_time_of_part_2,
       value: 60,
-      step: 1,
+      step: 15,
     ),
     SettingModel(
       title: StringConstants.speed_of_first_time,
