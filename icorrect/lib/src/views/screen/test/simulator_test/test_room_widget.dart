@@ -66,7 +66,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
-  NativeVideoPlayerController? _videoPlayerController;
+  NativeVideoPlayerController? _nativeVideoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
   Record? _recordController;
   CameraService? _cameraService;
@@ -92,7 +92,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
   int _questionIndex = 0;
-  int _totalDuration = 0;
 
   @override
   void initState() {
@@ -545,12 +544,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   Future<void> _initController(NativeVideoPlayerController controller) async {
     if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
-      _videoPlayerController = controller;
-      _videoPlayerController!.setVolume(1.0);
+      _nativeVideoPlayerController = controller;
+      _nativeVideoPlayerController!.setVolume(1.0);
       await _loadVideoSource(_simulatorTestProvider!
               .listVideoSource[_playingIndex].files.first.url)
           .then((_) {
-        _videoPlayerController!.stop();
+        _nativeVideoPlayerController!.stop();
       });
     }
   }
@@ -563,7 +562,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     } else {
       // final videoSource = await _createVideoSource(fileName);
-      await _videoPlayerController!.loadVideoSource(videoSource);
+      await _nativeVideoPlayerController!.loadVideoSource(videoSource);
     }
   }
 
@@ -672,11 +671,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: action log starttime: $_logStartTime");
     }
 
-    if (null != _videoPlayerController) {
-      bool isPlaying = await _videoPlayerController!.isPlaying();
+    if (null != _nativeVideoPlayerController) {
+      bool isPlaying = await _nativeVideoPlayerController!.isPlaying();
       if (isPlaying) {
         _typeOfActionLog = 1;
-        _videoPlayerController!.stop();
+        _nativeVideoPlayerController!.stop();
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
@@ -773,7 +772,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _simulatorTestProvider!.setVisibleSaveTheTest(true);
       }
     } else {
-      if (null != _videoPlayerController) {
+      if (null != _nativeVideoPlayerController) {
         if (_simulatorTestProvider!.visibleCueCard) {
           //Playing end_of_take_note ==> replay end_of_take_note
 
@@ -790,7 +789,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               _isReDownload == false &&
               _simulatorTestProvider!.visibleRecord == false &&
               _simulatorTestProvider!.needDownloadAgain == false) {
-            _videoPlayerController!.play();
+            _nativeVideoPlayerController!.play();
           } else if (_simulatorTestProvider!.visibleRecord == true) {
             _reRecordAnswer();
           }
@@ -848,8 +847,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _audioPlayerController!.stop();
     }
 
-    if (null != _videoPlayerController) {
-      _videoPlayerController = null;
+    if (null != _nativeVideoPlayerController) {
+      _nativeVideoPlayerController = null;
     }
   }
 
@@ -1346,17 +1345,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Remove old listener
     // ignore: invalid_use_of_protected_member
-    if (_videoPlayerController!.onPlaybackEnded.hasListeners) {
-      _videoPlayerController!.onPlaybackEnded
+    if (_nativeVideoPlayerController!.onPlaybackEnded.hasListeners) {
+      _nativeVideoPlayerController!.onPlaybackEnded
           .removeListener(_checkStatusWhenFinishVideo);
     }
 
     //Add new listener
-    _videoPlayerController!.onPlaybackEnded
+    _nativeVideoPlayerController!.onPlaybackEnded
         .addListener(_checkStatusWhenFinishVideo);
 
     if (_playingIndex == 0) {
-      _videoPlayerController!.play();
+      _nativeVideoPlayerController!.play();
     } else {
       _createVideoSource(_currentQuestion!.files.first.url).then((value) async {
         if (kDebugMode) {
@@ -1376,14 +1375,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               print("DEBUG: _videoPlayerController!.loadVideoSource");
             }
 
-            _videoPlayerController!.loadVideoSource(value).then((_) {
+            _nativeVideoPlayerController!.loadVideoSource(value).then((_) {
               if (kDebugMode) {
                 print(
-                    "DEBUG: play video with speed ${_videoPlayerController!.playbackInfo!.speed}");
+                    "DEBUG: play video with speed ${_nativeVideoPlayerController!.playbackInfo!.speed}");
               }
               double speed = _getSpeedOfPlaying(_countRepeat);
-              _videoPlayerController!.setPlaybackSpeed(speed);
-              _videoPlayerController!.play();
+              _nativeVideoPlayerController!.setPlaybackSpeed(speed);
+              _nativeVideoPlayerController!.play();
 
               if (_currentQuestion!.files.first.fileTopicType ==
                       FileTopicType.question ||
@@ -1458,10 +1457,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setNeedDownloadAgain(true);
     _setVisibleRecord(false, null, null);
 
-    if (null != _videoPlayerController) {
-      bool isPlaying = await _videoPlayerController!.isPlaying();
+    if (null != _nativeVideoPlayerController) {
+      bool isPlaying = await _nativeVideoPlayerController!.isPlaying();
       if (isPlaying) {
-        _videoPlayerController!.stop();
+        _nativeVideoPlayerController!.stop();
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
@@ -1956,7 +1955,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       activityId: activityId,
       reQuestions: _simulatorTestProvider!.questionList,
       isExam: widget.isExam,
-      duration: _totalDuration,
+      duration: _simulatorTestProvider!.totalDuration,
     );
   }
 
