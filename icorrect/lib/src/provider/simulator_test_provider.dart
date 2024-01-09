@@ -6,6 +6,7 @@ import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:video_player/video_player.dart';
 // import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
@@ -607,6 +608,18 @@ class SimulatorTestProvider with ChangeNotifier {
     _optimizeVideoPlayer = optimize;
     if (kDebugMode) {
       print("DEBUG: Optimize video player: $_optimizeVideoPlayer");
+    }
+  }
+
+  VideoPlayerController? _videoPlayerController;
+
+  VideoPlayerController get videoPlayController =>
+      _videoPlayerController ?? VideoPlayerController.networkUrl(Uri.parse(""));
+
+  void setPlayController(VideoPlayerController videoPlayerController) {
+    _videoPlayerController = videoPlayerController;
+    if (!isDisposed) {
+      notifyListeners();
     }
   }
 

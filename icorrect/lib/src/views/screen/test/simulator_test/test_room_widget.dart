@@ -41,6 +41,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widg
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:video_player/video_player.dart';
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
@@ -67,6 +68,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
   NativeVideoPlayerController? _nativeVideoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
   Record? _recordController;
   CameraService? _cameraService;
@@ -432,13 +434,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
           return Stack(
             children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: NativeVideoPlayerView(
-                  onViewReady: _initController,
-                ),
-              ),
-
+              _buildVideoPlayingView(simulatorTestProvider),
               //Play video controller buttons
               _simulatorTestProvider!.doingStatus != DoingStatus.finish
                   ? buttonsControllerSubView
@@ -453,6 +449,28 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           );
         }
       },
+    );
+  }
+
+  Widget _buildVideoPlayingView(SimulatorTestProvider provider) {
+    //Using NativeVideoPlayerController
+    if (_simulatorTestProvider!.optimizeVideoPlayer) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: NativeVideoPlayerView(
+          onViewReady: _initController,
+        ),
+      );
+    }
+
+    //Using VideoPlayerController
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: provider.videoPlayController.value.isInitialized
+          ? VideoPlayer(_videoPlayerController!)
+          : const Image(
+              image: AssetImage("assets/images/bg_test_room.png"),
+            ),
     );
   }
 
