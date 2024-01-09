@@ -511,6 +511,7 @@ class StringConstants {
   static const String practice_screen_title = "PRACTICE";
   static const String topics_screen_title = "TOPICS";
   static const String icorrect_title = "ICORRECT";
+  static const String setting_screen_title = "SETTING";
 
   //Tab titles
   static const String topic_tab_title = "Topics";
@@ -759,6 +760,7 @@ class StringConstants {
       "You must choose at least 1 topics at part II and III";
   static const String delete_action_title = "Delete";
   static const String loading_title = "Loading Data";
+  static const String setting_title = "Setting ";
 
   static const String fail_to_load_your_test_message = 'Fail to load your test';
   static const String cannot_download_video =
@@ -800,6 +802,7 @@ class StringConstants {
   static const String not_evaluated_title = "Not Evaluated";
   static const String loaded_test_title = "Loaded Test";
   static const String select_all_title = "Select All";
+  static const String optimize_video_play = "Optimize Video Play";
   //Activity status
   static const String activity_status_out_of_date =
       "activity_status_out_of_date"; //"Out Of Date";

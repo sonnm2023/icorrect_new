@@ -72,6 +72,7 @@ class MultiLanguage {
     StringConstants.practice_screen_title: "LUYỆN TẬP",
     StringConstants.topics_screen_title: "Chủ Đề Luyện Tập",
     StringConstants.icorrect_title: "ICORRECT",
+    StringConstants.setting_screen_title: "CÀI ĐẶT",
     StringConstants.test_detail_tab_title: "Chi Tiết Bài Làm",
     StringConstants.correction_tab_title: "Kết Quả",
     StringConstants.my_exam_tab_title: "BÀI LÀM",
@@ -288,6 +289,7 @@ class MultiLanguage {
     StringConstants.my_test_title: "BÀI LÀM CỦA TÔI",
     StringConstants.delete_action_title: "Xoá",
     StringConstants.loading_title: "Đang tải dữ liệu",
+    StringConstants.setting_title: "Cài đặt",
     StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
     StringConstants.delete_this_test_confirm:
         "Bạn có chắc chắn muốn xóa bài làm này ?",
@@ -358,7 +360,8 @@ class MultiLanguage {
     StringConstants.ai_scored_title: " (AI) Đã Chấm",
     StringConstants.loaded_test_title: "Đã Khóa",
     StringConstants.select_all_title: "Chọn Tất Cả",
-    StringConstants.select_all: "Chọn Tất Cả"
+    StringConstants.select_all: "Chọn Tất Cả",
+    StringConstants.optimize_video_play: "Tối ưu",
 
     //////////////////////////////////////////////////////////////////////////
   };
@@ -433,6 +436,7 @@ class MultiLanguage {
     StringConstants.practice_screen_title: "PRACTICE",
     StringConstants.topics_screen_title: "Topics",
     StringConstants.icorrect_title: "ICORRECT",
+    StringConstants.setting_screen_title: "SETTING",
     StringConstants.test_detail_tab_title: "Test Detail",
     StringConstants.correction_tab_title: "Correction",
     StringConstants.my_exam_tab_title: "MY EXAM",
@@ -659,6 +663,7 @@ class MultiLanguage {
     StringConstants.my_test_title: "MY TESTS",
     StringConstants.delete_action_title: "Delete",
     StringConstants.loading_title: "Loading Data",
+    StringConstants.setting_title: "Setting",
     StringConstants.delete_test_success_message:
         "Delete this test successfully!",
     StringConstants.delete_this_test_confirm:
@@ -709,5 +714,6 @@ class MultiLanguage {
         'You must set up at least 1 question!',
     StringConstants.my_practice_setting_take_note_time_error_message:
         'You must set up the take note time greater than 0 second!',
+    StringConstants.optimize_video_play: "Optimize Video Play",
   };
 }

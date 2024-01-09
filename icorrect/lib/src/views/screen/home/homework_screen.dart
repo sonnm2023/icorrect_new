@@ -14,6 +14,7 @@ import 'package:icorrect/src/views/screen/home/my_practice_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
+import 'package:icorrect/src/views/widget/setting_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
@@ -425,6 +426,30 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
           //     );
           //   },
           // ),
+          ListTile(
+            title: Text(
+              Utils.multiLanguage(
+                StringConstants.setting_title,
+              ),
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultGrayColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            leading: const Icon(
+              Icons.settings,
+              color: AppColor.defaultGrayColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingWidget(),
+                ),
+              );
+            },
+          ),
           ListTile(
             title: Text(
               Utils.multiLanguage(

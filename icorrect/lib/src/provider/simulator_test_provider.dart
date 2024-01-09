@@ -601,7 +601,17 @@ class SimulatorTestProvider with ChangeNotifier {
     _totalDuration = 0;
   }
 
+  bool _optimizeVideoPlayer = false;
+  bool get optimizeVideoPlayer => _optimizeVideoPlayer;
+  void setOptimizeVideoPlayer(bool optimize) {
+    _optimizeVideoPlayer = optimize;
+    if (kDebugMode) {
+      print("DEBUG: Optimize video player: $_optimizeVideoPlayer");
+    }
+  }
+
   void resetAll() {
+    _optimizeVideoPlayer = false;
     _totalDuration = 0;
     _needRefreshActivityList = false;
     _hasOrder = false;
