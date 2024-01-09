@@ -452,6 +452,29 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
+  Future _initWithVideoPlayer(File file) async {
+    if (kDebugMode) {
+      print("DEBUG: File video : ${file.path}");
+    }
+    _videoPlayerController = VideoPlayerController.file(file);
+
+    _videoPlayerController!.setPlaybackSpeed(_getSpeedOfPlaying(_countRepeat));
+    _videoPlayerController!.initialize().then((value) {
+      _videoPlayerController!.value.isPlaying
+          ? _videoPlayerController!.pause()
+          : _videoPlayerController!.play();
+      setState(() {});
+    });
+
+    _simulatorTestProvider!.setPlayController(_videoPlayerController!);
+    _simulatorTestProvider!.videoPlayController.addListener(() {
+      if (_simulatorTestProvider!.videoPlayController.value.position ==
+          _simulatorTestProvider!.videoPlayController.value.duration) {
+        // _onVideoEnd(); //TODO
+      }
+    });
+  }
+
   Widget _buildVideoPlayingView(SimulatorTestProvider provider) {
     //Using NativeVideoPlayerController
     if (_simulatorTestProvider!.optimizeVideoPlayer) {
@@ -462,6 +485,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         ),
       );
     }
+
+    _initWithVideoPlayer(file)
 
     //Using VideoPlayerController
     return AspectRatio(
