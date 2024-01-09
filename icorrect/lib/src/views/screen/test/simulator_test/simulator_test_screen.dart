@@ -900,6 +900,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       isCenter: true,
     );
 
+    _callToRefesh();
+
     Navigator.pop(context, 'refresh');
   }
 

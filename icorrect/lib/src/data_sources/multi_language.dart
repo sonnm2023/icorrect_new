@@ -99,8 +99,8 @@ class MultiLanguage {
     StringConstants.practice_card_full_test_description:
         "Bạn sẽ làm bài thi đầy đủ ba phần của Bài Thi Nói IELTS",
     StringConstants.selected_topics: "Chủ đề đã chọn (%a/%a)",
-    StringConstants.my_pratice_selected_topics: " Chủ đề lớn",
-    StringConstants.my_pratice_selected_subtopics: " Chủ đề nhỏ",
+    StringConstants.my_pratice_selected_topics: "Chủ đề lớn",
+    StringConstants.my_pratice_selected_subtopics: "Chủ đề nhỏ",
     StringConstants.downloading: "Đang Tải Dữ Liệu...",
     StringConstants.overview: "Nhận Xét Chung",
     StringConstants.show_less: "Thu Gọn",
@@ -460,8 +460,8 @@ class MultiLanguage {
     StringConstants.practice_card_full_test_description:
         "You will take a full sample test of IELTS Speaking Test",
     StringConstants.selected_topics: "Selected topic (%a/%a)",
-    StringConstants.my_pratice_selected_topics: " Topics",
-    StringConstants.my_pratice_selected_subtopics: " Sub Topics",
+    StringConstants.my_pratice_selected_topics: "Topics",
+    StringConstants.my_pratice_selected_subtopics: "Sub Topics",
     StringConstants.downloading: "Downloading...",
     StringConstants.overview: "Overview",
     StringConstants.show_less: "Show less",
