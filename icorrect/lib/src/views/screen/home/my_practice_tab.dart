@@ -338,7 +338,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                         ),
                         const SizedBox(width: 1),
                         Text(
-                          "00:0${myTestModel.duration}",
+                          Utils.formateDuration(myTestModel.duration),
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultGrayColor,

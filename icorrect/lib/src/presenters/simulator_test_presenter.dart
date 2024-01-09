@@ -590,6 +590,7 @@ class SimulatorTestPresenter {
     required bool isExam,
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
+    required int duration,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -611,6 +612,7 @@ class SimulatorTestPresenter {
       isExam: isExam,
       videoConfirmFile: videoConfirmFile,
       logAction: logAction,
+      duration: duration,
     );
 
     if (kDebugMode) {

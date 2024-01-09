@@ -19,6 +19,7 @@ class DoingTestService {
     required bool isExam,
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
+    required int duration,
   }) async {
     String url = submitHomeWorkV2EP();
 
@@ -64,6 +65,7 @@ class DoingTestService {
             .addEntries([const MapEntry(StringConstants.k_log_action, '[]')]);
       }
     }
+    formData.addEntries([MapEntry(StringConstants.k_duration, "$duration")]);
 
     for (QuestionTopicModel q in questions) {
       String part = '';

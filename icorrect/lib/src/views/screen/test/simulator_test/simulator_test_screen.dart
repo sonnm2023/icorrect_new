@@ -375,13 +375,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                   Utils.multiLanguage(StringConstants.dont_save_button_title),
               borderRadius: 8,
               hasCloseButton: true,
-              okButtonTapped: () {
+              okButtonTapped: () async {
                 //Update reanswer
                 _loading!.show(context: buildContext, isViewAIResponse: false);
                 _simulatorTestProvider!.setVisibleSaveTheTest(false);
                 String savedVideoPath = _simulatorTestPresenter!
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
+
                 if (widget.activitiesModel != null) {
                   _simulatorTestPresenter!.submitTest(
                     context: buildContext,
@@ -392,6 +393,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     isExam: _isExam,
                     videoConfirmFile: videoConfirmFile,
                     logAction: _simulatorTestProvider!.logActions,
+                    duration: _simulatorTestProvider!.totalDuration,
                   );
                 } else {
                   /////Handle practice submit
@@ -413,6 +415,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           }
         }
       } else {
+        //Reset total duration
+        _simulatorTestProvider!.resetTotalDuration();
+
         //Call back refresh list of my practice if need
         //For from My Practice Test
         _callToRefesh();
@@ -435,6 +440,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             if (kDebugMode) {
               print("DEBUG: Status is not start to do the exam!");
             }
+
+            //Reset total duration
+            _simulatorTestProvider!.resetTotalDuration();
 
             if (_isExam) {
               Navigator.pop(context, StringConstants.k_refresh);
@@ -497,6 +505,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             //Reset question image
             _resetQuestionImage();
             _deleteAllAnswer();
+            //Reset total duration
+            _simulatorTestProvider!.resetTotalDuration();
             okButtonTapped = true;
           },
           cancelButtonTapped: () {
@@ -571,6 +581,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           if (widget.activitiesModel != null) {
             activityId = widget.activitiesModel!.activityId.toString();
           }
+
           _simulatorTestPresenter!.submitTest(
             context: context,
             testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
@@ -579,6 +590,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             isExam: _isExam,
             videoConfirmFile: videoConfirmFile,
             logAction: _simulatorTestProvider!.logActions,
+            duration: _simulatorTestProvider!.totalDuration,
           );
           _simulatorTestProvider!.setShowConfirmSaveTest(false);
         } else {
@@ -958,6 +970,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
     if (isQuitTheTest) {
       _deleteAllAnswer();
+      _simulatorTestProvider!.resetTotalDuration();
       Navigator.of(context).pop();
     } else {
       //Continue play video

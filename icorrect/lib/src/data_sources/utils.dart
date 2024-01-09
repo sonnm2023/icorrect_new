@@ -32,6 +32,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:audioplayers/audioplayers.dart' as audio;
 
 class Utils {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -1101,4 +1102,51 @@ class Utils {
       }
     }
   }
+
+  static String formateDuration(String durationStr) {
+    int duration = int.parse(durationStr);
+    String result = '';
+
+    if (duration < 10) {
+      return "00:0$duration";
+    }
+
+    if (duration < 60) {
+      return "00:$duration";
+    }
+
+    if (duration > 60) {
+      int seconds = (duration / 60).floor();
+      int ms = (duration - seconds * 60);
+      String str1 = seconds < 10 ? "0$seconds" : "$seconds";
+      String str2 = ms < 10 ? '0$ms' : '$ms';
+      return "$str1:$str2";
+    }
+
+    return result;
+  }
+
+  // static Future<int> getAudioDuration(List<QuestionTopicModel> list) async {
+  //   audio.AudioPlayer audioPlayer = audio.AudioPlayer();
+  //   int totalDuration = 0;
+  //   for (QuestionTopicModel q in list) {
+  //     String path = await Utils.createNewFilePath(q.answers[q.repeatIndex].url);
+
+  //     audioPlayer.setSourceDeviceFile(path);
+  //     Duration? duration = await audioPlayer.getDuration();
+
+  //     if (duration != null) {
+  //       totalDuration += duration.inMilliseconds;
+  //     }
+  //   }
+
+  //   // Print the duration.
+  //   if (kDebugMode) {
+  //     print('Total audio duration: $totalDuration');
+  //   }
+
+  //   audioPlayer.dispose();
+
+  //   return totalDuration;
+  // }
 }

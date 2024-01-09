@@ -867,6 +867,7 @@ class StringConstants {
   static const String k_required_topic = "required_topic[]";
   static const String k_is_predict = "is_predict";
   static const String k_has_order = "has_order";
+  static const String k_duration = "duration";
 }
 
 const int timeout = 60;

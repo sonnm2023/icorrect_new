@@ -92,6 +92,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
   int _questionIndex = 0;
+  int _totalDuration = 0;
 
   @override
   void initState() {
@@ -657,6 +658,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
     _createLog(action: LogEvent.actionStartToDoTest, data: info);
 
+    _simulatorTestProvider!.resetTotalDuration();
+
     _initVideoController();
   }
 
@@ -1151,6 +1154,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     };
     _createLog(action: LogEvent.actionRepeatQuestion, data: info);
 
+    //Reset countdown
+    if (null != _countDown) {
+      _countDown!.cancel();
+    }
+
     //Stop record
     _setVisibleRecord(false, null, null);
 
@@ -1627,8 +1635,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         return;
       }
       //_cameraService!.dispose();
-
-      _showResizeVideoDialog();
     } else {
       //Activity Type = "homework"
       _setVisibleSaveTest(true);
@@ -1682,7 +1688,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  void _startSubmitTest({File? videoConfirmFile}) {
+  void _startSubmitTest({File? videoConfirmFile}) async {
     _createLog(action: LogEvent.actionSubmitTest, data: null);
 
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
@@ -1693,6 +1699,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (widget.activitiesModel != null) {
       activityId = widget.activitiesModel!.activityId.toString();
     }
+
     _testRoomPresenter!.submitTest(
       context: context,
       testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
@@ -1701,6 +1708,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       isExam: widget.isExam,
       videoConfirmFile: videoConfirmFile,
       logAction: _simulatorTestProvider!.logActions,
+      duration: _simulatorTestProvider!.totalDuration,
     );
   }
 
@@ -1948,6 +1956,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       activityId: activityId,
       reQuestions: _simulatorTestProvider!.questionList,
       isExam: widget.isExam,
+      duration: _totalDuration,
     );
   }
 
@@ -2020,6 +2029,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
       }
     }
+  }
+
+  @override
+  void onUpdateDuration(int duration) {
+    _simulatorTestProvider!.addDuration(duration);
   }
 
   @override

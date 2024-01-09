@@ -26,6 +26,7 @@ abstract class TestRoomViewContract {
   void onPlayEndOfTest(String fileName);
   void onCountDown(
       String countDownString, bool isLessThan2Seconds, int timeCounting);
+  void onUpdateDuration(int duration);
   void onCountDownForCueCard(String countDownString);
   void onFinishAnswer(bool isPart2);
   void onFinishForReAnswer();
@@ -57,6 +58,8 @@ class TestRoomPresenter {
     int temp = count;
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
+    int duration = 0;
+
     return Timer.periodic(oneSec, (Timer timer) {
       if (count < 1) {
         timer.cancel();
@@ -74,10 +77,12 @@ class TestRoomPresenter {
         isLessThan2Seconds = false;
       }
 
+      _view!.onUpdateDuration(1);
       _view!.onCountDown("$minuteStr:$secondStr", isLessThan2Seconds, count);
 
       if (count == 0 && !finishCountDown) {
         finishCountDown = true;
+        duration = temp - count;
         if (isReAnswer) {
           //For Re answer
           _view!.onFinishForReAnswer();
@@ -123,6 +128,7 @@ class TestRoomPresenter {
 
     bool finishCountDown = false;
     const oneSec = Duration(seconds: 1);
+
     return Timer.periodic(oneSec, (Timer timer) {
       if (count < 1) {
         timer.cancel();
@@ -200,6 +206,7 @@ class TestRoomPresenter {
     required bool isExam,
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
+    required int duration,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -221,6 +228,7 @@ class TestRoomPresenter {
       isExam: isExam,
       videoConfirmFile: videoConfirmFile,
       logAction: logAction,
+      duration: duration,
     );
 
     if (kDebugMode) {
@@ -337,6 +345,7 @@ class TestRoomPresenter {
     required String activityId,
     required List<QuestionTopicModel> reQuestions,
     required bool isExam,
+    required int duration,
   }) async {
     //Add log
     LogModel? log;
@@ -356,6 +365,7 @@ class TestRoomPresenter {
       isExam: isExam,
       videoConfirmFile: null,
       logAction: null,
+      duration: duration,
     );
     if (kDebugMode) {
       print("DEBUG: update reanswer");

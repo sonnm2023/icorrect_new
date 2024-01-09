@@ -584,7 +584,25 @@ class SimulatorTestProvider with ChangeNotifier {
     _needRefreshActivityList = needRefresh;
   }
 
+  int _totalDuration = 0;
+  int get totalDuration => _totalDuration;
+  void updateTotalDuration(int total) {
+    _totalDuration = total;
+  }
+
+  void addDuration(int duration) {
+    _totalDuration += duration;
+    if (kDebugMode) {
+      print("DEBUG: Total duration = $_totalDuration");
+    }
+  }
+
+  void resetTotalDuration() {
+    _totalDuration = 0;
+  }
+
   void resetAll() {
+    _totalDuration = 0;
     _needRefreshActivityList = false;
     _hasOrder = false;
     _enabledFinish = true;
