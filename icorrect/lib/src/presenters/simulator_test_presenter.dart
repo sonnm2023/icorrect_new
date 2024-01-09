@@ -764,6 +764,10 @@ class SimulatorTestPresenter {
     //Part 3
     allFilesTopic!
         .addAll(getAllFilesOfTopic(testDetail.part3, PartOfTest.part3));
+
+    if (kDebugMode) {
+      print("DEBUG: AllFiles = ${allFilesTopic!.length}");
+    }
   }
 
   double _getPercent(int downloaded, int total) {

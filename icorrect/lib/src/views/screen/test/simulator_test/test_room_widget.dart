@@ -1240,11 +1240,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _playingIndex++;
     }
 
-    if (_playingIndex == _simulatorTestProvider!.listVideoSource.length) {
-      if (kDebugMode) {
-        print("DEBUG: Finish to play list questions!!!");
-        _prepareToEndTheTest();
-      }
+    if (_playingIndex >= _simulatorTestProvider!.listVideoSource.length) {
+      _prepareToEndTheTest();
     } else {
       _initVideoController();
     }
@@ -1330,7 +1327,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (kDebugMode) {
       print(
-          "DEBUG: _initVideoController: Playing - ${_currentQuestion!.files.first.url}");
+          "DEBUG: _initVideoController: Playing - ${_currentQuestion!.files.first.url} - index: ($_playingIndex/${_simulatorTestProvider!.listVideoSource.length})");
     }
 
     Map<String, dynamic> info = {
@@ -1595,6 +1592,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _prepareToEndTheTest() async {
+    if (kDebugMode) {
+      print("DEBUG: Finish to play list questions!!!");
+    }
     //Stop old record
     await _stopRecord();
 
@@ -1615,8 +1615,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     List<String> temp = _prepareAnswerListForDelete();
     _simulatorTestProvider!.setAnswerList(temp);
 
-    //Hide cameraLive
+    //Auto submit test for activity type = test or type = exam
     if (widget.isExam) {
+      //Hide cameraLive
       if (null != _countRecording) {
         _countRecording!.cancel();
       }
@@ -1626,10 +1627,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         return;
       }
       //_cameraService!.dispose();
-    }
 
-    //Auto submit test for activity type = test or type = exam
-    if (widget.isExam) {
       _showResizeVideoDialog();
     } else {
       //Activity Type = "homework"
