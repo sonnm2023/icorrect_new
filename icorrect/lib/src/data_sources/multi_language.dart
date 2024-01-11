@@ -655,8 +655,8 @@ class MultiLanguage {
         "You must choose at least 3 topics at part I",
     StringConstants.choose_at_least_1_topics_at_part23_message:
         "You must choose at least 1 topics at part II and III",
-    StringConstants.my_test_menu_item_title: "My Tests",
-    StringConstants.my_test_title: "MY TESTS",
+    StringConstants.my_test_menu_item_title: "My Practices",
+    StringConstants.my_test_title: "MY PRACTICES",
     StringConstants.delete_action_title: "Delete",
     StringConstants.loading_title: "Loading Data",
     StringConstants.delete_test_success_message:

@@ -577,8 +577,8 @@ class StringConstants {
   static const String unknown = "Unknown";
   static const String home_menu_item_title = "Home";
   static const String practice_menu_item_title = "Practice";
-  static const String my_test_menu_item_title = "My Tests";
-  static const String my_test_title = "MY TESTS";
+  static const String my_test_menu_item_title = "My Practices";
+  static const String my_test_title = "MY PRACTICES";
   static const String change_password_menu_item_title = "Change password";
   static const String logout_menu_item_title = "Logout";
   static const String email = "Email";
