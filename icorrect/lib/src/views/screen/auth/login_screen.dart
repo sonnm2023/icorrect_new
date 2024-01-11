@@ -90,14 +90,10 @@ class _LoginScreenState extends State<LoginScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(
-                            height: CustomSize.size_40,
-                          ),
+                          const SizedBox(height: CustomSize.size_40),
                           const LogoWidget(),
                           const LogoTextWidget(),
-                          const SizedBox(
-                            height: CustomSize.size_60,
-                          ),
+                          const SizedBox(height: CustomSize.size_60),
                           EmailInputWidget(
                             emailController: emailController,
                             focusNode: FocusNode(),
@@ -110,9 +106,7 @@ class _LoginScreenState extends State<LoginScreen>
                           _buildSignInButton(),
                           // _buildSignUpButton(),
                           // _buildForgotPasswordButton(),
-                          Expanded(
-                            child: Container(),
-                          ),
+                          Expanded(child: Container()),
                           const ContactInfoWidget(),
                         ],
                       ),
@@ -244,13 +238,15 @@ class _LoginScreenState extends State<LoginScreen>
     if (appConfigInfo.isEmpty) {
       _loginPresenter!.getAppConfigInfo(context);
     } else {
-      Utils.checkInternetConnection().then((isConnected) {
-        if (isConnected) {
-          _autoLogin();
-        } else {
-          _handleError();
-        }
-      });
+      Utils.checkInternetConnection().then(
+        (isConnected) {
+          if (isConnected) {
+            _autoLogin();
+          } else {
+            _handleError();
+          }
+        },
+      );
     }
   }
 
@@ -269,16 +265,19 @@ class _LoginScreenState extends State<LoginScreen>
           .setUserInformation(currentUser.userInfoModel.id.toString());
 
       //Has login
-      Timer(const Duration(milliseconds: 2000), () async {
-        _authProvider.updateLoginStatus(processing: false);
+      Timer(
+        const Duration(milliseconds: 2000),
+        () async {
+          _authProvider.updateLoginStatus(processing: false);
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomeWorkScreen(),
-          ),
-        );
-      });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HomeWorkScreen(),
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -351,6 +350,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (message == StringConstants.email_or_password_wrong_message) {
       message = Utils.multiLanguage(message);
     }
+
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
@@ -377,30 +377,32 @@ class _LoginScreenState extends State<LoginScreen>
     }
     _loading!.hide();
 
-    Utils.checkInternetConnection().then((isConnected) {
-      if (null != errorCode) {
-        if (errorCode == 401) {
-          _finishLoginWithError(message);
-        }
-      } else {
-        String email = emailController.text.trim();
-        String password = passwordController.text.trim();
-        if (isConnected && email.isNotEmpty && password.isNotEmpty) {
-          if (kDebugMode) {
-            print("DEBUG: checkInternetConnection = $isConnected");
-            print("DEBUG: checkInternetConnection email = $email");
-            print("DEBUG: checkInternetConnection pass = $password");
+    Utils.checkInternetConnection().then(
+      (isConnected) {
+        if (null != errorCode) {
+          if (errorCode == 401) {
+            _finishLoginWithError(message);
           }
-          _loginPresenter!.login(
-            emailController.text.trim(),
-            passwordController.text.trim(),
-            context,
-          );
         } else {
-          _finishLoginWithError(message);
+          String email = emailController.text.trim();
+          String password = passwordController.text.trim();
+          if (isConnected && email.isNotEmpty && password.isNotEmpty) {
+            if (kDebugMode) {
+              print("DEBUG: checkInternetConnection = $isConnected");
+              print("DEBUG: checkInternetConnection email = $email");
+              print("DEBUG: checkInternetConnection pass = $password");
+            }
+            _loginPresenter!.login(
+              emailController.text.trim(),
+              passwordController.text.trim(),
+              context,
+            );
+          } else {
+            _finishLoginWithError(message);
+          }
         }
-      }
-    });
+      },
+    );
   }
 
   @override

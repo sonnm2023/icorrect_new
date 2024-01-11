@@ -47,32 +47,6 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _getBankList();
   }
 
-  void _getMyTestsList(
-      {required bool isRefresh, required bool needShowLoading}) {
-    if (null != _loading &&
-        null != _presenter &&
-        null != _myPracticeListProvider) {
-      int pageNum = 1;
-      if (needShowLoading) {
-        _loading!.show(context: context, isViewAIResponse: false);
-      }
-      _presenter!.getMyTestLists(
-          pageNum: pageNum, isLoadMore: false, isRefresh: isRefresh);
-
-      Future.delayed(
-        Duration.zero,
-        () {
-          _myPracticeListProvider!.setPageNum(pageNum);
-          _myPracticeListProvider!.setIsProcessing(true);
-        },
-      );
-    }
-  }
-
-  void _getBankList() {
-    _presenter!.getBankList();
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -131,7 +105,33 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  void _gotoBankDetailWithId(BankModel bank) {
+  void _getMyTestsList(
+      {required bool isRefresh, required bool needShowLoading}) {
+    if (null != _loading &&
+        null != _presenter &&
+        null != _myPracticeListProvider) {
+      int pageNum = 1;
+      if (needShowLoading) {
+        _loading!.show(context: context, isViewAIResponse: false);
+      }
+      _presenter!.getMyTestLists(
+          pageNum: pageNum, isLoadMore: false, isRefresh: isRefresh);
+
+      Future.delayed(
+        Duration.zero,
+        () {
+          _myPracticeListProvider!.setPageNum(pageNum);
+          _myPracticeListProvider!.setIsProcessing(true);
+        },
+      );
+    }
+  }
+
+  void _getBankList() {
+    _presenter!.getBankList();
+  }
+
+  void _gotoBankDetail(BankModel bank) {
     if (kDebugMode) {
       print("DEBUG: you choosed bank id = ${bank.id}");
     }
@@ -186,7 +186,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       SpeedDialChild temp = SpeedDialChild(
         shape: const CircleBorder(),
         onTap: () {
-          _gotoBankDetailWithId(bank);
+          _gotoBankDetail(bank);
         },
         child: Container(
           margin: const EdgeInsets.all(5),
@@ -257,7 +257,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                   MyPracticeTestModel myTestModel = provider.myTestsList[index];
                   return InkWell(
                     onTap: () {
-                      _onClickToTestDetail(myTestModel);
+                      _gotoTestDetail(myTestModel);
                     },
                     child: _buildItem(myTestModel, index),
                   );
@@ -387,7 +387,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                     ),
                     InkWell(
                       onTap: () {
-                        _onClickDeleteTest(myTestModel.id, index);
+                        _deleteTest(myTestModel.id, index);
                       },
                       child: Container(
                         width: 80,
@@ -523,7 +523,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     return "${date.day}-${date.month}-${date.year}";
   }
 
-  void _onClickDeleteTest(int testId, int indexDelete) {
+  void _deleteTest(int testId, int indexDelete) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -548,7 +548,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  void _onClickToTestDetail(MyPracticeTestModel myTestModel) {
+  void _gotoTestDetail(MyPracticeTestModel myTestModel) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
