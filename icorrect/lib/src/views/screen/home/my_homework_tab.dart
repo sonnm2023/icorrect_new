@@ -15,6 +15,7 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
@@ -237,6 +238,11 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     widget.homeWorkProvider.prepareToUpdateFilterString();
   }
 
+  void _refreshMyPracticeList() {
+    Provider.of<MyPracticeListProvider>(context, listen: false)
+        .refreshList(true);
+  }
+
   Widget _languageSelectionButton() {
     return SpeedDial(
       backgroundColor: AppColor.defaultPurpuleTransparent,
@@ -250,6 +256,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           onTap: () {
             localization.translate('en');
             _updateFilterText();
+            _refreshMyPracticeList();
           },
           child: const Padding(
             padding: EdgeInsets.all(2),
@@ -267,6 +274,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           onTap: () {
             localization.translate('vi');
             _updateFilterText();
+            _refreshMyPracticeList();
           },
           child: const Padding(
             padding: EdgeInsets.all(2),
