@@ -711,6 +711,10 @@ class StringConstants {
       "An error occur. Please check your connection!";
   static const String common_error_message =
       "An error occur, please try again later!";
+  static const String http_client_exception_error_message =
+      "An error occur, client exception error, please try again later!";
+  static const String timeout_exception_error_message =
+      "An error occur, timeout exception error, please try again later!";
   static const String error_when_resize_file =
       'An error occurred while resizing the video file!';
   static const String error_when_delete_file =

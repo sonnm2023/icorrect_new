@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -177,17 +178,19 @@ class LoginPresenter {
       }
     }).catchError((onError) {
       String message = '';
-      if (onError is http.ClientException || onError is SocketException) {
-        message = StringConstants.network_error_message;
-
-        _view!.onGetAppConfigInfoFail(
-            Utils.multiLanguage(StringConstants.network_error_message));
+      if (onError is SocketException) {
+        message = Utils.multiLanguage(StringConstants.network_error_message);
+      } else if (onError is http.ClientException) {
+        message = Utils.multiLanguage(
+            StringConstants.http_client_exception_error_message);
+      } else if (onError is TimeoutException) {
+        message = Utils.multiLanguage(
+            StringConstants.timeout_exception_error_message);
       } else {
-        message = StringConstants.common_error_message;
-
-        _view!.onGetAppConfigInfoFail(
-            Utils.multiLanguage(StringConstants.common_error_message));
+        message = Utils.multiLanguage(StringConstants.common_error_message);
       }
+
+      _view!.onGetAppConfigInfoFail(message);
       //Add log
       Utils.prepareLogData(
         log: log,

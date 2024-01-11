@@ -375,6 +375,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (kDebugMode) {
       print("DEBUG: onLoginError");
     }
+    _loading!.hide();
 
     Utils.checkInternetConnection().then((isConnected) {
       if (null != errorCode) {

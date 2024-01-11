@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
@@ -281,5 +279,15 @@ class MyPracticeListProvider extends ChangeNotifier {
 
   void resetPermissionDeniedTime() {
     _permissionDeniedTime = 0;
+  }
+
+  bool _isRefreshList = false;
+  bool get isRefreshList => _isRefreshList;
+  void refreshList(bool isRefresh) {
+    _isRefreshList = isRefresh;
+
+    if (isRefresh && !isDisposed) {
+      notifyListeners();
+    }
   }
 }

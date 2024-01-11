@@ -5,6 +5,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:provider/provider.dart';
 
 class LanguageSelectionDialog extends StatefulWidget {
@@ -19,10 +20,13 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
   double w = 0, h = 0;
   final FlutterLocalization localization = FlutterLocalization.instance;
   HomeWorkProvider? homeWorkProvider;
+  MyPracticeListProvider? myPracticeListProvider;
 
   @override
   void initState() {
     homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
+    myPracticeListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
     super.initState();
   }
 
@@ -74,6 +78,9 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
         localization.translate(isEnglish ? 'en' : 'vi');
         if (null != homeWorkProvider) {
           homeWorkProvider!.prepareToUpdateFilterString();
+        }
+        if (null != myPracticeListProvider) {
+          myPracticeListProvider!.refreshList(true);
         }
         Navigator.of(context).pop();
       },

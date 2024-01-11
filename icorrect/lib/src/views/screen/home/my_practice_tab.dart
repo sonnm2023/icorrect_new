@@ -41,24 +41,32 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _loading = CircleLoading();
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
+    _myPracticeListProvider!.refreshList(false);
 
-    _getMyTestsList(isRefresh: false);
+    _getMyTestsList(isRefresh: false, needShowLoading: true);
     _getBankList();
   }
 
-  void _getMyTestsList({required bool isRefresh}) {
-    int pageNum = 1;
-    _loading!.show(context: context, isViewAIResponse: false);
-    _presenter!.getMyTestLists(
-        pageNum: pageNum, isLoadMore: false, isRefresh: isRefresh);
+  void _getMyTestsList(
+      {required bool isRefresh, required bool needShowLoading}) {
+    if (null != _loading &&
+        null != _presenter &&
+        null != _myPracticeListProvider) {
+      int pageNum = 1;
+      if (needShowLoading) {
+        _loading!.show(context: context, isViewAIResponse: false);
+      }
+      _presenter!.getMyTestLists(
+          pageNum: pageNum, isLoadMore: false, isRefresh: isRefresh);
 
-    Future.delayed(
-      Duration.zero,
-      () {
-        _myPracticeListProvider!.setPageNum(pageNum);
-        _myPracticeListProvider!.setIsProcessing(true);
-      },
-    );
+      Future.delayed(
+        Duration.zero,
+        () {
+          _myPracticeListProvider!.setPageNum(pageNum);
+          _myPracticeListProvider!.setIsProcessing(true);
+        },
+      );
+    }
   }
 
   void _getBankList() {
@@ -96,6 +104,11 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   Widget _buildBankListButton() {
     return Consumer<MyPracticeListProvider>(
       builder: (context, provider, child) {
+        if (provider.isRefreshList) {
+          provider.refreshList(false);
+          _getMyTestsList(isRefresh: true, needShowLoading: false);
+        }
+
         return Visibility(
           visible: provider.banks.isNotEmpty,
           child: Container(
@@ -138,7 +151,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     if (kDebugMode) {
       print("DEBUG: _refeshList Callback");
     }
-    _getMyTestsList(isRefresh: true);
+    _getMyTestsList(isRefresh: true, needShowLoading: true);
   }
 
   List<SpeedDialChild> _generateBankListUI() {
@@ -548,7 +561,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     if (kDebugMode) {
       print("DEBUG: MyPracticeList - _reloadCallBack");
     }
-    _getMyTestsList(isRefresh: true);
+    _getMyTestsList(isRefresh: true, needShowLoading: true);
   }
 
   @override

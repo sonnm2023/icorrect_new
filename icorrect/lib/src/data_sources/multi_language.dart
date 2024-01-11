@@ -237,6 +237,10 @@ class MultiLanguage {
         "Đã xảy ra lỗi.Vui lòng kiểm tra kết nối mạng và thử lại!",
     StringConstants.common_error_message:
         "Đã xảy ra lỗi, vui lòng thử lại sau!",
+    StringConstants.http_client_exception_error_message:
+        "Đã xảy ra lỗi, client exception, vui lòng thử lại sau!",
+    StringConstants.timeout_exception_error_message:
+        "Đã xảy ra lỗi, timeout exception, vui lòng thử lại sau!",
     StringConstants.error_when_resize_file:
         'Đã xảy ra lỗi khi thay đổi kích thước tệp video!', //không sử dụng
     StringConstants.error_when_delete_file:
@@ -595,6 +599,10 @@ class MultiLanguage {
         "An error occur. Please check your connection!",
     StringConstants.common_error_message:
         "An error occur, please try again later!",
+    StringConstants.http_client_exception_error_message:
+        "An error occur, client exception error, please try again later!",
+    StringConstants.timeout_exception_error_message:
+        "An error occur, timeout exception error, please try again later!",
     StringConstants.error_when_resize_file:
         'An error occurred while resizing the video file!',
     StringConstants.error_when_delete_file:
