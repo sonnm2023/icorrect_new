@@ -38,7 +38,7 @@ class DownloadAgainWidget extends StatelessWidget {
               child: Center(
                 child: Text(
                   Utils.multiLanguage(
-                      StringConstants.data_downloaded_error_message),
+                      StringConstants.data_downloaded_error_message)!,
                   textAlign: TextAlign.center,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
@@ -63,7 +63,8 @@ class DownloadAgainWidget extends StatelessWidget {
                 height: 60,
                 child: Center(
                   child: Text(
-                    Utils.multiLanguage(StringConstants.try_again_button_title),
+                    Utils.multiLanguage(
+                        StringConstants.try_again_button_title)!,
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
                       color: AppColor.defaultPurpleColor,

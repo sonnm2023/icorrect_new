@@ -170,9 +170,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
               !homeworkProvider.isProcessing) {
             homeworkProvider.updateFilterString(
-                Utils.multiLanguage(StringConstants.default_filter_title));
+                Utils.multiLanguage(StringConstants.default_filter_title)!);
             return NoDataWidget(
-              msg: Utils.multiLanguage(StringConstants.no_data_filter_message),
+              msg: Utils.multiLanguage(StringConstants.no_data_filter_message)!,
               reloadCallBack: _reloadCallBack,
             );
           }
@@ -442,9 +442,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.activity_is_loaded_message),
+              Utils.multiLanguage(StringConstants.activity_is_loaded_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
@@ -481,7 +481,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                   testOption: null,
                   topicsId: null,
                   isPredict: null,
-                  data: null,
+                  testDetail: null,
                   onRefresh: null,
                 ),
               ),

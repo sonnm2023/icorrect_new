@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
       if (result == ConnectivityResult.none) {
         //Show toast for disconnected
         showToastMsg(
-          msg: Utils.multiLanguage(StringConstants.network_error_message),
+          msg: Utils.multiLanguage(StringConstants.network_error_message)!,
           toastState: ToastStatesType.warning,
           isCenter: false,
         );

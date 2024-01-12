@@ -107,7 +107,7 @@ class _OtherTabState extends State<OtherTab>
         } else {
           return EmptyWidget.init().buildNothingWidget(
             context,
-            Utils.multiLanguage(StringConstants.no_data_message),
+            Utils.multiLanguage(StringConstants.no_data_message)!,
             widthSize: CustomSize.size_100,
             heightSize: CustomSize.size_100,
           );

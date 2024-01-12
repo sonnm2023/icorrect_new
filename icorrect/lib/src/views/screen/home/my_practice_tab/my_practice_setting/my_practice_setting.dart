@@ -7,12 +7,14 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
+import 'package:icorrect/src/presenters/my_practice_setting_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
-import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/setting_tab.dart';
 import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/topic_list_tab.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -33,18 +35,23 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     with
         AutomaticKeepAliveClientMixin<MyPracticeSettingScreen>,
         SingleTickerProviderStateMixin
-    implements ActionAlertListener {
+    implements ActionAlertListener, MyPracticeSettingViewContract {
   // late TabController _tabController;
 
+  MyPracticeSettingPresenter? _myPracticeSettingPresenter;
   MyPracticeListProvider? _practiceListProvider;
   bool isCheckingData = false;
+  CircleLoading? _loading;
 
   @override
   void initState() {
     super.initState();
     // _tabController = TabController(vsync: this, length: 2);
+
+    _myPracticeSettingPresenter = MyPracticeSettingPresenter(this);
     _practiceListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
+    _loading = CircleLoading();
   }
 
   @override
@@ -58,110 +65,128 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     super.build(context);
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.0,
-          iconTheme: const IconThemeData(
-            color: AppColor.defaultPurpleColor,
-          ),
-          centerTitle: true,
-          leading: BackButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(
-            widget.selectedBank.title!,
-            style: CustomTextStyle.textWithCustomInfo(
-              context: context,
-              color: AppColor.defaultPurpleColor,
-              fontsSize: FontsSize.fontSize_18,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(CustomSize.size_50),
-            child: Container(
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: AppColor.defaultPurpleColor,
-                  ),
-                ),
-              ),
-              child: TabBar(
-                // controller: _tabController,
-                physics: const BouncingScrollPhysics(),
-                isScrollable: false,
-                indicator: const UnderlineTabIndicator(
-                  borderSide: BorderSide(
-                    width: 3.0,
-                    color: AppColor.defaultPurpleColor,
-                  ),
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: AppColor.defaultPurpleColor,
-                labelStyle: const TextStyle(
-                  fontSize: FontsSize.fontSize_16,
-                  fontWeight: FontWeight.bold,
-                ),
-                unselectedLabelColor: AppColor.defaultBlackColor,
-                tabs: _tabsLabel(),
-              ),
-            ),
-          ),
-          backgroundColor: AppColor.defaultWhiteColor,
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: TabBarView(
-                children: [
-                  TopicListTabScreen(
-                    selectedBank: widget.selectedBank,
-                  ),
-                  const SettingTabScreen(),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                if (_practiceListProvider!.settings.isEmpty) {
-                  _practiceListProvider!.initSettings();
-                }
+    if (kDebugMode) {
+      print("DEBUG: MyPracticeSettingScreen - build");
+    }
 
-                if (isCheckingData == false) {
-                  bool isValidData = _checkSettings();
-                  if (isValidData) {
-                    _prepareData();
-                  }
-                }
-              },
-              child: Container(
-                width: screenWidth,
-                height: 50,
-                decoration: const BoxDecoration(
+    return Stack(
+      children: [
+        DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              elevation: 0.0,
+              iconTheme: const IconThemeData(
+                color: AppColor.defaultPurpleColor,
+              ),
+              centerTitle: true,
+              leading: BackButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: Text(
+                widget.selectedBank.title!,
+                style: CustomTextStyle.textWithCustomInfo(
+                  context: context,
                   color: AppColor.defaultPurpleColor,
+                  fontsSize: FontsSize.fontSize_18,
+                  fontWeight: FontWeight.w800,
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  Utils.multiLanguage(StringConstants.start_to_pratice),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: FontsSize.fontSize_16,
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(CustomSize.size_50),
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: AppColor.defaultPurpleColor,
+                      ),
+                    ),
+                  ),
+                  child: TabBar(
+                    // controller: _tabController,
+                    physics: const BouncingScrollPhysics(),
+                    isScrollable: false,
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(
+                        width: 3.0,
+                        color: AppColor.defaultPurpleColor,
+                      ),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: AppColor.defaultPurpleColor,
+                    labelStyle: const TextStyle(
+                      fontSize: FontsSize.fontSize_16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelColor: AppColor.defaultBlackColor,
+                    tabs: _tabsLabel(),
                   ),
                 ),
               ),
+              backgroundColor: AppColor.defaultWhiteColor,
             ),
-          ],
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      TopicListTabScreen(
+                        selectedBank: widget.selectedBank,
+                      ),
+                      const SettingTabScreen(),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (_practiceListProvider!.settings.isEmpty) {
+                      _practiceListProvider!.initSettings();
+                    }
+
+                    if (isCheckingData == false) {
+                      bool isValidData = _checkSettings();
+                      if (isValidData) {
+                        _prepareData();
+                      }
+                    }
+                  },
+                  child: Container(
+                    width: screenWidth,
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      color: AppColor.defaultPurpleColor,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      Utils.multiLanguage(StringConstants.start_to_pratice)!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: FontsSize.fontSize_16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        Consumer<MyPracticeListProvider>(
+          builder: (context, provider, child) {
+            if (provider.isTestDetailLoading) {
+              _loading!.show(context: context, isViewAIResponse: false);
+            } else {
+              _loading!.hide();
+            }
+            return const SizedBox();
+          },
+        ),
+      ],
     );
   }
 
@@ -169,12 +194,12 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     return [
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.topic_tab_title),
+          Utils.multiLanguage(StringConstants.topic_tab_title)!,
         ),
       ),
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.practice_setting),
+          Utils.multiLanguage(StringConstants.practice_setting)!,
         ),
       ),
     ];
@@ -187,7 +212,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       isCheckingData = true;
       showToastMsg(
         msg: Utils.multiLanguage(
-            StringConstants.my_practice_selected_topic_error_message),
+            StringConstants.my_practice_selected_topic_error_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -202,7 +227,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     if (settingNumberOfTopics == 0) {
       showToastMsg(
         msg: Utils.multiLanguage(
-            StringConstants.my_practice_setting_number_topic_error_message),
+            StringConstants.my_practice_setting_number_topic_error_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -216,7 +241,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     if (numberQuestionPart1 == 0 && numberQuestionPart2 == 0) {
       showToastMsg(
         msg: Utils.multiLanguage(
-            StringConstants.my_practice_setting_number_question_error_message),
+            StringConstants.my_practice_setting_number_question_error_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -228,7 +253,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     if (takeNoteTime == 0) {
       showToastMsg(
         msg: Utils.multiLanguage(
-            StringConstants.my_practice_setting_take_note_time_error_message),
+            StringConstants.my_practice_setting_take_note_time_error_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -273,27 +298,27 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
           }
         }
       }
-
-      Map<String, dynamic> data = {};
-      data["bank_code"] = bank_code;
-      data["amount_topics"] = amount_topics;
-      data["amount_questions_part1"] = amount_questions_part1;
-      data["amount_questions_part2"] = amount_questions_part2;
-      data["take_note_time"] = take_note_time;
-      data["normal_speed"] = normal_speed;
-      data["first_repeat_speed"] = first_repeat_speed;
-      data["second_repeat_speed"] = second_repeat_speed;
-      data["topics"] = topics;
-      data["sub_topics"] = subTopics;
-
-      if (kDebugMode) {
-        print("DEBUG: _prepareData");
-      }
-      _onClickStartToPractice(data);
     }
+
+    Map<String, dynamic> data = {};
+    data["bank_code"] = bank_code;
+    data["amount_topics"] = amount_topics;
+    data["amount_questions_part1"] = amount_questions_part1;
+    data["amount_questions_part2"] = amount_questions_part2;
+    data["take_note_time"] = take_note_time;
+    data["normal_speed"] = normal_speed;
+    data["first_repeat_speed"] = first_repeat_speed;
+    data["second_repeat_speed"] = second_repeat_speed;
+    data["topics"] = topics;
+    data["sub_topics"] = subTopics;
+
+    _onClickStartToPractice(data);
   }
 
   Future _onClickStartToPractice(Map<String, dynamic> data) async {
+    if (kDebugMode) {
+      print("DEBUG: _onClickStartToPractice");
+    }
     _requestMicroPermission(data);
   }
 
@@ -317,7 +342,8 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         }
       } else {
         _practiceListProvider!.resetPermissionDeniedTime();
-        _goToTestScreen(data);
+        _getTestDetail(data);
+        // _goToTestScreen(data); //TODO
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -344,9 +370,15 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     }
   }
 
-  Future<void> _goToTestScreen(Map<String, dynamic> data) async {
+  void _getTestDetail(Map<String, dynamic> data) {
+    _practiceListProvider!.setIsTestDetailLoading(true);
+    _myPracticeSettingPresenter!
+        .getTestDetailFromMyPractice(context: context, data: data);
+  }
+
+  Future<void> _goToTestScreen(TestDetailModel testDetail) async {
     if (kDebugMode) {
-      print("DEBUG: _goToTestScreen $data");
+      print("DEBUG: _goToTestScreen $testDetail");
     }
 
     Navigator.pushReplacement(
@@ -357,7 +389,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
           testOption: null,
           topicsId: null,
           isPredict: null,
-          data: data,
+          testDetail: testDetail,
           onRefresh: widget.onRefresh,
         ),
       ),
@@ -365,11 +397,37 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  void onGetTestDetailError(String message) {
+    _practiceListProvider!.setIsTestDetailLoading(false);
+    if (kDebugMode) {
+      print("DEBUG: onGetTestDetailError");
+    }
+
+    if (null != _loading) {
+      _loading!.hide();
+    }
+
+    String? msg = Utils.multiLanguage(message);
+
+    showToastMsg(
+      msg: msg ??= message,
+      toastState: ToastStatesType.error,
+      isCenter: true,
+    );
+  }
+
+  @override
+  void onGetTestDetailSuccess(TestDetailModel testDetail) {
+    _practiceListProvider!.setIsTestDetailLoading(false);
+    _goToTestScreen(testDetail);
+  }
 
   @override
   void onAlertExit(String keyInfo) {}
 
   @override
   void onAlertNextStep(String keyInfo) {}
+
+  @override
+  bool get wantKeepAlive => true;
 }

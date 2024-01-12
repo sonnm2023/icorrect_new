@@ -39,7 +39,7 @@ class DownloadProgressingWidget extends StatelessWidget {
           }),
           const SizedBox(height: 8),
           Text(
-            Utils.multiLanguage(StringConstants.downloading),
+            Utils.multiLanguage(StringConstants.downloading)!,
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultBlackColor,

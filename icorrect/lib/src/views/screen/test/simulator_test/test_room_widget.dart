@@ -949,14 +949,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           context: context,
           builder: (BuildContext context) {
             return ConfirmDialogWidget(
-              title: Utils.multiLanguage(StringConstants.dialog_title),
+              title: Utils.multiLanguage(StringConstants.dialog_title)!,
               message: Utils.multiLanguage(
                 StringConstants.confirm_reanswer_when_reviewing_message,
-              ),
+              )!,
               cancelButtonTitle:
-                  Utils.multiLanguage(StringConstants.cancel_button_title),
+                  Utils.multiLanguage(StringConstants.cancel_button_title)!,
               okButtonTitle:
-                  Utils.multiLanguage(StringConstants.ok_button_title),
+                  Utils.multiLanguage(StringConstants.ok_button_title)!,
               cancelButtonTapped: _cancelButtonTapped,
               okButtonTapped: () {
                 //TODO: Pause reviewing process
@@ -996,7 +996,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void _showWaitUntilTheExamFinishedDialog() {
     showToastMsg(
       msg: Utils.multiLanguage(
-          StringConstants.wait_until_the_exam_finished_message),
+          StringConstants.wait_until_the_exam_finished_message)!,
       toastState: ToastStatesType.warning,
       isCenter: true,
     );
@@ -1183,7 +1183,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Comment for spin 1
       // _startReviewing();
       showToastMsg(
-        msg: Utils.multiLanguage(StringConstants.feature_not_available_message),
+        msg:
+            Utils.multiLanguage(StringConstants.feature_not_available_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -1965,7 +1966,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       Fluttertoast.showToast(
         msg: Utils.multiLanguage(
           StringConstants.answer_must_be_greater_than_2_seconds_message,
-        ),
+        )!,
         backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         gravity: ToastGravity.CENTER,
@@ -2160,7 +2161,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description: msg,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
@@ -2214,9 +2215,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: Utils.multiLanguage(StringConstants.dialog_title),
+                  title: Utils.multiLanguage(StringConstants.dialog_title)!,
                   description: Utils.multiLanguage(
-                      StringConstants.confirm_save_the_test_message),
+                      StringConstants.confirm_save_the_test_message)!,
                   okButtonTitle:
                       Utils.multiLanguage(StringConstants.save_button_title),
                   cancelButtonTitle: Utils.multiLanguage(
@@ -2242,9 +2243,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               context: context,
               builder: (BuildContext context) {
                 return CustomAlertDialog(
-                  title: Utils.multiLanguage(StringConstants.confirm_title),
+                  title: Utils.multiLanguage(StringConstants.confirm_title)!,
                   description: Utils.multiLanguage(
-                      StringConstants.confirm_save_change_answers_message),
+                      StringConstants.confirm_save_change_answers_message)!,
                   okButtonTitle:
                       Utils.multiLanguage(StringConstants.save_button_title),
                   cancelButtonTitle:

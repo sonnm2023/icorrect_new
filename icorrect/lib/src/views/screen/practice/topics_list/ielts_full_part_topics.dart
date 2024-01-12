@@ -1,15 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/provider/ielts_topics_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../../core/app_color.dart';
-import '../../../../data_sources/constants.dart';
-import '../../../../data_sources/utils.dart';
-import '../../../../provider/ielts_topics_provider.dart';
 import 'ielts_each_part_topics.dart';
 
 class IELTSFullPartTopics extends StatefulWidget {
-  IELTSFullPartTopics({super.key});
+  const IELTSFullPartTopics({super.key});
 
   @override
   State<IELTSFullPartTopics> createState() => _IELTSFullPartTopicsState();
@@ -72,7 +70,7 @@ class _IELTSFullPartTopicsState extends State<IELTSFullPartTopics> {
       Tab(
         height: 40,
         child: Text(
-          Utils.multiLanguage(StringConstants.practice_card_part_1_title),
+          Utils.multiLanguage(StringConstants.practice_card_part_1_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,
@@ -84,7 +82,7 @@ class _IELTSFullPartTopicsState extends State<IELTSFullPartTopics> {
       Tab(
         height: 40,
         child: Text(
-          Utils.multiLanguage(StringConstants.practice_card_part_2_3_title),
+          Utils.multiLanguage(StringConstants.practice_card_part_2_3_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,

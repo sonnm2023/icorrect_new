@@ -49,7 +49,7 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                   Flexible(
                     child: Text(
                       Utils.multiLanguage(
-                          _practiceListProvider!.settings[index].title),
+                          _practiceListProvider!.settings[index].title)!,
                     ),
                   ),
                   Row(

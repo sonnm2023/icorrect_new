@@ -38,7 +38,7 @@ class _CueCardWidgetState extends State<CueCardWidget> {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                Utils.multiLanguage(StringConstants.cue_card),
+                Utils.multiLanguage(StringConstants.cue_card)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,

@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/video_authentication_persenter.dart';
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/provider/video_authentication_provider.dart';
@@ -20,8 +21,6 @@ import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
 import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';
 import 'package:provider/provider.dart';
-
-import '../../../data_sources/utils.dart';
 
 class VideoAuthenticationRecord extends StatefulWidget {
   UserAuthDetailProvider userAuthDetailProvider;
@@ -242,7 +241,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                   Text(
                                     Utils.multiLanguage(
                                       StringConstants.sampleTextTitle,
-                                    ),
+                                    )!,
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultAppColor,
@@ -253,7 +252,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                   Text(
                                     Utils.multiLanguage(
                                       StringConstants.sampleTextContent,
-                                    ),
+                                    )!,
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultAppColor,
@@ -290,7 +289,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
                                 msg: Utils.multiLanguage(
                                   StringConstants
                                       .video_record_duration_less_than_15s,
-                                ),
+                                )!,
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 5,
@@ -354,12 +353,12 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         return WillPopScope(
           child: ConfirmDialogWidget(
             title:
-                Utils.multiLanguage(StringConstants.confirm_exit_screen_title),
-            message: Utils.multiLanguage(StringConstants.confirm_exit_content),
+                Utils.multiLanguage(StringConstants.confirm_exit_screen_title)!,
+            message: Utils.multiLanguage(StringConstants.confirm_exit_content)!,
             cancelButtonTitle:
-                Utils.multiLanguage(StringConstants.exit_button_title),
+                Utils.multiLanguage(StringConstants.exit_button_title)!,
             okButtonTitle:
-                Utils.multiLanguage(StringConstants.later_button_title),
+                Utils.multiLanguage(StringConstants.later_button_title)!,
             dimissButtonTapped: () {
               _continueRecodingVideo();
             },
@@ -392,16 +391,16 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
         return ConfirmDialogWidget(
           title: Utils.multiLanguage(
             StringConstants.confirm_exit_screen_title,
-          ),
+          )!,
           message: Utils.multiLanguage(
             StringConstants.confirm_submit_before_out_screen,
-          ),
+          )!,
           cancelButtonTitle: Utils.multiLanguage(
             StringConstants.exit_button_title,
-          ),
+          )!,
           okButtonTitle: Utils.multiLanguage(
             StringConstants.submit_button_title,
-          ),
+          )!,
           cancelButtonTapped: () async {
             await _videoAuthProvider!.savedFile.delete().then(
               (value) {

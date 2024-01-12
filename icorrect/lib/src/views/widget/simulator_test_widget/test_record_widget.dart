@@ -48,7 +48,7 @@ class TestRecordWidget extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(Utils.multiLanguage(
                       StringConstants.answer_being_recorded,
-                    )),
+                    )!),
                     const SizedBox(height: 20),
                     Image.asset(
                       'assets/images/ic_record_2.png',
@@ -172,7 +172,7 @@ class TestRecordWidget extends StatelessWidget {
         child: Text(
           Utils.multiLanguage(
             StringConstants.finish_button_title,
-          ),
+          )!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,
@@ -223,7 +223,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          Utils.multiLanguage(StringConstants.repeat_button_title),
+          Utils.multiLanguage(StringConstants.repeat_button_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,
@@ -252,7 +252,7 @@ class TestRecordWidget extends StatelessWidget {
         child: Text(
           Utils.multiLanguage(
             StringConstants.cancel_button_title,
-          ),
+          )!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,

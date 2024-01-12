@@ -39,7 +39,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          Utils.multiLanguage(StringConstants.practice_screen_title),
+          Utils.multiLanguage(StringConstants.practice_screen_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -69,41 +69,41 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 _buildInPracticeCard(
                   context,
                   title: Utils.multiLanguage(
-                      StringConstants.practice_card_part_1_title),
+                      StringConstants.practice_card_part_1_title)!,
                   des: Utils.multiLanguage(
-                      StringConstants.practice_card_part_1_description),
+                      StringConstants.practice_card_part_1_description)!,
                   topicTypes: IELTSTopicType.part1.get,
                 ),
                 _buildInPracticeCard(
                   context,
                   title: Utils.multiLanguage(
-                      StringConstants.practice_card_part_2_title),
+                      StringConstants.practice_card_part_2_title)!,
                   des: Utils.multiLanguage(
-                      StringConstants.practice_card_part_2_description),
+                      StringConstants.practice_card_part_2_description)!,
                   topicTypes: IELTSTopicType.part2.get,
                 ),
                 _buildInPracticeCard(
                   context,
                   title: Utils.multiLanguage(
-                      StringConstants.practice_card_part_3_title),
+                      StringConstants.practice_card_part_3_title)!,
                   des: Utils.multiLanguage(
-                      StringConstants.practice_card_part_3_description),
+                      StringConstants.practice_card_part_3_description)!,
                   topicTypes: IELTSTopicType.part3.get,
                 ),
                 _buildInPracticeCard(
                   context,
                   title: Utils.multiLanguage(
-                      StringConstants.practice_card_part_2_3_title),
+                      StringConstants.practice_card_part_2_3_title)!,
                   des: Utils.multiLanguage(
-                      StringConstants.practice_card_part_2_3_description),
+                      StringConstants.practice_card_part_2_3_description)!,
                   topicTypes: IELTSTopicType.part2and3.get,
                 ),
                 _buildInPracticeCard(
                   context,
                   title: Utils.multiLanguage(
-                      StringConstants.practice_card_full_test_title),
+                      StringConstants.practice_card_full_test_title)!,
                   des: Utils.multiLanguage(
-                      StringConstants.practice_card_full_test_description),
+                      StringConstants.practice_card_full_test_description)!,
                   topicTypes: IELTSTopicType.full.get,
                 ),
               ],

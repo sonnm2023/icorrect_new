@@ -53,7 +53,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
         child: Text(
           Utils.multiLanguage(
             StringConstants.no_answer_please_start_your_test_message,
-          ),
+          )!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultBlackColor,
@@ -85,7 +85,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                             child: Text(
                               Utils.multiLanguage(
                                 StringConstants.part_1_header,
-                              ),
+                              )!,
                               textAlign: TextAlign.center,
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
@@ -125,7 +125,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                             child: Text(
                               Utils.multiLanguage(
                                 StringConstants.part_2_header,
-                              ),
+                              )!,
                               textAlign: TextAlign.center,
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
@@ -165,7 +165,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                             child: Text(
                               Utils.multiLanguage(
                                 StringConstants.part_3_header,
-                              ),
+                              )!,
                               textAlign: TextAlign.center,
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
@@ -218,7 +218,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
       hasCueCard = true;
       questionStr = Utils.multiLanguage(
         StringConstants.answer_of_part_2,
-      );
+      )!;
     }
 
     SimulatorTestProvider prepareSimulatorTestProvider =
@@ -324,7 +324,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                             child: Text(
                               Utils.multiLanguage(
                                 StringConstants.re_answer_button_title,
-                              ),
+                              )!,
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
                                 color: AppColor.defaultPurpleColor,
@@ -347,7 +347,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                                 child: Text(
                                   Utils.multiLanguage(
                                     StringConstants.view_tips_button_title,
-                                  ),
+                                  )!,
                                   style: CustomTextStyle.textWithCustomInfo(
                                     context: context,
                                     color: AppColor.defaultPurpleColor,
@@ -398,7 +398,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
       showToastMsg(
         msg: Utils.multiLanguage(
           StringConstants.wait_until_the_exam_finished_message,
-        ),
+        )!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );

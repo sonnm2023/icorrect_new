@@ -39,7 +39,7 @@ class SimulatorTestScreen extends StatefulWidget {
     required this.testOption,
     required this.topicsId,
     required this.isPredict,
-    required this.data,
+    required this.testDetail,
     required this.onRefresh,
   });
 
@@ -47,7 +47,8 @@ class SimulatorTestScreen extends StatefulWidget {
   final int? testOption; //From Practice screen
   final List<int>? topicsId; //From Practice screen
   final int? isPredict; //From Practice screen
-  final Map<String, dynamic>? data; //From MyPractice
+  // final Map<String, dynamic>? data; //From MyPractice
+  final TestDetailModel? testDetail; //From MyPractice
   final Function? onRefresh; //For refresh My practice list if needed
 
   @override
@@ -84,7 +85,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return [
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.my_exam_tab_title),
+          Utils.multiLanguage(StringConstants.my_exam_tab_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -95,7 +96,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.highlight_tab_title),
+          Utils.multiLanguage(StringConstants.highlight_tab_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -106,7 +107,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       ),
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.others_tab_title),
+          Utils.multiLanguage(StringConstants.others_tab_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -365,9 +366,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           context: context,
           builder: (BuildContext buildContext) {
             return CustomAlertDialog(
-              title: Utils.multiLanguage(StringConstants.dialog_title),
+              title: Utils.multiLanguage(StringConstants.dialog_title)!,
               description: Utils.multiLanguage(
-                  StringConstants.confirm_save_change_answers_message_1),
+                  StringConstants.confirm_save_change_answers_message_1)!,
               okButtonTitle:
                   Utils.multiLanguage(StringConstants.save_button_title),
               cancelButtonTitle:
@@ -478,7 +479,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   void _callToRefesh() {
-    if (widget.data != null) {
+    if (widget.testDetail != null) {
       if (widget.onRefresh != null) {
         widget.onRefresh!();
       }
@@ -492,9 +493,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext buildContext) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.quit_the_test_message),
+              Utils.multiLanguage(StringConstants.quit_the_test_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),
@@ -531,9 +532,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext buildContext) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description: Utils.multiLanguage(
-              StringConstants.confirm_before_quit_the_test_message),
+              StringConstants.confirm_before_quit_the_test_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.exit_button_title),
@@ -645,7 +646,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           if (false == value) {
             showToastMsg(
               msg: Utils.multiLanguage(
-                  StringConstants.can_not_delete_files_message),
+                  StringConstants.can_not_delete_files_message)!,
               toastState: ToastStatesType.warning,
               isCenter: true,
             );
@@ -739,12 +740,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             context: context,
             activityId: widget.activitiesModel!.activityId.toString(),
           );
-        } else if (widget.data != null) {
+        } else if (widget.testDetail != null) {
           //From my practice screen
-          _simulatorTestPresenter!.getTestDetailFromMyPractice(
-            context: context,
-            data: widget.data!,
-          );
+          // _simulatorTestPresenter!.getTestDetailFromMyPractice(
+          //   context: context,
+          //   data: widget.data!,
+          // );
+          onGetTestDetailSuccess(widget.testDetail!);
         } else {
           //From practice screen
           _simulatorTestPresenter!.getTestDetailFromPractice(
@@ -779,9 +781,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.network_error_message),
+              Utils.multiLanguage(StringConstants.network_error_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
@@ -846,19 +848,19 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onGetTestDetailSuccess(TestDetailModel testDetai) {
+  void onGetTestDetailSuccess(TestDetailModel testDetail) {
     if (kDebugMode) {
       print("DEBUG: onGetTestDetailSuccess");
     }
-    _simulatorTestProvider!.setCurrentTestDetail(testDetai);
+    _simulatorTestProvider!.setCurrentTestDetail(testDetail);
     _simulatorTestProvider!.setDownloadProgressingStatus(true);
-
+    _simulatorTestPresenter!.testDetail = testDetail;
     _simulatorTestPresenter!.prepareDataForDownload(
       context: context,
       activityId: widget.activitiesModel != null
           ? widget.activitiesModel!.activityId.toString()
           : null,
-      testDetail: testDetai,
+      testDetail: testDetail,
     );
   }
 
@@ -867,12 +869,20 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (kDebugMode) {
       print("DEBUG: onGetTestDetailError");
     }
-    //Show error message
+
+    if (null != _loading) {
+      _loading!.hide();
+    }
+
+    String? msg = Utils.multiLanguage(message);
+
     showToastMsg(
-      msg: Utils.multiLanguage(message),
+      msg: msg ??= message,
       toastState: ToastStatesType.error,
       isCenter: true,
     );
+
+    Navigator.of(context).pop();
   }
 
   @override

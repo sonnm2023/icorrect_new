@@ -154,7 +154,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         ? [
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.my_exam_tab_title),
+                Utils.multiLanguage(StringConstants.my_exam_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -165,7 +165,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.response_tab_title),
+                Utils.multiLanguage(StringConstants.response_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -176,7 +176,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.highlight_tab_title),
+                Utils.multiLanguage(StringConstants.highlight_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -187,7 +187,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.others_tab_title),
+                Utils.multiLanguage(StringConstants.others_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -200,7 +200,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
         : [
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.my_exam_tab_title),
+                Utils.multiLanguage(StringConstants.my_exam_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -211,7 +211,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.highlight_tab_title),
+                Utils.multiLanguage(StringConstants.highlight_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -222,7 +222,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
             ),
             Tab(
               child: Text(
-                Utils.multiLanguage(StringConstants.others_tab_title),
+                Utils.multiLanguage(StringConstants.others_tab_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -275,12 +275,13 @@ class _MyTestScreenState extends State<MyTestScreen> {
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: Utils.multiLanguage(StringConstants.confirm_to_go_out_screen),
+          title: Utils.multiLanguage(StringConstants.confirm_to_go_out_screen)!,
           message: Utils.multiLanguage(
-              StringConstants.re_answer_not_be_save_message),
+              StringConstants.re_answer_not_be_save_message)!,
           cancelButtonTitle:
-              Utils.multiLanguage(StringConstants.cancel_button_title),
-          okButtonTitle: Utils.multiLanguage(StringConstants.back_button_title),
+              Utils.multiLanguage(StringConstants.cancel_button_title)!,
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.back_button_title)!,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             deleteFileAnswers(provider.reAnswerOfQuestions);
