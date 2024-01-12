@@ -42,8 +42,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     with AutomaticKeepAliveClientMixin
     implements HomeWorkViewContract {
   HomeWorkPresenter? _homeWorkPresenter;
-  late HomeWorkProvider _homeWorkProvider;
-  late AuthProvider _authProvider;
+  HomeWorkProvider? _homeWorkProvider;
+  AuthProvider? _authProvider;
   SimulatorTestProvider? _simulatorTestProvider;
 
   List<Widget> _tabsLabel() {
@@ -84,26 +84,26 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   void _getListHomeWork() async {
     //Reset old data
-    _homeWorkProvider.updateFilterString(
+    _homeWorkProvider!.updateFilterString(
         Utils.multiLanguage(StringConstants.add_your_filter));
-    _homeWorkProvider.resetListSelectedClassFilter();
-    _homeWorkProvider.resetListSelectedStatusFilter();
-    _homeWorkProvider.resetListSelectedFilterIntoLocal();
-    _homeWorkProvider.resetListHomeworks();
-    _homeWorkProvider.resetListClassForFilter();
-    _homeWorkProvider.resetListFilteredHomeWorks();
+    _homeWorkProvider!.resetListSelectedClassFilter();
+    _homeWorkProvider!.resetListSelectedStatusFilter();
+    _homeWorkProvider!.resetListSelectedFilterIntoLocal();
+    _homeWorkProvider!.resetListHomeworks();
+    _homeWorkProvider!.resetListClassForFilter();
+    _homeWorkProvider!.resetListFilteredHomeWorks();
 
     _homeWorkPresenter!.getListHomeWork(context);
 
     Future.delayed(Duration.zero, () {
-      _authProvider
+      _authProvider!
           .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
     });
   }
 
   @override
   void dispose() {
-    _authProvider.resetPermissionDeniedTime();
+    _authProvider!.resetPermissionDeniedTime();
     super.dispose();
   }
 
@@ -113,7 +113,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     return WillPopScope(
       onWillPop: () async {
-        _onBackButtonTapped();
+        _backButtonTapped();
         return false;
       },
       child: MaterialApp(
@@ -190,7 +190,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               backgroundColor: AppColor.defaultWhiteColor,
             ),
             body: _buildBody(),
-            drawer: _buildDrawer(),
+            drawer: _buildMenu(),
             drawerEnableOpenDragGesture: false,
           ),
         ),
@@ -202,7 +202,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     return TabBarView(
       children: [
         MyHomeWorkTab(
-          homeWorkProvider: _homeWorkProvider,
+          homeWorkProvider: _homeWorkProvider!,
           homeWorkPresenter: _homeWorkPresenter!,
           pullToRefreshCallBack: _pullToRefresh,
         ),
@@ -211,7 +211,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  Widget _buildDrawer() {
+  Widget _buildMenu() {
     return Drawer(
       child: ListView(
         children: [
@@ -453,10 +453,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  Future _onBackButtonTapped() async {
-    if (_authProvider.isShowDialog) {
-      GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
-      _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
+  Future _backButtonTapped() async {
+    if (_authProvider!.isShowDialog) {
+      GlobalKey<ScaffoldState> key = _authProvider!.globalScaffoldKey;
+      _authProvider!.setShowDialogWithGlobalScaffoldKey(false, key);
 
       Navigator.of(key.currentState!.context).pop();
     } else if (_isShowConfirmDuringTest()) {
@@ -465,7 +465,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       _simulatorTestProvider!.setShowConfirmSaveTest(true);
       setState(() {});
     } else {
-      GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
+      GlobalKey<ScaffoldState> key = _authProvider!.scaffoldKeys.first;
       if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {
         _showQuitAppConfirmDialog();
       } else {
@@ -474,7 +474,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         } else {
           Navigator.of(key.currentState!.context).pop();
         }
-        _authProvider.scaffoldKeys.removeFirst();
+        _authProvider!.scaffoldKeys.removeFirst();
       }
     }
   }
@@ -569,7 +569,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onGetListHomeworkError(String message) {
-    _homeWorkProvider.setProcessingStatus(processing: false);
+    _homeWorkProvider!.setProcessingStatus(processing: false);
 
     //Show error message
     showToastMsg(
@@ -581,7 +581,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onLogoutSuccess() {
-    _homeWorkProvider.setProcessingStatus(processing: false);
+    _homeWorkProvider!.setProcessingStatus(processing: false);
 
     //Send log
     Utils.sendLog();
@@ -596,7 +596,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onLogoutError(String message) {
-    _homeWorkProvider.setProcessingStatus(processing: false);
+    _homeWorkProvider!.setProcessingStatus(processing: false);
 
     //Show error message
     showToastMsg(
@@ -608,17 +608,17 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
-    _homeWorkProvider.setCurrentUser(userDataModel);
-    _homeWorkProvider.setProcessingStatus(processing: true);
+    _homeWorkProvider!.setCurrentUser(userDataModel);
+    _homeWorkProvider!.setProcessingStatus(processing: true);
   }
 
   @override
   void onGetListHomeworkSuccess(List<ActivitiesModel> activities,
       List<NewClassModel> classes, String serverCurrentTime) async {
-    _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
-    await _homeWorkProvider.setListClassForFilter(classes);
-    await _homeWorkProvider.setListHomeWorks(activities);
-    await _homeWorkProvider.initializeListFilter(context);
+    _homeWorkProvider!.setServerCurrentTime(serverCurrentTime);
+    await _homeWorkProvider!.setListClassForFilter(classes);
+    await _homeWorkProvider!.setListHomeWorks(activities);
+    await _homeWorkProvider!.initializeListFilter(context);
   }
 
   @override

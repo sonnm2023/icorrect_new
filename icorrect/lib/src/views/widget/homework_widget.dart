@@ -6,14 +6,15 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/provider/homework_provider.dart';
 
 class HomeWorkWidget extends StatelessWidget {
-  const HomeWorkWidget(
-      {super.key,
-      required this.homeWorkModel,
-      required this.callBack,
-      required this.homeWorkProvider});
+  const HomeWorkWidget({
+    super.key,
+    required this.activity,
+    required this.activityTapped,
+    required this.homeWorkProvider,
+  });
 
-  final ActivitiesModel homeWorkModel;
-  final Function callBack;
+  final ActivitiesModel activity;
+  final Function activityTapped;
   final HomeWorkProvider homeWorkProvider;
 
   @override
@@ -21,7 +22,6 @@ class HomeWorkWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: CustomSize.size_10,
-        // vertical: CustomSize.size_5,
       ),
       child: Card(
         elevation: 0,
@@ -36,7 +36,7 @@ class HomeWorkWidget extends StatelessWidget {
               )),
           child: ListTile(
             onTap: () {
-              callBack(homeWorkModel);
+              activityTapped(activity);
             },
             contentPadding: const EdgeInsets.symmetric(
               horizontal: CustomSize.size_10,
@@ -68,8 +68,7 @@ class HomeWorkWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    Utils.getPartOfTestWithString(
-                        homeWorkModel.activityTestOption),
+                    Utils.getPartOfTestWithString(activity.activityTestOption),
                     style: CustomTextStyle.textWithCustomInfo(
                       context: context,
                       color: AppColor.defaultPurpleColor,
@@ -93,8 +92,8 @@ class HomeWorkWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        (homeWorkModel.activityEndTime.isNotEmpty)
-                            ? homeWorkModel.activityEndTime
+                        (activity.activityEndTime.isNotEmpty)
+                            ? activity.activityEndTime
                             : '0000-00-00 00:00',
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
@@ -111,7 +110,7 @@ class HomeWorkWidget extends StatelessWidget {
                           left: CustomSize.size_20,
                         ),
                         child: Text(
-                          _statusOfActivity(context),
+                          _getActivityStatus(context),
                           textAlign: TextAlign.right,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
@@ -136,9 +135,9 @@ class HomeWorkWidget extends StatelessWidget {
 
   Widget _activityNameWidget(context) {
     String prefix = "";
-    if (homeWorkModel.activityType == 'test') {
+    if (activity.activityType == 'test') {
       prefix = "TEST: ";
-    } else if (homeWorkModel.activityType == 'exam') {
+    } else if (activity.activityType == 'exam') {
       prefix = "EXAM: ";
     }
 
@@ -158,7 +157,7 @@ class HomeWorkWidget extends StatelessWidget {
         SizedBox(
           width: MediaQuery.of(context).size.width / 1.7,
           child: Text(
-            homeWorkModel.activityName,
+            activity.activityName,
             maxLines: 2,
             overflow: TextOverflow.clip,
             style: CustomTextStyle.textWithCustomInfo(
@@ -173,10 +172,10 @@ class HomeWorkWidget extends StatelessWidget {
     );
   }
 
-  String _statusOfActivity(BuildContext context) {
+  String _getActivityStatus(BuildContext context) {
     String status = Utils.getHomeWorkStatus(
-        homeWorkModel, homeWorkProvider.serverCurrentTime)['title'];
-    String aiStatus = Utils.haveAiResponse(homeWorkModel);
+        activity, homeWorkProvider.serverCurrentTime)['title'];
+    String aiStatus = Utils.haveAiResponse(activity);
     if (aiStatus.isNotEmpty) {
       return "${status == StringConstants.activity_status_corrected ? '${Utils.multiLanguage(status)} &' : ''}"
           "${Utils.multiLanguage(aiStatus)}";
@@ -186,12 +185,12 @@ class HomeWorkWidget extends StatelessWidget {
   }
 
   Color _getColor(BuildContext context) {
-    String aiStatus = Utils.haveAiResponse(homeWorkModel);
+    String aiStatus = Utils.haveAiResponse(activity);
     if (aiStatus.isNotEmpty) {
       return const Color.fromARGB(255, 12, 201, 110);
     } else {
       return Utils.getHomeWorkStatus(
-          homeWorkModel, homeWorkProvider.serverCurrentTime)['color'];
+          activity, homeWorkProvider.serverCurrentTime)['color'];
     }
   }
 }

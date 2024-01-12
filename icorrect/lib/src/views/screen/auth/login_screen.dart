@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen>
   CircleLoading? _loading;
   Permission? _writeFilePermission;
   PermissionStatus _writeFilePermissionStatus = PermissionStatus.denied;
-  late AuthProvider _authProvider;
+  AuthProvider? _authProvider;
 
   @override
   void initState() {
@@ -54,8 +54,8 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     //For debug
-    // emailController.text = "testbase06@testing.com";
-    // passwordController.text = "123456";
+    emailController.text = "testbase06@testing.com";
+    passwordController.text = "123456";
 
     _checkPermission();
   }
@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen>
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
-    _authProvider.resetPermissionDeniedTime();
+    _authProvider!.resetPermissionDeniedTime();
     super.dispose();
   }
 
@@ -137,8 +137,8 @@ class _LoginScreenState extends State<LoginScreen>
       onPressed: () async {
         FocusManager.instance.primaryFocus?.unfocus();
         if (_formKey.currentState!.validate() &&
-            _authProvider.isLogining == false) {
-          _authProvider.updateLoginStatus(processing: true);
+            _authProvider!.isLogining == false) {
+          _authProvider!.updateLoginStatus(processing: true);
           Utils.checkInternetConnection().then((isConnected) {
             if (isConnected) {
               //Add firebase log
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _requestPermission(
       Permission permission, BuildContext context) async {
-    _authProvider.setPermissionDeniedTime();
+    _authProvider!.setPermissionDeniedTime();
     // ignore: unused_local_variable
     final status = await permission.request();
     _listenForPermissionStatus(context);
@@ -202,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen>
       _writeFilePermissionStatus = await _writeFilePermission!.status;
 
       if (_writeFilePermissionStatus == PermissionStatus.denied) {
-        if (_authProvider.permissionDeniedTime > 2) {
+        if (_authProvider!.permissionDeniedTime > 2) {
           _showConfirmDialog();
         }
       } else if (_writeFilePermissionStatus ==
@@ -215,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _showConfirmDialog() {
-    if (false == _authProvider.dialogShowing) {
+    if (false == _authProvider!.dialogShowing) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen>
           );
         },
       );
-      _authProvider.setDialogShowing(true);
+      _authProvider!.setDialogShowing(true);
     }
   }
 
@@ -254,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen>
     String token = await Utils.getAccessToken();
 
     if (token.isNotEmpty) {
-      _authProvider.updateLoginStatus(processing: true);
+      _authProvider!.updateLoginStatus(processing: true);
 
       UserDataModel? currentUser = await Utils.getCurrentUser();
       if (null == currentUser) {
@@ -268,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen>
       Timer(
         const Duration(milliseconds: 2000),
         () async {
-          _authProvider.updateLoginStatus(processing: false);
+          _authProvider!.updateLoginStatus(processing: false);
 
           Navigator.pushReplacement(
             context,
@@ -286,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (kDebugMode) {
       print("DEBUG: Connect error here!");
     }
-    _authProvider.updateLoginStatus(processing: false);
+    _authProvider!.updateLoginStatus(processing: false);
     Utils.showConnectionErrorDialog(context);
     Utils.addConnectionErrorLog(context);
   }
@@ -345,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _finishLoginWithError(String message) {
-    _authProvider.updateLoginStatus(processing: false);
+    _authProvider!.updateLoginStatus(processing: false);
 
     if (message == StringConstants.email_or_password_wrong_message) {
       message = Utils.multiLanguage(message);
@@ -360,7 +360,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void onLoginSuccess() {
-    _authProvider.updateLoginStatus(processing: false);
+    _authProvider!.updateLoginStatus(processing: false);
 
     _resetTextFieldControllers();
 

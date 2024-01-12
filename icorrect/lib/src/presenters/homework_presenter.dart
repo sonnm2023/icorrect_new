@@ -193,15 +193,16 @@ class HomeWorkPresenter {
     _view!.onRefreshListHomework();
   }
 
-  void clickOnHomeworkItem(
-      {required BuildContext context,
-      required ActivitiesModel homework}) async {
+  void addLogWhenListActivityItemTapped({
+    required BuildContext context,
+    required ActivitiesModel activity,
+  }) async {
     //Add action log
     LogModel actionLog = await Utils.prepareToCreateLog(context,
         action: LogEvent.actionClickOnHomeworkItem);
     actionLog.addData(
         key: StringConstants.k_activity_id,
-        value: homework.activityId.toString());
+        value: activity.activityId.toString());
     Utils.addLog(actionLog, LogEvent.none);
   }
 }

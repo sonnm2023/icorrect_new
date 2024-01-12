@@ -213,8 +213,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                       },
                       itemBuilder: (c, element) {
                         return HomeWorkWidget(
-                          homeWorkModel: element,
-                          callBack: _clickOnHomeWorkItem,
+                          activity: element,
+                          activityTapped: _listActivityItemTapped,
                           homeWorkProvider: homeworkProvider,
                         );
                       },
@@ -310,14 +310,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
-  void _clickOnHomeWorkItem(ActivitiesModel homeWorkModel) async {
+  void _listActivityItemTapped(ActivitiesModel activity) async {
     widget.homeWorkPresenter
-        .clickOnHomeworkItem(context: context, homework: homeWorkModel);
+        .addLogWhenListActivityItemTapped(context: context, activity: activity);
 
-    if (homeWorkModel.activityType == "homework") {
-      _requestMicroPermission(homeWorkModel);
+    if (activity.activityType == "homework") {
+      _requestMicroPermission(activity);
     } else {
-      _requestMicroAndCameraPermissions(homeWorkModel);
+      _requestMicroAndCameraPermissions(activity);
     }
   }
 
