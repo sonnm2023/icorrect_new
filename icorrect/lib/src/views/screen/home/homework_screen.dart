@@ -50,13 +50,13 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     return [
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.my_homework_screen_title)
+          Utils.multiLanguage(StringConstants.my_homework_screen_title)!
               .toUpperCase(),
         ),
       ),
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.my_test_menu_item_title)
+          Utils.multiLanguage(StringConstants.my_test_menu_item_title)!
               .toUpperCase(),
         ),
       ),
@@ -85,7 +85,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   void _getListHomeWork() async {
     //Reset old data
     _homeWorkProvider.updateFilterString(
-        Utils.multiLanguage(StringConstants.add_your_filter));
+        Utils.multiLanguage(StringConstants.add_your_filter)!);
     _homeWorkProvider.resetListSelectedClassFilter();
     _homeWorkProvider.resetListSelectedStatusFilter();
     _homeWorkProvider.resetListSelectedFilterIntoLocal();
@@ -142,7 +142,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             key: widget.scaffoldKey,
             appBar: AppBar(
               title: Text(
-                Utils.multiLanguage(StringConstants.icorrect_title),
+                Utils.multiLanguage(StringConstants.icorrect_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,
@@ -289,7 +289,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             title: Text(
               Utils.multiLanguage(
                 StringConstants.home_menu_item_title,
-              ),
+              )!,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultGrayColor,
@@ -309,7 +309,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             title: Text(
               Utils.multiLanguage(
                 StringConstants.practice_menu_item_title,
-              ),
+              )!,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultGrayColor,
@@ -333,7 +333,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             title: Text(
               Utils.multiLanguage(
                 StringConstants.change_password_menu_item_title,
-              ),
+              )!,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultGrayColor,
@@ -357,7 +357,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             title: Text(
               Utils.multiLanguage(
                 StringConstants.video_authen_menu_item_title,
-              ),
+              )!,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultGrayColor,
@@ -381,7 +381,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             title: Text(
               Utils.multiLanguage(
                 StringConstants.multi_language,
-              ),
+              )!,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultGrayColor,
@@ -429,7 +429,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
             title: Text(
               Utils.multiLanguage(
                 StringConstants.logout_menu_item_title,
-              ),
+              )!,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultGrayColor,
@@ -507,8 +507,8 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
-          description: Utils.multiLanguage(StringConstants.exit_app_message),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: Utils.multiLanguage(StringConstants.exit_app_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),
@@ -547,9 +547,9 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.quit_the_test_message),
+              Utils.multiLanguage(StringConstants.quit_the_test_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),

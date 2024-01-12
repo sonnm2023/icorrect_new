@@ -132,10 +132,10 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       child: Wrap(
         children: [
           Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              child:
-                  Consumer<AuthProvider>(builder: (context, provider, child) {
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Consumer<AuthProvider>(
+              builder: (context, provider, child) {
                 return Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
@@ -163,40 +163,44 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                       ),
                       const SizedBox(height: 20),
                       Visibility(
-                          visible: !provider.skipAction,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: GestureDetector(
-                              onTap: () async {
-                                provider.setSkipAction(widget.isVideoExam);
-                                if (widget.isVideoExam) {
-                                  provider.setSkipAction(true);
-                                } else {
-                                  disposeAll();
-                                  Navigator.of(context).pop();
-                                  widget.skipAndLater!();
-                                }
-                              },
-                              child: Text(
-                                Utils.multiLanguage(
-                                    StringConstants.skip_and_text),
-                                style: CustomTextStyle.textWithCustomInfo(
-                                  context: context,
-                                  color: AppColor.defaultPurpleColor,
-                                  fontsSize: FontsSize.fontSize_15,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        visible: !provider.skipAction,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          child: GestureDetector(
+                            onTap: () async {
+                              provider.setSkipAction(widget.isVideoExam);
+                              if (widget.isVideoExam) {
+                                provider.setSkipAction(true);
+                              } else {
+                                disposeAll();
+                                Navigator.of(context).pop();
+                                widget.skipAndLater!();
+                              }
+                            },
+                            child: Text(
+                              Utils.multiLanguage(
+                                  StringConstants.skip_and_text)!,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultPurpleColor,
+                                fontsSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          )),
+                          ),
+                        ),
+                      ),
                       Visibility(
-                          visible:
-                              provider.skipAction && widget.onSubmitNow != null,
-                          child: _warningWhenSkip())
+                        visible:
+                            provider.skipAction && widget.onSubmitNow != null,
+                        child: _warningWhenSkip(),
+                      )
                     ],
                   ),
                 );
-              }))
+              },
+            ),
+          )
         ],
       ),
     );
@@ -218,12 +222,12 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
               children: [
                 Text(
                     Utils.multiLanguage(
-                        StringConstants.warning_skip_compress_video_text),
+                        StringConstants.warning_skip_compress_video_text)!,
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 Text(
                   Utils.multiLanguage(
-                      StringConstants.warning_skip_compress_video_content),
+                      StringConstants.warning_skip_compress_video_content)!,
                   style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(height: 10),
@@ -236,7 +240,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                       },
                       child: Text(
                         Utils.multiLanguage(
-                            StringConstants.continue_prepare_text),
+                            StringConstants.continue_prepare_text)!,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultBlackColor,
@@ -255,7 +259,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
                         }
                       },
                       child: Text(
-                        Utils.multiLanguage(StringConstants.submit_now_text),
+                        Utils.multiLanguage(StringConstants.submit_now_text)!,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultPurpleColor,

@@ -46,7 +46,8 @@ class TestRecordWidget extends StatelessWidget {
                       const SizedBox(
                         height: CustomSize.size_20,
                       ),
-                      Text(Utils.multiLanguage(StringConstants.answer_being_recorded)),
+                      Text(Utils.multiLanguage(
+                          StringConstants.answer_being_recorded)!),
                       const SizedBox(
                         height: CustomSize.size_20,
                       ),
@@ -114,7 +115,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          Utils.multiLanguage(StringConstants.finish_button_title),
+          Utils.multiLanguage(StringConstants.finish_button_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,
@@ -140,7 +141,7 @@ class TestRecordWidget extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          Utils.multiLanguage(StringConstants.cancel_button_title),
+          Utils.multiLanguage(StringConstants.cancel_button_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultAppColor,

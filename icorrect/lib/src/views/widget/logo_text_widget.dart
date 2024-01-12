@@ -11,7 +11,7 @@ class LogoTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        Utils.multiLanguage(StringConstants.logo_text),
+        Utils.multiLanguage(StringConstants.logo_text)!,
         style: CustomTextStyle.textWithCustomInfo(
           context: context,
           color: AppColor.defaultPurpleColor,

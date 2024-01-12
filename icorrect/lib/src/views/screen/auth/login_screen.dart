@@ -349,8 +349,9 @@ class _LoginScreenState extends State<LoginScreen>
     _authProvider.updateLoginStatus(processing: false);
 
     if (message == StringConstants.email_or_password_wrong_message) {
-      message = Utils.multiLanguage(message);
+      message = Utils.multiLanguage(message)!;
     }
+
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,

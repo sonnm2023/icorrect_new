@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/topic_id.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/presenters/ielts_topics_list_presenter.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
+import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
+import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../core/app_color.dart';
-import '../../../../data_sources/constants.dart';
-import '../../../../data_sources/utils.dart';
-import '../../../../models/practice_model/ielts_topic_model.dart';
-import '../../../../models/user_data_models/user_data_model.dart';
-import '../../../../presenters/ielts_topics_list_presenter.dart';
-import '../../../../provider/ielts_topics_screen_provider.dart';
-import '../../../widget/divider.dart';
-import '../../other_views/dialog/circle_loading.dart';
-import '../../other_views/dialog/message_dialog.dart';
-
+// ignore: must_be_immutable
 class IELTSEachPartTopics extends StatefulWidget {
   List<String> topicTypes;
   IELTSEachPartTopics({required this.topicTypes, super.key});
@@ -71,101 +70,108 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
     super.build(context);
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
-    return Consumer<IELTSTopicsProvider>(builder: (context, provider, child) {
-      int testOption = Utils.getTestOption(widget.topicTypes);
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: w,
-            padding: const EdgeInsets.symmetric(
-              horizontal: CustomPadding.padding_11,
-            ),
-            color: AppColor.defaultLight01GrayColor,
-            child: Stack(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // mainAxisSize: MainAxisSize.max,
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  alignment: Alignment.centerLeft,
-                  child: Checkbox(
-                    tristate: true,
-                    activeColor: AppColor.defaultPurpleColor,
-                    value:
-                        provider.topicsId.length == provider.topicsList.length,
-                    onChanged: (bool? value) {
-                      if (value ?? false) {
-                        _addAllTopics();
-                      } else {
-                        provider.clearTopicSelection();
-                        _provider!.clearTopicsByTestOption(testOption);
-                      }
-                    },
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    context.formatString(StringConstants.selected_topics,
-                        [provider.topicsId.length, provider.topicsList.length]),
-                    style: CustomTextStyle.textWithCustomInfo(
-                      context: context,
-                      color: AppColor.defaultBlackColor,
-                      fontsSize: FontsSize.fontSize_15,
-                      fontWeight: FontWeight.w500,
+    return Consumer<IELTSTopicsProvider>(
+      builder: (context, provider, child) {
+        int testOption = Utils.getTestOption(widget.topicTypes);
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: w,
+              padding: const EdgeInsets.symmetric(
+                horizontal: CustomPadding.padding_11,
+              ),
+              color: AppColor.defaultLight01GrayColor,
+              child: Stack(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisSize: MainAxisSize.max,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    alignment: Alignment.centerLeft,
+                    child: Checkbox(
+                      tristate: true,
+                      activeColor: AppColor.defaultPurpleColor,
+                      value: provider.topicsId.length ==
+                          provider.topicsList.length,
+                      onChanged: (bool? value) {
+                        if (value ?? false) {
+                          _addAllTopics();
+                        } else {
+                          provider.clearTopicSelection();
+                          _provider!.clearTopicsByTestOption(testOption);
+                        }
+                      },
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      provider.clearTopicSelection();
-                      _provider!.clearTopicsByTestOption(testOption);
-                    },
+                  Align(
+                    alignment: Alignment.center,
                     child: Text(
-                      Utils.multiLanguage(StringConstants.clear_button_title),
+                      context.formatString(StringConstants.selected_topics, [
+                        provider.topicsId.length,
+                        provider.topicsList.length
+                      ]),
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
-                        color: AppColor.defaultPurpleColor,
+                        color: AppColor.defaultBlackColor,
                         fontsSize: FontsSize.fontSize_15,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-              ],
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        provider.clearTopicSelection();
+                        _provider!.clearTopicsByTestOption(testOption);
+                      },
+                      child: Text(
+                        Utils.multiLanguage(
+                            StringConstants.clear_button_title)!,
+                        style: CustomTextStyle.textWithCustomInfo(
+                          context: context,
+                          color: AppColor.defaultPurpleColor,
+                          fontsSize: FontsSize.fontSize_15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Consumer<IELTSTopicsScreenProvider>(
+            Consumer<IELTSTopicsScreenProvider>(
               builder: (context, parentScreenProvider, child) {
-            var listSearched = provider.topicsList.where((element) => element
-                .title
-                .toLowerCase()
-                .contains(parentScreenProvider.queryChanged.toLowerCase()));
-            return Expanded(
-                child: ListView.separated(
-              itemCount: listSearched.length,
-              itemBuilder: (context, index) {
-                IELTSTopicModel topicModel = listSearched.elementAt(index);
-                return _buildInTopicCard(
-                  context,
-                  ieltsTopicModel: topicModel,
+                var listSearched = provider.topicsList.where((element) =>
+                    element.title.toLowerCase().contains(
+                        parentScreenProvider.queryChanged.toLowerCase()));
+                return Expanded(
+                  child: ListView.separated(
+                    itemCount: listSearched.length,
+                    itemBuilder: (context, index) {
+                      IELTSTopicModel topicModel =
+                          listSearched.elementAt(index);
+                      return _buildInTopicCard(
+                        context,
+                        ieltsTopicModel: topicModel,
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const CustomDivider(),
+                  ),
                 );
               },
-              separatorBuilder: (BuildContext context, int index) =>
-                  const CustomDivider(),
-            ));
-          })
-        ],
-      );
-    });
+            )
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildInTopicCard(BuildContext context,

@@ -2,8 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-
-import '../../../data_sources/utils.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {
   final String imageUrl;
@@ -51,7 +50,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
               Text(
                 Utils.multiLanguage(
                   StringConstants.load_image_error_message,
-                ),
+                )!,
               ),
             ],
           );

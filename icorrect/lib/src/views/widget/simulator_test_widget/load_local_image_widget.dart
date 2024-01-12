@@ -36,7 +36,7 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
   Widget build(BuildContext context) {
     String loadImageErrorMessage = Utils.multiLanguage(
       StringConstants.load_image_error_message,
-    );
+    )!;
 
     return _buildImageWidget(loadImageErrorMessage);
   }

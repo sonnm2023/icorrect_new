@@ -264,11 +264,11 @@ class TestRoomPresenter {
           _view!.onUpdateHasOrderStatus(hasOrder);
 
           String message =
-              Utils.multiLanguage(StringConstants.submit_test_success_message);
+              Utils.multiLanguage(StringConstants.submit_test_success_message)!;
           if (json[StringConstants.k_error_code] == 5013) {
             if (!isExam) {
               message = Utils.multiLanguage(
-                  StringConstants.submit_test_success_message_with_code_5013);
+                  StringConstants.submit_test_success_message_with_code_5013)!;
             }
           }
 
@@ -301,7 +301,7 @@ class TestRoomPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onSubmitTestError(Utils.multiLanguage(
-            StringConstants.submit_test_error_invalid_return_type_message));
+            StringConstants.submit_test_error_invalid_return_type_message)!);
       });
     } on TimeoutException {
       //Add log
@@ -313,7 +313,7 @@ class TestRoomPresenter {
       );
 
       _view!.onSubmitTestError(
-          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -324,7 +324,7 @@ class TestRoomPresenter {
       );
 
       _view!.onSubmitTestError(
-          Utils.multiLanguage(StringConstants.submit_test_error_socket));
+          Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -335,7 +335,7 @@ class TestRoomPresenter {
       );
 
       _view!.onSubmitTestError(
-          Utils.multiLanguage(StringConstants.submit_test_error_client));
+          Utils.multiLanguage(StringConstants.submit_test_error_client)!);
     }
   }
 
@@ -391,8 +391,8 @@ class TestRoomPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onUpdateReAnswersSuccess(
-              Utils.multiLanguage(StringConstants.save_answer_success_message));
+          _view!.onUpdateReAnswersSuccess(Utils.multiLanguage(
+              StringConstants.save_answer_success_message)!);
         } else {
           //Add log
           Utils.prepareLogData(
@@ -421,7 +421,7 @@ class TestRoomPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onUpdateReAnswersError(Utils.multiLanguage(
-            StringConstants.submit_test_error_invalid_return_type_message));
+            StringConstants.submit_test_error_invalid_return_type_message)!);
       });
     } on TimeoutException {
       //Add log
@@ -433,7 +433,7 @@ class TestRoomPresenter {
       );
 
       _view!.onUpdateReAnswersError(
-          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -444,7 +444,7 @@ class TestRoomPresenter {
       );
 
       _view!.onUpdateReAnswersError(
-          Utils.multiLanguage(StringConstants.submit_test_error_socket));
+          Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -454,7 +454,7 @@ class TestRoomPresenter {
         status: LogEvent.failed,
       );
       _view!.onUpdateReAnswersError(
-          Utils.multiLanguage(StringConstants.submit_test_error_client));
+          Utils.multiLanguage(StringConstants.submit_test_error_client)!);
     }
   }
 

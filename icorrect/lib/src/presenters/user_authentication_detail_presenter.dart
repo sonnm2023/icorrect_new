@@ -63,7 +63,7 @@ class UserAuthDetailPresenter {
           );
 
           _view!.userNotFoundWhenLoadAuth(
-              Utils.multiLanguage(StringConstants.not_authen_user_message));
+              Utils.multiLanguage(StringConstants.not_authen_user_message)!);
         }
       } else {
         //Add log
@@ -74,7 +74,7 @@ class UserAuthDetailPresenter {
           status: LogEvent.failed,
         );
         _view!.onGetUserAuthDetailError(
-            Utils.multiLanguage(StringConstants.get_authen_user_fail_message));
+            Utils.multiLanguage(StringConstants.get_authen_user_fail_message)!);
       }
     }).catchError((e) {
       //Add log
@@ -85,7 +85,7 @@ class UserAuthDetailPresenter {
         status: LogEvent.failed,
       );
       _view!.onGetUserAuthDetailError(
-          Utils.multiLanguage(StringConstants.get_authen_user_fail_message));
+          Utils.multiLanguage(StringConstants.get_authen_user_fail_message)!);
     });
   }
 }

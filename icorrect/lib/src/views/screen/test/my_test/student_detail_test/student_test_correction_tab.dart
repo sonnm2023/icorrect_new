@@ -84,7 +84,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   Utils.multiLanguage(
-                      StringConstants.test_correction_wait_response_message),
+                      StringConstants.test_correction_wait_response_message)!,
                   textAlign: TextAlign.center,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
@@ -133,7 +133,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
             Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                Utils.multiLanguage(StringConstants.overview),
+                Utils.multiLanguage(StringConstants.overview)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -181,8 +181,8 @@ class _StudentCorrectionState extends State<StudentCorrection>
                       },
                       child: Text(
                         (appState.visibleOverviewComment)
-                            ? Utils.multiLanguage(StringConstants.show_less)
-                            : Utils.multiLanguage(StringConstants.show_more),
+                            ? Utils.multiLanguage(StringConstants.show_less)!
+                            : Utils.multiLanguage(StringConstants.show_more)!,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultBlackColor,
@@ -393,7 +393,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         Text(
-                          Utils.multiLanguage(StringConstants.problem),
+                          Utils.multiLanguage(StringConstants.problem)!,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultBlackColor,
@@ -418,7 +418,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         Text(
-                          Utils.multiLanguage(StringConstants.solution),
+                          Utils.multiLanguage(StringConstants.solution)!,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultBlackColor,
@@ -449,7 +449,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
             )
           : EmptyWidget.init().buildNothingWidget(
               context,
-              Utils.multiLanguage(StringConstants.no_data_message),
+              Utils.multiLanguage(StringConstants.no_data_message)!,
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
             ),
@@ -473,7 +473,7 @@ class _StudentCorrectionState extends State<StudentCorrection>
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
         child: Text(
-          Utils.multiLanguage(StringConstants.view_sample_button_title),
+          Utils.multiLanguage(StringConstants.view_sample_button_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,

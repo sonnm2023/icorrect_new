@@ -63,7 +63,7 @@ class NoDataWidget extends StatelessWidget {
               height: 50,
               child: Center(
                 child: Text(
-                  Utils.multiLanguage(StringConstants.reload_button_title),
+                  Utils.multiLanguage(StringConstants.reload_button_title)!,
                   style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,

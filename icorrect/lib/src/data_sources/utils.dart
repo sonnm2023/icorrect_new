@@ -32,7 +32,6 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:audioplayers/audioplayers.dart' as audio;
 
 class Utils {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -295,7 +294,7 @@ class Utils {
     }
   }
 
-  static String multiLanguage(String constantString) {
+  static String? multiLanguage(String constantString) {
     final FlutterLocalization localization = FlutterLocalization.instance;
     if (localization.currentLocale == null) {
       localization.init(
@@ -306,11 +305,19 @@ class Utils {
         initLanguageCode: 'vi',
       );
     }
-    return Intl.message(
-        localization.currentLocale!.languageCode == "vi"
-            ? MultiLanguage.VN[constantString]
-            : MultiLanguage.EN[constantString],
-        name: constantString);
+
+    String? temp;
+    if (localization.currentLocale!.languageCode == "vi") {
+      temp = MultiLanguage.VN[constantString];
+    } else {
+      temp = MultiLanguage.EN[constantString];
+    }
+
+    if (null == temp) {
+      return null;
+    }
+
+    return Intl.message(temp, name: constantString);
   }
 
   static Map<String, dynamic> getCurrentLanguage() {
@@ -356,43 +363,44 @@ class Utils {
     switch (status) {
       case 0:
         return UserAuthenStatusUI(
-            title: Utils.multiLanguage(StringConstants.not_auth_title),
-            description: Utils.multiLanguage(StringConstants.not_auth_content),
+            title: Utils.multiLanguage(StringConstants.not_auth_title)!,
+            description: Utils.multiLanguage(StringConstants.not_auth_content)!,
             icon: Icons.cancel_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
             iconColor: Colors.red);
       case 4:
         return UserAuthenStatusUI(
-            title: Utils.multiLanguage(StringConstants.reject_auth_title),
+            title: Utils.multiLanguage(StringConstants.reject_auth_title)!,
             description:
-                Utils.multiLanguage(StringConstants.reject_auth_content),
+                Utils.multiLanguage(StringConstants.reject_auth_content)!,
             icon: Icons.video_camera_front_outlined,
             backgroundColor: const Color.fromARGB(255, 248, 233, 179),
             titleColor: Colors.amber,
             iconColor: Colors.amber);
       case 1:
         return UserAuthenStatusUI(
-            title: Utils.multiLanguage(StringConstants.user_authed_title),
+            title: Utils.multiLanguage(StringConstants.user_authed_title)!,
             description:
-                Utils.multiLanguage(StringConstants.user_authed_content),
+                Utils.multiLanguage(StringConstants.user_authed_content)!,
             icon: Icons.check_circle_outline_rounded,
             backgroundColor: const Color.fromARGB(255, 179, 248, 195),
             titleColor: Colors.green,
             iconColor: Colors.green);
       case 3:
         return UserAuthenStatusUI(
-            title: Utils.multiLanguage(StringConstants.progress_auth_title),
+            title: Utils.multiLanguage(StringConstants.progress_auth_title)!,
             description:
-                Utils.multiLanguage(StringConstants.progress_auth_content),
+                Utils.multiLanguage(StringConstants.progress_auth_content)!,
             icon: Icons.change_circle_sharp,
             backgroundColor: const Color.fromARGB(255, 179, 222, 248),
             titleColor: Colors.blue,
             iconColor: Colors.blue);
       case 2:
         return UserAuthenStatusUI(
-            title: Utils.multiLanguage(StringConstants.lock_auth_title),
-            description: Utils.multiLanguage(StringConstants.lock_auth_content),
+            title: Utils.multiLanguage(StringConstants.lock_auth_title)!,
+            description:
+                Utils.multiLanguage(StringConstants.lock_auth_content)!,
             icon: Icons.lock,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -400,9 +408,9 @@ class Utils {
       case 99:
       default:
         return UserAuthenStatusUI(
-            title: Utils.multiLanguage(StringConstants.error_auth_title),
+            title: Utils.multiLanguage(StringConstants.error_auth_title)!,
             description:
-                Utils.multiLanguage(StringConstants.error_auth_content),
+                Utils.multiLanguage(StringConstants.error_auth_content)!,
             icon: Icons.error_outline,
             backgroundColor: const Color.fromARGB(255, 248, 179, 179),
             titleColor: Colors.red,
@@ -609,8 +617,8 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
-          description: Utils.multiLanguage(StringConstants.confirm_to_log_out),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: Utils.multiLanguage(StringConstants.confirm_to_log_out)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),
@@ -886,9 +894,9 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.network_error_message),
+              Utils.multiLanguage(StringConstants.network_error_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
@@ -1057,7 +1065,7 @@ class Utils {
     }
 
     if (temp.isNotEmpty) {
-      rs = multiLanguage(temp);
+      rs = multiLanguage(temp) == null ? multiLanguage(temp)! : temp;
     }
 
     return rs;

@@ -173,7 +173,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
             child: Text(
               Utils.multiLanguage(
                 StringConstants.require_user_authentication_title,
-              ),
+              )!,
               textAlign: TextAlign.start,
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
@@ -262,7 +262,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                         Text(
                           Utils.multiLanguage(
                             StringConstants.start_record_video_title,
-                          ),
+                          )!,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultGrayColor,
@@ -402,11 +402,11 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
                                 .isNotEmpty
                             ? Utils.multiLanguage(
                                 StringConstants.record_video_again_title,
-                              )
+                              )!
                             : Utils.multiLanguage(
                                 StringConstants
                                     .record_video_authentication_title,
-                              ),
+                              )!,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultWhiteColor,
@@ -432,16 +432,16 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
         return ConfirmDialogWidget(
           title: Utils.multiLanguage(
             StringConstants.waiting_review_video,
-          ),
+          )!,
           message: Utils.multiLanguage(
             StringConstants.confirm_record_new_video,
-          ),
+          )!,
           cancelButtonTitle: Utils.multiLanguage(
             StringConstants.cancel_button_title,
-          ),
+          )!,
           okButtonTitle: Utils.multiLanguage(
             StringConstants.ok_button_title,
-          ),
+          )!,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             Navigator.of(context).push(

@@ -289,7 +289,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
             },
             child: Center(
               child: Text(
-                Utils.multiLanguage(StringConstants.close_button_title),
+                Utils.multiLanguage(StringConstants.close_button_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultGrayColor,
@@ -321,10 +321,10 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
               } else {
                 widget.homeWorkProvider.setProcessingStatus(processing: false);
                 widget.homeWorkProvider.updateFilterString(
-                    Utils.multiLanguage(StringConstants.default_filter_title));
+                    Utils.multiLanguage(StringConstants.default_filter_title)!);
                 showToastMsg(
                   msg: Utils.multiLanguage(
-                      StringConstants.choose_filter_message),
+                      StringConstants.choose_filter_message)!,
                   toastState: ToastStatesType.warning,
                   isCenter: true,
                 );
@@ -332,7 +332,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
             },
             child: Center(
               child: Text(
-                Utils.multiLanguage(StringConstants.done_button_title),
+                Utils.multiLanguage(StringConstants.done_button_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultPurpleColor,

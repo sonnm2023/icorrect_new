@@ -69,7 +69,7 @@ class MyPracticeTopicListPresenter {
         );
 
         _view!.onGetListTopicOfBankError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -83,7 +83,7 @@ class MyPracticeTopicListPresenter {
         );
 
         _view!.onGetListTopicOfBankError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       },
     );
   }

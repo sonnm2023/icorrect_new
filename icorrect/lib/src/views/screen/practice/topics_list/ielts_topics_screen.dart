@@ -166,7 +166,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
                 const CustomDivider(),
                 const SizedBox(height: 10),
                 Text(
-                  Utils.multiLanguage(StringConstants.start_test_button_title),
+                  Utils.multiLanguage(StringConstants.start_test_button_title)!,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
                     color: AppColor.defaultPurpleColor,
@@ -196,7 +196,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
       } else {
         showToastMsg(
           msg: Utils.multiLanguage(
-              StringConstants.choose_at_least_1_topics_at_part23_message),
+              StringConstants.choose_at_least_1_topics_at_part23_message)!,
           toastState: ToastStatesType.warning,
           isCenter: true,
         );
@@ -209,7 +209,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
       _goToTestScreen();
     } else {
       showToastMsg(
-        msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics),
+        msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -225,14 +225,14 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
     if (topicsPart1.length < 3) {
       showToastMsg(
         msg: Utils.multiLanguage(
-            StringConstants.choose_at_least_3_topics_at_part1_message),
+            StringConstants.choose_at_least_3_topics_at_part1_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
     } else if (topicsPart23.isEmpty) {
       showToastMsg(
         msg: Utils.multiLanguage(
-            StringConstants.choose_at_least_1_topics_at_part23_message),
+            StringConstants.choose_at_least_1_topics_at_part23_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
@@ -298,7 +298,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
           testOption: testOption,
           topicsId: _provider!.getTopicsIdList(),
           isPredict: IELTSPredict.normalQuestion.get,
-          data: null,
+          testDetail: null,
           onRefresh: null,
         ),
       ),

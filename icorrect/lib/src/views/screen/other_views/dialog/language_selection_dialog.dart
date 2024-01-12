@@ -52,7 +52,7 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
                   const SizedBox(height: 10),
                   Text(
                     Utils.multiLanguage(
-                        StringConstants.select_your_language_title),
+                        StringConstants.select_your_language_title)!,
                     style: const TextStyle(
                       color: AppColor.defaultPurpleColor,
                       fontSize: 17,
@@ -103,7 +103,7 @@ class _LanguageSelectionDialogState extends State<LanguageSelectionDialog> {
                 const SizedBox(width: 20),
                 Text(
                   Utils.multiLanguage(
-                      isEnglish ? StringConstants.ens : StringConstants.vn),
+                      isEnglish ? StringConstants.ens : StringConstants.vn)!,
                   style: const TextStyle(
                     color: AppColor.defaultPurpleColor,
                     fontSize: 16,
