@@ -311,6 +311,9 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     data["second_repeat_speed"] = second_repeat_speed;
     data["topics"] = topics;
     data["sub_topics"] = subTopics;
+    data["lang"] = Utils.getCurrentLanguage()[StringConstants.k_data]
+        .toString()
+        .toLowerCase();
 
     _onClickStartToPractice(data);
   }
@@ -343,7 +346,6 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       } else {
         _practiceListProvider!.resetPermissionDeniedTime();
         _getTestDetail(data);
-        // _goToTestScreen(data); //TODO
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {
