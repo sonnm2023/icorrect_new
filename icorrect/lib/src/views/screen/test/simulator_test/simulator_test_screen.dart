@@ -918,7 +918,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
-      isCenter: true,
+      isCenter: false,
     );
 
     _callToRefesh();
