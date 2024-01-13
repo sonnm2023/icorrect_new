@@ -231,7 +231,7 @@ class MyPracticeListProvider extends ChangeNotifier {
   final List<SettingModel> _settings = [];
   List<SettingModel> get settings => _settings;
 
-  void updateSettings(int index, bool isAdd) {
+  void updateSettings({required int index, required bool isAdd}) {
     SettingModel item = _settings[index];
     if (isAdd) {
       item.value += item.step;
