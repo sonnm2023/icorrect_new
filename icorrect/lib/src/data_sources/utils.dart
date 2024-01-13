@@ -27,7 +27,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

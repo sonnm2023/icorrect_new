@@ -9,7 +9,7 @@ import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart
 import 'package:icorrect/src/presenters/my_practice_topic_list_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:provider/provider.dart';
 
 class TopicListTabScreen extends StatefulWidget {

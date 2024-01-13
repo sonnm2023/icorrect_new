@@ -11,7 +11,7 @@ import 'package:icorrect/src/models/auth_models/topic_id.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
 import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/other/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_each_part_topics.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_full_part_topics.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';

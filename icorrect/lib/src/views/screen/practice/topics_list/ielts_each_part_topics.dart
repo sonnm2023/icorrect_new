@@ -9,8 +9,8 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/ielts_topics_list_presenter.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
 import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
+import 'package:icorrect/src/views/other/circle_loading.dart';
+import 'package:icorrect/src/views/other/message_dialog.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
