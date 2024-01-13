@@ -55,7 +55,7 @@ class _ContactInfoWidgetState extends State<ContactInfoWidget> {
           Text(
             Utils.multiLanguage(
               StringConstants.contact,
-            ),
+            )!,
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultGrayColor,

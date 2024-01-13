@@ -58,7 +58,7 @@ class ChangePasswordPresenter {
         );
 
         _view!.onChangePasswordSuccess(Utils.multiLanguage(
-            StringConstants.change_password_success_message));
+            StringConstants.change_password_success_message)!);
       } else {
         //Add log
         Utils.prepareLogData(
@@ -70,7 +70,7 @@ class ChangePasswordPresenter {
         );
 
         _view!.onChangePasswordError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -84,7 +84,7 @@ class ChangePasswordPresenter {
         );
 
         _view!.onChangePasswordError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       },
     );
   }

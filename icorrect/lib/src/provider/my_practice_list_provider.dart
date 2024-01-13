@@ -290,4 +290,13 @@ class MyPracticeListProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool _isTestDetailLoading = false;
+  bool get isTestDetailLoading => _isTestDetailLoading;
+  void setIsTestDetailLoading(bool isLoading) {
+    _isTestDetailLoading = isLoading;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 }

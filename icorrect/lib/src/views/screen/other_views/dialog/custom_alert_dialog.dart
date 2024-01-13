@@ -93,7 +93,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               child: Center(
                                 child: Text(
                                   widget.cancelButtonTitle ??
-                                      Utils.multiLanguage(StringConstants.cancel_button_title),
+                                      Utils.multiLanguage(
+                                          StringConstants.cancel_button_title)!,
                                   style: CustomTextStyle.textWithCustomInfo(
                                     context: context,
                                     color: AppColor.defaultGrayColor,
@@ -118,7 +119,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                               child: Center(
                                 child: Text(
                                   widget.okButtonTitle ??
-                                      Utils.multiLanguage(StringConstants.ok_button_title),
+                                      Utils.multiLanguage(
+                                          StringConstants.ok_button_title)!,
                                   style: CustomTextStyle.textWithCustomInfo(
                                     context: context,
                                     color: AppColor.defaultPurpleColor,
@@ -145,7 +147,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                           child: Center(
                             child: Text(
                               widget.okButtonTitle ??
-                                  Utils.multiLanguage(StringConstants.ok_button_title),
+                                  Utils.multiLanguage(
+                                      StringConstants.ok_button_title)!,
                               style: CustomTextStyle.textWithCustomInfo(
                                 context: context,
                                 color: AppColor.defaultPurpleColor,

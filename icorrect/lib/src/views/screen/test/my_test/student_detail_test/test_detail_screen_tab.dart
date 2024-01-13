@@ -266,8 +266,8 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                             },
                             child: (question.tips.isNotEmpty)
                                 ? Text(
-                                    Utils.multiLanguage(
-                                        StringConstants.view_tips_button_title),
+                                    Utils.multiLanguage(StringConstants
+                                        .view_tips_button_title)!,
                                     style: CustomTextStyle.textWithCustomInfo(
                                       context: context,
                                       color: AppColor.defaultPurpleColor,
@@ -298,7 +298,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
           questionId: question.id.toString());
     } else {
       Fluttertoast.showToast(
-        msg: Utils.multiLanguage(StringConstants.no_answer_message),
+        msg: Utils.multiLanguage(StringConstants.no_answer_message)!,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -412,9 +412,9 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.network_error_message),
+              Utils.multiLanguage(StringConstants.network_error_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,

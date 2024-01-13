@@ -209,7 +209,7 @@ class _MyTestTabState extends State<MyTestTab>
                                     child: Center(
                                       child: Text(
                                         Utils.multiLanguage(StringConstants
-                                            .update_answer_button_title),
+                                            .update_answer_button_title)!,
                                         style:
                                             CustomTextStyle.textWithCustomInfo(
                                           context: context,
@@ -261,7 +261,7 @@ class _MyTestTabState extends State<MyTestTab>
                   child: Center(
                     child: Text(
                       Utils.multiLanguage(
-                          StringConstants.view_ai_response_button_title),
+                          StringConstants.view_ai_response_button_title)!,
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultAppColor,
@@ -282,12 +282,13 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: Utils.multiLanguage(StringConstants.confirm_title),
+          title: Utils.multiLanguage(StringConstants.confirm_title)!,
           message: Utils.multiLanguage(
-              StringConstants.confirm_save_change_answers_message),
+              StringConstants.confirm_save_change_answers_message)!,
           cancelButtonTitle:
-              Utils.multiLanguage(StringConstants.cancel_button_title),
-          okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
+              Utils.multiLanguage(StringConstants.cancel_button_title)!,
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.save_button_title)!,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
@@ -518,7 +519,7 @@ class _MyTestTabState extends State<MyTestTab>
                                         },
                                         child: Text(
                                           Utils.multiLanguage(StringConstants
-                                              .re_answer_button_title),
+                                              .re_answer_button_title)!,
                                           style: CustomTextStyle
                                               .textWithCustomInfo(
                                             context: context,
@@ -539,7 +540,7 @@ class _MyTestTabState extends State<MyTestTab>
                                   child: (question.tips.isNotEmpty)
                                       ? Text(
                                           Utils.multiLanguage(StringConstants
-                                              .view_tips_button_title),
+                                              .view_tips_button_title)!,
                                           style: CustomTextStyle
                                               .textWithCustomInfo(
                                             context: context,
@@ -691,9 +692,9 @@ class _MyTestTabState extends State<MyTestTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.network_error_message),
+              Utils.multiLanguage(StringConstants.network_error_message)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle: null,
           borderRadius: 8,
@@ -711,7 +712,7 @@ class _MyTestTabState extends State<MyTestTab>
     if (widget.provider.isLessThan2Second) {
       Fluttertoast.showToast(
         msg: Utils.multiLanguage(
-            StringConstants.answer_must_be_greater_than_2_seconds_message),
+            StringConstants.answer_must_be_greater_than_2_seconds_message)!,
         backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         gravity: ToastGravity.CENTER,

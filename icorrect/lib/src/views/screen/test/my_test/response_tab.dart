@@ -105,7 +105,7 @@ class _ResponseTabState extends State<ResponseTab>
             Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                Utils.multiLanguage(StringConstants.overview),
+                Utils.multiLanguage(StringConstants.overview)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,
@@ -155,9 +155,10 @@ class _ResponseTabState extends State<ResponseTab>
                           },
                           child: Text(
                             (appState.visibleOverviewComment)
-                                ? Utils.multiLanguage(StringConstants.show_less)
+                                ? Utils.multiLanguage(
+                                    StringConstants.show_less)!
                                 : Utils.multiLanguage(
-                                    StringConstants.show_more),
+                                    StringConstants.show_more)!,
                             style: CustomTextStyle.textWithCustomInfo(
                               context: context,
                               color: AppColor.defaultBlackColor,
@@ -375,7 +376,7 @@ class _ResponseTabState extends State<ResponseTab>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         Text(
-                          Utils.multiLanguage(StringConstants.problem),
+                          Utils.multiLanguage(StringConstants.problem)!,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultBlackColor,
@@ -405,7 +406,7 @@ class _ResponseTabState extends State<ResponseTab>
                         ),
                         const SizedBox(width: CustomSize.size_10),
                         Text(
-                          Utils.multiLanguage(StringConstants.solution),
+                          Utils.multiLanguage(StringConstants.solution)!,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultBlackColor,
@@ -430,7 +431,7 @@ class _ResponseTabState extends State<ResponseTab>
               })
           : EmptyWidget.init().buildNothingWidget(
               context,
-              Utils.multiLanguage(StringConstants.no_data_message),
+              Utils.multiLanguage(StringConstants.no_data_message)!,
               widthSize: CustomSize.size_100,
               heightSize: CustomSize.size_100,
             ),
@@ -454,7 +455,7 @@ class _ResponseTabState extends State<ResponseTab>
           borderRadius: BorderRadius.circular(CustomSize.size_20),
         ),
         child: Text(
-          Utils.multiLanguage(StringConstants.view_sample_button_title),
+          Utils.multiLanguage(StringConstants.view_sample_button_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,

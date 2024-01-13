@@ -73,7 +73,7 @@ class _MyPracticeDetailState extends State<MyPracticeDetail> {
                           alignment: Alignment.center,
                           child: Text(
                             Utils.multiLanguage(
-                                StringConstants.test_detail_tab_title),
+                                StringConstants.test_detail_tab_title)!,
                             style: CustomTextStyle.textWithCustomInfo(
                               context: context,
                               color: AppColor.defaultPurpleColor,
@@ -114,12 +114,13 @@ class _MyPracticeDetailState extends State<MyPracticeDetail> {
       context: context,
       builder: (builder) {
         return ConfirmDialogWidget(
-          title: Utils.multiLanguage(StringConstants.confirm_to_go_out_screen),
+          title: Utils.multiLanguage(StringConstants.confirm_to_go_out_screen)!,
           message: Utils.multiLanguage(
-              StringConstants.re_answer_not_be_save_message),
+              StringConstants.re_answer_not_be_save_message)!,
           cancelButtonTitle:
-              Utils.multiLanguage(StringConstants.cancel_button_title),
-          okButtonTitle: Utils.multiLanguage(StringConstants.back_button_title),
+              Utils.multiLanguage(StringConstants.cancel_button_title)!,
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.back_button_title)!,
           cancelButtonTapped: () {},
           okButtonTapped: () {
             deleteFileAnswers(provider.reAnswerOfQuestions);

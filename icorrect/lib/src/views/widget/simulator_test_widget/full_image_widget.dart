@@ -30,7 +30,8 @@ class _FullImageWidgetState extends State<FullImageWidget> {
   }
 
   Widget _buildChildWidget() {
-    String loadImageErrorMessage = Utils.multiLanguage(StringConstants.load_image_error_message);
+    String loadImageErrorMessage =
+        Utils.multiLanguage(StringConstants.load_image_error_message)!;
 
     return FutureBuilder<void>(
       future: _getLocalImagePath(),

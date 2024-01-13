@@ -842,6 +842,7 @@ class StringConstants {
   static const String k_error_code = "error_code";
   static const String k_access_token = "access_token";
   static const String k_message = "message";
+  static const String k_messages = "messages";
   static const String k_current_time = "current_time";
   static const String k_content_type = "Content-Type";
   static const String k_authorization = "Authorization";

@@ -20,7 +20,7 @@ class StartNowButtonWidget extends StatelessWidget {
           child: Text(
             Utils.multiLanguage(
               StringConstants.start_now_description,
-            ),
+            )!,
             style: CustomTextStyle.textWithCustomInfo(
               context: context,
               color: AppColor.defaultBlackColor,
@@ -42,9 +42,7 @@ class StartNowButtonWidget extends StatelessWidget {
             alignment: Alignment.center,
             child: Center(
               child: Text(
-                Utils.multiLanguage(
-                  StringConstants.start_now_button_title
-                ),
+                Utils.multiLanguage(StringConstants.start_now_button_title)!,
                 style: CustomTextStyle.textWithCustomInfo(
                   context: context,
                   color: AppColor.defaultBlackColor,

@@ -7,11 +7,8 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/presenters/change_password_presenter.dart';
-import 'package:icorrect/src/provider/auth_provider.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/widget/default_material_button.dart';
 import 'package:icorrect/src/views/widget/password_input_widget.dart';
-import 'package:provider/provider.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -65,7 +62,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          Utils.multiLanguage(StringConstants.change_password_screen_title),
+          Utils.multiLanguage(StringConstants.change_password_screen_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -155,7 +152,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
           showToastMsg(
             msg: Utils.multiLanguage(
               StringConstants.old_password_equals_new_password_error_message,
-            ),
+            )!,
             toastState: ToastStatesType.error,
             isCenter: false,
           );
@@ -164,7 +161,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
           showToastMsg(
             msg: Utils.multiLanguage(
               StringConstants.confirm_new_password_error_message,
-            ),
+            )!,
             toastState: ToastStatesType.error,
             isCenter: false,
           );

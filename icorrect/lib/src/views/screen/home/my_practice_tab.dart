@@ -222,7 +222,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                 const SizedBox(height: 100),
                 NoDataWidget(
                   msg: Utils.multiLanguage(
-                      StringConstants.my_practice_no_data_message),
+                      StringConstants.my_practice_no_data_message)!,
                   reloadCallBack: _reloadCallBack,
                 ),
               ],
@@ -395,7 +395,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                         alignment: Alignment.bottomRight,
                         child: Text(
                           Utils.multiLanguage(
-                              StringConstants.delete_action_title),
+                              StringConstants.delete_action_title)!,
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultPurpleColor,
@@ -528,9 +528,9 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title),
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
           description:
-              Utils.multiLanguage(StringConstants.delete_this_test_confirm),
+              Utils.multiLanguage(StringConstants.delete_this_test_confirm)!,
           okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
           cancelButtonTitle:
               Utils.multiLanguage(StringConstants.cancel_button_title),
@@ -570,10 +570,12 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
 
+    String? msg = Utils.multiLanguage(message);
+
     showDialog(
       context: context,
       builder: (builder) {
-        return MessageDialog.alertDialog(context, Utils.multiLanguage(message));
+        return MessageDialog.alertDialog(context, msg ??= message);
       },
     );
   }
@@ -582,10 +584,13 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   void onDeleteTestError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
+
+    String? msg = Utils.multiLanguage(message);
+
     showDialog(
       context: context,
       builder: (builder) {
-        return MessageDialog.alertDialog(context, Utils.multiLanguage(message));
+        return MessageDialog.alertDialog(context, msg ??= message);
       },
     );
   }
@@ -593,8 +598,11 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   @override
   void onDeleteTestSuccess(String message, int indexDeleted) {
     _loading!.hide();
+
+    String? msg = Utils.multiLanguage(message);
+
     showToastMsg(
-      msg: Utils.multiLanguage(message),
+      msg: msg ??= message,
       toastState: ToastStatesType.success,
       isCenter: false,
     );

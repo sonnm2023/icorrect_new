@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/practice_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
 import 'package:icorrect/src/models/practice_model/ielts_topics_list_result_model.dart';
-
-import '../data_sources/constants.dart';
-import '../data_sources/dependency_injection.dart';
 
 abstract class IELTSTopicsListConstract {
   void onGetIELTSTopicsSuccess(List<IELTSTopicModel> topicsList);
@@ -37,11 +36,11 @@ class IELTSTopicsListPresenter {
         _view!.onGetIELTSTopicsSuccess(resultModel.topics);
       } else {
         _view!.onGetIELTSTopicsFail(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       }
     }).catchError((error) {
       _view!.onGetIELTSTopicsFail(
-          Utils.multiLanguage(StringConstants.common_error_message));
+          Utils.multiLanguage(StringConstants.common_error_message)!);
     });
   }
 }

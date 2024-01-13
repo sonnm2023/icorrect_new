@@ -180,7 +180,7 @@ class HomeWorkWidget extends StatelessWidget {
       return "${status == StringConstants.activity_status_corrected ? '${Utils.multiLanguage(status)} &' : ''}"
           "${Utils.multiLanguage(aiStatus)}";
     } else {
-      return Utils.multiLanguage(status);
+      return Utils.multiLanguage(status)!;
     }
   }
 

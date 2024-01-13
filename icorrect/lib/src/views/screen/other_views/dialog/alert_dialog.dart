@@ -96,7 +96,7 @@ class AlertsDialog {
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Text(
                               Utils.multiLanguage(
-                                  alertTypeMap[Alert.cancelTitle].toString()),
+                                  alertTypeMap[Alert.cancelTitle].toString())!,
                             ),
                           ),
                         ),
@@ -122,7 +122,8 @@ class AlertsDialog {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Text(
                                 Utils.multiLanguage(
-                                    alertTypeMap[Alert.actionTitle].toString()),
+                                    alertTypeMap[Alert.actionTitle]
+                                        .toString())!,
                               ),
                             ),
                           ),

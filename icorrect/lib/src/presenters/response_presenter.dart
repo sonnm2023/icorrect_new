@@ -66,7 +66,7 @@ class ResponsePresenter {
 
         _view!.onGetResponseError(
           message: Utils.multiLanguage(
-              StringConstants.load_result_response_error_message),
+              StringConstants.load_result_response_error_message)!,
           isError: false,
         );
       }
@@ -82,7 +82,7 @@ class ResponsePresenter {
       // ignore: invalid_return_type_for_catch_error
       _view!.onGetResponseError(
         message:
-            Utils.multiLanguage(StringConstants.can_not_load_response_message),
+            Utils.multiLanguage(StringConstants.can_not_load_response_message)!,
         isError: true,
       );
     });

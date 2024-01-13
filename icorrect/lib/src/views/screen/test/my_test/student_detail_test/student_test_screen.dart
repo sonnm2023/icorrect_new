@@ -116,7 +116,7 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
     return [
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.test_detail_tab_title),
+          Utils.multiLanguage(StringConstants.test_detail_tab_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,
@@ -127,7 +127,7 @@ class _StudentTestDetailState extends State<StudentTestDetail> {
       ),
       Tab(
         child: Text(
-          Utils.multiLanguage(StringConstants.correction_tab_title),
+          Utils.multiLanguage(StringConstants.correction_tab_title)!,
           style: CustomTextStyle.textWithCustomInfo(
             context: context,
             color: AppColor.defaultPurpleColor,

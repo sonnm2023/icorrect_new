@@ -80,13 +80,13 @@ class LoginPresenter {
           String message = '';
           if (authModel.message.isNotEmpty) {
             _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.network_error_message),
+              Utils.multiLanguage(StringConstants.network_error_message)!,
               null,
             );
             message = StringConstants.network_error_message;
           } else {
             _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.common_error_message),
+              Utils.multiLanguage(StringConstants.common_error_message)!,
               null,
             );
             message = '${authModel.errorCode}: ${authModel.status}';
@@ -103,13 +103,13 @@ class LoginPresenter {
         String message = '';
         if (onError is http.ClientException || onError is SocketException) {
           _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.network_error_message),
+            Utils.multiLanguage(StringConstants.network_error_message)!,
             null,
           );
           message = StringConstants.network_error_message;
         } else {
           _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.common_error_message),
+            Utils.multiLanguage(StringConstants.common_error_message)!,
             null,
           );
           message = StringConstants.common_error_message;
@@ -174,20 +174,20 @@ class LoginPresenter {
         );
 
         _view!.onGetAppConfigInfoFail(Utils.multiLanguage(
-            StringConstants.getting_app_config_information_error_message));
+            StringConstants.getting_app_config_information_error_message)!);
       }
     }).catchError((onError) {
       String message = '';
       if (onError is SocketException) {
-        message = Utils.multiLanguage(StringConstants.network_error_message);
+        message = Utils.multiLanguage(StringConstants.network_error_message)!;
       } else if (onError is http.ClientException) {
         message = Utils.multiLanguage(
-            StringConstants.http_client_exception_error_message);
+            StringConstants.http_client_exception_error_message)!;
       } else if (onError is TimeoutException) {
         message = Utils.multiLanguage(
-            StringConstants.timeout_exception_error_message);
+            StringConstants.timeout_exception_error_message)!;
       } else {
-        message = Utils.multiLanguage(StringConstants.common_error_message);
+        message = Utils.multiLanguage(StringConstants.common_error_message)!;
       }
 
       _view!.onGetAppConfigInfoFail(message);
@@ -249,7 +249,7 @@ class LoginPresenter {
         );
 
         _view!.onLoginError(
-          Utils.multiLanguage(StringConstants.common_error_message),
+          Utils.multiLanguage(StringConstants.common_error_message)!,
           null,
         );
       }
@@ -265,7 +265,7 @@ class LoginPresenter {
         );
 
         _view!.onLoginError(
-          Utils.multiLanguage(StringConstants.common_error_message),
+          Utils.multiLanguage(StringConstants.common_error_message)!,
           null,
         );
       },

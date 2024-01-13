@@ -39,7 +39,7 @@ class HomeWorkPresenter {
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser == null) {
       _view!.onGetListHomeworkError(Utils.multiLanguage(
-          StringConstants.load_list_homework_error_message));
+          StringConstants.load_list_homework_error_message)!);
       return;
     }
 
@@ -89,7 +89,7 @@ class HomeWorkPresenter {
         );
 
         _view!.onGetListHomeworkError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -103,7 +103,7 @@ class HomeWorkPresenter {
         );
 
         _view!.onGetListHomeworkError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       },
     );
   }
@@ -170,7 +170,7 @@ class HomeWorkPresenter {
         );
 
         _view!.onLogoutError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       }
     }).catchError(
       // ignore: invalid_return_type_for_catch_error
@@ -184,7 +184,7 @@ class HomeWorkPresenter {
         );
 
         _view!.onLogoutError(
-            Utils.multiLanguage(StringConstants.common_error_message));
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       },
     );
   }

@@ -17,7 +17,7 @@ class MessageDialog {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  Utils.multiLanguage(StringConstants.dialog_title),
+                  Utils.multiLanguage(StringConstants.dialog_title)!,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
                     color: AppColor.defaultBlackColor,
@@ -58,7 +58,7 @@ class MessageDialog {
                         alignment: Alignment.center,
                       ),
                       child: Text(
-                        Utils.multiLanguage(StringConstants.ok_button_title),
+                        Utils.multiLanguage(StringConstants.ok_button_title)!,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
                           color: AppColor.defaultPurpleColor,

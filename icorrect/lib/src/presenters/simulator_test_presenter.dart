@@ -189,6 +189,7 @@ class SimulatorTestPresenter {
     );
   }
 
+  /*
   Future getTestDetailFromMyPractice(
       {required BuildContext context,
       required Map<String, dynamic> data}) async {
@@ -219,6 +220,7 @@ class SimulatorTestPresenter {
     //   },
     // );
   }
+  */
 
   void prepareDataForDownload({
     required BuildContext context,
@@ -649,11 +651,11 @@ class SimulatorTestPresenter {
           _view!.onUpdateHasOrderStatus(hasOrder);
 
           String message =
-              Utils.multiLanguage(StringConstants.submit_test_success_message);
+              Utils.multiLanguage(StringConstants.submit_test_success_message)!;
           if (json[StringConstants.k_error_code] == 5013) {
             if (!isExam) {
               message = Utils.multiLanguage(
-                  StringConstants.submit_test_success_message_with_code_5013);
+                  StringConstants.submit_test_success_message_with_code_5013)!;
             }
           }
 
@@ -685,7 +687,7 @@ class SimulatorTestPresenter {
 
         // ignore: invalid_return_type_for_catch_error
         _view!.onSubmitTestError(Utils.multiLanguage(
-            StringConstants.submit_test_error_invalid_return_type_message));
+            StringConstants.submit_test_error_invalid_return_type_message)!);
       });
     } on TimeoutException {
       //Add log
@@ -697,7 +699,7 @@ class SimulatorTestPresenter {
       );
 
       _view!.onSubmitTestError(
-          Utils.multiLanguage(StringConstants.submit_test_error_timeout));
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
     } on SocketException {
       //Add log
       Utils.prepareLogData(
@@ -708,7 +710,7 @@ class SimulatorTestPresenter {
       );
 
       _view!.onSubmitTestError(
-          Utils.multiLanguage(StringConstants.submit_test_error_socket));
+          Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
     } on http.ClientException {
       //Add log
       Utils.prepareLogData(
@@ -719,7 +721,7 @@ class SimulatorTestPresenter {
       );
 
       _view!.onSubmitTestError(
-          Utils.multiLanguage(StringConstants.submit_test_error_client));
+          Utils.multiLanguage(StringConstants.submit_test_error_client)!);
     }
   }
 
@@ -911,6 +913,17 @@ class SimulatorTestPresenter {
       );
 
       _view!.onGetTestDetailSuccess(testDetail!);
+    } else if (map[StringConstants.k_error_code] == 501) {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: null,
+        message:
+            "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_messages]}",
+        status: LogEvent.failed,
+      );
+
+      _view!.onGetTestDetailError(map[StringConstants.k_messages]);
     } else {
       //Add log
       Utils.prepareLogData(
