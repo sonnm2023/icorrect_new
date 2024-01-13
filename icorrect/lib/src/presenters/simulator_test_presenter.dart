@@ -253,12 +253,11 @@ class SimulatorTestPresenter {
     }
   }
 
-  List<QuestionTopicModel> getAllFilesOfTopic(
+  List<QuestionTopicModel> _getAllFilesOfTopic(
     TopicModel topic,
     PartOfTest partOfTest,
+    List<QuestionTopicModel> allFiles,
   ) {
-    List<QuestionTopicModel> allFiles = [];
-
     //Add all files of introduce part
     if (topic.files.isNotEmpty) {
       for (FileTopicModel file in topic.files) {
@@ -325,6 +324,27 @@ class SimulatorTestPresenter {
       q.files.add(topic.fileEndOfTest);
       q.numPart = partOfTest.get;
       allFiles.add(q);
+    }
+    return allFiles;
+  }
+
+  List<QuestionTopicModel> getAllFilesOfTopic(
+    TopicModel topic,
+    PartOfTest partOfTest,
+  ) {
+    List<QuestionTopicModel> allFiles = [];
+
+    //For Part 2 Data Error
+    if (partOfTest == PartOfTest.part2) {
+      if (topic.questionList.isEmpty) {
+        if (kDebugMode) {
+          print("DEBUG: Has no Part 2");
+        }
+      } else {
+        allFiles = _getAllFilesOfTopic(topic, partOfTest, allFiles);
+      }
+    } else {
+      allFiles = _getAllFilesOfTopic(topic, partOfTest, allFiles);
     }
 
     return allFiles;

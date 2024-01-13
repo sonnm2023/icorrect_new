@@ -1635,6 +1635,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         return;
       }
       //_cameraService!.dispose();
+      _startSubmitTest();
     } else {
       //Activity Type = "homework"
       _setVisibleSaveTest(true);
