@@ -25,7 +25,7 @@ abstract class LoginViewContract {
   void onLoginSuccess();
   void onLoginError(String message, int? errorCode);
   void onGetAppConfigInfoSuccess();
-  void onGetAppConfigInfoFail(String message);
+  void onGetAppConfigInfoError(String message);
 }
 
 class LoginPresenter {
@@ -35,7 +35,11 @@ class LoginPresenter {
     _repository = Injector().getAuthRepository();
   }
 
-  void login(String email, String password, BuildContext context) async {
+  void login({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) async {
     assert(_view != null && _repository != null);
 
     LogModel? log;
@@ -47,82 +51,88 @@ class LoginPresenter {
     int delayTime = 0; //For product
     // int delayTime = 10; //For test
 
-    Future.delayed(Duration(seconds: delayTime)).then((_) {
-      _repository!.login(email, password).then((value) async {
-        if (kDebugMode) {
-          print("DEBUG: login response: $value");
-        }
-        AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
-        if (authModel.errorCode == 200) {
-          //Add log
-          Utils.prepareLogData(
-            log: log,
-            data: jsonDecode(value),
-            message: authModel.message,
-            status: LogEvent.success,
-          );
+    Future.delayed(Duration(seconds: delayTime)).then(
+      (_) {
+        _repository!.login(email, password).then(
+          (value) async {
+            if (kDebugMode) {
+              print("DEBUG: login response: $value");
+            }
+            AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
+            if (authModel.errorCode == 200) {
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: jsonDecode(value),
+                message: authModel.message,
+                status: LogEvent.success,
+              );
 
-          await _saveAccessToken(authModel.data.accessToken);
-          _getUserInfo(context);
-        } else if (authModel.errorCode == 401) {
-          //Add log
-          Utils.prepareLogData(
-            log: log,
-            data: jsonDecode(value),
-            message: authModel.status,
-            status: LogEvent.success,
-          );
-          _view!.onLoginError(
-            authModel.status,
-            authModel.errorCode,
-          );
-        } else {
-          String message = '';
-          if (authModel.message.isNotEmpty) {
-            _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.network_error_message)!,
-              null,
+              await _saveAccessToken(authModel.data.accessToken);
+              _getUserInfo(context);
+            } else if (authModel.errorCode == 401) {
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: jsonDecode(value),
+                message: authModel.status,
+                status: LogEvent.success,
+              );
+              _view!.onLoginError(
+                authModel.status,
+                authModel.errorCode,
+              );
+            } else {
+              String message = '';
+              if (authModel.message.isNotEmpty) {
+                _view!.onLoginError(
+                  Utils.multiLanguage(StringConstants.network_error_message)!,
+                  null,
+                );
+                message = StringConstants.network_error_message;
+              } else {
+                _view!.onLoginError(
+                  Utils.multiLanguage(StringConstants.common_error_message)!,
+                  null,
+                );
+                message = '${authModel.errorCode}: ${authModel.status}';
+              }
+              //Add log
+              Utils.prepareLogData(
+                log: log,
+                data: null,
+                message: message,
+                status: LogEvent.failed,
+              );
+            }
+          },
+        ).catchError(
+          (onError) {
+            String message = '';
+            if (onError is http.ClientException || onError is SocketException) {
+              _view!.onLoginError(
+                Utils.multiLanguage(StringConstants.network_error_message)!,
+                null,
+              );
+              message = StringConstants.network_error_message;
+            } else {
+              _view!.onLoginError(
+                Utils.multiLanguage(StringConstants.common_error_message)!,
+                null,
+              );
+              message = StringConstants.common_error_message;
+            }
+            //Add log
+            Utils.prepareLogData(
+              log: log,
+              data: null,
+              message: message,
+              status: LogEvent.failed,
             );
-            message = StringConstants.network_error_message;
-          } else {
-            _view!.onLoginError(
-              Utils.multiLanguage(StringConstants.common_error_message)!,
-              null,
-            );
-            message = '${authModel.errorCode}: ${authModel.status}';
-          }
-          //Add log
-          Utils.prepareLogData(
-            log: log,
-            data: null,
-            message: message,
-            status: LogEvent.failed,
-          );
-        }
-      }).catchError((onError) {
-        String message = '';
-        if (onError is http.ClientException || onError is SocketException) {
-          _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.network_error_message)!,
-            null,
-          );
-          message = StringConstants.network_error_message;
-        } else {
-          _view!.onLoginError(
-            Utils.multiLanguage(StringConstants.common_error_message)!,
-            null,
-          );
-          message = StringConstants.common_error_message;
-        }
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: null,
-          message: message,
-          status: LogEvent.failed,
+          },
         );
-      });
-    });
+      },
+    );
   }
 
   void getAppConfigInfo(BuildContext context) async {
@@ -173,32 +183,48 @@ class LoginPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetAppConfigInfoFail(Utils.multiLanguage(
+        _view!.onGetAppConfigInfoError(Utils.multiLanguage(
             StringConstants.getting_app_config_information_error_message)!);
       }
-    }).catchError((onError) {
-      String message = '';
-      if (onError is SocketException) {
-        message = Utils.multiLanguage(StringConstants.network_error_message)!;
-      } else if (onError is http.ClientException) {
-        message = Utils.multiLanguage(
-            StringConstants.http_client_exception_error_message)!;
-      } else if (onError is TimeoutException) {
-        message = Utils.multiLanguage(
-            StringConstants.timeout_exception_error_message)!;
-      } else {
-        message = Utils.multiLanguage(StringConstants.common_error_message)!;
-      }
+    }).catchError(
+      (onError) {
+        String message = '';
+        if (onError is SocketException) {
+          message = Utils.multiLanguage(StringConstants.network_error_message)!;
+        } else if (onError is http.ClientException) {
+          message = Utils.multiLanguage(
+              StringConstants.http_client_exception_error_message)!;
+        } else if (onError is TimeoutException) {
+          message = Utils.multiLanguage(
+              StringConstants.timeout_exception_error_message)!;
+        } else {
+          message = Utils.multiLanguage(StringConstants.common_error_message)!;
+        }
 
-      _view!.onGetAppConfigInfoFail(message);
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: null,
-        message: message,
-        status: LogEvent.failed,
-      );
-    });
+        _view!.onGetAppConfigInfoError(message);
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: message,
+          status: LogEvent.failed,
+        );
+      },
+    );
+  }
+
+  Future<void> setUserInformation(String userId) async {
+    try {
+      if (kDebugMode) {
+        print("DEBUG: _setUserInformation with user_id: $userId");
+      }
+      await FirebaseCrashlytics.instance.setUserIdentifier(userId);
+    } on Exception catch (e, stack) {
+      if (kDebugMode) {
+        print("DEBUG: _setUserInformation error: $e: $stack");
+      }
+      FirebaseCrashlytics.instance.log('$e: $stack');
+    }
   }
 
   Future<void> _saveAccessToken(String token) async {
@@ -270,19 +296,5 @@ class LoginPresenter {
         );
       },
     );
-  }
-
-  Future<void> setUserInformation(String userId) async {
-    try {
-      if (kDebugMode) {
-        print("DEBUG: _setUserInformation with user_id: $userId");
-      }
-      await FirebaseCrashlytics.instance.setUserIdentifier(userId);
-    } on Exception catch (e, stack) {
-      if (kDebugMode) {
-        print("DEBUG: _setUserInformation error: $e: $stack");
-      }
-      FirebaseCrashlytics.instance.log('$e: $stack');
-    }
   }
 }

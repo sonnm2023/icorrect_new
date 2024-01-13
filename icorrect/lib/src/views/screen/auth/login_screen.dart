@@ -94,23 +94,16 @@ class _LoginScreenState extends State<LoginScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const SizedBox(height: CustomSize.size_40),
-                          const LogoWidget(),
-                          const LogoTextWidget(),
+                          _buildLogo(),
+                          _buildLogoText(),
                           const SizedBox(height: CustomSize.size_60),
-                          EmailInputWidget(
-                            emailController: emailController,
-                            focusNode: FocusNode(),
-                          ),
-                          PasswordInputWidget(
-                            passwordController: passwordController,
-                            type: PasswordType.password,
-                            focusNode: FocusNode(),
-                          ),
+                          _buildEmailInput(),
+                          _buildPasswordInput(),
                           _buildSignInButton(),
                           // _buildSignUpButton(),
                           // _buildForgotPasswordButton(),
                           Expanded(child: Container()),
-                          const ContactInfoWidget(),
+                          _buildContactInfo(),
                         ],
                       ),
                     ),
@@ -118,19 +111,33 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
               ],
             ),
-            Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
-                if (context.select((AuthProvider value) => value.isLogining)) {
-                  _loading!.show(context: context, isViewAIResponse: false);
-                } else {
-                  _loading!.hide();
-                }
-                return Container();
-              },
-            ),
+            _buildProcessingView(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLogo() {
+    return const LogoWidget();
+  }
+
+  Widget _buildLogoText() {
+    return const LogoTextWidget();
+  }
+
+  Widget _buildEmailInput() {
+    return EmailInputWidget(
+      emailController: emailController,
+      focusNode: FocusNode(),
+    );
+  }
+
+  Widget _buildPasswordInput() {
+    return PasswordInputWidget(
+      passwordController: passwordController,
+      type: PasswordType.password,
+      focusNode: FocusNode(),
     );
   }
 
@@ -153,9 +160,9 @@ class _LoginScreenState extends State<LoginScreen>
               );
 
               _loginPresenter!.login(
-                emailController.text.trim(),
-                passwordController.text.trim(),
-                context,
+                context: context,
+                email: emailController.text.trim(),
+                password: passwordController.text.trim(),
               );
             } else {
               _handleError();
@@ -167,6 +174,23 @@ class _LoginScreenState extends State<LoginScreen>
       background: AppColor.defaultPurpleColor,
       fontSize: FontsSize.fontSize_14,
       height: CustomSize.size_50,
+    );
+  }
+
+  Widget _buildContactInfo() {
+    return const ContactInfoWidget();
+  }
+
+  Widget _buildProcessingView() {
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        if (context.select((AuthProvider value) => value.isLogining)) {
+          _loading!.show(context: context, isViewAIResponse: false);
+        } else {
+          _loading!.hide();
+        }
+        return Container();
+      },
     );
   }
 
@@ -396,9 +420,9 @@ class _LoginScreenState extends State<LoginScreen>
               print("DEBUG: checkInternetConnection pass = $password");
             }
             _loginPresenter!.login(
-              emailController.text.trim(),
-              passwordController.text.trim(),
-              context,
+              context: context,
+              email: emailController.text.trim(),
+              password: passwordController.text.trim(),
             );
           } else {
             _finishLoginWithError(message);
@@ -409,7 +433,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   @override
-  void onGetAppConfigInfoFail(String message) {
+  void onGetAppConfigInfoError(String message) {
     if (kDebugMode) {
       print("DEBUG: onGetAppConfigInfoFail $message");
     }
