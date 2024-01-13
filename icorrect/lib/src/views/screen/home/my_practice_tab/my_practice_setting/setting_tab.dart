@@ -64,10 +64,11 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                             if (_practiceListProvider!.settings[index].value >
                                 _practiceListProvider!.settings[index].step) {
                               _practiceListProvider!
-                                  .updateSettings(index, false);
+                                  .updateSettings(index: index, isAdd: false);
                             }
                           } else {
-                            _practiceListProvider!.updateSettings(index, false);
+                            _practiceListProvider!
+                                .updateSettings(index: index, isAdd: false);
                           }
                         },
                       ),
@@ -109,10 +110,11 @@ class _SettingTabScreenState extends State<SettingTabScreen>
                             if (_practiceListProvider!.settings[index].value <
                                 1) {
                               _practiceListProvider!
-                                  .updateSettings(index, true);
+                                  .updateSettings(index: index, isAdd: true);
                             }
                           } else {
-                            _practiceListProvider!.updateSettings(index, true);
+                            _practiceListProvider!
+                                .updateSettings(index: index, isAdd: true);
                           }
                         },
                       ),

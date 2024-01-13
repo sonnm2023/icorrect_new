@@ -270,10 +270,15 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         _practiceListProvider!.settings[1].value.toInt();
     int amount_questions_part2 =
         _practiceListProvider!.settings[2].value.toInt();
-    double take_note_time = _practiceListProvider!.settings[3].value;
-    double normal_speed = _practiceListProvider!.settings[4].value;
-    double first_repeat_speed = _practiceListProvider!.settings[5].value;
-    double second_repeat_speed = _practiceListProvider!.settings[6].value;
+    double take_note_time =
+        _practiceListProvider!.settings[3].value.toPrecision(2);
+    ;
+    double normal_speed =
+        _practiceListProvider!.settings[4].value.toPrecision(2);
+    double first_repeat_speed =
+        _practiceListProvider!.settings[5].value.toPrecision(2);
+    double second_repeat_speed =
+        _practiceListProvider!.settings[6].value.toPrecision(2);
 
     List<int> topics = [];
     List<int> subTopics = [];
@@ -432,4 +437,8 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+extension Ex on double {
+  double toPrecision(int n) => double.parse(toStringAsFixed(n));
 }
