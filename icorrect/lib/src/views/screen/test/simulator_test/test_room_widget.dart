@@ -114,6 +114,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _deallocateMemory();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

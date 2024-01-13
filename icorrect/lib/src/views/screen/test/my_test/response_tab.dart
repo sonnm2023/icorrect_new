@@ -53,6 +53,9 @@ class _ResponseTabState extends State<ResponseTab>
 
   @override
   void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

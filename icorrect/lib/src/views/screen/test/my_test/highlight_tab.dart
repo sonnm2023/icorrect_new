@@ -33,6 +33,14 @@ class _HighLightTabState extends State<HighLightTab>
   CircleLoading? _loading;
 
   @override
+  void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _presenter = SpecialHomeworksPresenter(this);

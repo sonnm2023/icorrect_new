@@ -44,6 +44,9 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
   @override
   void dispose() {
     _practiceListProvider!.clearTopicList();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

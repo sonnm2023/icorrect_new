@@ -65,6 +65,9 @@ class _LoginScreenState extends State<LoginScreen>
     emailController.dispose();
     passwordController.dispose();
     _authProvider!.resetPermissionDeniedTime();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

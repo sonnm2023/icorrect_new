@@ -39,6 +39,14 @@ class _OtherTabState extends State<OtherTab>
     _getOthersHomeWork();
   }
 
+  @override
+  void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
+    super.dispose();
+  }
+
   void _getOthersHomeWork() async {
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();

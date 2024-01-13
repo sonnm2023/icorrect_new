@@ -57,6 +57,9 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   @override
   void dispose() {
     // _tabController.dispose();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

@@ -55,6 +55,9 @@ class _StudentCorrectionState extends State<StudentCorrection>
 
   @override
   void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

@@ -48,6 +48,14 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
+  void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
 

@@ -145,6 +145,9 @@ class _MyTestTabState extends State<MyTestTab>
     _record.dispose();
     _presenter!.closeClientRequest();
     _presenter!.pauseDownload();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

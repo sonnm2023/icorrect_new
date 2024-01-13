@@ -104,6 +104,16 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _player!.dispose();
+    if (null != _loading) {
+      _loading = null;
+    }
+    super.dispose();
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
@@ -145,13 +155,6 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       widget.provider.setVisibleRecord(false);
       _player!.stop();
     }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _player!.dispose();
-    super.dispose();
   }
 
   @override

@@ -67,8 +67,11 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
     if (null != _count) {
       _count!.cancel();
     }
-    super.dispose();
+    if (null != _loading) {
+      _loading = null;
+    }
     _cameraService!.dispose();
+    super.dispose();
   }
 
   @override

@@ -59,6 +59,9 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
 
   @override
   void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
     if (FocusManager.instance.primaryFocus != null) {
       FocusManager.instance.primaryFocus!.unfocus();

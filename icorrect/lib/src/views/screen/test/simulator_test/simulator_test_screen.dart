@@ -184,6 +184,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestPresenter!.closeClientRequest();
     _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
     _simulatorTestProvider!.resetAll();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 

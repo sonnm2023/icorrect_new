@@ -39,6 +39,14 @@ class _HighLightTabState extends State<HighLightTab>
     _getHighLightHomeWork();
   }
 
+  @override
+  void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
+    super.dispose();
+  }
+
   void _getHighLightHomeWork() async {
     UserDataModel userDataModel =
         await Utils.getCurrentUser() ?? UserDataModel();

@@ -51,6 +51,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
 
   @override
   void dispose() {
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 
