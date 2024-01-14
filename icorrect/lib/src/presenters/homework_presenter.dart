@@ -14,13 +14,13 @@ import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class HomeWorkViewContract {
-  void onGetListHomeworkSuccess(List<ActivitiesModel> homeworks,
+  void onGetListActivitySuccess(List<ActivitiesModel> activities,
       List<NewClassModel> classes, String serverCurrentTime);
-  void onGetListHomeworkError(String message);
+  void onGetListActivityError(String message);
   void onLogoutSuccess();
   void onLogoutError(String message);
   void onUpdateCurrentUserInfo(UserDataModel userDataModel);
-  void onRefreshListHomework();
+  void onRefreshListActivity();
 }
 
 class HomeWorkPresenter {
@@ -33,12 +33,12 @@ class HomeWorkPresenter {
     _homeWorkRepository = Injector().getHomeWorkRepository();
   }
 
-  void getListHomeWork(BuildContext context) async {
+  void getListActivity(BuildContext context) async {
     assert(_view != null && _homeWorkRepository != null);
 
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser == null) {
-      _view!.onGetListHomeworkError(Utils.multiLanguage(
+      _view!.onGetListActivityError(Utils.multiLanguage(
           StringConstants.load_list_homework_error_message)!);
       return;
     }
@@ -60,7 +60,7 @@ class HomeWorkPresenter {
         List<NewClassModel> classes =
             await _generateListNewClass(dataMap[StringConstants.k_data]);
 
-        List<ActivitiesModel> homeworks = await _generateListHomeWork(classes);
+        List<ActivitiesModel> homeworks = await _createListActivity(classes);
 
         if (kDebugMode) {
           print("DEBUG: Homework: getListHomeWork class: ${classes.length}");
@@ -76,7 +76,7 @@ class HomeWorkPresenter {
           status: LogEvent.success,
         );
 
-        _view!.onGetListHomeworkSuccess(
+        _view!.onGetListActivitySuccess(
             homeworks, classes, dataMap[StringConstants.k_current_time]);
       } else {
         //Add log
@@ -88,7 +88,7 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(
+        _view!.onGetListActivityError(
             Utils.multiLanguage(StringConstants.common_error_message)!);
       }
     }).catchError(
@@ -102,29 +102,10 @@ class HomeWorkPresenter {
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(
+        _view!.onGetListActivityError(
             Utils.multiLanguage(StringConstants.common_error_message)!);
       },
     );
-  }
-
-  Future<List<NewClassModel>> _generateListNewClass(List<dynamic> data) async {
-    List<NewClassModel> temp = [];
-    for (int i = 0; i < data.length; i++) {
-      NewClassModel item = NewClassModel.fromJson(data[i]);
-      temp.add(item);
-    }
-    return temp;
-  }
-
-  Future<List<ActivitiesModel>> _generateListHomeWork(
-      List<NewClassModel> data) async {
-    List<ActivitiesModel> temp = [];
-    for (int i = 0; i < data.length; i++) {
-      NewClassModel classModel = data[i];
-      temp.addAll(classModel.activities);
-    }
-    return temp;
   }
 
   void logout(BuildContext context) async {
@@ -189,8 +170,8 @@ class HomeWorkPresenter {
     );
   }
 
-  void refreshListHomework() {
-    _view!.onRefreshListHomework();
+  void refreshListActivity() {
+    _view!.onRefreshListActivity();
   }
 
   void addLogWhenListActivityItemTapped({
@@ -204,5 +185,24 @@ class HomeWorkPresenter {
         key: StringConstants.k_activity_id,
         value: activity.activityId.toString());
     Utils.addLog(actionLog, LogEvent.none);
+  }
+
+  Future<List<NewClassModel>> _generateListNewClass(List<dynamic> data) async {
+    List<NewClassModel> temp = [];
+    for (int i = 0; i < data.length; i++) {
+      NewClassModel item = NewClassModel.fromJson(data[i]);
+      temp.add(item);
+    }
+    return temp;
+  }
+
+  Future<List<ActivitiesModel>> _createListActivity(
+      List<NewClassModel> data) async {
+    List<ActivitiesModel> temp = [];
+    for (int i = 0; i < data.length; i++) {
+      NewClassModel classModel = data[i];
+      temp.addAll(classModel.activities);
+    }
+    return temp;
   }
 }

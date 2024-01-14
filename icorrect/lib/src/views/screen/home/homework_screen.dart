@@ -493,7 +493,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _homeWorkProvider!.resetListClassForFilter();
     _homeWorkProvider!.resetListFilteredHomeWorks();
 
-    _homeWorkPresenter!.getListHomeWork(context);
+    _homeWorkPresenter!.getListActivity(context);
 
     Future.delayed(Duration.zero, () {
       _authProvider!
@@ -633,7 +633,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onGetListHomeworkError(String message) {
+  void onGetListActivityError(String message) {
     _homeWorkProvider!.updateProcessingStatus(processing: false);
 
     //Show error message
@@ -680,7 +680,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onGetListHomeworkSuccess(List<ActivitiesModel> activities,
+  void onGetListActivitySuccess(List<ActivitiesModel> activities,
       List<NewClassModel> classes, String serverCurrentTime) async {
     _homeWorkProvider!.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider!.setListClassForFilter(classes);
@@ -689,7 +689,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onRefreshListHomework() {
+  void onRefreshListActivity() {
     if (kDebugMode) {
       print("DEBUG: HomeWorkScreen - onRefreshListHomework");
     }

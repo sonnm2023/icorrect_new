@@ -494,7 +494,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             // After the SimulatorTest returns a result
             // and refresh list of homework if needed
             if (result == StringConstants.k_refresh) {
-              widget.homeWorkPresenter.refreshListHomework();
+              widget.homeWorkPresenter.refreshListActivity();
             }
           } else {
             Navigator.of(context).push(
@@ -527,7 +527,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     if (kDebugMode) {
       print("DEBUG: MyHomeworkTab - _reloadCallBack");
     }
-    widget.homeWorkPresenter.refreshListHomework();
+    widget.homeWorkPresenter.refreshListActivity();
   }
 
   @override
