@@ -609,48 +609,6 @@ class Utils {
     return "";
   }
 
-  static void showLogoutConfirmDialog({
-    required BuildContext context,
-    required HomeWorkPresenter? homeWorkPresenter,
-  }) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-          title: Utils.multiLanguage(StringConstants.dialog_title)!,
-          description: Utils.multiLanguage(StringConstants.confirm_to_log_out)!,
-          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
-          cancelButtonTitle:
-              Utils.multiLanguage(StringConstants.cancel_button_title),
-          borderRadius: 8,
-          hasCloseButton: false,
-          okButtonTapped: () async {
-            if (null != homeWorkPresenter) {
-              Utils.checkInternetConnection().then((isConnected) {
-                if (isConnected) {
-                  homeWorkPresenter.logout(context);
-                } else {
-                  //Show connect error here
-                  if (kDebugMode) {
-                    print("DEBUG: Connect error here!");
-                  }
-                  Utils.showConnectionErrorDialog(context);
-
-                  Utils.addConnectionErrorLog(context);
-                }
-              });
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-          cancelButtonTapped: () {
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
-  }
-
   static bool isExpired(String activityEndTime, String serverCurrentTime) {
     final t1 = DateTime.parse(activityEndTime);
 

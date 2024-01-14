@@ -64,6 +64,17 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  //For Logout
+  bool _isLogout = false;
+  bool get isLogout => _isLogout;
+
+  void updateLogoutStatus({required bool processing}) {
+    _isLogout = processing;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   //For Change password
   bool _isChanging = false;
   bool get isChanging => _isChanging;

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/other/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
@@ -45,6 +46,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   HomeWorkProvider? _homeWorkProvider;
   AuthProvider? _authProvider;
   SimulatorTestProvider? _simulatorTestProvider;
+  CircleLoading? _loading;
 
   List<Widget> _tabsLabel() {
     return [
@@ -72,6 +74,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _loading = CircleLoading();
 
     _getListHomeWork();
 
@@ -82,27 +85,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     // Utils.testCrashBug();
   }
 
-  void _getListHomeWork() async {
-    _homeWorkProvider!.updateFilterString(
-        Utils.multiLanguage(StringConstants.add_your_filter)!);
-    _homeWorkProvider!.resetListSelectedClassFilter();
-    _homeWorkProvider!.resetListSelectedStatusFilter();
-    _homeWorkProvider!.resetListSelectedFilterIntoLocal();
-    _homeWorkProvider!.resetListHomeworks();
-    _homeWorkProvider!.resetListClassForFilter();
-    _homeWorkProvider!.resetListFilteredHomeWorks();
-
-    _homeWorkPresenter!.getListHomeWork(context);
-
-    Future.delayed(Duration.zero, () {
-      _authProvider!
-          .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
-    });
-  }
-
   @override
   void dispose() {
     _authProvider!.resetPermissionDeniedTime();
+    if (null != _loading) {
+      _loading = null;
+    }
     super.dispose();
   }
 
@@ -111,90 +99,94 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     super.build(context);
 
     return WillPopScope(
-      onWillPop: () async {
-        _backButtonTapped();
-        return false;
-      },
-      child: MaterialApp(
-        theme: ThemeData(
-          brightness: Brightness.light,
-          tabBarTheme: const TabBarTheme(
-            labelColor: AppColor.defaultPurpleColor,
-            labelStyle: TextStyle(
-              color: AppColor.defaultPurpleColor,
-              fontWeight: FontWeight.w800,
-            ),
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(
-                color: AppColor.defaultPurpleColor,
-              ),
-            ),
-          ),
-          primaryColor: AppColor.defaultPurpleColor,
-          unselectedWidgetColor:
-              AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            key: widget.scaffoldKey,
-            appBar: AppBar(
-              title: Text(
-                Utils.multiLanguage(StringConstants.icorrect_title)!,
-                style: CustomTextStyle.textWithCustomInfo(
-                  context: context,
-                  color: AppColor.defaultPurpleColor,
-                  fontsSize: FontsSize.fontSize_18,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              centerTitle: true,
-              elevation: 0.0,
-              iconTheme: const IconThemeData(
-                color: AppColor.defaultPurpleColor,
-              ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(CustomSize.size_50),
-                child: Container(
-                  alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: AppColor.defaultPurpleColor,
-                      ),
+        onWillPop: () async {
+          _backButtonTapped();
+          return false;
+        },
+        child: Stack(
+          children: [
+            MaterialApp(
+              theme: ThemeData(
+                brightness: Brightness.light,
+                tabBarTheme: const TabBarTheme(
+                  labelColor: AppColor.defaultPurpleColor,
+                  labelStyle: TextStyle(
+                    color: AppColor.defaultPurpleColor,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  indicator: UnderlineTabIndicator(
+                    borderSide: BorderSide(
+                      color: AppColor.defaultPurpleColor,
                     ),
                   ),
-                  child: TabBar(
-                    physics: const BouncingScrollPhysics(),
-                    isScrollable: false,
-                    indicator: const UnderlineTabIndicator(
-                      borderSide: BorderSide(
-                        width: 3.0,
+                ),
+                primaryColor: AppColor.defaultPurpleColor,
+                unselectedWidgetColor:
+                    AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
+              ),
+              debugShowCheckedModeBanner: false,
+              home: DefaultTabController(
+                length: 2,
+                child: Scaffold(
+                  key: widget.scaffoldKey,
+                  appBar: AppBar(
+                    title: Text(
+                      Utils.multiLanguage(StringConstants.icorrect_title)!,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
                         color: AppColor.defaultPurpleColor,
+                        fontsSize: FontsSize.fontSize_18,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: AppColor.defaultPurpleColor,
-                    labelStyle: const TextStyle(
-                      fontSize: FontsSize.fontSize_16,
-                      fontWeight: FontWeight.bold,
+                    centerTitle: true,
+                    elevation: 0.0,
+                    iconTheme: const IconThemeData(
+                      color: AppColor.defaultPurpleColor,
                     ),
-                    unselectedLabelColor: AppColor.defaultBlackColor,
-                    tabs: _tabsLabel(),
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(CustomSize.size_50),
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: AppColor.defaultPurpleColor,
+                            ),
+                          ),
+                        ),
+                        child: TabBar(
+                          physics: const BouncingScrollPhysics(),
+                          isScrollable: false,
+                          indicator: const UnderlineTabIndicator(
+                            borderSide: BorderSide(
+                              width: 3.0,
+                              color: AppColor.defaultPurpleColor,
+                            ),
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelColor: AppColor.defaultPurpleColor,
+                          labelStyle: const TextStyle(
+                            fontSize: FontsSize.fontSize_16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          unselectedLabelColor: AppColor.defaultBlackColor,
+                          tabs: _tabsLabel(),
+                        ),
+                      ),
+                    ),
+                    backgroundColor: AppColor.defaultWhiteColor,
                   ),
+                  body: _buildBody(),
+                  drawer: _buildMenu(),
+                  drawerEnableOpenDragGesture: false,
                 ),
               ),
-              backgroundColor: AppColor.defaultWhiteColor,
             ),
-            body: _buildBody(),
-            drawer: _buildMenu(),
-            drawerEnableOpenDragGesture: false,
-          ),
-        ),
-      ),
-    );
+            _buildProcessingView(),
+          ],
+        ));
   }
 
   Widget _buildBody() {
@@ -441,7 +433,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               color: AppColor.defaultGrayColor,
             ),
             onTap: () {
-              Utils.showLogoutConfirmDialog(
+              _showLogoutConfirmDialog(
                 context: context,
                 homeWorkPresenter: _homeWorkPresenter,
               );
@@ -476,6 +468,37 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         _authProvider!.scaffoldKeys.removeFirst();
       }
     }
+  }
+
+  Widget _buildProcessingView() {
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        if (context.select((AuthProvider value) => value.isLogout)) {
+          _loading!.show(context: context, isViewAIResponse: false);
+        } else {
+          _loading!.hide();
+        }
+        return Container();
+      },
+    );
+  }
+
+  void _getListHomeWork() async {
+    _homeWorkProvider!.updateFilterString(
+        Utils.multiLanguage(StringConstants.add_your_filter)!);
+    _homeWorkProvider!.resetListSelectedClassFilter();
+    _homeWorkProvider!.resetListSelectedStatusFilter();
+    _homeWorkProvider!.resetListSelectedFilterIntoLocal();
+    _homeWorkProvider!.resetListHomeworks();
+    _homeWorkProvider!.resetListClassForFilter();
+    _homeWorkProvider!.resetListFilteredHomeWorks();
+
+    _homeWorkPresenter!.getListHomeWork(context);
+
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
+    });
   }
 
   bool _isShowConfirmDuringTest() {
@@ -566,6 +589,49 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
+  void _showLogoutConfirmDialog({
+    required BuildContext context,
+    required HomeWorkPresenter? homeWorkPresenter,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: Utils.multiLanguage(StringConstants.confirm_to_log_out)!,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () async {
+            if (null != homeWorkPresenter) {
+              Utils.checkInternetConnection().then((isConnected) {
+                if (isConnected) {
+                  _authProvider!.updateLogoutStatus(processing: true);
+                  homeWorkPresenter.logout(context);
+                } else {
+                  //Show connect error here
+                  if (kDebugMode) {
+                    print("DEBUG: Connect error here!");
+                  }
+                  Utils.showConnectionErrorDialog(context);
+
+                  Utils.addConnectionErrorLog(context);
+                }
+              });
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
   @override
   void onGetListHomeworkError(String message) {
     _homeWorkProvider!.setProcessingStatus(processing: false);
@@ -580,6 +646,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onLogoutSuccess() {
+    _authProvider!.updateLogoutStatus(processing: false);
     _homeWorkProvider!.setProcessingStatus(processing: false);
 
     //Send log
@@ -595,6 +662,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onLogoutError(String message) {
+    _authProvider!.updateLogoutStatus(processing: false);
     _homeWorkProvider!.setProcessingStatus(processing: false);
 
     //Show error message
