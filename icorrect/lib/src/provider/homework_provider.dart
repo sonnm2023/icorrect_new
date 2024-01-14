@@ -20,7 +20,7 @@ class HomeWorkProvider with ChangeNotifier {
 
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
-  void setProcessingStatus({required bool processing}) {
+  void updateProcessingStatus({required bool processing}) {
     _isProcessing = processing;
 
     notifyListeners();
@@ -300,7 +300,7 @@ class HomeWorkProvider with ChangeNotifier {
     }
 
     prepareToUpdateFilterString();
-    setProcessingStatus(processing: false);
+    updateProcessingStatus(processing: false);
   }
 
   void prepareToUpdateFilterString() {

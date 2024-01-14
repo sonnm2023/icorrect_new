@@ -676,7 +676,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
     _homeWorkProvider!.setCurrentUser(userDataModel);
-    _homeWorkProvider!.setProcessingStatus(processing: true);
+    _homeWorkProvider!.updateProcessingStatus(processing: true);
   }
 
   @override

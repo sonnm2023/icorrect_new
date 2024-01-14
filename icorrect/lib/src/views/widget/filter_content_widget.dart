@@ -314,12 +314,13 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
           child: InkWell(
             onTap: () {
               bool isValid = widget.homeWorkProvider.checkFilterSelected();
-              widget.homeWorkProvider.setProcessingStatus(processing: true);
+              widget.homeWorkProvider.updateProcessingStatus(processing: true);
               if (isValid) {
                 widget.homeWorkProvider.filterHomeWork(context);
                 Navigator.pop(context);
               } else {
-                widget.homeWorkProvider.setProcessingStatus(processing: false);
+                widget.homeWorkProvider
+                    .updateProcessingStatus(processing: false);
                 widget.homeWorkProvider.updateFilterString(
                     Utils.multiLanguage(StringConstants.default_filter_title)!);
                 showToastMsg(
