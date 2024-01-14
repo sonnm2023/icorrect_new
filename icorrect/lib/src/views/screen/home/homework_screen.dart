@@ -634,7 +634,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
   @override
   void onGetListHomeworkError(String message) {
-    _homeWorkProvider!.setProcessingStatus(processing: false);
+    _homeWorkProvider!.updateProcessingStatus(processing: false);
 
     //Show error message
     showToastMsg(
@@ -647,7 +647,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onLogoutSuccess() {
     _authProvider!.updateLogoutStatus(processing: false);
-    _homeWorkProvider!.setProcessingStatus(processing: false);
+    _homeWorkProvider!.updateProcessingStatus(processing: false);
 
     //Send log
     Utils.sendLog();
@@ -663,7 +663,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onLogoutError(String message) {
     _authProvider!.updateLogoutStatus(processing: false);
-    _homeWorkProvider!.setProcessingStatus(processing: false);
+    _homeWorkProvider!.updateProcessingStatus(processing: false);
 
     //Show error message
     showToastMsg(
