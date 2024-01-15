@@ -21,14 +21,12 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
-import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/presenters/home_presenter/homework_presenter.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/home/my_homework_tab.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
-import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 
 class HomeWorkScreen extends StatefulWidget {
   final scaffoldKey = GlobalScaffoldKey.homeScreenScaffoldKey;
@@ -76,13 +74,17 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _loading = CircleLoading();
 
-    _getListHomeWork();
+    _getCurrentUserInfo();
 
     //Send log
     Utils.sendLog();
 
     //Create crash bug for test
     // Utils.testCrashBug();
+  }
+
+  void _getCurrentUserInfo() {
+    _homeWorkPresenter!.getCurrentUserInfo();
   }
 
   @override
@@ -99,94 +101,95 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     super.build(context);
 
     return WillPopScope(
-        onWillPop: () async {
-          _backButtonTapped();
-          return false;
-        },
-        child: Stack(
-          children: [
-            MaterialApp(
-              theme: ThemeData(
-                brightness: Brightness.light,
-                tabBarTheme: const TabBarTheme(
-                  labelColor: AppColor.defaultPurpleColor,
-                  labelStyle: TextStyle(
+      onWillPop: () async {
+        _backButtonTapped();
+        return false;
+      },
+      child: Stack(
+        children: [
+          MaterialApp(
+            theme: ThemeData(
+              brightness: Brightness.light,
+              tabBarTheme: const TabBarTheme(
+                labelColor: AppColor.defaultPurpleColor,
+                labelStyle: TextStyle(
+                  color: AppColor.defaultPurpleColor,
+                  fontWeight: FontWeight.w800,
+                ),
+                indicator: UnderlineTabIndicator(
+                  borderSide: BorderSide(
                     color: AppColor.defaultPurpleColor,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  indicator: UnderlineTabIndicator(
-                    borderSide: BorderSide(
-                      color: AppColor.defaultPurpleColor,
-                    ),
                   ),
                 ),
-                primaryColor: AppColor.defaultPurpleColor,
-                unselectedWidgetColor:
-                    AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
               ),
-              debugShowCheckedModeBanner: false,
-              home: DefaultTabController(
-                length: 2,
-                child: Scaffold(
-                  key: widget.scaffoldKey,
-                  appBar: AppBar(
-                    title: Text(
-                      Utils.multiLanguage(StringConstants.icorrect_title)!,
-                      style: CustomTextStyle.textWithCustomInfo(
-                        context: context,
-                        color: AppColor.defaultPurpleColor,
-                        fontsSize: FontsSize.fontSize_18,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    centerTitle: true,
-                    elevation: 0.0,
-                    iconTheme: const IconThemeData(
+              primaryColor: AppColor.defaultPurpleColor,
+              unselectedWidgetColor:
+                  AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
+            ),
+            debugShowCheckedModeBanner: false,
+            home: DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                key: widget.scaffoldKey,
+                appBar: AppBar(
+                  title: Text(
+                    Utils.multiLanguage(StringConstants.icorrect_title)!,
+                    style: CustomTextStyle.textWithCustomInfo(
+                      context: context,
                       color: AppColor.defaultPurpleColor,
+                      fontsSize: FontsSize.fontSize_18,
+                      fontWeight: FontWeight.w800,
                     ),
-                    bottom: PreferredSize(
-                      preferredSize: const Size.fromHeight(CustomSize.size_50),
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: AppColor.defaultPurpleColor,
-                            ),
+                  ),
+                  centerTitle: true,
+                  elevation: 0.0,
+                  iconTheme: const IconThemeData(
+                    color: AppColor.defaultPurpleColor,
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(CustomSize.size_50),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColor.defaultPurpleColor,
                           ),
-                        ),
-                        child: TabBar(
-                          physics: const BouncingScrollPhysics(),
-                          isScrollable: false,
-                          indicator: const UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                              width: 3.0,
-                              color: AppColor.defaultPurpleColor,
-                            ),
-                          ),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          labelColor: AppColor.defaultPurpleColor,
-                          labelStyle: const TextStyle(
-                            fontSize: FontsSize.fontSize_16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          unselectedLabelColor: AppColor.defaultBlackColor,
-                          tabs: _tabsLabel(),
                         ),
                       ),
+                      child: TabBar(
+                        physics: const BouncingScrollPhysics(),
+                        isScrollable: false,
+                        indicator: const UnderlineTabIndicator(
+                          borderSide: BorderSide(
+                            width: 3.0,
+                            color: AppColor.defaultPurpleColor,
+                          ),
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: AppColor.defaultPurpleColor,
+                        labelStyle: const TextStyle(
+                          fontSize: FontsSize.fontSize_16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        unselectedLabelColor: AppColor.defaultBlackColor,
+                        tabs: _tabsLabel(),
+                      ),
                     ),
-                    backgroundColor: AppColor.defaultWhiteColor,
                   ),
-                  body: _buildBody(),
-                  drawer: _buildMenu(),
-                  drawerEnableOpenDragGesture: false,
+                  backgroundColor: AppColor.defaultWhiteColor,
                 ),
+                body: _buildBody(),
+                drawer: _buildMenu(),
+                drawerEnableOpenDragGesture: false,
               ),
             ),
-            _buildProcessingView(),
-          ],
-        ));
+          ),
+          _buildProcessingView(),
+        ],
+      ),
+    );
   }
 
   Widget _buildBody() {
@@ -195,7 +198,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         MyHomeWorkTab(
           homeWorkProvider: _homeWorkProvider!,
           homeWorkPresenter: _homeWorkPresenter!,
-          pullToRefreshCallBack: _pullToRefresh,
         ),
         const MyPracticeTab(),
       ],
@@ -221,35 +223,36 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
                     height: CustomSize.size_60,
                     child: CircleAvatar(
                       child: Consumer<HomeWorkProvider>(
-                          builder: (context, homeWorkProvider, child) {
-                        return CachedNetworkImage(
-                          imageUrl: fileEP(
-                              homeWorkProvider.currentUser.profileModel.avatar),
-                          imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(CustomSize.size_100),
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                colorFilter: const ColorFilter.mode(
-                                  Colors.transparent,
-                                  BlendMode.colorBurn,
+                        builder: (context, homeWorkProvider, child) {
+                          return CachedNetworkImage(
+                            imageUrl: fileEP(homeWorkProvider
+                                .currentUser.profileModel.avatar),
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(CustomSize.size_100),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.transparent,
+                                    BlendMode.colorBurn,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) => CircleAvatar(
-                            child: Image.asset(
-                              AppAsset.defaultAvt,
-                              width: CustomSize.size_40,
-                              height: CustomSize.size_40,
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              child: Image.asset(
+                                AppAsset.defaultAvt,
+                                width: CustomSize.size_40,
+                                height: CustomSize.size_40,
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(width: 5),
@@ -483,24 +486,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
   }
 
-  void _getListHomeWork() async {
-    _homeWorkProvider!.updateFilterString(
-        Utils.multiLanguage(StringConstants.add_your_filter)!);
-    _homeWorkProvider!.resetListSelectedClassFilter();
-    _homeWorkProvider!.resetListSelectedStatusFilter();
-    _homeWorkProvider!.resetListSelectedFilterIntoLocal();
-    _homeWorkProvider!.resetListHomeworks();
-    _homeWorkProvider!.resetListClassForFilter();
-    _homeWorkProvider!.resetListFilteredHomeWorks();
-
-    _homeWorkPresenter!.getListActivity(context);
-
-    Future.delayed(Duration.zero, () {
-      _authProvider!
-          .setGlobalScaffoldKey(GlobalScaffoldKey.homeScreenScaffoldKey);
-    });
-  }
-
   bool _isShowConfirmDuringTest() {
     return _simulatorTestProvider!.doingStatus == DoingStatus.doing &&
         _simulatorTestProvider!.reviewingStatus == ReviewingStatus.playing;
@@ -515,13 +500,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   bool _isBackFromTestRoom(GlobalKey<ScaffoldState> key) {
     // return key == GlobalScaffoldKey.simulatorTestScaffoldKey &&
     return _simulatorTestProvider!.submitStatus == SubmitStatus.success;
-  }
-
-  Future<void> _pullToRefresh() async {
-    if (kDebugMode) {
-      print("DEBUG: HomeWorkScreen - _pullToRefresh");
-    }
-    _getListHomeWork();
   }
 
   void _showQuitAppConfirmDialog() async {
@@ -633,18 +611,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onGetListActivityError(String message) {
-    _homeWorkProvider!.updateProcessingStatus(processing: false);
-
-    //Show error message
-    showToastMsg(
-      msg: message,
-      toastState: ToastStatesType.error,
-      isCenter: true,
-    );
-  }
-
-  @override
   void onLogoutSuccess() {
     _authProvider!.updateLogoutStatus(processing: false);
     _homeWorkProvider!.updateProcessingStatus(processing: false);
@@ -674,26 +640,16 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
-  void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
+  void onUpdateCurrentUserInfoSuccess(UserDataModel userDataModel) {
     _homeWorkProvider!.setCurrentUser(userDataModel);
     _homeWorkProvider!.updateProcessingStatus(processing: true);
   }
 
   @override
-  void onGetListActivitySuccess(List<ActivitiesModel> activities,
-      List<NewClassModel> classes, String serverCurrentTime) async {
-    _homeWorkProvider!.setServerCurrentTime(serverCurrentTime);
-    await _homeWorkProvider!.setListClassForFilter(classes);
-    await _homeWorkProvider!.setListHomeWorks(activities);
-    await _homeWorkProvider!.initializeListFilter(context);
-  }
-
-  @override
-  void onRefreshListActivity() {
+  void onUpdateCurrentUserInfoError(String message) {
     if (kDebugMode) {
-      print("DEBUG: HomeWorkScreen - onRefreshListHomework");
+      print("DEBUG: onUpdateCurrentUserInfoError");
     }
-    _getListHomeWork();
   }
 
   @override

@@ -173,7 +173,7 @@ class HomeWorkWidget extends StatelessWidget {
   }
 
   String _getActivityStatus(BuildContext context) {
-    String status = Utils.getHomeWorkStatus(
+    String status = Utils.getActivityStatus(
         activity, homeWorkProvider.serverCurrentTime)['title'];
     String aiStatus = Utils.haveAiResponse(activity);
     if (aiStatus.isNotEmpty) {
@@ -189,7 +189,7 @@ class HomeWorkWidget extends StatelessWidget {
     if (aiStatus.isNotEmpty) {
       return const Color.fromARGB(255, 12, 201, 110);
     } else {
-      return Utils.getHomeWorkStatus(
+      return Utils.getActivityStatus(
           activity, homeWorkProvider.serverCurrentTime)['color'];
     }
   }

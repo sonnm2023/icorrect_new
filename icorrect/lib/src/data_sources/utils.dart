@@ -25,7 +25,7 @@ import 'package:icorrect/src/models/ui_models/user_authen_status.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/presenters/home_presenter/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -169,18 +169,17 @@ class Utils {
     return tempDate;
   }
 
-  static Map<String, dynamic> getHomeWorkStatus(
-      ActivitiesModel homeWorkModel, String serverCurrentTime) {
-    if (homeWorkModel.activityStatus == 99) {
+  static Map<String, dynamic> getActivityStatus(
+      ActivitiesModel activity, String serverCurrentTime) {
+    if (activity.activityStatus == 99) {
       return {
         StringConstants.k_title: StringConstants.activity_status_loaded_test,
         StringConstants.k_color: Colors.brown,
       };
     }
 
-    if (null == homeWorkModel.activityAnswer) {
-      bool timeCheck =
-          isExpired(homeWorkModel.activityEndTime, serverCurrentTime);
+    if (null == activity.activityAnswer) {
+      bool timeCheck = isExpired(activity.activityEndTime, serverCurrentTime);
       if (timeCheck) {
         return {
           StringConstants.k_title: StringConstants.activity_status_out_of_date,
@@ -193,30 +192,30 @@ class Utils {
         StringConstants.k_color: const Color.fromARGB(255, 237, 179, 3)
       };
     } else {
-      if (homeWorkModel.activityAnswer!.orderId != 0) {
+      if (activity.activityAnswer!.orderId != 0) {
         return {
           StringConstants.k_title: StringConstants.activity_status_corrected,
           StringConstants.k_color: const Color.fromARGB(255, 12, 201, 110)
         };
       } else {
-        if (homeWorkModel.activityAnswer!.late == 0) {
+        if (activity.activityAnswer!.late == 0) {
           return {
             StringConstants.k_title: StringConstants.activity_status_submitted,
             StringConstants.k_color: const Color.fromARGB(255, 45, 117, 243)
           };
         }
 
-        if (homeWorkModel.activityAnswer!.late == 1) {
+        if (activity.activityAnswer!.late == 1) {
           return {
             StringConstants.k_title: StringConstants.activity_status_late,
             StringConstants.k_color: Colors.red,
           };
         }
 
-        if (homeWorkModel.activityEndTime.isNotEmpty) {
-          DateTime endTime = DateTime.parse(homeWorkModel.activityEndTime);
+        if (activity.activityEndTime.isNotEmpty) {
+          DateTime endTime = DateTime.parse(activity.activityEndTime);
           DateTime createTime =
-              DateTime.parse(homeWorkModel.activityAnswer!.createdAt);
+              DateTime.parse(activity.activityAnswer!.createdAt);
           if (endTime.compareTo(createTime) < 0) {
             return {
               StringConstants.k_title:

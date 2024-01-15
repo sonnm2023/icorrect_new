@@ -8,11 +8,14 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
-import 'package:icorrect/src/presenters/homework_presenter.dart';
+import 'package:icorrect/src/presenters/home_presenter/homework_presenter.dart';
+import 'package:icorrect/src/presenters/home_presenter/my_home_work_tab_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
@@ -28,26 +31,25 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class MyHomeWorkTab extends StatefulWidget {
-  const MyHomeWorkTab(
-      {Key? key,
-      required this.homeWorkProvider,
-      required this.homeWorkPresenter,
-      required this.pullToRefreshCallBack})
-      : super(key: key);
+  const MyHomeWorkTab({
+    Key? key,
+    required this.homeWorkProvider,
+    required this.homeWorkPresenter,
+  }) : super(key: key);
 
   final HomeWorkProvider homeWorkProvider;
   final HomeWorkPresenter homeWorkPresenter;
-  final Future<void> Function() pullToRefreshCallBack;
 
   @override
   State<MyHomeWorkTab> createState() => _MyHomeWorkTabState();
 }
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
-    implements ActionAlertListener {
-  ActivitiesModel? _selectedActivityModel;
+    implements ActionAlertListener, MyHomeWorkTabViewContract {
+  ActivitiesModel? _selectedActivity;
   final FlutterLocalization localization = FlutterLocalization.instance;
   CircleLoading? _loading;
+  MyHomeWorkTabPresenter? _presenter;
 
   @override
   void dispose() {
@@ -61,6 +63,8 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   void initState() {
     super.initState();
     _loading = CircleLoading();
+    _presenter = MyHomeWorkTabPresenter(this);
+    _getListActivity();
   }
 
   @override
@@ -70,7 +74,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         Column(
           children: [
             _buildTopFilter(),
-            _buildListHomeWork(),
+            _buildListActivity(),
           ],
         ),
         Consumer<HomeWorkProvider>(
@@ -164,77 +168,92 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
-  Widget _buildListHomeWork() {
+  Widget _buildListActivity() {
     return Expanded(
       child: Container(
         color: AppColor.defaultWhiteColor,
         child: Consumer<HomeWorkProvider>(
-            builder: (context, homeworkProvider, child) {
-          if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
-              !homeworkProvider.isProcessing) {
-            homeworkProvider.updateFilterString(
-                Utils.multiLanguage(StringConstants.default_filter_title)!);
-            return NoDataWidget(
-              msg: Utils.multiLanguage(StringConstants.no_data_filter_message)!,
-              reloadCallBack: _reloadCallBack,
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: widget.pullToRefreshCallBack,
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  slivers: [
-                    SliverGroupedListView<ActivitiesModel, String>(
-                      elements: homeworkProvider.listFilteredHomeWorks,
-                      groupBy: (element) => element.classId.toString(),
-                      groupComparator: (value1, value2) =>
-                          value2.compareTo(value1),
-                      order: GroupedListOrder.ASC,
-                      groupSeparatorBuilder: (String classId) {
-                        String className = Utils.getClassNameWithId(
-                            classId, homeworkProvider.listClassForFilter);
+          builder: (context, homeworkProvider, child) {
+            if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
+                !homeworkProvider.isProcessing) {
+              homeworkProvider.updateFilterString(
+                  Utils.multiLanguage(StringConstants.default_filter_title)!);
+              return NoDataWidget(
+                msg: Utils.multiLanguage(
+                    StringConstants.no_data_filter_message)!,
+                reloadCallBack: _reloadCallBack,
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: _pullToRefresh,
+              child: Stack(
+                children: [
+                  CustomScrollView(
+                    slivers: [
+                      SliverGroupedListView<ActivitiesModel, String>(
+                        elements: homeworkProvider.listFilteredHomeWorks,
+                        groupBy: (element) => element.classId.toString(),
+                        groupComparator: (value1, value2) =>
+                            value2.compareTo(value1),
+                        order: GroupedListOrder.ASC,
+                        groupSeparatorBuilder: (String classId) {
+                          String className = Utils.getClassNameWithId(
+                              classId, homeworkProvider.listClassForFilter);
 
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            left: CustomSize.size_15,
-                            top: CustomSize.size_5,
-                            right: CustomSize.size_10,
-                            bottom: CustomSize.size_5,
-                          ),
-                          child: Text(
-                            className,
-                            textAlign: TextAlign.left,
-                            style: CustomTextStyle.textWithCustomInfo(
-                              context: context,
-                              color: AppColor.defaultBlackColor,
-                              fontsSize: FontsSize.fontSize_16,
-                              fontWeight: FontWeight.w600,
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              left: CustomSize.size_15,
+                              top: CustomSize.size_5,
+                              right: CustomSize.size_10,
+                              bottom: CustomSize.size_5,
                             ),
-                          ),
-                        );
-                      },
-                      itemBuilder: (c, element) {
-                        return HomeWorkWidget(
-                          activity: element,
-                          activityTapped: _listActivityItemTapped,
-                          homeWorkProvider: homeworkProvider,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                Container(
-                  alignment: Alignment.bottomRight,
-                  margin: const EdgeInsets.all(20),
-                  child: _languageSelectionButton(),
-                )
-              ],
-            ),
-          );
-        }),
+                            child: Text(
+                              className,
+                              textAlign: TextAlign.left,
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultBlackColor,
+                                fontsSize: FontsSize.fontSize_16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        },
+                        itemBuilder: (c, element) {
+                          return HomeWorkWidget(
+                            activity: element,
+                            activityTapped: _listActivityItemTapped,
+                            homeWorkProvider: homeworkProvider,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Container(
+                    alignment: Alignment.bottomRight,
+                    margin: const EdgeInsets.all(20),
+                    child: _languageSelectionButton(),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
+  }
+
+  void _getListActivity() async {
+    widget.homeWorkProvider.updateFilterString(
+        Utils.multiLanguage(StringConstants.add_your_filter)!);
+    widget.homeWorkProvider.resetListSelectedClassFilter();
+    widget.homeWorkProvider.resetListSelectedStatusFilter();
+    widget.homeWorkProvider.resetListSelectedFilterIntoLocal();
+    widget.homeWorkProvider.resetListHomeworks();
+    widget.homeWorkProvider.resetListClassForFilter();
+    widget.homeWorkProvider.resetListFilteredHomeWorks();
+
+    _presenter!.getListActivity(context);
   }
 
   void _updateFilterText() {
@@ -307,7 +326,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           Text(
             Utils.getCurrentLanguage()[StringConstants.k_data],
             style: const TextStyle(color: Colors.white, fontSize: 13),
-          )
+          ),
         ],
       ),
     );
@@ -343,9 +362,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
           widget.homeWorkProvider.setPermissionDeniedTime();
         }
       } else {
-        _selectedActivityModel = homeWorkModel;
+        _selectedActivity = homeWorkModel;
         widget.homeWorkProvider.resetPermissionDeniedTime();
-        _gotoHomeworkDetail();
+        _gotoActivityDetail();
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -389,9 +408,9 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               widget.homeWorkProvider.setPermissionDeniedTime();
             }
           } else {
-            _selectedActivityModel = homeWorkModel;
+            _selectedActivity = homeWorkModel;
             widget.homeWorkProvider.resetPermissionDeniedTime();
-            _gotoHomeworkDetail();
+            _gotoActivityDetail();
           }
         } on PlatformException catch (e) {
           if (kDebugMode) {
@@ -409,33 +428,17 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   void _showConfirmDeniedDialog(AlertInfo alertInfo) {
     if (false == widget.homeWorkProvider.dialogShowing) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertsDialog.init().showDialog(
-              context,
-              alertInfo,
-              this,
-              keyInfo: StringClass.permissionDenied,
-            );
-          });
-      widget.homeWorkProvider.setDialogShowing(true);
-    }
-  }
-
-  void _showConfirmDialog() {
-    if (false == widget.homeWorkProvider.dialogShowing) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertsDialog.init().showDialog(
-              context,
-              AlertClass.storagePermissionAlert,
-              this,
-              keyInfo: StringClass.permissionDenied,
-            );
-          });
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertsDialog.init().showDialog(
+            context,
+            alertInfo,
+            this,
+            keyInfo: StringClass.permissionDenied,
+          );
+        },
+      );
       widget.homeWorkProvider.setDialogShowing(true);
     }
   }
@@ -461,55 +464,57 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     );
   }
 
-  void _gotoHomeworkDetail() async {
-    if (_selectedActivityModel!.activityStatus == 99) {
+  void _gotoActivityDetail() async {
+    if (_selectedActivity!.activityStatus == 99) {
       _showActivityIsLoadedDialog(context);
     } else {
-      Utils.checkInternetConnection().then((isConnected) async {
-        if (isConnected) {
-          Map<String, dynamic> statusMap = Utils.getHomeWorkStatus(
-            _selectedActivityModel!,
-            widget.homeWorkProvider.serverCurrentTime,
-          );
-
-          if (statusMap[StringConstants.k_title] ==
-                  StringConstants.activity_status_out_of_date ||
-              statusMap[StringConstants.k_title] ==
-                  StringConstants.activity_status_not_completed) {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SimulatorTestScreen(
-                  activitiesModel: _selectedActivityModel!,
-                  testOption: null,
-                  topicsId: null,
-                  isPredict: null,
-                  testDetail: null,
-                  onRefresh: null,
-                ),
-              ),
+      Utils.checkInternetConnection().then(
+        (isConnected) async {
+          if (isConnected) {
+            Map<String, dynamic> statusMap = Utils.getActivityStatus(
+              _selectedActivity!,
+              widget.homeWorkProvider.serverCurrentTime,
             );
 
-            if (!mounted) return;
-            // After the SimulatorTest returns a result
-            // and refresh list of homework if needed
-            if (result == StringConstants.k_refresh) {
-              widget.homeWorkPresenter.refreshListActivity();
+            if (statusMap[StringConstants.k_title] ==
+                    StringConstants.activity_status_out_of_date ||
+                statusMap[StringConstants.k_title] ==
+                    StringConstants.activity_status_not_completed) {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SimulatorTestScreen(
+                    activitiesModel: _selectedActivity!,
+                    testOption: null,
+                    topicsId: null,
+                    isPredict: null,
+                    testDetail: null,
+                    onRefresh: null,
+                  ),
+                ),
+              );
+
+              if (!mounted) return;
+              // After the SimulatorTest returns a result
+              // and refresh list of activity if needed
+              if (result == StringConstants.k_refresh) {
+                _presenter!.refreshListActivity();
+              }
+            } else {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => MyTestScreen(
+                    activitiesModel: _selectedActivity!,
+                    isFromSimulatorTest: false,
+                  ),
+                ),
+              );
             }
           } else {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => MyTestScreen(
-                  activitiesModel: _selectedActivityModel!,
-                  isFromSimulatorTest: false,
-                ),
-              ),
-            );
+            _handleConnectionError();
           }
-        } else {
-          _handleConnectionError();
-        }
-      });
+        },
+      );
     }
   }
 
@@ -527,7 +532,14 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     if (kDebugMode) {
       print("DEBUG: MyHomeworkTab - _reloadCallBack");
     }
-    widget.homeWorkPresenter.refreshListActivity();
+    _presenter!.refreshListActivity();
+  }
+
+  Future<void> _pullToRefresh() async {
+    if (kDebugMode) {
+      print("DEBUG: MyHomeWorkTab - _pullToRefresh");
+    }
+    _getListActivity();
   }
 
   @override
@@ -539,5 +551,34 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   void onAlertNextStep(String keyInfo) {
     widget.homeWorkProvider.setDialogShowing(false);
     openAppSettings();
+  }
+
+  @override
+  void onGetListActivityError(String message) {
+    widget.homeWorkProvider.updateProcessingStatus(processing: false);
+
+    //Show error message
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.error,
+      isCenter: true,
+    );
+  }
+
+  @override
+  void onGetListActivitySuccess(
+    List<ActivitiesModel> activities,
+    List<NewClassModel> classes,
+    String serverCurrentTime,
+  ) async {
+    widget.homeWorkProvider.setServerCurrentTime(serverCurrentTime);
+    await widget.homeWorkProvider.setListClassForFilter(classes);
+    await widget.homeWorkProvider.setListHomeWorks(activities);
+    await widget.homeWorkProvider.initializeListFilter(context);
+  }
+
+  @override
+  void onRefreshListActivity() {
+    _getListActivity();
   }
 }
