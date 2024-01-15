@@ -7,7 +7,7 @@ import 'app_repository.dart';
 
 abstract class PracticeRepository {
   Future<String> getPracticeTopicsList(List<String> parts, String status);
-  Future<String> getMyPracticeTestList(String pageNum);
+  Future<String> getMyPracticeList(String pageNum);
   Future<String> deleteTest(String testId);
   Future<String> getMyPracticeTestDetail(String testId);
   Future<String> getBankList();
@@ -44,8 +44,8 @@ class PracticeReporitoryImpl implements PracticeRepository {
   }
 
   @override
-  Future<String> getMyPracticeTestList(String pageNum) {
-    String url = getMyPracticeTestEP(pageNum);
+  Future<String> getMyPracticeList(String pageNum) {
+    String url = getMyPracticeEP(pageNum);
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,

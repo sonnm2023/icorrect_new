@@ -12,8 +12,8 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_mode
 import 'package:icorrect/src/presenters/home_presenter/my_practice_tab_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/other/message_dialog.dart';
-import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
-import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/my_practice_setting.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_detail/my_practice_detail_screen.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/my_practice_setting_screen.dart';
 import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
@@ -43,7 +43,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
         Provider.of<MyPracticeListProvider>(context, listen: false);
     _myPracticeListProvider!.refreshList(false);
 
-    _getMyTestsList(isRefresh: false, needShowLoading: true);
+    _getMyPracticeList(isRefresh: false, needShowLoading: true);
     _getBankList();
   }
 
@@ -88,7 +88,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       builder: (context, provider, child) {
         if (provider.isRefreshList) {
           provider.refreshList(false);
-          _getMyTestsList(isRefresh: true, needShowLoading: false);
+          _getMyPracticeList(isRefresh: true, needShowLoading: false);
         }
 
         return Visibility(
@@ -113,7 +113,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  void _getMyTestsList(
+  void _getMyPracticeList(
       {required bool isRefresh, required bool needShowLoading}) {
     if (null != _loading &&
         null != _presenter &&
@@ -122,7 +122,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       if (needShowLoading) {
         _loading!.show(context: context, isViewAIResponse: false);
       }
-      _presenter!.getMyTestLists(
+      _presenter!.getMyPracticeList(
           pageNum: pageNum, isLoadMore: false, isRefresh: isRefresh);
 
       Future.delayed(
@@ -159,7 +159,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     if (kDebugMode) {
       print("DEBUG: _refreshList Callback");
     }
-    _getMyTestsList(isRefresh: true, needShowLoading: true);
+    _getMyPracticeList(isRefresh: true, needShowLoading: true);
   }
 
   List<SpeedDialChild> _generateBankListUI() {
@@ -476,7 +476,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       int lastPage = practiceResponseModel.myPracticeDataModel.lastPage;
       if (pageNum < lastPage) {
         pageNum = pageNum + 1;
-        _presenter!.getMyTestLists(
+        _presenter!.getMyPracticeList(
             pageNum: pageNum, isLoadMore: true, isRefresh: false);
         _myPracticeListProvider!.setPageNum(pageNum);
       } else {
@@ -560,7 +560,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            MyPracticeDetail(testId: myTestModel.id.toString()),
+            MyPracticeDetailScreen(testId: myTestModel.id.toString()),
       ),
     );
   }
@@ -569,11 +569,11 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     if (kDebugMode) {
       print("DEBUG: MyPracticeList - _reloadCallBack");
     }
-    _getMyTestsList(isRefresh: true, needShowLoading: true);
+    _getMyPracticeList(isRefresh: true, needShowLoading: true);
   }
 
   @override
-  void onGetMyTestsListSuccess({
+  void onGetMyPracticeListSuccess({
     required MyPracticeResponseModel practiceResponseModel,
     required List<MyPracticeTestModel> practiceTests,
     required bool isLoadMore,
@@ -596,7 +596,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
-  void onGetMyTestListError(String message) {
+  void onGetMyPracticeListError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
@@ -612,7 +612,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
-  void onDeleteTestError(String message) {
+  void onDeleteMyPracticeError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
 
@@ -627,7 +627,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
-  void onDeleteTestSuccess(String message, int indexDeleted) {
+  void onDeleteMyPracticeSuccess(String message, int indexDeleted) {
     _loading!.hide();
 
     String? msg = Utils.multiLanguage(message);
