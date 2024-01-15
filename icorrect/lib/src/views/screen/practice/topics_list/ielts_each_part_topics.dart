@@ -25,7 +25,7 @@ class IELTSEachPartTopics extends StatefulWidget {
 
 class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
     with AutomaticKeepAliveClientMixin<IELTSEachPartTopics>
-    implements IELTSTopicsListConstract {
+    implements IELTSTopicsListContract {
   double w = 0, h = 0;
   IELTSTopicsProvider? _ieltsTopicsProvider;
   CircleLoading? _loading;

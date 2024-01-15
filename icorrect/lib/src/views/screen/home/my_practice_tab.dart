@@ -9,7 +9,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
-import 'package:icorrect/src/presenters/my_tests_list_presenter.dart';
+import 'package:icorrect/src/presenters/home_presenter/my_practice_tab_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/other/message_dialog.dart';
 import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_detail.dart';
@@ -28,16 +28,16 @@ class MyPracticeTab extends StatefulWidget {
 
 class _MyPracticeTabState extends State<MyPracticeTab>
     with AutomaticKeepAliveClientMixin
-    implements MyTestsListConstract {
+    implements MyPracticeTabContract {
   double w = 0, h = 0;
-  MyTestsListPresenter? _presenter;
+  MyPracticeTabPresenter? _presenter;
   CircleLoading? _loading;
   MyPracticeListProvider? _myPracticeListProvider;
 
   @override
   void initState() {
     super.initState();
-    _presenter = MyTestsListPresenter(this);
+    _presenter = MyPracticeTabPresenter(this);
     _loading = CircleLoading();
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);

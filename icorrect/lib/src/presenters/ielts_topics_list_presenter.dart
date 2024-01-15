@@ -8,13 +8,13 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
 import 'package:icorrect/src/models/practice_model/ielts_topics_list_result_model.dart';
 
-abstract class IELTSTopicsListConstract {
+abstract class IELTSTopicsListContract {
   void onGetIELTSTopicsSuccess(List<IELTSTopicModel> topicsList);
   void onGetIELTSTopicsFail(String message);
 }
 
 class IELTSTopicsListPresenter {
-  final IELTSTopicsListConstract? _view;
+  final IELTSTopicsListContract? _view;
   PracticeRepository? _repository;
 
   IELTSTopicsListPresenter(this._view) {

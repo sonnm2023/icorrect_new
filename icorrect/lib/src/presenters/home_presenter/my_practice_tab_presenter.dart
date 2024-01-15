@@ -8,7 +8,7 @@ import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 
-abstract class MyTestsListConstract {
+abstract class MyPracticeTabContract {
   void onGetMyTestsListSuccess(
       {required MyPracticeResponseModel practiceResponseModel,
       required List<MyPracticeTestModel> practiceTests,
@@ -21,11 +21,11 @@ abstract class MyTestsListConstract {
   void onGetBankListError(String message);
 }
 
-class MyTestsListPresenter {
-  final MyTestsListConstract? _view;
+class MyPracticeTabPresenter {
+  final MyPracticeTabContract? _view;
   PracticeRepository? _repository;
 
-  MyTestsListPresenter(this._view) {
+  MyPracticeTabPresenter(this._view) {
     _repository = Injector().getPracticeRepository();
   }
 
