@@ -139,7 +139,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _presenter!.getBankList();
   }
 
-  void _gotoBankDetail(BankModel bank) {
+  void _gotoMyPracticeSettingScreen(BankModel bank) {
     if (kDebugMode) {
       print("DEBUG: you chose bank id = ${bank.id}");
     }
@@ -194,7 +194,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       SpeedDialChild temp = SpeedDialChild(
         shape: const CircleBorder(),
         onTap: () {
-          _gotoBankDetail(bank);
+          _gotoMyPracticeSettingScreen(bank);
         },
         child: Container(
           margin: const EdgeInsets.all(5),
@@ -573,6 +573,29 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
+  void onGetMyTestsListSuccess({
+    required MyPracticeResponseModel practiceResponseModel,
+    required List<MyPracticeTestModel> practiceTests,
+    required bool isLoadMore,
+    required bool isRefresh,
+  }) {
+    if (isRefresh) {
+      _myPracticeListProvider!.clearOldDataMyTestsList();
+    }
+
+    if (isLoadMore) {
+      _myPracticeListProvider!.setShowLoadingBottom(false);
+      _myPracticeListProvider!.addMyTestsList(practiceTests);
+    } else {
+      _loading!.hide();
+      _myPracticeListProvider!.setMyTestsList(practiceTests);
+    }
+
+    _myPracticeListProvider!.setMyPracticeResponseModel(practiceResponseModel);
+    _myPracticeListProvider!.setIsProcessing(false);
+  }
+
+  @override
   void onGetMyTestListError(String message) {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
@@ -635,29 +658,6 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
     _myPracticeListProvider!.setBankList(banks);
     _myPracticeListProvider!.updateStatusShowBankListButton(isShow: true);
-  }
-
-  @override
-  void onGetMyTestsListSuccess({
-    required MyPracticeResponseModel practiceResponseModel,
-    required List<MyPracticeTestModel> practiceTests,
-    required bool isLoadMore,
-    required bool isRefresh,
-  }) {
-    if (isRefresh) {
-      _myPracticeListProvider!.clearOldDataMyTestsList();
-    }
-
-    if (isLoadMore) {
-      _myPracticeListProvider!.setShowLoadingBottom(false);
-      _myPracticeListProvider!.addMyTestsList(practiceTests);
-    } else {
-      _loading!.hide();
-      _myPracticeListProvider!.setMyTestsList(practiceTests);
-    }
-
-    _myPracticeListProvider!.setMyPracticeResponseModel(practiceResponseModel);
-    _myPracticeListProvider!.setIsProcessing(false);
   }
 
   @override

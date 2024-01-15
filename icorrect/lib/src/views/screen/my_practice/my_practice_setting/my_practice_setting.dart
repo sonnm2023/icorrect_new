@@ -323,10 +323,10 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         .toString()
         .toLowerCase();
 
-    _onClickStartToPractice(data);
+    _startToPracticeTapped(data);
   }
 
-  Future _onClickStartToPractice(Map<String, dynamic> data) async {
+  Future _startToPracticeTapped(Map<String, dynamic> data) async {
     if (kDebugMode) {
       print("DEBUG: _onClickStartToPractice");
     }
