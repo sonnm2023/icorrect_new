@@ -174,7 +174,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         color: AppColor.defaultWhiteColor,
         child: Consumer<HomeWorkProvider>(
           builder: (context, homeworkProvider, child) {
-            if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
+            if (homeworkProvider.listFilteredActivity.isEmpty &&
                 !homeworkProvider.isProcessing) {
               homeworkProvider.updateFilterString(
                   Utils.multiLanguage(StringConstants.default_filter_title)!);
@@ -191,7 +191,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
                   CustomScrollView(
                     slivers: [
                       SliverGroupedListView<ActivitiesModel, String>(
-                        elements: homeworkProvider.listFilteredHomeWorks,
+                        elements: homeworkProvider.listFilteredActivity,
                         groupBy: (element) => element.classId.toString(),
                         groupComparator: (value1, value2) =>
                             value2.compareTo(value1),
@@ -251,7 +251,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
     widget.homeWorkProvider.resetListSelectedFilterIntoLocal();
     widget.homeWorkProvider.resetListHomeworks();
     widget.homeWorkProvider.resetListClassForFilter();
-    widget.homeWorkProvider.resetListFilteredHomeWorks();
+    widget.homeWorkProvider.resetListFilteredActivity();
 
     _presenter!.getListActivity(context);
   }

@@ -32,29 +32,29 @@ class HomeWorkProvider with ChangeNotifier {
     _filterString = newValue;
   }
 
-  final List<ActivitiesModel> _listHomeWorks = [];
-  List<ActivitiesModel> get listHomeWorks => _listHomeWorks;
+  final List<ActivitiesModel> _listActivity = [];
+  List<ActivitiesModel> get listActivity => _listActivity;
   Future<void> setListHomeWorks(List<ActivitiesModel> list) async {
-    if (_listHomeWorks.isNotEmpty) _listHomeWorks.clear();
-    _listHomeWorks.addAll(list);
+    if (_listActivity.isNotEmpty) _listActivity.clear();
+    _listActivity.addAll(list);
   }
 
   void resetListHomeworks() {
-    _listHomeWorks.clear();
+    _listActivity.clear();
   }
 
   //List homework after filter
-  final List<ActivitiesModel> _listFilteredHomeWorks = [];
-  List<ActivitiesModel> get listFilteredHomeWorks => _listFilteredHomeWorks;
-  void setListFilteredHomeWorks(List<ActivitiesModel> list) {
-    _listFilteredHomeWorks.clear();
-    _listFilteredHomeWorks.addAll(list);
+  final List<ActivitiesModel> _listFilteredActivity = [];
+  List<ActivitiesModel> get listFilteredActivity => _listFilteredActivity;
+  void setListFilteredActivity(List<ActivitiesModel> list) {
+    _listFilteredActivity.clear();
+    _listFilteredActivity.addAll(list);
 
     notifyListeners();
   }
 
-  void resetListFilteredHomeWorks() {
-    _listFilteredHomeWorks.clear();
+  void resetListFilteredActivity() {
+    _listFilteredActivity.clear();
   }
 
   final List<NewClassModel> _listClassForFilter = [];
@@ -274,11 +274,11 @@ class HomeWorkProvider with ChangeNotifier {
 
     if (hasSelectAllClass && hasSelectAllStatus) {
       //Reset data
-      if (_listFilteredHomeWorks.isNotEmpty) _listFilteredHomeWorks.clear();
+      if (_listFilteredActivity.isNotEmpty) _listFilteredActivity.clear();
 
-      setListFilteredHomeWorks(listHomeWorks);
+      setListFilteredActivity(listActivity);
     } else {
-      List<ActivitiesModel> temp1 = listHomeWorks
+      List<ActivitiesModel> temp1 = listActivity
           .where((e1) =>
               listSelectedClassFilter.map((e2) => e2.id).contains(e1.classId))
           .toList();
@@ -296,7 +296,7 @@ class HomeWorkProvider with ChangeNotifier {
             .map((e2) => Utils.multiLanguage(e2.name))
             .contains(Utils.multiLanguage(activityStatusMap['title']));
       }).toList();
-      setListFilteredHomeWorks(temp2);
+      setListFilteredActivity(temp2);
     }
 
     prepareToUpdateFilterString();
