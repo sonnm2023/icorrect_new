@@ -149,13 +149,13 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       MaterialPageRoute(
         builder: (_) => MyPracticeSettingScreen(
           selectedBank: bank,
-          onRefresh: _refeshList,
+          onRefresh: _refreshList,
         ),
       ),
     );
   }
 
-  void _refeshList() {
+  void _refreshList() {
     if (kDebugMode) {
       print("DEBUG: _refeshList Callback");
     }
