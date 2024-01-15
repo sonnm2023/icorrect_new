@@ -12,8 +12,8 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_mode
 import 'package:icorrect/src/presenters/home_presenter/my_practice_tab_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/other/message_dialog.dart';
-import 'package:icorrect/src/views/screen/my_practice_tab/my_practice_detail.dart';
-import 'package:icorrect/src/views/screen/my_practice_tab/my_practice_setting/my_practice_setting.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_detail.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/my_practice_setting.dart';
 import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
@@ -74,7 +74,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
           child: Stack(
             children: [
               _buildList(),
-              _buildLoadmore(),
+              _buildLoadMore(),
               _buildBankListButton(),
             ],
           ),
@@ -141,7 +141,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
   void _gotoBankDetail(BankModel bank) {
     if (kDebugMode) {
-      print("DEBUG: you choosed bank id = ${bank.id}");
+      print("DEBUG: you chose bank id = ${bank.id}");
     }
 
     Navigator.push(
@@ -157,7 +157,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
   void _refreshList() {
     if (kDebugMode) {
-      print("DEBUG: _refeshList Callback");
+      print("DEBUG: _refreshList Callback");
     }
     _getMyTestsList(isRefresh: true, needShowLoading: true);
   }
@@ -423,7 +423,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  Widget _buildLoadmore() {
+  Widget _buildLoadMore() {
     return Consumer<MyPracticeListProvider>(
       builder: (context, provider, child) {
         return Visibility(

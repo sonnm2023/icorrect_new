@@ -11,8 +11,8 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/my_practice_setting_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
-import 'package:icorrect/src/views/screen/my_practice_tab/my_practice_setting/setting_tab.dart';
-import 'package:icorrect/src/views/screen/my_practice_tab/my_practice_setting/topic_list_tab.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/setting_tab.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_setting/topic_list_tab.dart';
 import 'package:icorrect/src/views/other/alert_dialog.dart';
 import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
