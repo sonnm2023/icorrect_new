@@ -104,7 +104,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
               activeBackgroundColor: AppColor.defaultYellowColor,
               activeIcon: Icons.close,
               foregroundColor: Colors.white,
-              children: _generateBankListUI(),
+              children: _createBankListUI(),
               child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
@@ -162,7 +162,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _getMyPracticeList(isRefresh: true, needShowLoading: true);
   }
 
-  List<SpeedDialChild> _generateBankListUI() {
+  List<SpeedDialChild> _createBankListUI() {
     if (_myPracticeListProvider!.banks.isEmpty) return [];
 
     List<SpeedDialChild> list = [];
@@ -265,7 +265,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                   MyPracticeTestModel myTestModel = provider.myTestsList[index];
                   return InkWell(
                     onTap: () {
-                      _gotoTestDetail(myTestModel);
+                      _gotoMyPracticeDetailScreen(myTestModel);
                     },
                     child: _buildItem(myTestModel, index),
                   );
@@ -556,7 +556,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  void _gotoTestDetail(MyPracticeTestModel myTestModel) {
+  void _gotoMyPracticeDetailScreen(MyPracticeTestModel myTestModel) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
