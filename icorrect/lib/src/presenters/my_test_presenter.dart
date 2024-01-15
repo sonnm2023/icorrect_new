@@ -575,8 +575,8 @@ class MyTestPresenter {
             status: LogEvent.success,
           );
 
-          _view!.onUpdateAnswersSuccess(
-              StringConstants.save_answer_success_message);
+          _view!.onUpdateAnswersSuccess(Utils.multiLanguage(
+              StringConstants.save_answer_success_message)!);
         } else {
           //Add log
           Utils.prepareLogData(
