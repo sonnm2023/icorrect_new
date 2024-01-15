@@ -556,11 +556,12 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  void _gotoMyPracticeDetailScreen(MyPracticeTestModel myTestModel) {
+  void _gotoMyPracticeDetailScreen(MyPracticeTestModel myPractice) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            MyPracticeDetailScreen(testId: myTestModel.id.toString()),
+        builder: (context) => MyPracticeDetailScreen(
+          practice: myPractice,
+        ),
       ),
     );
   }

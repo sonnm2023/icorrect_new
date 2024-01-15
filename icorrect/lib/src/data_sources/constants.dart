@@ -579,6 +579,8 @@ class StringConstants {
   static const String practice_menu_item_title = "Practice";
   static const String my_test_menu_item_title = "My Practices";
   static const String my_test_title = "MY PRACTICES";
+  static const String my_practice_detail_tab_title = "My Practice";
+  static const String my_practice_scoring_order_tab_title = "Scoring Order";
   static const String change_password_menu_item_title = "Change password";
   static const String logout_menu_item_title = "Logout";
   static const String email = "Email";

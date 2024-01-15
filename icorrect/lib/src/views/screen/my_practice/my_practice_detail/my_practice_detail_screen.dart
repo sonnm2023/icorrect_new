@@ -1,144 +1,158 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/provider/my_test_provider.dart';
-import 'package:icorrect/src/views/other/confirm_dialog.dart';
-import 'package:icorrect/src/views/screen/test/my_test/my_test_tab.dart';
-import 'package:icorrect/src/views/widget/divider.dart';
-import 'package:provider/provider.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_detail/my_practice_detail_tab.dart';
+import 'package:icorrect/src/views/screen/my_practice/my_practice_detail/my_practice_scoring_order_tab.dart';
 
 class MyPracticeDetailScreen extends StatefulWidget {
-  final String testId;
-  const MyPracticeDetailScreen({required this.testId, super.key});
+  final MyPracticeTestModel practice;
+  const MyPracticeDetailScreen({required this.practice, super.key});
 
   @override
   State<MyPracticeDetailScreen> createState() => _MyPracticeDetailScreenState();
 }
 
-class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen> {
-  double w = 0, h = 0;
-  MyTestProvider? _myTestProvider;
+class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen>
+    with AutomaticKeepAliveClientMixin<MyPracticeDetailScreen> {
+  late final String _title;
+  List<Widget> _tabsLabel() {
+    return [
+      Tab(
+        child: Text(
+          Utils.multiLanguage(StringConstants.my_practice_detail_tab_title)!,
+        ),
+      ),
+      Tab(
+        child: Text(
+          Utils.multiLanguage(
+              StringConstants.my_practice_scoring_order_tab_title)!,
+        ),
+      ),
+    ];
+  }
+
+  TabBar get _tabBar {
+    return TabBar(
+      physics: const BouncingScrollPhysics(),
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(
+          width: 3.0,
+          color: AppColor.defaultPurpleColor,
+        ),
+      ),
+      labelColor: AppColor.defaultPurpleColor,
+      labelStyle: const TextStyle(
+        fontSize: FontsSize.fontSize_16,
+        fontWeight: FontWeight.bold,
+      ),
+      tabs: _tabsLabel(),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    _myTestProvider = Provider.of<MyTestProvider>(context, listen: false);
+    _title = "#${widget.practice.id}-${widget.practice.bankTitle}";
   }
 
   @override
   Widget build(BuildContext context) {
-    w = MediaQuery.of(context).size.width;
-    h = MediaQuery.of(context).size.height;
-    return WillPopScope(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          left: true,
-          top: true,
-          right: true,
-          bottom: true,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  padding: const EdgeInsets.all(10),
-                  child: Stack(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (_myTestProvider!
-                                .reAnswerOfQuestions.isNotEmpty) {
-                              _showDialogConfirmToOutScreen(
-                                  provider: _myTestProvider!);
-                            } else {
-                              _myTestProvider!.clearData();
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          child: const Icon(
-                            Icons.arrow_back_outlined,
-                            color: AppColor.defaultPurpleColor,
-                            size: 25,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          Utils.multiLanguage(
-                              StringConstants.test_detail_tab_title)!,
-                          style: CustomTextStyle.textWithCustomInfo(
-                            context: context,
-                            color: AppColor.defaultPurpleColor,
-                            fontsSize: FontsSize.fontSize_18,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const CustomDivider(),
-                Container(
-                  height: h - 60,
-                  padding: const EdgeInsets.only(bottom: 30),
-                  child: MyTestTab(
-                    homeWorkModel: null,
-                    practiceTestId: widget.testId,
-                    provider: _myTestProvider!,
-                  ),
-                )
-              ],
+    super.build(context);
+
+    return MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        tabBarTheme: const TabBarTheme(
+          labelColor: AppColor.defaultPurpleColor,
+          labelStyle: TextStyle(
+            color: AppColor.defaultPurpleColor,
+            fontWeight: FontWeight.w800,
+          ),
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(
+              color: AppColor.defaultPurpleColor,
             ),
           ),
         ),
+        primaryColor: AppColor.defaultPurpleColor,
+        unselectedWidgetColor:
+            AppColor.defaultPurpleColor.withAlpha(5), // deprecated,
       ),
-      onWillPop: () async {
-        if (_myTestProvider!.reAnswerOfQuestions.isNotEmpty) {
-          _showDialogConfirmToOutScreen(provider: _myTestProvider!);
-        } else {
-          _myTestProvider!.clearData();
-          Navigator.of(context).pop();
-        }
-        return false;
-      },
+      debugShowCheckedModeBanner: false,
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0.0,
+            iconTheme: const IconThemeData(
+              color: AppColor.defaultPurpleColor,
+            ),
+            centerTitle: true,
+            leading: _buildBackButton(),
+            title: _buildTitle(),
+            bottom: _buildBottomNavigatorTabBar(),
+            backgroundColor: AppColor.defaultWhiteColor,
+          ),
+          body: _buildBody(),
+        ),
+      ),
     );
   }
 
-  void _showDialogConfirmToOutScreen({required MyTestProvider provider}) {
-    showDialog(
-      context: context,
-      builder: (builder) {
-        return ConfirmDialogWidget(
-          title: Utils.multiLanguage(StringConstants.confirm_to_go_out_screen)!,
-          message: Utils.multiLanguage(
-              StringConstants.re_answer_not_be_save_message)!,
-          cancelButtonTitle:
-              Utils.multiLanguage(StringConstants.cancel_button_title)!,
-          okButtonTitle:
-              Utils.multiLanguage(StringConstants.back_button_title)!,
-          cancelButtonTapped: () {},
-          okButtonTapped: () {
-            deleteFileAnswers(provider.reAnswerOfQuestions);
-            Navigator.pop(context);
-          },
-        );
+  Widget _buildBackButton() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop();
       },
+      child: const Icon(
+        Icons.arrow_back_rounded,
+        color: AppColor.defaultPurpleColor,
+        size: 25,
+      ),
     );
   }
 
-  Future deleteFileAnswers(List<QuestionTopicModel> questions) async {
-    for (var q in questions) {
-      if (q.answers.isNotEmpty) {
-        String fileName = q.answers.last.url.toString();
-        FileStorageHelper.deleteFile(fileName, MediaType.audio, null);
-      }
-    }
+  Widget _buildTitle() {
+    return Text(
+      _title,
+      style: CustomTextStyle.textWithCustomInfo(
+        context: context,
+        color: AppColor.defaultPurpleColor,
+        fontsSize: FontsSize.fontSize_18,
+        fontWeight: FontWeight.w800,
+      ),
+    );
   }
+
+  PreferredSize _buildBottomNavigatorTabBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(CustomSize.size_40),
+      child: Container(
+        alignment: Alignment.center,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColor.defaultPurpleColor,
+            ),
+          ),
+        ),
+        child: _tabBar,
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return TabBarView(
+      children: [
+        MyPracticeDetailTab(testId: widget.practice.id.toString()),
+        MyPracticeScoringOrderTab(),
+      ],
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

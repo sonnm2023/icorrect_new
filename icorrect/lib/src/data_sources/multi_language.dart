@@ -290,6 +290,8 @@ class MultiLanguage {
         "Bạn hãy chọn ít nhất 1 chủ đề ở phần II và III",
     StringConstants.my_test_menu_item_title: "Bài Làm Của Tôi",
     StringConstants.my_test_title: "BÀI LÀM CỦA TÔI",
+    StringConstants.my_practice_detail_tab_title: "Bài Làm",
+    StringConstants.my_practice_scoring_order_tab_title: "Yêu Cầu Chấm Điểm",
     StringConstants.delete_action_title: "Xoá",
     StringConstants.loading_title: "Đang tải dữ liệu",
     StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
@@ -665,6 +667,8 @@ class MultiLanguage {
         "You must choose at least 1 topics at part II and III",
     StringConstants.my_test_menu_item_title: "My Practices",
     StringConstants.my_test_title: "MY PRACTICES",
+    StringConstants.my_practice_detail_tab_title: "My Practice",
+    StringConstants.my_practice_scoring_order_tab_title: "Scoring Order",
     StringConstants.delete_action_title: "Delete",
     StringConstants.loading_title: "Loading Data",
     StringConstants.delete_test_success_message:
