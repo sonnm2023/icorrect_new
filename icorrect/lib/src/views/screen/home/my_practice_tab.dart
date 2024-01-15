@@ -12,8 +12,8 @@ import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_mode
 import 'package:icorrect/src/presenters/home_presenter/my_practice_tab_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/views/other/message_dialog.dart';
-import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_detail.dart';
-import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/my_practice_setting.dart';
+import 'package:icorrect/src/views/screen/my_practice_tab/my_practice_detail.dart';
+import 'package:icorrect/src/views/screen/my_practice_tab/my_practice_setting/my_practice_setting.dart';
 import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
