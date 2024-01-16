@@ -8,26 +8,27 @@ import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 import 'package:http/http.dart' as http;
 
 abstract class SimulatorTestRepository {
-  Future<String> getTestDetailFromHomework({
-    required String activityId,
-    required String distributeCode,
-    required String platform,
-    required String appVersion,
-    required String deviceId,
-  });
+  Future<String> getTestDetailFromHomework(
+      {required String activityId,
+      required String distributeCode,
+      required String platform,
+      required String appVersion,
+      required String deviceId});
 
   Future<String> getTestDetailFromPractice(
       {required int testOption,
       required List<int> topicsId,
       required int isPredict});
+
   Future<String> submitTest(http.MultipartRequest multiRequest);
-  Future<String> callTestPosition({
-    required String email,
-    required String activityId,
-    required int questionIndex,
-    required String user,
-    required String pass,
-  });
+
+  Future<String> callTestPosition(
+      {required String email,
+      required String activityId,
+      required int questionIndex,
+      required String user,
+      required String pass});
+
   Future<String> getTestDetailFromMyPractice(
       {required Map<String, dynamic> data});
 }
@@ -53,7 +54,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         StringConstants.k_device_id: deviceId,
       };
       String jsonString = json.encode(dataObj);
-      print("DEBUG: START - request data: $jsonString");
+      print("DEBUG: START - request: $jsonString");
     }
 
     return AppRepository.init()
@@ -74,7 +75,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then((http.Response response) {
           final String jsonBody = response.body;
           if (kDebugMode) {
-            print("DEBUG: END - response data: $jsonBody");
+            print("DEBUG: END - response: $jsonBody");
           }
           return jsonBody;
         });
@@ -98,15 +99,14 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
     }
 
     if (kDebugMode) {
-      print(
-          'DEBUG: SimulatorTestRepositoryImpl - getTestDetailFromPractice: $url');
+      print('DEBUG: START - getTestDetailFromPractice: $url');
       var dataObj = {
         StringConstants.k_test_option: testOption,
         StringConstants.k_is_predict: isPredict,
         "topic_ids": topicsId,
       };
       String jsonString = json.encode(dataObj);
-      print("DEBUG: request data: $jsonString");
+      print("DEBUG: START - request: $jsonString");
     }
 
     return AppRepository.init()
@@ -120,7 +120,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then((http.Response response) {
       final String jsonBody = response.body;
       if (kDebugMode) {
-        print("DEBUG: END - response data: $jsonBody");
+        print("DEBUG: END - response: $jsonBody");
       }
       return jsonBody;
     });
@@ -134,9 +134,8 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
     var body = json.encode(data);
 
     if (kDebugMode) {
-      print(
-          'DEBUG: SimulatorTestRepositoryImpl - getTestDetailFromMyPractice: $url');
-      print("DEBUG: request data: $body");
+      print('DEBUG: START - getTestDetailFromMyPractice: $url');
+      print("DEBUG: START - request: $body");
     }
 
     return AppRepository.init()
@@ -151,7 +150,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .then((http.Response response) {
       final String jsonBody = response.body;
       if (kDebugMode) {
-        print("DEBUG: END - response data: $jsonBody");
+        print("DEBUG: END - response: $jsonBody");
       }
       return jsonBody;
     });
@@ -161,7 +160,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
   Future<String> submitTest(http.MultipartRequest multiRequest) async {
     if (kDebugMode) {
       String url = multiRequest.url.toString();
-      print('DEBUG: SimulatorTestRepositoryImpl - submitTest: $url');
+      print('DEBUG: START - submitTest: $url');
       Map<String, dynamic> data = multiRequest.fields;
       List<Map<String, dynamic>> files = [];
       if (multiRequest.files.isNotEmpty) {
@@ -179,7 +178,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         "files": files,
       };
       String jsonString = json.encode(dataObj);
-      print("DEBUG: request data: $jsonString");
+      print("DEBUG: START - request: $jsonString");
     }
 
     return await multiRequest
@@ -192,7 +191,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             .then((http.Response response) {
           final String jsonBody = response.body;
           if (kDebugMode) {
-            print("DEBUG: END - response data: $jsonBody");
+            print("DEBUG: END - response: $jsonBody");
           }
           return jsonBody;
         });
@@ -213,8 +212,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
       required String user,
       required String pass}) async {
     if (kDebugMode) {
-      print(
-          'DEBUG: SimulatorTestRepositoryImpl - callTestPosition: $testPositionApi');
+      print('DEBUG: START - callTestPosition: $testPositionApi');
       var data = {
         StringConstants.k_email: email,
         StringConstants.k_activity_id: activityId,
@@ -223,7 +221,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         "pass": pass,
       };
       String jsonString = json.encode(data);
-      print("DEBUG: request data: $jsonString");
+      print("DEBUG: START - request: $jsonString");
     }
     return AppRepository.init()
         .sendRequest(
@@ -240,22 +238,18 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           },
         )
         .timeout(const Duration(seconds: timeout))
-        .then(
-          (http.Response response) {
-            final String jsonBody = response.body;
-            if (kDebugMode) {
-              print("DEBUG: END - response data: $jsonBody");
-            }
-            return jsonBody;
-          },
-        )
+        .then((http.Response response) {
+          final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: END - response: $jsonBody");
+          }
+          return jsonBody;
+        })
         // ignore: body_might_complete_normally_catch_error
-        .catchError(
-          (onError) {
-            if (kDebugMode) {
-              print("DEBUG: END - error: ${onError.toString()}");
-            }
-          },
-        );
+        .catchError((onError) {
+          if (kDebugMode) {
+            print("DEBUG: END - error: ${onError.toString()}");
+          }
+        });
   }
 }

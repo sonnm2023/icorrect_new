@@ -9,7 +9,7 @@ abstract class PracticeRepository {
   Future<String> getPracticeTopicsList(List<String> parts, String status);
   Future<String> getMyPracticeList(String pageNum);
   Future<String> deleteTest(String testId);
-  Future<String> getMyPracticeTestDetail(String testId);
+  Future<String> getMyPracticeDetail(String testId);
   Future<String> getBankList();
   Future<String> getListTopicOfBank(String distributeCode);
   Future<String> getListScoringOrderWithTestId(String testId); //Api 149
@@ -29,7 +29,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
     String url = getPracticeTopicsListEP(queryParams);
 
     if (kDebugMode) {
-      print('DEBUG: PracticeReporitoryImpl - url :$url');
+      print('DEBUG: START - getPracticeTopicsList: $url');
     }
     return AppRepository.init()
         .sendRequest(
@@ -40,7 +40,11 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 
@@ -48,7 +52,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
   Future<String> getMyPracticeList(String pageNum) {
     String url = getMyPracticeEP(pageNum);
     if (kDebugMode) {
-      print('DEBUG: getMyPracticeList: $url');
+      print('DEBUG: START - getMyPracticeList: $url');
     }
 
     return AppRepository.init()
@@ -60,7 +64,11 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 
@@ -68,7 +76,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
   Future<String> deleteTest(String testId) {
     String url = deleteTestEP(testId);
     if (kDebugMode) {
-      print('DEBUG: deleteTest: $url');
+      print('DEBUG: START - deleteTest: $url');
     }
 
     return AppRepository.init()
@@ -80,15 +88,19 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 
   @override
-  Future<String> getMyPracticeTestDetail(String testId) {
-    String url = getMyPracticeTestDetailEP(testId);
+  Future<String> getMyPracticeDetail(String testId) {
+    String url = getMyPracticeDetailEP(testId);
     if (kDebugMode) {
-      print('DEBUG: getMyPracticeTestDetail: $url');
+      print('DEBUG: START - getMyPracticeTestDetail: $url');
     }
 
     return AppRepository.init()
@@ -100,7 +112,11 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 
@@ -108,7 +124,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
   Future<String> getBankList() {
     String url = '$apiDomain$bankListEP';
     if (kDebugMode) {
-      print('DEBUG: getBankList: $url');
+      print('DEBUG: START - getBankList: $url');
     }
 
     return AppRepository.init()
@@ -120,7 +136,11 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 
@@ -128,7 +148,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
   Future<String> getListTopicOfBank(String distributeCode) {
     String url = getListTopicOfBankEP(distributeCode);
     if (kDebugMode) {
-      print('DEBUG: getListTopicOfBank: $url');
+      print('DEBUG: START - getListTopicOfBank: $url');
     }
 
     return AppRepository.init()
@@ -140,7 +160,11 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 
@@ -148,7 +172,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
   Future<String> getListScoringOrderWithTestId(String testId) {
     String url = getListScoringOrderWithTestIdEP(testId);
     if (kDebugMode) {
-      print('DEBUG: getListScoringOrderWithTestId: $url');
+      print('DEBUG: START - getListScoringOrderWithTestId: $url');
     }
 
     return AppRepository.init()
@@ -160,7 +184,11 @@ class PracticeReporitoryImpl implements PracticeRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 }

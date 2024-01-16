@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-
-import '../api_urls.dart';
 import 'app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
@@ -20,10 +19,10 @@ class MyTestImpl implements MyTestRepository {
   Future<String> getMyTestDetail(String testId, bool isPracticeTest) {
     String url = myTestDetailEP(testId);
     if (isPracticeTest) {
-      url = getMyPracticeTestDetailEP(testId);
+      url = getMyPracticeDetailEP(testId);
     }
     if (kDebugMode) {
-      print("DEBUG: getMyTestDetail: $url");
+      print("DEBUG: START - getMyTestDetail: $url");
     }
 
     return AppRepository.init()
@@ -31,6 +30,9 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
       return jsonBody;
     });
   }
@@ -39,7 +41,7 @@ class MyTestImpl implements MyTestRepository {
   Future<String> getResponse(String orderId) {
     String url = responseEP(orderId);
     if (kDebugMode) {
-      print("DEBUG: getResponse: $url");
+      print("DEBUG: START - getResponse: $url");
     }
 
     return AppRepository.init()
@@ -47,6 +49,9 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
       return jsonBody;
     });
   }
@@ -57,7 +62,7 @@ class MyTestImpl implements MyTestRepository {
     String url = specialHomeWorksEP(email, activityId, status, example);
 
     if (kDebugMode) {
-      print("DEBUG: getSpecialHomeWorks: $url");
+      print("DEBUG: START - getSpecialHomeWorks: $url");
     }
 
     return AppRepository.init()
@@ -65,12 +70,19 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
       return jsonBody;
     });
   }
 
   @override
   Future<String> updateAnswers(http.MultipartRequest multiRequest) async {
+    if (kDebugMode) {
+      print("DEBUG: START - updateAnswers");
+    }
+
     return await multiRequest
         .send()
         .timeout(const Duration(seconds: timeout))
@@ -80,6 +92,9 @@ class MyTestImpl implements MyTestRepository {
             .timeout(const Duration(seconds: timeout))
             .then((http.Response response) {
           final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: END - response: $jsonBody");
+          }
           return jsonBody;
         }).catchError((onError) {
           return '';
@@ -97,7 +112,7 @@ class MyTestImpl implements MyTestRepository {
     String url = getTestDetailWithIdEP(testId);
 
     if (kDebugMode) {
-      print("DEBUG: getTestDetailWithId: $url");
+      print("DEBUG: START - getTestDetailWithId: $url");
     }
 
     return AppRepository.init()
@@ -105,6 +120,9 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
       return jsonBody;
     });
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 
@@ -13,6 +14,11 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
   @override
   Future<String> getUserAuthDetail() {
     String url = getUserAuthDetailEP();
+
+    if (kDebugMode) {
+      print('DEBUG: START - getUserAuthDetail: $url');
+    }
+
     return AppRepository.init()
         .sendRequest(
           RequestMethod.get,
@@ -23,12 +29,19 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
       return jsonBody;
     });
   }
 
   @override
   Future<String> submitAuth(http.MultipartRequest multiRequest) async {
+    if (kDebugMode) {
+      print('DEBUG: START - submitAuth');
+    }
+
     return await multiRequest
         .send()
         .timeout(const Duration(seconds: timeout))
@@ -38,6 +51,9 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
             .timeout(const Duration(seconds: timeout))
             .then((http.Response response) {
           final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: END - response: $jsonBody");
+          }
           return jsonBody;
         }).catchError((onError) {
           return '';

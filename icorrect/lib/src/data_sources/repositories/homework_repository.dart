@@ -19,7 +19,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
     String url = getActivitiesList(queryParameters);
 
     if (kDebugMode) {
-      print('DEBUG: HomeWorkRepositoryImpl - url :$url');
+      print('DEBUG: START getListActivity:$url');
     }
     return AppRepository.init()
         .sendRequest(
@@ -30,7 +30,11 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 }

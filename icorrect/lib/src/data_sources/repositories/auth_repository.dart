@@ -19,7 +19,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String> login(String email, String password) async {
     String url = '$apiDomain$loginEP';
     if (kDebugMode) {
-      print("DEBUG: login: $url");
+      print('DEBUG: START - login: $url');
     }
 
     return AppRepository.init()
@@ -36,12 +36,15 @@ class AuthRepositoryImpl implements AuthRepository {
         .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
           final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: END - response: $jsonBody");
+          }
           return jsonBody;
         })
         // ignore: body_might_complete_normally_catch_error
         .catchError((onError) {
           if (kDebugMode) {
-            print("DEBUG: error: ${onError.toString()}");
+            print("DEBUG: END - error: ${onError.toString()}");
           }
         });
   }
@@ -51,7 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String url = '$apiDomain$getUserInfoEP';
 
     if (kDebugMode) {
-      print("DEBUG: getUserInfo: $url");
+      print('DEBUG: START - getUserInfo: $url');
     }
 
     return AppRepository.init()
@@ -68,7 +71,11 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-          return response.body;
+          final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: END - response: $jsonBody");
+          }
+          return jsonBody;
         });
   }
 
@@ -77,7 +84,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String url = '$apiDomain$logoutEP';
 
     if (kDebugMode) {
-      print("DEBUG: logout: $url");
+      print("DEBUG: START - logout: $url");
     }
 
     return AppRepository.init()
@@ -90,6 +97,9 @@ class AuthRepositoryImpl implements AuthRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
       return jsonBody;
     });
   }
@@ -102,7 +112,7 @@ class AuthRepositoryImpl implements AuthRepository {
   ) {
     String url = '$apiDomain$changePasswordEP';
     if (kDebugMode) {
-      print("DEBUG: changePassword: $url");
+      print("DEBUG: START -changePassword: $url");
     }
 
     return AppRepository.init()
@@ -119,7 +129,11 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-          return response.body;
+          final String jsonBody = response.body;
+          if (kDebugMode) {
+            print("DEBUG: END - response: $jsonBody");
+          }
+          return jsonBody;
         });
   }
 
@@ -127,7 +141,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String> getAppConfigInfo() {
     String url = '$icorrectDomain$appConfigEP';
     if (kDebugMode) {
-      print("DEBUG: url getAppConfigInfo: $url");
+      print("DEBUG: START - getAppConfigInfo: $url");
     }
     return AppRepository.init()
         .sendRequest(
@@ -138,7 +152,11 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-      return response.body;
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
     });
   }
 }

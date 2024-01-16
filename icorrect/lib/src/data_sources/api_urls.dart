@@ -114,7 +114,7 @@ String deleteTestEP(String testId) {
   return '$icorrectDomain/api/v1/ielts-test/destroy/$testId';
 }
 
-String getMyPracticeTestDetailEP(String testId) {
+String getMyPracticeDetailEP(String testId) {
   return '$icorrectDomain/api/v1/ielts-test/show/$testId';
 }
 
