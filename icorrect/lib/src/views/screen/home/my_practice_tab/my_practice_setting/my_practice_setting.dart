@@ -274,11 +274,11 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         _practiceListProvider!.settings[3].value.toPrecision(2);
     ;
     double normal_speed =
-        _practiceListProvider!.settings[4].value.toPrecision(2);
+        1.0; //_practiceListProvider!.settings[4].value.toPrecision(2);
     double first_repeat_speed =
-        _practiceListProvider!.settings[5].value.toPrecision(2);
+        1.0; //_practiceListProvider!.settings[5].value.toPrecision(2);
     double second_repeat_speed =
-        _practiceListProvider!.settings[6].value.toPrecision(2);
+        1.0; //_practiceListProvider!.settings[6].value.toPrecision(2);
 
     List<int> topics = [];
     List<int> subTopics = [];

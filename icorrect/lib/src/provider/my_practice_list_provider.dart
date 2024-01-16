@@ -211,21 +211,21 @@ class MyPracticeListProvider extends ChangeNotifier {
       value: 60,
       step: 15,
     ),
-    SettingModel(
-      title: StringConstants.speed_of_first_time,
-      value: 1,
-      step: 0.05,
-    ),
-    SettingModel(
-      title: StringConstants.speed_of_second_time,
-      value: 0.85,
-      step: 0.05,
-    ),
-    SettingModel(
-      title: StringConstants.speed_of_third_time,
-      value: 0.75,
-      step: 0.05,
-    ),
+    // SettingModel(
+    //   title: StringConstants.speed_of_first_time,
+    //   value: 1,
+    //   step: 0.05,
+    // ),
+    // SettingModel(
+    //   title: StringConstants.speed_of_second_time,
+    //   value: 0.85,
+    //   step: 0.05,
+    // ),
+    // SettingModel(
+    //   title: StringConstants.speed_of_third_time,
+    //   value: 0.75,
+    //   step: 0.05,
+    // ),
   ];
 
   final List<SettingModel> _settings = [];
