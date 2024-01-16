@@ -344,6 +344,8 @@ class MultiLanguage {
         'Bạn phải thiết lập ít nhất 1 câu hỏi!',
     StringConstants.my_practice_setting_take_note_time_error_message:
         'Bạn phải thiết lập thời gian chờ Part 2 lớn hơn 0!',
+    StringConstants.list_scoring_order_empty_message:
+        "Hiện tại chưa có yêu cầu chấm điểm nào!",
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -723,5 +725,7 @@ class MultiLanguage {
         'You must set up at least 1 question!',
     StringConstants.my_practice_setting_take_note_time_error_message:
         'You must set up the take note time greater than 0 second!',
+    StringConstants.list_scoring_order_empty_message:
+        "Hasn't any scoring order!",
   };
 }

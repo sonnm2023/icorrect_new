@@ -83,12 +83,14 @@ class MyPracticeScoringOrderTabPresenter {
   }
 
   Future<List<ScoringOrderModel>> _createListScoringOrder(
-      List<ScoringOrderModel> data) async {
+      List<dynamic> data) async {
+    if (data.isEmpty) return [];
+
     List<ScoringOrderModel> temp = [];
-    // for (int i = 0; i < data.length; i++) {
-    //   ScoringOrderModel order = data[i];
-    //   temp.addAll(classModel.activities);
-    // }
+    for (int i = 0; i < data.length; i++) {
+      ScoringOrderModel order = ScoringOrderModel.fromJson(data[i]);
+      temp.add(order);
+    }
     return temp;
   }
 }

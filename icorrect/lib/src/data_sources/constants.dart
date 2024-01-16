@@ -797,6 +797,8 @@ class StringConstants {
       'You must set up at least 1 question!';
   static const String my_practice_setting_take_note_time_error_message =
       'You must set up the take note time greater than 0 second!';
+  static const String list_scoring_order_empty_message =
+      "Hasn't any scoring order!";
 
   static const String out_of_date_title = "Out Of Date";
   static const String not_completed_title = "Not Completed";

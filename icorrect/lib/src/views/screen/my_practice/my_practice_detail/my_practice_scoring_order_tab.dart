@@ -78,7 +78,8 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
         builder: (context, provider, child) {
           if (provider.listOrder.isEmpty) {
             return NoDataWidget(
-              msg: "Hiện tại không có yêu cầu chấm điểm nào!",
+              msg: Utils.multiLanguage(
+                  StringConstants.list_scoring_order_empty_message)!,
               reloadCallBack: _reloadCallBack,
             );
           }
