@@ -45,7 +45,7 @@ class MyHomeWorkTabPresenter {
           action: LogEvent.callApiGetListHomework);
     }
 
-    _homeWorkRepository!.getListHomeWork(email, status).then((value) async {
+    _homeWorkRepository!.getListActivity(email, status).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
         List<NewClassModel> classes =

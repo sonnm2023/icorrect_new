@@ -6,12 +6,12 @@ import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 import 'package:http/http.dart' as http;
 
 abstract class HomeWorkRepository {
-  Future<String> getListHomeWork(String email, String status);
+  Future<String> getListActivity(String email, String status);
 }
 
 class HomeWorkRepositoryImpl implements HomeWorkRepository {
   @override
-  Future<String> getListHomeWork(String email, String status) {
+  Future<String> getListActivity(String email, String status) {
     Map<String, String> queryParameters = {
       StringConstants.email: email,
       StringConstants.k_status: status

@@ -1001,7 +1001,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       msg: Utils.multiLanguage(
           StringConstants.wait_until_the_exam_finished_message)!,
       toastState: ToastStatesType.warning,
-      isCenter: true,
+      isCenter: false,
     );
   }
 
@@ -1189,7 +1189,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         msg:
             Utils.multiLanguage(StringConstants.feature_not_available_message)!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
     } else {
       //Start to do the test
@@ -2203,7 +2203,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     showToastMsg(
       msg: msg,
       toastState: ToastStatesType.success,
-      isCenter: true,
+      isCenter: false,
     );
   }
 

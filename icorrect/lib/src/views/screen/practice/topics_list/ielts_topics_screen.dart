@@ -198,7 +198,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
           msg: Utils.multiLanguage(
               StringConstants.choose_at_least_1_topics_at_part23_message)!,
           toastState: ToastStatesType.warning,
-          isCenter: true,
+          isCenter: false,
         );
       }
     } else if (topicsId.length >= 3 &&
@@ -211,7 +211,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
       showToastMsg(
         msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics)!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
     }
   }
@@ -227,14 +227,14 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
         msg: Utils.multiLanguage(
             StringConstants.choose_at_least_3_topics_at_part1_message)!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
     } else if (topicsPart23.isEmpty) {
       showToastMsg(
         msg: Utils.multiLanguage(
             StringConstants.choose_at_least_1_topics_at_part23_message)!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
     } else {
       _goToTestScreen();

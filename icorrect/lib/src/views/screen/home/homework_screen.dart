@@ -635,7 +635,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
-      isCenter: true,
+      isCenter: false,
     );
   }
 

@@ -18,7 +18,9 @@ class NoDataWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(height: 150),
           Image.asset(
             'assets/images/ic_emotion_sad.png',
             width: 150,

@@ -327,7 +327,7 @@ class _FilterContentWidgetState extends State<FilterContentWidget> {
                   msg: Utils.multiLanguage(
                       StringConstants.choose_filter_message)!,
                   toastState: ToastStatesType.warning,
-                  isCenter: true,
+                  isCenter: false,
                 );
               }
             },

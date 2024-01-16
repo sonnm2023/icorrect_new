@@ -400,7 +400,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
           StringConstants.wait_until_the_exam_finished_message,
         )!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
     }
   }

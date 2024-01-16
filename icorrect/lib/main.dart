@@ -19,6 +19,7 @@ import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
@@ -111,6 +112,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => RatingProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeListProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeTopicsProvider()),
+        ChangeNotifierProvider(create: (_) => MyPracticeDetailProvider()),
       ],
       child: MaterialApp(
         supportedLocales: _localization.supportedLocales,

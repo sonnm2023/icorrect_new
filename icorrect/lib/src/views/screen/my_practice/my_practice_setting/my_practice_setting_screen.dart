@@ -217,7 +217,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         msg: Utils.multiLanguage(
             StringConstants.my_practice_selected_topic_error_message)!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
       Future.delayed(const Duration(seconds: 1), () {
         isCheckingData = false;
@@ -232,7 +232,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         msg: Utils.multiLanguage(
             StringConstants.my_practice_setting_number_topic_error_message)!,
         toastState: ToastStatesType.warning,
-        isCenter: true,
+        isCenter: false,
       );
       return false;
     }
@@ -422,7 +422,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
     showToastMsg(
       msg: msg ??= message,
       toastState: ToastStatesType.error,
-      isCenter: true,
+      isCenter: false,
     );
   }
 

@@ -33,7 +33,7 @@ void showToastMsg(
       toastLength: Toast.LENGTH_SHORT,
       gravity: isCenter ? ToastGravity.CENTER : ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
-      backgroundColor: AppColor.defaultPurpleColor,
+      backgroundColor: const Color.fromARGB(255, 223, 125, 218),
       textColor: AppColor.defaultAppColor,
       fontSize: 15.0);
 }

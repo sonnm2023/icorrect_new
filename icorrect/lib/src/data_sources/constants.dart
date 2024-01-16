@@ -526,6 +526,7 @@ class StringConstants {
   static const String filter_string = "Filter ";
   static const String class_string = "Class";
   static const String status_string = "Status";
+  static const String create_scoring_order = "Create Scoring Order";
 
   //Text
   static const String start_to_pratice = "Start to practice";

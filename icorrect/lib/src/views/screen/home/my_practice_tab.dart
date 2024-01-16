@@ -224,16 +224,10 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       child: Consumer<MyPracticeListProvider>(
         builder: (context, provider, child) {
           if (provider.myTestsList.isEmpty && !provider.isProcessing) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 100),
-                NoDataWidget(
-                  msg: Utils.multiLanguage(
-                      StringConstants.my_practice_no_data_message)!,
-                  reloadCallBack: _reloadCallBack,
-                ),
-              ],
+            return NoDataWidget(
+              msg: Utils.multiLanguage(
+                  StringConstants.my_practice_no_data_message)!,
+              reloadCallBack: _reloadCallBack,
             );
           }
           return Container(

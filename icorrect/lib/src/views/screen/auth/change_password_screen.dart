@@ -238,19 +238,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordSuccess(String message) {
-    // _loading!.isShowing = false;
-    // _loading!.hide();
-    // _authProvider.updateChangePasswordStatus(processing: false).then((value) {
-    //   //Show error message
-    //   showToastMsg(
-    //     msg: message,
-    //     toastState: ToastStatesType.success,
-    //     isCenter: false,
-    //   );
-
-    //   //Go back login screen
-    //   Navigator.of(context).pop();
-    // });
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.success,
@@ -263,16 +250,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordError(String message) {
-    // _loading!.isShowing = false;
-    // _loading!.hide();
-    //Show error message
-    // _authProvider.updateChangePasswordStatus(processing: false).then((value) {
-    //   showToastMsg(
-    //     msg: message,
-    //     toastState: ToastStatesType.error,
-    //     isCenter: false,
-    //   );
-    // });
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
