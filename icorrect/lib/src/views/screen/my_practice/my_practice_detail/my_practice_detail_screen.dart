@@ -3,6 +3,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
+import 'package:icorrect/src/presenters/my_practice_detail_presenter/my_practice_detail_presenter.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_detail/my_practice_detail_tab.dart';
 import 'package:icorrect/src/views/screen/my_practice/my_practice_detail/my_practice_scoring_order_tab.dart';
 
@@ -15,7 +16,8 @@ class MyPracticeDetailScreen extends StatefulWidget {
 }
 
 class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen>
-    with AutomaticKeepAliveClientMixin<MyPracticeDetailScreen> {
+    with AutomaticKeepAliveClientMixin<MyPracticeDetailScreen>
+    implements MyPracticeDetailViewContract {
   late final String _title;
   List<Widget> _tabsLabel() {
     return [
@@ -51,10 +53,13 @@ class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen>
     );
   }
 
+  late final MyPracticeDetailPresenter _presenter;
+
   @override
   void initState() {
     super.initState();
     _title = "#${widget.practice.id}-${widget.practice.bankTitle}";
+    _presenter = MyPracticeDetailPresenter(this);
   }
 
   @override
@@ -147,8 +152,13 @@ class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen>
   Widget _buildBody() {
     return TabBarView(
       children: [
-        MyPracticeDetailTab(testId: widget.practice.id.toString()),
-        MyPracticeScoringOrderTab(),
+        MyPracticeDetailTab(
+          testId: widget.practice.id.toString(),
+        ),
+        MyPracticeScoringOrderTab(
+          presenter: _presenter,
+          practice: widget.practice,
+        ),
       ],
     );
   }

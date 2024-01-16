@@ -50,6 +50,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String> getUserInfo(String deviceId, String appVersion, String os) {
     String url = '$apiDomain$getUserInfoEP';
 
+    if (kDebugMode) {
+      print("DEBUG: getUserInfo: $url");
+    }
+
     return AppRepository.init()
         .sendRequest(
           RequestMethod.post,
@@ -72,6 +76,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String> logout() {
     String url = '$apiDomain$logoutEP';
 
+    if (kDebugMode) {
+      print("DEBUG: logout: $url");
+    }
+
     return AppRepository.init()
         .sendRequest(
           RequestMethod.post,
@@ -93,6 +101,9 @@ class AuthRepositoryImpl implements AuthRepository {
     String confirmNewPassword,
   ) {
     String url = '$apiDomain$changePasswordEP';
+    if (kDebugMode) {
+      print("DEBUG: changePassword: $url");
+    }
 
     return AppRepository.init()
         .sendRequest(

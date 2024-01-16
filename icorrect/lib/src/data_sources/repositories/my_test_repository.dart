@@ -20,8 +20,12 @@ class MyTestImpl implements MyTestRepository {
   Future<String> getMyTestDetail(String testId, bool isPracticeTest) {
     String url = myTestDetailEP(testId);
     if (isPracticeTest) {
-      getMyPracticeTestDetailEP(testId);
+      url = getMyPracticeTestDetailEP(testId);
     }
+    if (kDebugMode) {
+      print("DEBUG: getMyTestDetail: $url");
+    }
+
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
         .timeout(const Duration(seconds: timeout))
@@ -34,6 +38,10 @@ class MyTestImpl implements MyTestRepository {
   @override
   Future<String> getResponse(String orderId) {
     String url = responseEP(orderId);
+    if (kDebugMode) {
+      print("DEBUG: getResponse: $url");
+    }
+
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
         .timeout(const Duration(seconds: timeout))
@@ -87,6 +95,10 @@ class MyTestImpl implements MyTestRepository {
   @override
   Future<String> getTestDetailWithId(String testId) {
     String url = getTestDetailWithIdEP(testId);
+
+    if (kDebugMode) {
+      print("DEBUG: getTestDetailWithId: $url");
+    }
 
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
