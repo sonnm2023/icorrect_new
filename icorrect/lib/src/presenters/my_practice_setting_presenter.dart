@@ -51,7 +51,8 @@ class MyPracticeSettingPresenter {
       );
 
       _view!.onGetTestDetailSuccess(testDetail!);
-    } else if (map[StringConstants.k_error_code] == 501) {
+    } else if (map[StringConstants.k_error_code] == 501 ||
+        map[StringConstants.k_error_code] == 5010) {
       //Add log
       Utils.prepareLogData(
         log: log,
