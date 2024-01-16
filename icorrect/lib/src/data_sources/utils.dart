@@ -1022,7 +1022,7 @@ class Utils {
     }
 
     if (temp.isNotEmpty) {
-      rs = multiLanguage(temp) == null ? multiLanguage(temp)! : temp;
+      rs = multiLanguage(temp) != null ? multiLanguage(temp)! : temp;
     }
 
     return rs;

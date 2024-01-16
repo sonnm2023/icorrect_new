@@ -79,7 +79,7 @@ class MultiLanguage {
     StringConstants.highlight_tab_title: "BÀI MẪU",
     StringConstants.others_tab_title: "BÀI KHÁC",
     StringConstants.filter_choose_class_tab_title: "CHỌN LỚP",
-    StringConstants.filter_choose_status_tab_title: "TRẠNG THÁI",
+    StringConstants.filter_choose_status_tab_title: "CHỌN TRẠNG THÁI",
     StringConstants.cue_card: "Thẻ Gợi Ý",
     StringConstants.another_tips: "Gợi Ý Khác",
     StringConstants.nothing_tips: "Không có gợi ý tại đây",
