@@ -40,5 +40,11 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   void onGetScoringOrderListError(String message) {}
 
   @override
-  void onGetScoringOrderListSuccess(List<ScoringOrderModel> list) {}
+  void onGetScoringOrderListSuccess(List<ScoringOrderModel> list) {
+    if (list.isEmpty) {
+      //Build No Data UI
+    } else {
+      
+    }
+  }
 }
