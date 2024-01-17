@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -28,6 +29,17 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
           ),
         ],
       );
+
+  bool _isChamGop = false;
+  bool _isChamAll = false;
+
+  void _changeChamGopValue(bool value) {
+    _isChamGop = value;
+  }
+
+  void _changeChamAllValue(bool value) {
+    _isChamAll = value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +90,46 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   }
 
   Widget _buildAIScoring() {
-    return Container();
+    return Column(
+      children: [
+        Row(
+          children: [
+            Checkbox(
+              tristate: true,
+              value: _isChamGop,
+              onChanged: (value) {
+                _changeChamGopValue(value!);
+              },
+              side: const BorderSide(
+                color: AppColor.defaultGrayColor,
+                width: 2,
+              ),
+              activeColor: AppColor.defaultPurpleColor,
+            ),
+            const SizedBox(width: 10),
+            Text("Chấm gộp câu trả lời"),
+            const SizedBox(width: 10),
+            InkWell(
+              onTap: () {
+                if (kDebugMode) {
+                  print("DEBUG: Cham gop tapped");
+                }
+              },
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: Center(
+                  child: Icon(
+                    Icons.info,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
