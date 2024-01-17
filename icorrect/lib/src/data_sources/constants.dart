@@ -646,6 +646,7 @@ class StringConstants {
   static const String number_of_topics = 'Number of topics';
   static const String number_question_of_part_1 = 'Number question of Part 1';
   static const String number_question_of_part_2 = 'Number question of Part 2';
+  static const String number_question_of_part_3 = 'Number question of Part 3';
   static const String cue_card_time_of_part_2 = 'Cue card time of Part 2';
   static const String speed_of_first_time = 'Speed of the first time';
   static const String speed_of_second_time = 'Speed of the second time';

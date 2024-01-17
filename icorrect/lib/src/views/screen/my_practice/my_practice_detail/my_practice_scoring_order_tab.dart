@@ -179,9 +179,13 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     showModalBottomSheet<void>(
       context: context,
       isDismissible: true,
+      isScrollControlled: true,
       backgroundColor: Colors.white.withOpacity(0),
-      builder: (BuildContext context) {
-        return ScoringOrderSettingWidget();
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.65,
+          child: const ScoringOrderSettingWidget(),
+        );
       },
     );
   }
@@ -198,8 +202,12 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   }
 
   @override
-  void onGetScoringOrderConfigInfoSuccess(List<AiOption> list) {
+  void onGetScoringOrderConfigInfoSuccess({
+    required List<AiOption> list,
+    required bool canGroupScoring,
+  }) {
     _provider.updateProcessingStatus(processing: false);
+    _provider.updateIsCanGroupScoring(value: canGroupScoring);
     _createListAiOption(list);
   }
 

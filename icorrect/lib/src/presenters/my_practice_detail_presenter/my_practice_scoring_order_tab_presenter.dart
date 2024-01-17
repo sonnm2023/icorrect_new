@@ -13,7 +13,8 @@ import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.d
 abstract class MyPracticeScoringOrderTabViewContract {
   void onGetScoringOrderListSuccess(List<ScoringOrderModel> list);
   void onGetScoringOrderListError(String message);
-  void onGetScoringOrderConfigInfoSuccess(List<AiOption> list);
+  void onGetScoringOrderConfigInfoSuccess(
+      {required List<AiOption> list, required bool canGroupScoring});
   void onGetScoringOrderConfigInfoError(String message);
 }
 
@@ -99,6 +100,10 @@ class MyPracticeScoringOrderTabPresenter {
         .then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
+        ScoringOrderConfigInfo obj =
+            ScoringOrderConfigInfo.fromJson(dataMap[StringConstants.k_data]);
+        bool canGroupScoring = false;
+        canGroupScoring = obj.scoringEachQuest == 1;
         List<AiOption> list = await _createListAiOption(
             dataMap[StringConstants.k_data][StringConstants.k_ai_option]);
         //Add log
@@ -109,7 +114,8 @@ class MyPracticeScoringOrderTabPresenter {
         //   status: LogEvent.success,
         // );
 
-        _view!.onGetScoringOrderConfigInfoSuccess(list);
+        _view!.onGetScoringOrderConfigInfoSuccess(
+            list: list, canGroupScoring: canGroupScoring);
       } else {
         //Add log
         // Utils.prepareLogData(

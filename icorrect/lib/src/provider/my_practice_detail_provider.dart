@@ -34,4 +34,12 @@ class MyPracticeDetailProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  bool _isCanGroupScoring = false;
+  bool get isCanGroupScoring => _isCanGroupScoring;
+  void updateIsCanGroupScoring({required bool value}) {
+    _isCanGroupScoring = value;
+
+    notifyListeners();
+  }
 }
