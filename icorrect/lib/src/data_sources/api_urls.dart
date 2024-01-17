@@ -126,9 +126,32 @@ String getListTopicOfBankEP(String distributeCode) {
 
 const String customPracticeEP = 'api/v1/ielts-test/practices/custom'; //API 145
 
-String getListScoringOrderWithTestIdEP(String testId) {
-  //API 149
+//API 146 POST
+String calculateOrderPriceEP(String testId) {
+  return "$icorrectDomain/api/v1/ielts-test/$testId/charge";
+}
+
+//API 147 GET
+String getScoringOrderConfigInfoEP(String testId) {
+  return "$icorrectDomain/api/v1/ielts-test/$testId/orders/config";
+}
+
+//API 148 POST
+String createScoringOrderEP(String testId) {
   return "$icorrectDomain/api/v1/ielts-test/$testId/orders";
+}
+
+//API 149 GET
+String getListScoringOrderWithTestIdEP(String testId) {
+  return "$icorrectDomain/api/v1/ielts-test/$testId/orders";
+}
+
+//API 150 Cancel Scoring Order ===> API 50 order_id
+//API 151 Extend Scoring Order ===> API 49 order_id
+
+//API 152 GET
+String getScoringOrderDetailEP(String orderId) {
+  return "$icorrectDomain/api/v1/ielts-test/orders/$orderId";
 }
 
 class RequestMethod {

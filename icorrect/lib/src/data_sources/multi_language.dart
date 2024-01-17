@@ -367,7 +367,9 @@ class MultiLanguage {
     StringConstants.ai_scored_title: " (AI) Đã Chấm",
     StringConstants.loaded_test_title: "Đã Khóa",
     StringConstants.select_all_title: "Chọn Tất Cả",
-    StringConstants.select_all: "Chọn Tất Cả"
+    StringConstants.select_all: "Chọn Tất Cả",
+    StringConstants.ai_scoring_tab_title: "AI chấm",
+    StringConstants.expert_scoring_tab_title: "Chuyên gia chấm",
 
     //////////////////////////////////////////////////////////////////////////
   };
@@ -727,5 +729,7 @@ class MultiLanguage {
         'You must set up the take note time greater than 0 second!',
     StringConstants.list_scoring_order_empty_message:
         "Hasn't any scoring order!",
+    StringConstants.ai_scoring_tab_title: "AI Scoring",
+    StringConstants.expert_scoring_tab_title: "Expert Scoring",
   };
 }

@@ -527,6 +527,8 @@ class StringConstants {
   static const String class_string = "Class";
   static const String status_string = "Status";
   static const String create_scoring_order = "Create Scoring Order";
+  static const String ai_scoring_tab_title = "AI Scoring";
+  static const String expert_scoring_tab_title = "Expert Scoring";
 
   //Text
   static const String start_to_pratice = "Start to practice";
@@ -878,6 +880,7 @@ class StringConstants {
   static const String k_is_predict = "is_predict";
   static const String k_has_order = "has_order";
   static const String k_duration = "duration";
+  static const String k_ai_option = "ai_option";
 }
 
 const int timeout = 60;

@@ -4,6 +4,7 @@ import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/my_practice_test_model/ai_option_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.dart';
 import 'package:icorrect/src/presenters/my_practice_detail_presenter/my_practice_detail_presenter.dart';
@@ -11,6 +12,7 @@ import 'package:icorrect/src/presenters/my_practice_detail_presenter/my_practice
 import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
 import 'package:icorrect/src/views/other/circle_loading.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
+import 'package:icorrect/src/views/widget/scoring_order_setting_widget.dart';
 import 'package:provider/provider.dart';
 
 class MyPracticeScoringOrderTab extends StatefulWidget {
@@ -30,6 +32,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   late final MyPracticeScoringOrderTabPresenter _presenter;
   late final MyPracticeDetailProvider _provider;
   late final CircleLoading _loading;
+  late final List<AiOption> _listAiOption = [];
 
   @override
   void initState() {
@@ -104,9 +107,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   Widget _buildCreateOrderButton() {
     return InkWell(
       onTap: () {
-        if (kDebugMode) {
-          print("DEBUG: Create Order Tapped");
-        }
+        _getScoringOrderConfigInfo();
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -127,6 +128,12 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     );
   }
 
+  void _getScoringOrderConfigInfo() {
+    _provider.updateProcessingStatus(processing: true);
+    _presenter.getScoringOrderConfigInfo(
+        context: context, testId: widget.practice.id.toString());
+  }
+
   void _reloadCallBack() async {
     if (kDebugMode) {
       print("DEBUG: MyPracticeScoringOrderTab: _reloadCallBack");
@@ -143,8 +150,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
         context: context, testId: widget.practice.id.toString());
   }
 
-  @override
-  void onGetScoringOrderListError(String message) {
+  void _handleError(String message) {
     _provider.updateProcessingStatus(processing: false);
 
     //Show error message
@@ -155,10 +161,51 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     );
   }
 
+  void _createListAiOption(List<AiOption> list) {
+    //Add new data
+    for (int i = 0; i < list.length; i++) {
+      AiOption item = list[i];
+      _listAiOption.add(item);
+    }
+
+    if (kDebugMode) {
+      print("DEBUG: List AiOption: ${_listAiOption.length}");
+    }
+
+    _showScoringOrderSetting();
+  }
+
+  void _showScoringOrderSetting() {
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: true,
+      backgroundColor: Colors.white.withOpacity(0),
+      builder: (BuildContext context) {
+        return ScoringOrderSettingWidget();
+      },
+    );
+  }
+
+  @override
+  void onGetScoringOrderListError(String message) {
+    _handleError(message);
+  }
+
   @override
   void onGetScoringOrderListSuccess(List<ScoringOrderModel> list) {
     _provider.updateProcessingStatus(processing: false);
     _provider.setListOrder(list);
+  }
+
+  @override
+  void onGetScoringOrderConfigInfoSuccess(List<AiOption> list) {
+    _provider.updateProcessingStatus(processing: false);
+    _createListAiOption(list);
+  }
+
+  @override
+  void onGetScoringOrderConfigInfoError(String message) {
+    _handleError(message);
   }
 
   @override
