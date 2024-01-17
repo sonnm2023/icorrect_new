@@ -184,7 +184,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
       builder: (context) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.65,
-          child: const ScoringOrderSettingWidget(),
+          child: ScoringOrderSettingWidget(practice: widget.practice),
         );
       },
     );
@@ -208,6 +208,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   }) {
     _provider.updateProcessingStatus(processing: false);
     _provider.updateIsCanGroupScoring(value: canGroupScoring);
+    // _provider.updateIsCanGroupScoring(value: false); //For test
     _createListAiOption(list);
   }
 

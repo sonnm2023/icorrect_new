@@ -24,10 +24,10 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class MyTestContract {
   void onGetMyTestSuccess(List<QuestionTopicModel> questions);
+  void onGetMyTestFail(AlertInfo alertInfo);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
   void onDownloadFilesFail(AlertInfo alertInfo);
-  void onGetMyTestFail(AlertInfo alertInfo);
   void onCountDown(String time, bool isLessThan2Seconds);
   void onFinishCountDown();
   void onUpdateAnswersSuccess(String message);

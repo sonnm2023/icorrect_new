@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 
 class MyPracticeDetailProvider extends ChangeNotifier {
   bool isDisposed = false;
@@ -27,6 +28,14 @@ class MyPracticeDetailProvider extends ChangeNotifier {
     _listOrder.clear();
   }
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  void updateLoadingStatus({required bool value}) {
+    _isLoading = value;
+
+    notifyListeners();
+  }
+
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
   void updateProcessingStatus({required bool processing}) {
@@ -41,5 +50,27 @@ class MyPracticeDetailProvider extends ChangeNotifier {
     _isCanGroupScoring = value;
 
     notifyListeners();
+  }
+
+  int _currentUsd = 0;
+  int get currentUsd => _currentUsd;
+  void updateCurrentUsd(int value) {
+    _currentUsd = value;
+
+    notifyListeners();
+  }
+
+  TestDetailModel? _myPracticeDetail;
+  TestDetailModel? get myPracticeDetail => _myPracticeDetail;
+  void setMyPracticeDetail({required TestDetailModel value}) {
+    _myPracticeDetail = value;
+
+    notifyListeners();
+  }
+
+  void resetMyPracticeDetail() {
+    if (null != _myPracticeDetail) {
+      _myPracticeDetail = null;
+    }
   }
 }

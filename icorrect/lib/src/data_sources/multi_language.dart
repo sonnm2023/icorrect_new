@@ -371,6 +371,9 @@ class MultiLanguage {
     StringConstants.select_all: "Chọn Tất Cả",
     StringConstants.ai_scoring_tab_title: "AI chấm",
     StringConstants.expert_scoring_tab_title: "Chuyên gia chấm",
+    StringConstants.scoring_number_question_of_part_1: "Số câu hỏi chấm Part 1",
+    StringConstants.scoring_number_question_of_part_2: "Số câu hỏi chấm Part 2",
+    StringConstants.scoring_number_question_of_part_3: "Số câu hỏi chấm Part 3",
 
     //////////////////////////////////////////////////////////////////////////
   };
@@ -733,5 +736,11 @@ class MultiLanguage {
         "Hasn't any scoring order!",
     StringConstants.ai_scoring_tab_title: "AI Scoring",
     StringConstants.expert_scoring_tab_title: "Expert Scoring",
+    StringConstants.scoring_number_question_of_part_1:
+        "Number scoring question of Part 1",
+    StringConstants.scoring_number_question_of_part_2:
+        "Number scoring question of Part 2",
+    StringConstants.scoring_number_question_of_part_3:
+        "Number scoring question of Part 3",
   };
 }

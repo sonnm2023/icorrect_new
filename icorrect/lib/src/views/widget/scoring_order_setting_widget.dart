@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
 import 'package:provider/provider.dart';
 
 enum ScoringOptionType { groupScoring, allScoring }
 
 class ScoringOrderSettingWidget extends StatefulWidget {
-  const ScoringOrderSettingWidget({super.key});
+  final MyPracticeTestModel practice;
+
+  const ScoringOrderSettingWidget({super.key, required this.practice});
 
   @override
   State<ScoringOrderSettingWidget> createState() =>
@@ -37,31 +42,39 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   bool _isGroupScoring = false;
   bool _isAllScoring = false;
   late List<SettingModel> _originalSettings = [];
+  late MyPracticeDetailProvider _provider;
+  UserDataModel? _currentUser;
 
   @override
   void initState() {
     super.initState();
+    _provider = Provider.of<MyPracticeDetailProvider>(context, listen: false);
     _initData();
   }
 
-  void _initData() {
+  void _initData() async {
     _originalSettings = [
       SettingModel(
-        title: StringConstants.number_question_of_part_1,
+        title: StringConstants.scoring_number_question_of_part_1,
         value: 1,
         step: 1,
       ),
       SettingModel(
-        title: StringConstants.number_question_of_part_2,
+        title: StringConstants.scoring_number_question_of_part_2,
         value: 1,
         step: 1,
       ),
       SettingModel(
-        title: StringConstants.number_question_of_part_3,
+        title: StringConstants.scoring_number_question_of_part_3,
         value: 1,
         step: 1,
       ),
     ];
+
+    _currentUser = await Utils.getCurrentUser();
+    if (null != _currentUser) {
+      _provider.updateCurrentUsd(_currentUser!.profileModel.wallet.usd);
+    }
   }
 
   @override
@@ -70,8 +83,8 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
       padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 60.0),
       child: Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          color: Colors.red,
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
         ),
         child: _buildContent(),
       ),
@@ -126,19 +139,21 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   Widget _buildScoringOption() {
     return Column(
       children: [
-        _createScoringOption(
-          isSelected: _isGroupScoring,
-          type: ScoringOptionType.groupScoring,
-          selectCallBack: () {
-            bool isSelected = !_isGroupScoring;
-            _changeGroupScoringStatus(isSelected);
-          },
-          showNoteCallBack: () {
-            if (kDebugMode) {
-              print("DEBUG: show group scoring note");
-            }
-          },
-        ),
+        _provider.isCanGroupScoring
+            ? _createScoringOption(
+                isSelected: _isGroupScoring,
+                type: ScoringOptionType.groupScoring,
+                selectCallBack: () {
+                  bool isSelected = !_isGroupScoring;
+                  _changeGroupScoringStatus(isSelected);
+                },
+                showNoteCallBack: () {
+                  if (kDebugMode) {
+                    print("DEBUG: show group scoring note");
+                  }
+                },
+              )
+            : Container(),
         _createScoringOption(
           isSelected: _isAllScoring,
           type: ScoringOptionType.allScoring,
@@ -305,7 +320,14 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
             const SizedBox(width: 20),
             Text("Số kim cương hiện có:"),
             Expanded(child: Container()),
-            Text("100"),
+            Consumer<MyPracticeDetailProvider>(
+                builder: (context, provider, child) {
+              int currentUsd = provider.currentUsd;
+              return Text(
+                "$currentUsd",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              );
+            }),
             const SizedBox(width: 50),
             Icon(Icons.diamond, color: Colors.blue),
             const SizedBox(width: 10),

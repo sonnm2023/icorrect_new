@@ -651,6 +651,12 @@ class StringConstants {
   static const String speed_of_first_time = 'Speed of the first time';
   static const String speed_of_second_time = 'Speed of the second time';
   static const String speed_of_third_time = 'Speed of the third time';
+  static const String scoring_number_question_of_part_1 =
+      'Number scoring question of Part 1';
+  static const String scoring_number_question_of_part_2 =
+      'Number scoring question of Part 2';
+  static const String scoring_number_question_of_part_3 =
+      'Number scoring question of Part 3';
 
   //Compress video message
   static const String cancel_and_text = "Cancel and Later";
