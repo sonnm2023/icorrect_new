@@ -64,8 +64,6 @@ class MyPracticeDetailProvider extends ChangeNotifier {
   TestDetailModel? get myPracticeDetail => _myPracticeDetail;
   void setMyPracticeDetail({required TestDetailModel value}) {
     _myPracticeDetail = value;
-
-    notifyListeners();
   }
 
   void resetMyPracticeDetail() {

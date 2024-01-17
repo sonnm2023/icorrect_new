@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +14,11 @@ import 'package:provider/provider.dart';
 enum ScoringOptionType { groupScoring, allScoring }
 
 class ScoringOrderSettingWidget extends StatefulWidget {
-  final MyPracticeTestModel practice;
+  final TestDetailModel myPracticeDetail;
+  final List<PartInfoModel> parts;
 
-  const ScoringOrderSettingWidget({super.key, required this.practice});
+  const ScoringOrderSettingWidget(
+      {super.key, required this.myPracticeDetail, required this.parts});
 
   @override
   State<ScoringOrderSettingWidget> createState() =>
@@ -44,6 +48,7 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   late List<SettingModel> _originalSettings = [];
   late MyPracticeDetailProvider _provider;
   UserDataModel? _currentUser;
+  late List<PartInfoModel> _parts;
 
   @override
   void initState() {
@@ -53,20 +58,27 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   }
 
   void _initData() async {
+    PartInfoModel part1 =
+        widget.parts.where((element) => element.type == PartType.part1).first;
+    PartInfoModel part2 =
+        widget.parts.where((element) => element.type == PartType.part2).first;
+    PartInfoModel part3 =
+        widget.parts.where((element) => element.type == PartType.part3).first;
+
     _originalSettings = [
       SettingModel(
         title: StringConstants.scoring_number_question_of_part_1,
-        value: 1,
+        value: part1.numberOfQuestion.toDouble(),
         step: 1,
       ),
       SettingModel(
         title: StringConstants.scoring_number_question_of_part_2,
-        value: 1,
+        value: part2.numberOfQuestion.toDouble(),
         step: 1,
       ),
       SettingModel(
         title: StringConstants.scoring_number_question_of_part_3,
-        value: 1,
+        value: part3.numberOfQuestion.toDouble(),
         step: 1,
       ),
     ];
@@ -414,5 +426,19 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
     setState(() {
       _isAllScoring = value;
     });
+  }
+}
+
+enum PartType { part1, part2, part3 }
+
+class PartInfoModel {
+  late PartType type;
+  late int numberOfQuestion;
+  late int timeBlockForEachQuestion;
+
+  PartInfoModel(PartType partType, int number, int timeBlock) {
+    type = partType;
+    numberOfQuestion = number;
+    timeBlockForEachQuestion = timeBlock;
   }
 }

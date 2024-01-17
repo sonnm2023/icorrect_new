@@ -70,7 +70,7 @@ class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen>
     _presenter = MyPracticeDetailPresenter(this);
     _provider = Provider.of<MyPracticeDetailProvider>(context, listen: false);
     _loading = CircleLoading();
-    _getPracticeDetail();
+    // _getPracticeDetail();
   }
 
   void _getPracticeDetail() {

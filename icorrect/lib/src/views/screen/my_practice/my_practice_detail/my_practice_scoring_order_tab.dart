@@ -7,6 +7,8 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/ai_option_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/presenters/my_practice_detail_presenter/my_practice_detail_presenter.dart';
 import 'package:icorrect/src/presenters/my_practice_detail_presenter/my_practice_scoring_order_tab_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
@@ -175,7 +177,79 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     _showScoringOrderSetting();
   }
 
-  void _showScoringOrderSetting() {
+  Future<List<PartInfoModel>> _getListPartInfo(
+      TestDetailModel testDetailModel) async {
+    List<PartInfoModel> parts = []; //init list of part
+    int _numberQuestionOfPart1 = 0;
+    int _numberQuestionOfPart2 = 0;
+    int _numberQuestionOfPart3 = 0;
+
+    //Part introduce
+    if (testDetailModel.introduce.questionList.isNotEmpty) {
+      _numberQuestionOfPart1 += testDetailModel.introduce.questionList.length;
+    }
+
+    //Part 1
+    if (testDetailModel.part1.isNotEmpty) {
+      for (TopicModel topic in testDetailModel.part1) {
+        if (topic.questionList.isNotEmpty) {
+          _numberQuestionOfPart1 += topic.questionList.length;
+        }
+      }
+    }
+
+    PartInfoModel temp1 = PartInfoModel(
+      PartType.part1,
+      _numberQuestionOfPart1,
+      testDetailModel.part1Time,
+    );
+    parts.add(temp1);
+
+    //Part 2
+    if (testDetailModel.part2.questionList.isNotEmpty) {
+      _numberQuestionOfPart2 += testDetailModel.part2.questionList.length;
+    }
+
+    PartInfoModel temp2 = PartInfoModel(
+      PartType.part2,
+      _numberQuestionOfPart2,
+      testDetailModel.part2Time,
+    );
+    parts.add(temp2);
+
+    //Part 3
+    if (testDetailModel.part3.followUp.isNotEmpty) {
+      _numberQuestionOfPart3 += testDetailModel.part3.followUp.length;
+    }
+
+    if (testDetailModel.part3.questionList.isNotEmpty) {
+      _numberQuestionOfPart3 += testDetailModel.part3.questionList.length;
+    }
+
+    PartInfoModel temp3 = PartInfoModel(
+      PartType.part3,
+      _numberQuestionOfPart3,
+      testDetailModel.part3Time,
+    );
+    parts.add(temp3);
+
+    return parts;
+  }
+
+  void _showScoringOrderSetting() async {
+    TestDetailModel? myPracticeDetail =
+        Provider.of<MyPracticeDetailProvider>(context, listen: false)
+            .myPracticeDetail;
+    if (null == myPracticeDetail) {
+      if (kDebugMode) {
+        print(
+            "DEBUG: _showScoringOrderSetting: Can't get my practice detail info");
+      }
+      return;
+    }
+
+    List<PartInfoModel> parts = await _getListPartInfo(myPracticeDetail);
+
     showModalBottomSheet<void>(
       context: context,
       isDismissible: true,
@@ -184,7 +258,8 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
       builder: (context) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.65,
-          child: ScoringOrderSettingWidget(practice: widget.practice),
+          child: ScoringOrderSettingWidget(
+              myPracticeDetail: myPracticeDetail, parts: parts),
         );
       },
     );

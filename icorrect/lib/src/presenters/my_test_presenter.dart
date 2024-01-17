@@ -23,7 +23,8 @@ import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 
 abstract class MyTestContract {
-  void onGetMyTestSuccess(List<QuestionTopicModel> questions);
+  void onGetMyTestSuccess(
+      List<QuestionTopicModel> questions, TestDetailModel testDetail);
   void onGetMyTestFail(AlertInfo alertInfo);
   void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
       double percent, int index, int total);
@@ -120,14 +121,15 @@ class MyTestPresenter {
 
           filesTopic = _prepareFileTopicListForDownload(testDetailModel);
 
+          _view!.onGetMyTestSuccess(
+              _getQuestionsAnswer(testDetailModel), testDetailModel);
+
           downloadFiles(
             context: context,
             activityId: activityId,
             testDetail: testDetailModel,
             filesTopic: tempFilesTopic,
           );
-
-          _view!.onGetMyTestSuccess(_getQuestionsAnswer(testDetailModel));
         } else {
           //Add log
           Utils.prepareLogData(

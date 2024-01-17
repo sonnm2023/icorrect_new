@@ -19,6 +19,7 @@ import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/my_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
 import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/views/other/alert_dialog.dart';
 import 'package:icorrect/src/views/other/circle_loading.dart';
@@ -754,9 +755,15 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   @override
-  void onGetMyTestSuccess(List<QuestionTopicModel> questions) {
+  void onGetMyTestSuccess(
+    List<QuestionTopicModel> questions,
+    TestDetailModel testDetail,
+  ) {
     _loading!.hide();
     widget.provider.setAnswerOfQuestions(questions);
+    //Update my test detail for Scoring Order
+    Provider.of<MyPracticeDetailProvider>(context, listen: false)
+        .setMyPracticeDetail(value: testDetail);
   }
 
   @override
