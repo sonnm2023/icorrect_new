@@ -52,10 +52,34 @@ class MyPracticeDetailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isGroupScoring = false;
+  bool get isGroupScoring => _isGroupScoring;
+  void updateIsGroupScoring({required bool value}) {
+    _isGroupScoring = value;
+
+    notifyListeners();
+  }
+
+  bool _isAllScoring = false;
+  bool get isAllScoring => _isAllScoring;
+  void updateIsAllScoring({required bool value}) {
+    _isAllScoring = value;
+
+    notifyListeners();
+  }
+
   int _currentUsd = 0;
   int get currentUsd => _currentUsd;
   void updateCurrentUsd(int value) {
     _currentUsd = value;
+
+    notifyListeners();
+  }
+
+  int _totalPrice = 0;
+  int get totalPrice => _totalPrice;
+  void updateTotalPrice(int value) {
+    _totalPrice = value;
 
     notifyListeners();
   }

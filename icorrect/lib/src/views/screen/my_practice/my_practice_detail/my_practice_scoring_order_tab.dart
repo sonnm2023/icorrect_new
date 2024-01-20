@@ -51,6 +51,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     return Stack(
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             _buildList(),
             _buildCreateOrderButton(),
@@ -78,9 +79,42 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   }
 
   Widget _buildList() {
+    if (kDebugMode) {
+      print("DEBUG: MyPracticeScoringOrderTab _buildList");
+    }
+
+    return Expanded(
+      child: Stack(
+        children: [
+          Visibility(
+            visible: _provider.listOrder.isNotEmpty,
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: _provider.listOrder.length,
+              itemBuilder: (context, index) {
+                return _buildItem(_provider.listOrder[index]);
+              },
+            ),
+          ),
+          Visibility(
+            visible: _provider.listOrder.isEmpty,
+            child: NoDataWidget(
+              msg: Utils.multiLanguage(
+                  StringConstants.list_scoring_order_empty_message)!,
+              reloadCallBack: _reloadCallBack,
+            ),
+          ),
+        ],
+      ),
+    );
+    /*
     return Expanded(
       child: Consumer<MyPracticeDetailProvider>(
         builder: (context, provider, child) {
+          if (kDebugMode) {
+            print("DEBUG: MyPracticeScoringOrderTab _buildList");
+          }
           if (provider.listOrder.isEmpty) {
             return NoDataWidget(
               msg: Utils.multiLanguage(
@@ -100,6 +134,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
         },
       ),
     );
+    */
   }
 
   Widget _buildItem(ScoringOrderModel order) {
@@ -164,6 +199,10 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   }
 
   void _createListAiOption(List<AiOption> list) {
+    if (_listAiOption.isNotEmpty) {
+      _listAiOption.clear();
+    }
+
     //Add new data
     for (int i = 0; i < list.length; i++) {
       AiOption item = list[i];
@@ -174,7 +213,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
       print("DEBUG: List AiOption: ${_listAiOption.length}");
     }
 
-    _showScoringOrderSetting();
+    _showScoringOrderSetting(list);
   }
 
   Future<List<PartInfoModel>> _getListPartInfo(
@@ -236,7 +275,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     return parts;
   }
 
-  void _showScoringOrderSetting() async {
+  void _showScoringOrderSetting(List<AiOption> list) async {
     TestDetailModel? myPracticeDetail =
         Provider.of<MyPracticeDetailProvider>(context, listen: false)
             .myPracticeDetail;
@@ -259,7 +298,10 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.65,
           child: ScoringOrderSettingWidget(
-              myPracticeDetail: myPracticeDetail, parts: parts),
+            myPracticeDetail: myPracticeDetail,
+            parts: parts,
+            listAiOption: list,
+          ),
         );
       },
     );

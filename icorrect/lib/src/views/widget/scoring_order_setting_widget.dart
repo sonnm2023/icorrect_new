@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/my_practice_test_model/ai_option_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +15,13 @@ enum ScoringOptionType { groupScoring, allScoring }
 class ScoringOrderSettingWidget extends StatefulWidget {
   final TestDetailModel myPracticeDetail;
   final List<PartInfoModel> parts;
+  final List<AiOption> listAiOption;
 
   const ScoringOrderSettingWidget(
-      {super.key, required this.myPracticeDetail, required this.parts});
+      {super.key,
+      required this.myPracticeDetail,
+      required this.parts,
+      required this.listAiOption});
 
   @override
   State<ScoringOrderSettingWidget> createState() =>
@@ -43,18 +46,45 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
         ],
       );
 
-  bool _isGroupScoring = false;
-  bool _isAllScoring = false;
   late List<SettingModel> _originalSettings = [];
   late MyPracticeDetailProvider _provider;
   UserDataModel? _currentUser;
-  late List<PartInfoModel> _parts;
 
   @override
   void initState() {
     super.initState();
     _provider = Provider.of<MyPracticeDetailProvider>(context, listen: false);
     _initData();
+  }
+
+  void _calculatePrice() {
+    late AiOption option;
+    int totalPrice = 0;
+    int totalTime = 0;
+    bool isGroupScoring = _provider.isGroupScoring;
+    bool isAllScoring = _provider.isAllScoring;
+
+    if (isGroupScoring) {
+      //ELSA price
+      option =
+          widget.listAiOption.where((element) => element.option == 1).first;
+    } else {
+      //Speech super price
+      option =
+          widget.listAiOption.where((element) => element.option == 2).first;
+    }
+
+    if (isAllScoring) {
+      for (int i = 0; i < widget.parts.length; i++) {
+        PartInfoModel part = widget.parts[i];
+        if (part.numberOfQuestion > 0) {
+          totalTime += part.numberOfQuestion * part.timeBlockForEachQuestion;
+        }
+      }
+    } else {}
+
+    totalPrice = (totalTime / option.block!).ceil();
+    _provider.updateTotalPrice(totalPrice);
   }
 
   void _initData() async {
@@ -82,6 +112,8 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
         step: 1,
       ),
     ];
+
+    _calculatePrice();
 
     _currentUser = await Utils.getCurrentUser();
     if (null != _currentUser) {
@@ -149,39 +181,44 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   }
 
   Widget _buildScoringOption() {
-    return Column(
-      children: [
-        _provider.isCanGroupScoring
-            ? _createScoringOption(
-                isSelected: _isGroupScoring,
-                type: ScoringOptionType.groupScoring,
-                selectCallBack: () {
-                  bool isSelected = !_isGroupScoring;
-                  _changeGroupScoringStatus(isSelected);
-                },
-                showNoteCallBack: () {
-                  if (kDebugMode) {
-                    print("DEBUG: show group scoring note");
-                  }
-                },
-              )
-            : Container(),
-        _createScoringOption(
-          isSelected: _isAllScoring,
-          type: ScoringOptionType.allScoring,
-          selectCallBack: () {
-            bool isSelected = !_isAllScoring;
-            _changeAllScoringStatus(isSelected);
-          },
-          showNoteCallBack: () {
-            if (kDebugMode) {
-              print("DEBUG: show all scoring note");
-            }
-          },
-        ),
-        const Divider(color: AppColor.defaultPurpleColor),
-      ],
-    );
+    return Consumer<MyPracticeDetailProvider>(
+        builder: (context, provider, child) {
+      return Column(
+        children: [
+          _provider.isCanGroupScoring
+              ? _createScoringOption(
+                  isSelected: provider.isGroupScoring,
+                  type: ScoringOptionType.groupScoring,
+                  selectCallBack: () {
+                    bool isSelected = !provider.isGroupScoring;
+                    provider.updateIsGroupScoring(value: isSelected);
+                    _calculatePrice();
+                  },
+                  showNoteCallBack: () {
+                    if (kDebugMode) {
+                      print("DEBUG: show group scoring note");
+                    }
+                  },
+                )
+              : Container(),
+          _createScoringOption(
+            isSelected: provider.isAllScoring,
+            type: ScoringOptionType.allScoring,
+            selectCallBack: () {
+              bool isSelected = !provider.isAllScoring;
+              provider.updateIsAllScoring(value: isSelected);
+              _calculatePrice();
+            },
+            showNoteCallBack: () {
+              if (kDebugMode) {
+                print("DEBUG: show all scoring note");
+              }
+            },
+          ),
+          const Divider(color: AppColor.defaultPurpleColor),
+        ],
+      );
+    });
   }
 
   Widget _createScoringOption({
@@ -321,7 +358,14 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
             const SizedBox(width: 20),
             Text("Số kim cương cần:"),
             Expanded(child: Container()),
-            Text("100"),
+            Consumer<MyPracticeDetailProvider>(
+                builder: (context, provider, child) {
+              int totalPrice = provider.totalPrice;
+              return Text(
+                "$totalPrice",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              );
+            }),
             const SizedBox(width: 50),
             Icon(Icons.diamond, color: Colors.blue),
             const SizedBox(width: 10),
@@ -376,14 +420,18 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
             color: AppColor.defaultPurpleColor,
             borderRadius: BorderRadius.circular(8)),
         child: Center(
-          child: Text(
-            "Gửi chấm với 10 Kim cương",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: CustomSize.size_15,
-            ),
-          ),
+          child: Consumer<MyPracticeDetailProvider>(
+              builder: (context, provider, child) {
+            int totalPrice = provider.totalPrice;
+            return Text(
+              "Gửi chấm với $totalPrice Kim cương",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: CustomSize.size_15,
+              ),
+            );
+          }),
         ),
       ),
     );
@@ -414,18 +462,6 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
         ),
       ),
     );
-  }
-
-  void _changeGroupScoringStatus(bool value) {
-    setState(() {
-      _isGroupScoring = value;
-    });
-  }
-
-  void _changeAllScoringStatus(bool value) {
-    setState(() {
-      _isAllScoring = value;
-    });
   }
 }
 

@@ -137,7 +137,7 @@ class _MyPracticeDetailScreenState extends State<MyPracticeDetailScreen>
               body: _buildBody(),
             ),
           ),
-          _buildProcessingView(),
+          // _buildProcessingView(), //TODO
         ],
       ),
     );
