@@ -45,6 +45,7 @@ class MyHomeWorkTab extends StatefulWidget {
 }
 
 class _MyHomeWorkTabState extends State<MyHomeWorkTab>
+    with AutomaticKeepAliveClientMixin
     implements ActionAlertListener, MyHomeWorkTabViewContract {
   ActivitiesModel? _selectedActivity;
   final FlutterLocalization localization = FlutterLocalization.instance;
@@ -581,4 +582,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
   void onRefreshListActivity() {
     _getListActivity();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
