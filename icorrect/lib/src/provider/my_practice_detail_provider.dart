@@ -146,4 +146,18 @@ class MyPracticeDetailProvider extends ChangeNotifier {
 
   double _numberQuestionOfPart3 = 0;
   double get numberQuestionOfPart3 => _numberQuestionOfPart3;
+
+  bool _isShowNoteView = false;
+  bool get isShowNoteView => _isShowNoteView;
+  void updateShowNoteViewStatus({required bool isShow}) {
+    _isShowNoteView = isShow;
+
+    notifyListeners();
+  }
+
+  String _noteMessage = "";
+  String get noteMessage => _noteMessage;
+  void updateNoteMessage(String value) {
+    _noteMessage = value;
+  }
 }

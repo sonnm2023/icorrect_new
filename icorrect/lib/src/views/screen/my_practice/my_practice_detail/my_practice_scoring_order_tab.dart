@@ -304,7 +304,10 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      Provider.of<MyPracticeDetailProvider>(context, listen: false)
+          .updateShowNoteViewStatus(isShow: false);
+    });
   }
 
   @override

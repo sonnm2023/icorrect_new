@@ -8,6 +8,7 @@ import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
+import 'package:icorrect/src/views/widget/note_view_widget.dart';
 import 'package:provider/provider.dart';
 
 enum ScoringOptionType { groupScoring, allScoring }
@@ -62,15 +63,20 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 60.0),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 60.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: _buildContent(),
+          ),
         ),
-        child: _buildContent(),
-      ),
+        _buildNoteView(),
+      ],
     );
   }
 
@@ -102,6 +108,18 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
     );
   }
 
+  Widget _buildNoteView() {
+    return Consumer<MyPracticeDetailProvider>(
+      builder: (context, provider, child) {
+        if (provider.isShowNoteView) {
+          return NoteViewWidget(message: provider.noteMessage);
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
   Widget _buildExpertScoring() {
     return const Center(
       child: Text("Coming soon!"),
@@ -121,47 +139,52 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
 
   Widget _buildScoringOption() {
     return Consumer<MyPracticeDetailProvider>(
-        builder: (context, provider, child) {
-      return Column(
-        children: [
-          _provider.isCanGroupScoring
-              ? _createScoringOption(
-                  isSelected: provider.isGroupScoring,
-                  type: ScoringOptionType.groupScoring,
-                  selectCallBack: () {
-                    bool isSelected = !provider.isGroupScoring;
-                    provider.updateIsGroupScoring(value: isSelected);
-                    _calculatePrice();
-                  },
-                  showNoteCallBack: () {
-                    if (kDebugMode) {
-                      print("DEBUG: show group scoring note");
-                    }
-                  },
-                )
-              : Container(),
-          _createScoringOption(
-            isSelected: provider.isAllScoring,
-            type: ScoringOptionType.allScoring,
-            selectCallBack: () {
-              bool isSelected = !provider.isAllScoring;
-              provider.updateIsAllScoring(
-                  isSelected: isSelected,
-                  value1: _maxNumberQuestionOfPart1,
-                  value2: _maxNumberQuestionOfPart2,
-                  value3: _maxNumberQuestionOfPart3);
-              _calculatePrice();
-            },
-            showNoteCallBack: () {
-              if (kDebugMode) {
-                print("DEBUG: show all scoring note");
-              }
-            },
-          ),
-          const Divider(color: AppColor.defaultPurpleColor),
-        ],
-      );
-    });
+      builder: (context, provider, child) {
+        return Column(
+          children: [
+            _provider.isCanGroupScoring
+                ? _createScoringOption(
+                    isSelected: provider.isGroupScoring,
+                    type: ScoringOptionType.groupScoring,
+                    selectCallBack: () {
+                      bool isSelected = !provider.isGroupScoring;
+                      provider.updateIsGroupScoring(value: isSelected);
+                      _calculatePrice();
+                    },
+                    showNoteCallBack: () {
+                      if (kDebugMode) {
+                        print("DEBUG: show group scoring note");
+                      }
+                      provider.updateNoteMessage("Show group scoring note");
+                      provider.updateShowNoteViewStatus(isShow: true);
+                    },
+                  )
+                : Container(),
+            _createScoringOption(
+              isSelected: provider.isAllScoring,
+              type: ScoringOptionType.allScoring,
+              selectCallBack: () {
+                bool isSelected = !provider.isAllScoring;
+                provider.updateIsAllScoring(
+                    isSelected: isSelected,
+                    value1: _maxNumberQuestionOfPart1,
+                    value2: _maxNumberQuestionOfPart2,
+                    value3: _maxNumberQuestionOfPart3);
+                _calculatePrice();
+              },
+              showNoteCallBack: () {
+                if (kDebugMode) {
+                  print("DEBUG: show all scoring note");
+                }
+                provider.updateNoteMessage("Show all scoring note");
+                provider.updateShowNoteViewStatus(isShow: true);
+              },
+            ),
+            const Divider(color: AppColor.defaultPurpleColor),
+          ],
+        );
+      },
+    );
   }
 
   Widget _createScoringOption({
