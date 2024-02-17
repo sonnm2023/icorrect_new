@@ -62,8 +62,22 @@ class MyPracticeDetailProvider extends ChangeNotifier {
 
   bool _isAllScoring = false;
   bool get isAllScoring => _isAllScoring;
-  void updateIsAllScoring({required bool value}) {
-    _isAllScoring = value;
+  void updateIsAllScoring(
+      {required bool isSelected,
+      required int? value1,
+      required int? value2,
+      required int? value3}) {
+    _isAllScoring = isSelected;
+
+    //Update all number question of all parts
+    if (isSelected && null != value1 && null != value2 && null != value3) {
+      setNumberQuestionOfPart(
+          index: 0, value: value1.toDouble(), isInitData: false);
+      setNumberQuestionOfPart(
+          index: 1, value: value2.toDouble(), isInitData: false);
+      setNumberQuestionOfPart(
+          index: 2, value: value3.toDouble(), isInitData: false);
+    }
 
     notifyListeners();
   }
@@ -95,4 +109,41 @@ class MyPracticeDetailProvider extends ChangeNotifier {
       _myPracticeDetail = null;
     }
   }
+
+  double getNumberOfPart(int index) {
+    switch (index) {
+      case 0:
+        return _numberQuestionOfPart1;
+      case 1:
+        return _numberQuestionOfPart2;
+      case 2:
+        return _numberQuestionOfPart3;
+    }
+    return 0.0;
+  }
+
+  void setNumberQuestionOfPart(
+      {required int index, required double value, required bool isInitData}) {
+    switch (index) {
+      case 0:
+        _numberQuestionOfPart1 = value;
+      case 1:
+        _numberQuestionOfPart2 = value;
+      case 2:
+        _numberQuestionOfPart3 = value;
+    }
+
+    if (!isInitData) {
+      notifyListeners();
+    }
+  }
+
+  double _numberQuestionOfPart1 = 0;
+  double get numberQuestionOfPart1 => _numberQuestionOfPart1;
+
+  double _numberQuestionOfPart2 = 0;
+  double get numberQuestionOfPart2 => _numberQuestionOfPart2;
+
+  double _numberQuestionOfPart3 = 0;
+  double get numberQuestionOfPart3 => _numberQuestionOfPart3;
 }

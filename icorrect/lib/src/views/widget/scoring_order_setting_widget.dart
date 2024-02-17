@@ -49,76 +49,15 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   late List<SettingModel> _originalSettings = [];
   late MyPracticeDetailProvider _provider;
   UserDataModel? _currentUser;
+  int _maxNumberQuestionOfPart1 = 0;
+  int _maxNumberQuestionOfPart2 = 0;
+  int _maxNumberQuestionOfPart3 = 0;
 
   @override
   void initState() {
     super.initState();
     _provider = Provider.of<MyPracticeDetailProvider>(context, listen: false);
     _initData();
-  }
-
-  void _calculatePrice() {
-    late AiOption option;
-    int totalPrice = 0;
-    int totalTime = 0;
-    bool isGroupScoring = _provider.isGroupScoring;
-    bool isAllScoring = _provider.isAllScoring;
-
-    if (isGroupScoring) {
-      //ELSA price
-      option =
-          widget.listAiOption.where((element) => element.option == 1).first;
-    } else {
-      //Speech super price
-      option =
-          widget.listAiOption.where((element) => element.option == 2).first;
-    }
-
-    if (isAllScoring) {
-      for (int i = 0; i < widget.parts.length; i++) {
-        PartInfoModel part = widget.parts[i];
-        if (part.numberOfQuestion > 0) {
-          totalTime += part.numberOfQuestion * part.timeBlockForEachQuestion;
-        }
-      }
-    } else {}
-
-    totalPrice = (totalTime / option.block!).ceil();
-    _provider.updateTotalPrice(totalPrice);
-  }
-
-  void _initData() async {
-    PartInfoModel part1 =
-        widget.parts.where((element) => element.type == PartType.part1).first;
-    PartInfoModel part2 =
-        widget.parts.where((element) => element.type == PartType.part2).first;
-    PartInfoModel part3 =
-        widget.parts.where((element) => element.type == PartType.part3).first;
-
-    _originalSettings = [
-      SettingModel(
-        title: StringConstants.scoring_number_question_of_part_1,
-        value: part1.numberOfQuestion.toDouble(),
-        step: 1,
-      ),
-      SettingModel(
-        title: StringConstants.scoring_number_question_of_part_2,
-        value: part2.numberOfQuestion.toDouble(),
-        step: 1,
-      ),
-      SettingModel(
-        title: StringConstants.scoring_number_question_of_part_3,
-        value: part3.numberOfQuestion.toDouble(),
-        step: 1,
-      ),
-    ];
-
-    _calculatePrice();
-
-    _currentUser = await Utils.getCurrentUser();
-    if (null != _currentUser) {
-      _provider.updateCurrentUsd(_currentUser!.profileModel.wallet.usd);
-    }
   }
 
   @override
@@ -206,7 +145,11 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
             type: ScoringOptionType.allScoring,
             selectCallBack: () {
               bool isSelected = !provider.isAllScoring;
-              provider.updateIsAllScoring(value: isSelected);
+              provider.updateIsAllScoring(
+                  isSelected: isSelected,
+                  value1: _maxNumberQuestionOfPart1,
+                  value2: _maxNumberQuestionOfPart2,
+                  value3: _maxNumberQuestionOfPart3);
               _calculatePrice();
             },
             showNoteCallBack: () {
@@ -280,6 +223,17 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
     );
   }
 
+  Widget _buildNumberQuetions() {
+    return Column(
+      children: [
+        _buildItem(0),
+        _buildItem(1),
+        _buildItem(2),
+        const Divider(color: AppColor.defaultPurpleColor),
+      ],
+    );
+  }
+
   Widget _buildItem(int index) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -297,55 +251,65 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
                 Icons.remove_circle_outline_outlined,
                 size: 30,
               ),
-              onPressed: () {},
+              onPressed: () {
+                double oldValue = _provider.getNumberOfPart(index);
+                if (oldValue > 0) {
+                  double newValue = oldValue - 1.0;
+                  _provider.setNumberQuestionOfPart(
+                      index: index, value: newValue, isInitData: false);
+                  _calculatePrice();
+                  _updateIsAllScoring(isAdd: false);
+                }
+              },
             ),
-            Consumer(builder: (context, provider, child) {
-              int fractionDigits = 0;
-              return Container(
-                width: 80,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColor.defaultPurpleColor,
-                    width: 1.0,
-                  ),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 10,
-                      top: 5,
-                      right: 10,
-                      bottom: 5,
-                    ),
-                    child: Text(
-                      _originalSettings[index]
-                          .value
-                          .toStringAsFixed(fractionDigits),
+            Consumer<MyPracticeDetailProvider>(
+              builder: (context, provider, child) {
+                int fractionDigits = 0;
+                return Container(
+                  width: 80,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColor.defaultPurpleColor,
+                      width: 1.0,
                     ),
                   ),
-                ),
-              );
-            }),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        top: 5,
+                        right: 10,
+                        bottom: 5,
+                      ),
+                      child: Text(
+                        provider
+                            .getNumberOfPart(index)
+                            .toStringAsFixed(fractionDigits),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(
                 Icons.add_circle_outline_outlined,
                 size: 30,
               ),
-              onPressed: () {},
+              onPressed: () {
+                double oldValue = _provider.getNumberOfPart(index);
+                int max = _getMaxNumberQuestionOfPart(index);
+                if (oldValue < max) {
+                  double newValue = oldValue + 1.0;
+                  _provider.setNumberQuestionOfPart(
+                      index: index, value: newValue, isInitData: false);
+                  _calculatePrice();
+                  _updateIsAllScoring(isAdd: true);
+                }
+              },
             ),
           ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildNumberQuetions() {
-    return Column(
-      children: [
-        _buildItem(0),
-        _buildItem(1),
-        _buildItem(2),
-        const Divider(color: AppColor.defaultPurpleColor),
       ],
     );
   }
@@ -462,6 +426,116 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
         ),
       ),
     );
+  }
+
+  void _calculatePrice() {
+    Future.delayed(Duration.zero, () {
+      late AiOption option;
+      int totalPrice = 0;
+      int totalTime = 0;
+      bool isGroupScoring = _provider.isGroupScoring;
+      bool isAllScoring = _provider.isAllScoring;
+
+      if (isGroupScoring) {
+        //ELSA price
+        option =
+            widget.listAiOption.where((element) => element.option == 1).first;
+      } else {
+        //Speech super price
+        option =
+            widget.listAiOption.where((element) => element.option == 2).first;
+      }
+
+      if (isAllScoring) {
+        for (int i = 0; i < widget.parts.length; i++) {
+          PartInfoModel part = widget.parts[i];
+          if (part.numberOfQuestion > 0) {
+            totalTime += part.numberOfQuestion * part.timeBlockForEachQuestion;
+          }
+        }
+      } else {
+        totalTime = _provider.numberQuestionOfPart1.toInt() *
+                widget.parts[0].timeBlockForEachQuestion +
+            _provider.numberQuestionOfPart2.toInt() *
+                widget.parts[1].timeBlockForEachQuestion +
+            _provider.numberQuestionOfPart3.toInt() *
+                widget.parts[2].timeBlockForEachQuestion;
+      }
+
+      totalPrice = (totalTime / option.block!).ceil();
+      _provider.updateTotalPrice(totalPrice);
+    });
+  }
+
+  void _initData() async {
+    PartInfoModel part1 =
+        widget.parts.where((element) => element.type == PartType.part1).first;
+    PartInfoModel part2 =
+        widget.parts.where((element) => element.type == PartType.part2).first;
+    PartInfoModel part3 =
+        widget.parts.where((element) => element.type == PartType.part3).first;
+
+    _originalSettings = [
+      SettingModel(
+        title: StringConstants.scoring_number_question_of_part_1,
+        value: part1.numberOfQuestion.toDouble(),
+        step: 1,
+      ),
+      SettingModel(
+        title: StringConstants.scoring_number_question_of_part_2,
+        value: part2.numberOfQuestion.toDouble(),
+        step: 1,
+      ),
+      SettingModel(
+        title: StringConstants.scoring_number_question_of_part_3,
+        value: part3.numberOfQuestion.toDouble(),
+        step: 1,
+      ),
+    ];
+
+    _maxNumberQuestionOfPart1 = part1.numberOfQuestion;
+    _maxNumberQuestionOfPart2 = part2.numberOfQuestion;
+    _maxNumberQuestionOfPart3 = part3.numberOfQuestion;
+
+    //InitData in MyPracticeDetailProvider
+    _provider.setNumberQuestionOfPart(
+        index: 0, value: part1.numberOfQuestion.toDouble(), isInitData: true);
+    _provider.setNumberQuestionOfPart(
+        index: 1, value: part2.numberOfQuestion.toDouble(), isInitData: true);
+    _provider.setNumberQuestionOfPart(
+        index: 2, value: part3.numberOfQuestion.toDouble(), isInitData: true);
+
+    _calculatePrice();
+
+    _currentUser = await Utils.getCurrentUser();
+    if (null != _currentUser) {
+      _provider.updateCurrentUsd(_currentUser!.profileModel.wallet.usd);
+    }
+  }
+
+  int _getMaxNumberQuestionOfPart(int index) {
+    switch (index) {
+      case 0:
+        return _maxNumberQuestionOfPart1;
+      case 1:
+        return _maxNumberQuestionOfPart2;
+      case 2:
+        return _maxNumberQuestionOfPart3;
+    }
+    return 0;
+  }
+
+  void _updateIsAllScoring({required bool isAdd}) {
+    if (isAdd) {
+      if (_provider.numberQuestionOfPart1 != _maxNumberQuestionOfPart1) return;
+      if (_provider.numberQuestionOfPart2 != _maxNumberQuestionOfPart2) return;
+      if (_provider.numberQuestionOfPart3 != _maxNumberQuestionOfPart3) return;
+      _provider.updateIsAllScoring(
+          isSelected: true, value1: null, value2: null, value3: null);
+    } else {
+      _provider.updateIsAllScoring(
+          isSelected: false, value1: null, value2: null, value3: null);
+    }
   }
 }
 

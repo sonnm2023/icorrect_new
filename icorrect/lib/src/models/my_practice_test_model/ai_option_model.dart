@@ -5,6 +5,7 @@ class ScoringOrderConfigInfo {
   ScoringOrderConfigInfo({this.scoringEachQuest, this.aiOption});
 
   ScoringOrderConfigInfo.fromJson(Map<String, dynamic> json) {
+    // scoringEachQuest = 0; //For test: disable scoring by group
     scoringEachQuest = json['scoring_each_quest'];
     if (json['ai_option'] != null) {
       aiOption = <AiOption>[];
