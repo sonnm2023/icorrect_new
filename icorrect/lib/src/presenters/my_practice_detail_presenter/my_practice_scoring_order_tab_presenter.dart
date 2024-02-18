@@ -6,7 +6,6 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/practice_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/ai_option_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.dart';
 
@@ -16,6 +15,7 @@ abstract class MyPracticeScoringOrderTabViewContract {
   void onGetScoringOrderConfigInfoSuccess(
       {required List<AiOption> list, required bool canGroupScoring});
   void onGetScoringOrderConfigInfoError(String message);
+  void onRefreshScoringOrderList();
 }
 
 class MyPracticeScoringOrderTabPresenter {
@@ -144,6 +144,10 @@ class MyPracticeScoringOrderTabPresenter {
             Utils.multiLanguage(StringConstants.common_error_message)!);
       },
     );
+  }
+
+  void refreshScoringOrderList() {
+    _view!.onRefreshScoringOrderList();
   }
 
   Future<List<ScoringOrderModel>> _createListScoringOrder(

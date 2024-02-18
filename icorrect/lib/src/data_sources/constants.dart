@@ -412,6 +412,9 @@ class LogEvent {
   static const String crash_bug_audio_record = 'crash_bug_audio_record';
   static const String callApiGetListTopicOfBank =
       'call_api_get_list_topic_of_bank';
+  static const String callApiCalculatePrice = 'call_api_calculate_price';
+  static const String callApiCreateScoringOrder =
+      'call_api_create_scoring_order';
 
   //Action log event
   static const String actionLogin = 'action_login';
@@ -888,6 +891,11 @@ class StringConstants {
   static const String k_has_order = "has_order";
   static const String k_duration = "duration";
   static const String k_ai_option = "ai_option";
+  static const String k_amount_questions_part1 = "amount_questions_part1";
+  static const String k_amount_questions_part2 = "amount_questions_part2";
+  static const String k_amount_questions_part3 = "amount_questions_part3";
+  static const String k_type_scoring = "type_scoring";
+  static const String k_diamond = "diamond";
 }
 
 const int timeout = 60;

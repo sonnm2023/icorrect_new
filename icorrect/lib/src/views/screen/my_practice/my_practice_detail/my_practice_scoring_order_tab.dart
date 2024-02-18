@@ -301,6 +301,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
             myPracticeDetail: myPracticeDetail,
             parts: parts,
             listAiOption: list,
+            parentPresenter: _presenter,
           ),
         );
       },
@@ -335,6 +336,11 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   @override
   void onGetScoringOrderConfigInfoError(String message) {
     _handleError(message);
+  }
+
+  @override
+  void onRefreshScoringOrderList() {
+    _getListScoringOrder();
   }
 
   @override

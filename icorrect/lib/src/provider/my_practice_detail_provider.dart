@@ -160,4 +160,12 @@ class MyPracticeDetailProvider extends ChangeNotifier {
   void updateNoteMessage(String value) {
     _noteMessage = value;
   }
+
+  bool _isScoringRequest = false;
+  bool get isScoringRequest => _isScoringRequest;
+  void updateScoringRequestStatus({required bool value}) {
+    _isScoringRequest = value;
+
+    notifyListeners();
+  }
 }

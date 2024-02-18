@@ -7,7 +7,11 @@ import 'package:icorrect/src/models/my_practice_test_model/ai_option_model.dart'
 import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/presenters/my_practice_detail_presenter/my_practice_scoring_order_tab_presenter.dart';
+import 'package:icorrect/src/presenters/my_practice_detail_presenter/scoring_order_setting_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_detail_provider.dart';
+import 'package:icorrect/src/views/other/circle_loading.dart';
+import 'package:icorrect/src/views/other/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/widget/note_view_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -17,19 +21,23 @@ class ScoringOrderSettingWidget extends StatefulWidget {
   final TestDetailModel myPracticeDetail;
   final List<PartInfoModel> parts;
   final List<AiOption> listAiOption;
+  final MyPracticeScoringOrderTabPresenter parentPresenter;
 
-  const ScoringOrderSettingWidget(
-      {super.key,
-      required this.myPracticeDetail,
-      required this.parts,
-      required this.listAiOption});
+  const ScoringOrderSettingWidget({
+    super.key,
+    required this.myPracticeDetail,
+    required this.parts,
+    required this.listAiOption,
+    required this.parentPresenter,
+  });
 
   @override
   State<ScoringOrderSettingWidget> createState() =>
       _ScoringOrderSettingWidgetState();
 }
 
-class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
+class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget>
+    implements ScoringOrderSettingViewContract {
   TabBar get _tabBar => TabBar(
         indicatorColor: AppColor.defaultPurpleColor,
         indicator: const BoxDecoration(
@@ -49,6 +57,8 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
 
   late List<SettingModel> _originalSettings = [];
   late MyPracticeDetailProvider _provider;
+  late final ScoringOrderSettingPresenter _presenter;
+  late final CircleLoading _loading;
   UserDataModel? _currentUser;
   int _maxNumberQuestionOfPart1 = 0;
   int _maxNumberQuestionOfPart2 = 0;
@@ -57,6 +67,8 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
   @override
   void initState() {
     super.initState();
+    _loading = CircleLoading();
+    _presenter = ScoringOrderSettingPresenter(this);
     _provider = Provider.of<MyPracticeDetailProvider>(context, listen: false);
     _initData();
   }
@@ -76,7 +88,21 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
           ),
         ),
         _buildNoteView(),
+        _buildProcessingView(),
       ],
+    );
+  }
+
+  Widget _buildProcessingView() {
+    return Consumer<MyPracticeDetailProvider>(
+      builder: (context, provider, child) {
+        if (provider.isScoringRequest) {
+          _loading.show(context: context, isViewAIResponse: false);
+        } else {
+          _loading.hide();
+        }
+        return const SizedBox();
+      },
     );
   }
 
@@ -152,9 +178,6 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
                       _calculatePrice();
                     },
                     showNoteCallBack: () {
-                      if (kDebugMode) {
-                        print("DEBUG: show group scoring note");
-                      }
                       provider.updateNoteMessage("Show group scoring note");
                       provider.updateShowNoteViewStatus(isShow: true);
                     },
@@ -173,9 +196,6 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
                 _calculatePrice();
               },
               showNoteCallBack: () {
-                if (kDebugMode) {
-                  print("DEBUG: show all scoring note");
-                }
                 provider.updateNoteMessage("Show all scoring note");
                 provider.updateShowNoteViewStatus(isShow: true);
               },
@@ -398,14 +418,46 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
     return InkWell(
       onTap: () {
         if (kDebugMode) {
-          print("DEBUG: Scoring request button tapped");
+          print("Tapped: _createScoringRequestButton");
+        }
+        if (_provider.numberQuestionOfPart1 == 0 &&
+            _provider.numberQuestionOfPart2 == 0 &&
+            _provider.numberQuestionOfPart3 == 0) {
+          if (kDebugMode) {
+            print(
+                "You must select at least one or more question for scoring request!");
+          }
+          return;
+        } else {
+          _provider.updateScoringRequestStatus(value: true);
+          int typeScoring = 1;
+          AiOption aiOption =
+              widget.listAiOption.where((element) => element.option == 2).first;
+
+          if (_provider.isGroupScoring) {
+            typeScoring = _provider.isGroupScoring ? 2 : 1;
+            aiOption = widget.listAiOption
+                .where((element) => element.option == 1)
+                .first; //ELSA price
+          }
+
+          _presenter.calculatePrice(
+            context: context,
+            testId: widget.myPracticeDetail.testId.toString(),
+            amountQuestionsPart1: _provider.numberQuestionOfPart1.toInt(),
+            amountQuestionsPart2: _provider.numberQuestionOfPart2.toInt(),
+            amountQuestionsPart3: _provider.numberQuestionOfPart3.toInt(),
+            typeScoring: typeScoring,
+            aiOption: aiOption,
+          );
         }
       },
       child: Container(
         height: 44,
         decoration: BoxDecoration(
-            color: AppColor.defaultPurpleColor,
-            borderRadius: BorderRadius.circular(8)),
+          color: AppColor.defaultPurpleColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Center(
           child: Consumer<MyPracticeDetailProvider>(
               builder: (context, provider, child) {
@@ -559,6 +611,55 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget> {
       _provider.updateIsAllScoring(
           isSelected: false, value1: null, value2: null, value3: null);
     }
+  }
+
+  @override
+  void onCalculatePriceError(String message) {
+    _provider.updateScoringRequestStatus(value: false);
+  }
+
+  @override
+  void onCalculatePriceSuccess(int total) async {
+    _provider.updateScoringRequestStatus(value: false);
+    await showDialog(
+      context: context,
+      builder: (BuildContext buildContext) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: "Bạn có muốn yêu cầu chấm điểm với $total kim cương?",
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title),
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            _provider.updateScoringRequestStatus(value: true);
+            _presenter.createScoringOrder(
+              testId: widget.myPracticeDetail.testId.toString(),
+            );
+          },
+          cancelButtonTapped: () {
+            Navigator.of(buildContext).pop();
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void onCreateScoringOrderError(String message) {
+    _provider.updateScoringRequestStatus(value: false);
+    //Toast error message here
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void onCreateScoringOrderSuccess() {
+    _provider.updateScoringRequestStatus(value: false);
+    //Toast success message here
+    //Refresh list call back
+    widget.parentPresenter.refreshScoringOrderList();
+    Navigator.of(context).pop();
   }
 }
 
