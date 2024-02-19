@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
+import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
 import 'package:icorrect/src/data_sources/repositories/practice_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/ai_option_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.dart';
+import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class MyPracticeScoringOrderTabViewContract {
   void onGetScoringOrderListSuccess(List<ScoringOrderModel> list);
@@ -21,9 +23,11 @@ abstract class MyPracticeScoringOrderTabViewContract {
 class MyPracticeScoringOrderTabPresenter {
   final MyPracticeScoringOrderTabViewContract? _view;
   PracticeRepository? _practiceRepository;
+  AuthRepository? _authRepository;
 
   MyPracticeScoringOrderTabPresenter(this._view) {
     _practiceRepository = Injector().getPracticeRepository();
+    _authRepository = Injector().getAuthRepository();
   }
 
   void getListScoringOrderWithTestId(
@@ -40,8 +44,8 @@ class MyPracticeScoringOrderTabPresenter {
         .then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
-        List<ScoringOrderModel> list =
-            await _createListScoringOrder(dataMap[StringConstants.k_data]);
+        List<ScoringOrderModel> list = await _createListScoringOrder(
+            dataMap[StringConstants.k_data][StringConstants.k_data]);
 
         if (kDebugMode) {
           print("DEBUG: getListScoringOrderWithTestId: ${list.length}");
@@ -150,13 +154,43 @@ class MyPracticeScoringOrderTabPresenter {
     _view!.onRefreshScoringOrderList();
   }
 
+  void refreshCurrentUserInfor() async {
+    assert(_view != null && _authRepository != null);
+
+    String deviceId = await Utils.getDeviceIdentifier();
+    String appVersion = await Utils.getAppVersion();
+    String os = await Utils.getOS();
+
+    _authRepository!.getUserInfo(deviceId, appVersion, os).then((value) async {
+      Map<String, dynamic> dataMap = jsonDecode(value);
+      if (dataMap[StringConstants.k_error_code] == 200) {
+        UserDataModel userDataModel =
+            UserDataModel.fromJson(dataMap[StringConstants.k_data]);
+        Utils.setCurrentUser(userDataModel);
+      } else {
+        if (kDebugMode) {
+          print("Refresh current user info error!");
+        }
+      }
+    }).catchError(
+      // ignore: invalid_return_type_for_catch_error
+      (onError) {
+        if (kDebugMode) {
+          print("Refresh current user info error!");
+        }
+      },
+    );
+  }
+
   Future<List<ScoringOrderModel>> _createListScoringOrder(
       List<dynamic> data) async {
     if (data.isEmpty) return [];
 
+    List<dynamic> reversedList = data.reversed.toList();
+
     List<ScoringOrderModel> temp = [];
-    for (int i = 0; i < data.length; i++) {
-      ScoringOrderModel order = ScoringOrderModel.fromJson(data[i]);
+    for (int i = 0; i < reversedList.length; i++) {
+      ScoringOrderModel order = ScoringOrderModel.fromJson(reversedList[i]);
       temp.add(order);
     }
     return temp;

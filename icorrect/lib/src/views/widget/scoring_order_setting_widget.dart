@@ -370,11 +370,11 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget>
               int totalPrice = provider.totalPrice;
               return Text(
                 "$totalPrice",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               );
             }),
             const SizedBox(width: 50),
-            Icon(Icons.diamond, color: Colors.blue),
+            const Icon(Icons.diamond, color: Colors.blue),
             const SizedBox(width: 10),
           ],
         ),
@@ -482,6 +482,7 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget>
         if (kDebugMode) {
           print("DEBUG: Cancel button tapped");
         }
+        _provider.resetData();
         Navigator.of(context).pop();
       },
       child: Container(
@@ -656,9 +657,17 @@ class _ScoringOrderSettingWidgetState extends State<ScoringOrderSettingWidget>
   @override
   void onCreateScoringOrderSuccess() {
     _provider.updateScoringRequestStatus(value: false);
+    //Reset all data
+    _provider.resetData();
+
     //Toast success message here
+
+    //Refresh current user info
+    widget.parentPresenter.refreshCurrentUserInfor();
+
     //Refresh list call back
     widget.parentPresenter.refreshScoringOrderList();
+
     Navigator.of(context).pop();
   }
 }

@@ -22,6 +22,7 @@ class MyPracticeDetailProvider extends ChangeNotifier {
   Future<void> setListOrder(List<ScoringOrderModel> list) async {
     if (_listOrder.isNotEmpty) _listOrder.clear();
     _listOrder.addAll(list);
+    notifyListeners();
   }
 
   void resetListClassForFilter() {
@@ -167,5 +168,22 @@ class MyPracticeDetailProvider extends ChangeNotifier {
     _isScoringRequest = value;
 
     notifyListeners();
+  }
+
+  void resetData() {
+    _isScoringRequest = false;
+    _isShowNoteView = false;
+    _numberQuestionOfPart1 = 0;
+    _numberQuestionOfPart2 = 0;
+    _numberQuestionOfPart3 = 0;
+    _myPracticeDetail = null;
+    _totalPrice = 0;
+    _currentUsd = 0;
+    _isAllScoring = false;
+    _isGroupScoring = false;
+    _isCanGroupScoring = false;
+    _isProcessing = false;
+    _isLoading = false;
+    _listOrder.clear();
   }
 }

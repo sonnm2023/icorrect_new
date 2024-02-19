@@ -240,14 +240,40 @@ class PracticeReporitoryImpl implements PracticeRepository {
       print('DEBUG: START - calculatePrice: $url');
     }
     //For test - start
-    if (amountQuestionsPart2 == 0) {
-      amountQuestionsPart2 += 1;
+    // if (amountQuestionsPart2 == 0) {
+    //   amountQuestionsPart2 += 1;
+    // }
+
+    // if (amountQuestionsPart3 == 0) {
+    //   amountQuestionsPart3 += 1;
+    // }
+    //For test - end
+    Map<String, String> bodyMap = {};
+    if (amountQuestionsPart1 > 0) {
+      bodyMap.addEntries([
+        MapEntry(
+            StringConstants.k_amount_questions_part1, "$amountQuestionsPart1")
+      ]);
     }
 
-    if (amountQuestionsPart3 == 0) {
-      amountQuestionsPart3 += 1;
+    if (amountQuestionsPart2 > 0) {
+      bodyMap.addEntries([
+        MapEntry(
+            StringConstants.k_amount_questions_part2, "$amountQuestionsPart2")
+      ]);
     }
-    //For test - end
+
+    if (amountQuestionsPart3 > 0) {
+      bodyMap.addEntries([
+        MapEntry(
+            StringConstants.k_amount_questions_part3, "$amountQuestionsPart3")
+      ]);
+    }
+
+    bodyMap
+        .addEntries([MapEntry(StringConstants.k_type_scoring, "$typeScoring")]);
+    bodyMap.addEntries(
+        [MapEntry(StringConstants.k_ai_option, aiOption.option.toString())]);
 
     return AppRepository.init()
         .sendRequest(
@@ -255,22 +281,16 @@ class PracticeReporitoryImpl implements PracticeRepository {
           url,
           true,
           false,
-          body: <String, String>{
-            StringConstants.k_amount_questions_part1: "$amountQuestionsPart1",
-            StringConstants.k_amount_questions_part2: "$amountQuestionsPart2",
-            StringConstants.k_amount_questions_part3: "$amountQuestionsPart3",
-            StringConstants.k_type_scoring: "$typeScoring",
-            StringConstants.k_ai_option: aiOption.option.toString(),
-          },
+          body: bodyMap,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
-          final String jsonBody = response.body;
-          if (kDebugMode) {
-            print("DEBUG: END - response: $jsonBody");
-          }
-          return jsonBody;
-        });
+      final String jsonBody = response.body;
+      if (kDebugMode) {
+        print("DEBUG: END - response: $jsonBody");
+      }
+      return jsonBody;
+    });
   }
 
   @override

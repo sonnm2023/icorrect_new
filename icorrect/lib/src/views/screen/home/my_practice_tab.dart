@@ -331,7 +331,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      _getDate(myTestModel.createdAt),
+                      Utils.getDate(myTestModel.createdAt, false),
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultGrayColor,
@@ -518,11 +518,6 @@ class _MyPracticeTabState extends State<MyPracticeTab>
           StringConstants.k_data: "I"
         };
     }
-  }
-
-  String _getDate(String dateTime) {
-    var date = DateTime.parse(dateTime);
-    return "${date.day}-${date.month}-${date.year}";
   }
 
   void _deleteTest(int testId, int indexDelete) {

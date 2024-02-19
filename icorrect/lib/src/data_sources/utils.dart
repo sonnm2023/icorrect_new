@@ -19,6 +19,7 @@ import 'package:icorrect/src/models/homework_models/new_api_135/activities_model
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/ui_models/user_authen_status.dart';
@@ -1089,6 +1090,67 @@ class Utils {
     }
 
     return result;
+  }
+
+  static String getDate(String dateTime, bool hasHour) {
+    var date = DateTime.parse(dateTime);
+    if (hasHour) {
+      return "${date.hour}:${date.minute} ${date.day}-${date.month}-${date.year}";
+    }
+    return "${date.day}-${date.month}-${date.year}";
+  }
+
+  static Map<String, dynamic> getScoringOrderStatus(
+    ScoringOrderModel order,
+  ) {
+    switch (order.status!) {
+      case 1:
+        return {
+          StringConstants.k_title: "Chờ tiếp nhận",
+          StringConstants.k_color: Colors.brown,
+        };
+      case 2:
+        return {
+          StringConstants.k_title: "Đã được tiếp nhận",
+          StringConstants.k_color: Colors.blue,
+        };
+      case 3:
+        return {
+          StringConstants.k_title: "Đã xử lý",
+          StringConstants.k_color: Colors.green,
+        };
+      case 4:
+        return {
+          StringConstants.k_title: "Đã hoàn thành",
+          StringConstants.k_color: Colors.green,
+        };
+      case 5:
+        return {
+          StringConstants.k_title: "Quá hạn",
+          StringConstants.k_color: Colors.red,
+        };
+      case 6:
+        return {
+          StringConstants.k_title: "Đã huỷ",
+          StringConstants.k_color: Colors.grey,
+        };
+      case 9:
+        return {
+          StringConstants.k_title: "Đã hoàn kim cương",
+          StringConstants.k_color: Colors.brown,
+        };
+      case 10:
+        return {
+          StringConstants.k_title: "Chưa xử lý",
+          StringConstants.k_color: Colors.pink,
+        };
+      case 11:
+        return {
+          StringConstants.k_title: "Đang báo lỗi",
+          StringConstants.k_color: Colors.red,
+        };
+    }
+    return {}; //Error
   }
 
   // static Future<int> getAudioDuration(List<QuestionTopicModel> list) async {
