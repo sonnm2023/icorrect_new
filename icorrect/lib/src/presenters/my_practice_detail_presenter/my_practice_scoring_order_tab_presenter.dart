@@ -188,14 +188,6 @@ class MyPracticeScoringOrderTabPresenter {
 
     List<ScoringOrderModel> temp = [];
 
-    //Reversed list
-    // List<dynamic> reversedList = data.reversed.toList();
-
-    // for (int i = 0; i < reversedList.length; i++) {
-    //   ScoringOrderModel order = ScoringOrderModel.fromJson(reversedList[i]);
-    //   temp.add(order);
-    // }
-
     for (int i = 0; i < data.length; i++) {
       ScoringOrderModel order = ScoringOrderModel.fromJson(data[i]);
       temp.add(order);

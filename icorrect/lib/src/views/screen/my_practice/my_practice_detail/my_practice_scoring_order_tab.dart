@@ -36,13 +36,26 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   late final CircleLoading _loading;
   late final List<AiOption> _listAiOption = [];
 
+  bool isLoading = false;
+  bool isLoadingMore = false;
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _loading = CircleLoading();
     _provider = Provider.of<MyPracticeDetailProvider>(context, listen: false);
     _presenter = MyPracticeScoringOrderTabPresenter(this);
-    _getListScoringOrder();
+    _scrollController.addListener(_scrollListener);
+    _loadData();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      _loadMoreData();
+    }
   }
 
   @override
@@ -82,33 +95,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     if (kDebugMode) {
       print("DEBUG: MyPracticeScoringOrderTab _buildList");
     }
-    /*
-    return Expanded(
-      child: Stack(
-        children: [
-          Visibility(
-            visible: _provider.listOrder.isNotEmpty,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: _provider.listOrder.length,
-              itemBuilder: (context, index) {
-                return _buildItem(_provider.listOrder[index]);
-              },
-            ),
-          ),
-          Visibility(
-            visible: _provider.listOrder.isEmpty,
-            child: NoDataWidget(
-              msg: Utils.multiLanguage(
-                  StringConstants.list_scoring_order_empty_message)!,
-              reloadCallBack: _reloadCallBack,
-            ),
-          ),
-        ],
-      ),
-    );
-    */
+
     return Expanded(
       child: Consumer<MyPracticeDetailProvider>(
         builder: (context, provider, child) {
@@ -123,13 +110,17 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
             );
           }
 
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: provider.listOrder.length,
-            itemBuilder: (context, index) {
-              return _buildItem(provider.listOrder[index]);
-            },
+          return RefreshIndicator(
+            onRefresh: _loadData,
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: _scrollController,
+              itemCount: provider.listOrder.length,
+              itemBuilder: (context, index) {
+                return _buildItem(provider.listOrder[index]);
+              },
+            ),
           );
         },
       ),
@@ -254,13 +245,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   }
 
   Widget _buildItem(ScoringOrderModel order) {
-    // Map<String, String> dataString = _getMyTestItem(myTestModel.type);
     String title = _generateTitle(order);
-    // double score = Utils.generateScore(myTestModel);
-    Color scoreColor = AppColor.defaultGrayColor;
-    if (order.score! > 0) {
-      scoreColor = Colors.green;
-    }
     Map<String, dynamic> orderStatus = Utils.getScoringOrderStatus(order);
 
     return Container(
@@ -312,7 +297,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
                     _scoreOrExtendWidget(order),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 35),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -390,6 +375,52 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     );
   }
 
+  // Future<void> _loadData() async {
+  //   _getListScoringOrder();
+  // }
+
+  // Future<void> _loadMoreData() async {
+  //   await _getMoreDataFromAPI();
+  // }
+
+  Future<void> _loadData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Call your API to get initial data
+    // Replace this with your actual method call
+    await _getListScoringOrder();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _loadMoreData() async {
+    if (!isLoadingMore) {
+      setState(() {
+        isLoadingMore = true;
+      });
+
+      // Call your API to get more data
+      // Replace this with your actual method call
+      await _getMoreDataFromAPI();
+
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
+  }
+
+  Future<void> _getMoreDataFromAPI() async {
+    if (kDebugMode) {
+      print("_getMoreDataFromAPI");
+    }
+    // await Future.delayed(Duration(seconds: 2)); // Simulate API call
+    // scoringOrderList.addAll(List.generate(10, (index) => ScoringOrderModel((scoringOrderList.length + index).toString()))); // Example data
+  }
+
   void _getScoringOrderConfigInfo() {
     _provider.updateProcessingStatus(processing: true);
     _presenter.getScoringOrderConfigInfo(
@@ -403,7 +434,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     _getListScoringOrder();
   }
 
-  void _getListScoringOrder() {
+  Future<void> _getListScoringOrder() async {
     Future.delayed(const Duration(microseconds: 0), () {
       _provider.updateProcessingStatus(processing: true);
     });

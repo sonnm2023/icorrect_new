@@ -1095,7 +1095,17 @@ class Utils {
   static String getDate(String dateTime, bool hasHour) {
     var date = DateTime.parse(dateTime);
     if (hasHour) {
-      return "${date.hour}:${date.minute} ${date.day}-${date.month}-${date.year}";
+      String hourString = "${date.hour}";
+      if (date.hour < 10) {
+        hourString = "0${date.hour}";
+      }
+
+      String minutesString = "${date.minute}";
+      if (date.minute < 10) {
+        minutesString = "0${date.minute}";
+      }
+
+      return "$hourString:$minutesString ${date.day}-${date.month}-${date.year}";
     }
     return "${date.day}-${date.month}-${date.year}";
   }
