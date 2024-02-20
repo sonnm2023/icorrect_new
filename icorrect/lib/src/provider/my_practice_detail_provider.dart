@@ -176,7 +176,6 @@ class MyPracticeDetailProvider extends ChangeNotifier {
     _numberQuestionOfPart1 = 0;
     _numberQuestionOfPart2 = 0;
     _numberQuestionOfPart3 = 0;
-    _myPracticeDetail = null;
     _totalPrice = 0;
     _currentUsd = 0;
     _isAllScoring = false;

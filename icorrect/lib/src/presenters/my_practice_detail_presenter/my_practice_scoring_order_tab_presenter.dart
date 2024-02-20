@@ -186,11 +186,18 @@ class MyPracticeScoringOrderTabPresenter {
       List<dynamic> data) async {
     if (data.isEmpty) return [];
 
-    List<dynamic> reversedList = data.reversed.toList();
-
     List<ScoringOrderModel> temp = [];
-    for (int i = 0; i < reversedList.length; i++) {
-      ScoringOrderModel order = ScoringOrderModel.fromJson(reversedList[i]);
+
+    //Reversed list
+    // List<dynamic> reversedList = data.reversed.toList();
+
+    // for (int i = 0; i < reversedList.length; i++) {
+    //   ScoringOrderModel order = ScoringOrderModel.fromJson(reversedList[i]);
+    //   temp.add(order);
+    // }
+
+    for (int i = 0; i < data.length; i++) {
+      ScoringOrderModel order = ScoringOrderModel.fromJson(data[i]);
       temp.add(order);
     }
     return temp;
