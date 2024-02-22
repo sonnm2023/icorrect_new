@@ -36,9 +36,11 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   late final CircleLoading _loading;
   late final List<AiOption> _listAiOption = [];
 
-  bool isLoading = false;
+  // bool isLoading = false;
   bool isLoadingMore = false;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  bool _canLoadMore = true;
 
   @override
   void initState() {
@@ -50,10 +52,17 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     _loadData();
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   void _scrollListener() {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
+        !_scrollController.position.outOfRange &&
+        _canLoadMore) {
       _loadMoreData();
     }
   }
@@ -116,9 +125,18 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
               shrinkWrap: true,
               physics: const AlwaysScrollableScrollPhysics(),
               controller: _scrollController,
-              itemCount: provider.listOrder.length,
+              itemCount: provider.listOrder.length + (isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
-                return _buildItem(provider.listOrder[index]);
+                if (index < provider.listOrder.length) {
+                  return _buildItem(provider.listOrder[index]);
+                } else {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
               },
             ),
           );
@@ -384,17 +402,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   // }
 
   Future<void> _loadData() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    // Call your API to get initial data
-    // Replace this with your actual method call
-    await _getListScoringOrder();
-
-    setState(() {
-      isLoading = false;
-    });
+    await _getListScoringOrder(isLoadingMore: false);
   }
 
   Future<void> _loadMoreData() async {
@@ -403,22 +411,13 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
         isLoadingMore = true;
       });
 
-      // Call your API to get more data
-      // Replace this with your actual method call
-      await _getMoreDataFromAPI();
+      _currentPage++;
+      await _getListScoringOrder(isLoadingMore: true);
 
       setState(() {
         isLoadingMore = false;
       });
     }
-  }
-
-  Future<void> _getMoreDataFromAPI() async {
-    if (kDebugMode) {
-      print("_getMoreDataFromAPI");
-    }
-    // await Future.delayed(Duration(seconds: 2)); // Simulate API call
-    // scoringOrderList.addAll(List.generate(10, (index) => ScoringOrderModel((scoringOrderList.length + index).toString()))); // Example data
   }
 
   void _getScoringOrderConfigInfo() {
@@ -431,16 +430,28 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
     if (kDebugMode) {
       print("DEBUG: MyPracticeScoringOrderTab: _reloadCallBack");
     }
-    _getListScoringOrder();
+    _getListScoringOrder(isLoadingMore: false);
   }
 
-  Future<void> _getListScoringOrder() async {
+  Future<void> _getListScoringOrder({required bool isLoadingMore}) async {
+    if (!isLoadingMore) {
+      //Reset current page
+      _currentPage = 1;
+
+      //Reset can loading more
+      _canLoadMore = true;
+    }
+
     Future.delayed(const Duration(microseconds: 0), () {
       _provider.updateProcessingStatus(processing: true);
     });
 
     _presenter.getListScoringOrderWithTestId(
-        context: context, testId: widget.practice.id.toString());
+      context: context,
+      testId: widget.practice.id.toString(),
+      currentPage: _currentPage,
+      isLoadingMore: isLoadingMore,
+    );
   }
 
   void _handleError(String message) {
@@ -573,9 +584,13 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
   }
 
   @override
-  void onGetScoringOrderListSuccess(List<ScoringOrderModel> list) {
+  void onGetScoringOrderListSuccess(
+      {required List<ScoringOrderModel> list, required bool isLoadingMore}) {
+    if (list.length < 10) {
+      _canLoadMore = false;
+    }
     _provider.updateProcessingStatus(processing: false);
-    _provider.setListOrder(list);
+    _provider.setListOrder(list: list, isLoadingMore: isLoadingMore);
   }
 
   @override
@@ -596,7 +611,7 @@ class _MyPracticeScoringOrderTabState extends State<MyPracticeScoringOrderTab>
 
   @override
   void onRefreshScoringOrderList() {
-    _getListScoringOrder();
+    _getListScoringOrder(isLoadingMore: false);
   }
 
   @override

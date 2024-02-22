@@ -12,8 +12,13 @@ class AppRepository {
   factory AppRepository.init() => _repositories;
 
   Future<http.Response> sendRequest(
-      method, String url, bool hasToken, bool isFromMyPractice,
-      {Object? body, Encoding? encoding}) async {
+    method,
+    String url,
+    bool hasToken,
+    bool isFromMyPractice, {
+    Object? body,
+    Encoding? encoding,
+  }) async {
     Map<String, String> headers = {
       'Accept': 'application/json',
     };

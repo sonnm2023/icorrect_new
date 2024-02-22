@@ -12,7 +12,8 @@ import 'package:icorrect/src/models/my_practice_test_model/scoring_order_model.d
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class MyPracticeScoringOrderTabViewContract {
-  void onGetScoringOrderListSuccess(List<ScoringOrderModel> list);
+  void onGetScoringOrderListSuccess(
+      {required List<ScoringOrderModel> list, required bool isLoadingMore});
   void onGetScoringOrderListError(String message);
   void onGetScoringOrderConfigInfoSuccess(
       {required List<AiOption> list, required bool canGroupScoring});
@@ -30,8 +31,12 @@ class MyPracticeScoringOrderTabPresenter {
     _authRepository = Injector().getAuthRepository();
   }
 
-  void getListScoringOrderWithTestId(
-      {required BuildContext context, required String testId}) async {
+  void getListScoringOrderWithTestId({
+    required BuildContext context,
+    required String testId,
+    required int currentPage,
+    required bool isLoadingMore,
+  }) async {
     //TODO
     // LogModel? log;
     // if (context.mounted) {
@@ -40,7 +45,7 @@ class MyPracticeScoringOrderTabPresenter {
     // }
 
     _practiceRepository!
-        .getListScoringOrderWithTestId(testId)
+        .getListScoringOrderWithTestId(testId, currentPage)
         .then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
@@ -59,7 +64,8 @@ class MyPracticeScoringOrderTabPresenter {
         //   status: LogEvent.success,
         // );
 
-        _view!.onGetScoringOrderListSuccess(list);
+        _view!.onGetScoringOrderListSuccess(
+            list: list, isLoadingMore: isLoadingMore);
       } else {
         //Add log
         // Utils.prepareLogData(

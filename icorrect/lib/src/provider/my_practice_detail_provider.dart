@@ -19,8 +19,12 @@ class MyPracticeDetailProvider extends ChangeNotifier {
 
   final List<ScoringOrderModel> _listOrder = [];
   List<ScoringOrderModel> get listOrder => _listOrder;
-  Future<void> setListOrder(List<ScoringOrderModel> list) async {
-    if (_listOrder.isNotEmpty) _listOrder.clear();
+  Future<void> setListOrder(
+      {required List<ScoringOrderModel> list,
+      required bool isLoadingMore}) async {
+    if (!isLoadingMore) {
+      if (_listOrder.isNotEmpty) _listOrder.clear();
+    }
     _listOrder.addAll(list);
     notifyListeners();
   }

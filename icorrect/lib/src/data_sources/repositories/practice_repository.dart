@@ -13,7 +13,8 @@ abstract class PracticeRepository {
   Future<String> getMyPracticeDetail(String testId);
   Future<String> getBankList();
   Future<String> getListTopicOfBank(String distributeCode);
-  Future<String> getListScoringOrderWithTestId(String testId); //Api 149
+  Future<String> getListScoringOrderWithTestId(
+      String testId, int currentPage); //Api 149
   Future<String> getScoringOrderConfigInfoWithId(String testId); //Api 147
   Future<String> calculatePrice({
     required String testId,
@@ -180,8 +181,8 @@ class PracticeReporitoryImpl implements PracticeRepository {
   }
 
   @override
-  Future<String> getListScoringOrderWithTestId(String testId) {
-    String url = getListScoringOrderWithTestIdEP(testId);
+  Future<String> getListScoringOrderWithTestId(String testId, int currentPage) {
+    String url = getListScoringOrderWithTestIdEP(testId, currentPage);
     if (kDebugMode) {
       print('DEBUG: START - getListScoringOrderWithTestId: $url');
     }

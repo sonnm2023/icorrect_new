@@ -142,8 +142,8 @@ String createScoringOrderEP(String testId) {
 }
 
 //API 149 GET
-String getListScoringOrderWithTestIdEP(String testId) {
-  return "$icorrectDomain/api/v1/ielts-test/$testId/orders";
+String getListScoringOrderWithTestIdEP(String testId, int currentPage) {
+  return "$icorrectDomain/api/v1/ielts-test/$testId/orders?page=$currentPage";
 }
 
 //API 150 Cancel Scoring Order ===> API 50 order_id
