@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:icorrect/core/secure_storage.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
@@ -158,6 +159,9 @@ class HomeWorkPresenter {
           message: null,
           status: LogEvent.success,
         );
+
+        //Remove email & password which saved as secure
+        SecureStorage.deleteCredentials();
 
         _view!.onLogoutSuccess();
       } else {

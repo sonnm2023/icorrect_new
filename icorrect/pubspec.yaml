@@ -74,6 +74,7 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   internet_connection_checker: ^1.0.0+1
   flutter_rating_bar: ^4.0.1
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

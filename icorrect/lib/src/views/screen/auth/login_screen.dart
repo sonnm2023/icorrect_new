@@ -7,6 +7,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/secure_storage.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -255,6 +256,18 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _autoLogin() async {
+    Map<String, String?> infoMap = await SecureStorage.getCredentials();
+    String? email = infoMap["email"];
+    String? password = infoMap["password"];
+
+    if (email == null || password == null) {
+      return;
+    }
+
+    _authProvider.updateLoginStatus(processing: true);
+
+    _loginPresenter!.login(email, password, context);
+    /*
     String token = await Utils.getAccessToken();
 
     if (token.isNotEmpty) {
@@ -280,6 +293,7 @@ class _LoginScreenState extends State<LoginScreen>
         );
       });
     }
+    */
   }
 
   void _handleError() {

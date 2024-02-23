@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icorrect/core/secure_storage.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
@@ -49,9 +50,6 @@ class LoginPresenter {
 
     Future.delayed(Duration(seconds: delayTime)).then((_) {
       _repository!.login(email, password).then((value) async {
-        if (kDebugMode) {
-          print("DEBUG: login response: $value");
-        }
         AuthModel authModel = AuthModel.fromJson(jsonDecode(value));
         if (authModel.errorCode == 200) {
           //Add log
@@ -62,7 +60,12 @@ class LoginPresenter {
             status: LogEvent.success,
           );
 
+          //Save access token
           await _saveAccessToken(authModel.data.accessToken);
+
+          //Save email & pass as secure
+          SecureStorage.saveCredentials(email, password);
+
           _getUserInfo(context);
         } else if (authModel.errorCode == 401) {
           //Add log
@@ -135,9 +138,6 @@ class LoginPresenter {
     }
 
     _repository!.getAppConfigInfo().then((value) async {
-      if (kDebugMode) {
-        print("DEBUG: getAppConfigInfo $value");
-      }
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
         AppConfigInfoModel appConfigInfoModel =
