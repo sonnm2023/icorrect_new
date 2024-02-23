@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:icorrect/core/secure_storage.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
 import 'package:icorrect/src/data_sources/repositories/auth_repository.dart';
@@ -56,6 +57,13 @@ class ChangePasswordPresenter {
           message: dataMap[StringConstants.k_message],
           status: LogEvent.success,
         );
+
+        //Update password at local
+        Map<String, String?> infoMap = await SecureStorage.getCredentials();
+        String? email = infoMap['email'];
+        if (null != email) {
+          SecureStorage.saveCredentials(email, newPassword);
+        }
 
         _view!.onChangePasswordSuccess(Utils.multiLanguage(
             StringConstants.change_password_success_message)!);
