@@ -144,8 +144,14 @@ void callbackDispatcher() {
       if (kDebugMode) {
         print("DEBUG: Not have logs at moment");
       }
+      print("DEBUG-SENDLOG: HAS NOT LOG FILE");
       return Future.value(false);
     }
+
+    //For test
+    File(path).readAsString().then((String contents) {
+      print("DEBUG-SENDLOG: LOG CONTENT: $contents");
+    });
 
     //Get log api info
     String logApiUrl =
@@ -155,10 +161,13 @@ void callbackDispatcher() {
 
     if (logApiUrl.isEmpty || secretkey.isEmpty) {
       if (kDebugMode) {
-        print("DEBUG: Not have logs at moment");
+        print("DEBUG: Not have log url or secretkey");
       }
+      print("DEBUG-SENDLOG: HAS NOT LOG URL OR SECRETKEY");
       return Future.value(false);
     }
+
+    print("DEBUG-SENDLOG: URL: $logApiUrl");
 
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(logApiUrl));
@@ -181,11 +190,13 @@ void callbackDispatcher() {
       if (kDebugMode) {
         print("DEBUG: send log success kDebugMode");
       }
+      print("DEBUG-SENDLOG: SUCCESS");
       Utils.deleteLogFile();
     } else {
       if (kDebugMode) {
         print("DEBUG: send log failed  - kDebugMode");
       }
+      print("DEBUG-SENDLOG: ERROR: ${res.toString()}");
     }
 
     return Future.value(true);
