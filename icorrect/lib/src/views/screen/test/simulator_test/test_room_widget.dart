@@ -589,14 +589,54 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _initController(NativeVideoPlayerController controller) async {
-    if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
-      _nativeVideoPlayerController = controller;
-      _nativeVideoPlayerController!.setVolume(1.0);
-      await _loadVideoSource(_simulatorTestProvider!
-              .listVideoSource[_playingIndex].files.first.url)
-          .then((_) {
-        _nativeVideoPlayerController!.stop();
-      });
+    //Add log
+    LogModel? log;
+    Map<String, dynamic>? dataLog = {};
+
+    try {
+      if (_simulatorTestProvider!.listVideoSource.isNotEmpty) {
+        _nativeVideoPlayerController = controller;
+        _nativeVideoPlayerController!.setVolume(1.0);
+        await _loadVideoSource(_simulatorTestProvider!
+                .listVideoSource[_playingIndex].files.first.url)
+            .then((_) async {
+          if (context.mounted) {
+            log = await Utils.prepareToCreateLog(
+              context,
+              action: LogEvent.init_video_player_success,
+            );
+          }
+
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: dataLog,
+            message: "OK",
+            status: LogEvent.success,
+          );
+
+          _nativeVideoPlayerController!.stop();
+        });
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('Error initializing _nativeVideoPlayerController: $e');
+        print('Stack trace: $stackTrace');
+      }
+      if (context.mounted) {
+        log = await Utils.prepareToCreateLog(
+          context,
+          action: LogEvent.init_video_player_error,
+        );
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: e.toString(),
+        status: LogEvent.failed,
+      );
     }
   }
 
