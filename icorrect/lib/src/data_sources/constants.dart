@@ -431,6 +431,9 @@ class LogEvent {
   static const String checkConnection = 'check_connection';
   static const String imageDownload = 'image_download';
   static const String createVideoSource = 'create_video_source';
+  static const String start_audio_record = 'start_audio_record';
+  static const String init_audio_record_error = 'init_audio_record_error';
+  static const String init_audio_record_success = 'init_audio_record_success';
 }
 
 const sendLogsTask = "com.csupporter.sendlogtask";

@@ -99,7 +99,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     super.initState();
 
     _audioPlayerController = AudioPlayers.AudioPlayer();
-    _recordController = Record();
+    // _recordController = Record();
+    _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -108,6 +109,51 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _testRoomPresenter = TestRoomPresenter(this);
     _loading = CircleLoading();
     _initCameraService();
+  }
+
+  void _initRecordController() async {
+    //Add log
+    LogModel? log;
+    Map<String, dynamic>? dataLog = {};
+
+    try {
+      _recordController = Record();
+
+      if (context.mounted) {
+        log = await Utils.prepareToCreateLog(
+          context,
+          action: LogEvent.init_audio_record_success,
+        );
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: "OK",
+        status: LogEvent.success,
+      );
+    } catch (e, stackTrace) {
+      if (context.mounted) {
+        log = await Utils.prepareToCreateLog(
+          context,
+          action: LogEvent.init_audio_record_error,
+        );
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: e.toString(),
+        status: LogEvent.failed,
+      );
+
+      if (kDebugMode) {
+        print('Error initializing Record: $e');
+        print('Stack trace: $stackTrace');
+      }
+    }
   }
 
   @override
@@ -1519,6 +1565,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     };
     _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
+    _startRecord(fileName: newFileName, path: path, isAnswer: true);
+  }
+
+  Future<void> _startRecord(
+      {required String fileName,
+      required String path,
+      required bool isAnswer}) async {
+    //Add log
+    LogModel? log;
+    Map<String, dynamic>? dataLog = {};
+
     try {
       await _recordController!.start(
         path: path,
@@ -1527,24 +1584,40 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         samplingRate: 44100,
       );
 
-      List<FileTopicModel> temp = _currentQuestion!.answers;
-      if (!_checkAnswerFileExist(newFileName, temp)) {
-        temp.add(
-            FileTopicModel.fromJson({'id': 0, 'url': newFileName, 'type': 0}));
-        _currentQuestion!.answers = temp;
-        _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+      if (context.mounted) {
+        log = await Utils.prepareToCreateLog(
+          context,
+          action: LogEvent.start_audio_record,
+        );
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: "Path: $path",
+        status: LogEvent.success,
+      );
+
+      if (isAnswer) {
+        List<FileTopicModel> temp = _currentQuestion!.answers;
+        if (!_checkAnswerFileExist(fileName, temp)) {
+          temp.add(
+              FileTopicModel.fromJson({'id': 0, 'url': fileName, 'type': 0}));
+          _currentQuestion!.answers = temp;
+          _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
+        }
       }
     } catch (e) {
       if (kDebugMode) {
         print("DEBUG: init record audio FAIL: ${e.toString()}");
       }
-      //Add log
-      LogModel? log;
-      Map<String, dynamic>? dataLog = {};
 
       if (context.mounted) {
-        log = await Utils.prepareToCreateLog(context,
-            action: LogEvent.crash_bug_audio_record);
+        log = await Utils.prepareToCreateLog(
+          context,
+          action: LogEvent.crash_bug_audio_record,
+        );
       }
 
       //Add log
@@ -1567,12 +1640,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: RECORD AS FILE PATH: $path");
     }
 
-    await _recordController!.start(
-      path: path,
-      encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-      bitRate: 128000,
-      samplingRate: 44100,
-    );
+    _startRecord(fileName: fileName, path: path, isAnswer: false);
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
