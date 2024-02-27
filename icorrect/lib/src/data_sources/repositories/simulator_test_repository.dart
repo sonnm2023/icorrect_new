@@ -186,22 +186,31 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         .send()
         .timeout(const Duration(seconds: timeout))
         .then((http.StreamedResponse streamResponse) async {
-      if (streamResponse.statusCode == 200) {
-        return await http.Response.fromStream(streamResponse)
-            .timeout(const Duration(seconds: timeout))
-            .then((http.Response response) {
-          final String jsonBody = response.body;
-          if (kDebugMode) {
-            print("DEBUG: END - response data: $jsonBody");
-          }
-          return jsonBody;
-        });
-      } else {
+      return await http.Response.fromStream(streamResponse)
+          .timeout(const Duration(seconds: timeout))
+          .then((http.Response response) {
+        final String jsonBody = response.body;
         if (kDebugMode) {
-          print("DEBUG: END - Submit ERROR");
+          print("DEBUG: END - response data: $jsonBody");
         }
-        return '';
-      }
+        return jsonBody;
+      });
+      // if (streamResponse.statusCode == 200) {
+      //   return await http.Response.fromStream(streamResponse)
+      //       .timeout(const Duration(seconds: timeout))
+      //       .then((http.Response response) {
+      //     final String jsonBody = response.body;
+      //     if (kDebugMode) {
+      //       print("DEBUG: END - response data: $jsonBody");
+      //     }
+      //     return jsonBody;
+      //   });
+      // } else {
+      //   if (kDebugMode) {
+      //     print("DEBUG: END - Submit ERROR");
+      //   }
+      //   return '';
+      // }
     });
   }
 

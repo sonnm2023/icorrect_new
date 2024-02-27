@@ -266,6 +266,10 @@ class MultiLanguage {
         "SocketException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.submit_test_error_client:
         "ClientException: Có lỗi khi gửi bài kiểm tra này!",
+    StringConstants.submit_test_error_other:
+        "OtherException: Có lỗi khi gửi bài kiểm tra này!",
+    StringConstants.submit_test_error_parse_json:
+        "ParseJsonException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.get_special_homework_error_message:
         "Tải danh sách bài mẫu thất bại!",
     StringConstants.compress_video_error_message:
@@ -627,6 +631,10 @@ class MultiLanguage {
         "SocketException: Has an error when submit this test!",
     StringConstants.submit_test_error_client:
         "ClientException: Has an error when submit this test!",
+    StringConstants.submit_test_error_other:
+        "OtherException: Has an error when submit this test!",
+    StringConstants.submit_test_error_parse_json:
+        "ParseJsonException: Has an error when submit this test!",
     StringConstants.get_special_homework_error_message:
         "GetSpecialHomeWorks: result fail!",
     StringConstants.compress_video_error_message: "Compress video file fail",
