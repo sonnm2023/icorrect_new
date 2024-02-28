@@ -30,7 +30,7 @@ import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:record/record.dart';
+// import 'package:record/record.dart'; //TODO
 import 'package:url_launcher/url_launcher.dart';
 
 class MyTestTab extends StatefulWidget {
@@ -56,7 +56,7 @@ class _MyTestTabState extends State<MyTestTab>
   CircleLoading? _loading;
 
   AudioPlayer? _player;
-  final Record _record = Record();
+  // final Record _record = Record(); //TODO
   bool isOffline = false;
   StreamSubscription? connection;
   String audioFile = "";
@@ -142,7 +142,7 @@ class _MyTestTabState extends State<MyTestTab>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
-    _record.dispose();
+    // _record.dispose(); //TODO
     _presenter!.closeClientRequest();
     _presenter!.pauseDownload();
     super.dispose();
@@ -329,7 +329,7 @@ class _MyTestTabState extends State<MyTestTab>
 
   Future _onAppInBackground() async {
     if (widget.provider.visibleRecord) {
-      _record.stop();
+      // _record.stop(); //TODO
       _stopCountTimer();
 
       String path =
@@ -419,7 +419,7 @@ class _MyTestTabState extends State<MyTestTab>
     widget.provider.setTimerCount('00:00');
     _stopCountTimer();
     widget.provider.setCountDownTimer(null);
-    _record.stop();
+    // _record.stop(); //TODO
   }
 
   Widget _questionItem(QuestionTopicModel question) {
@@ -627,20 +627,21 @@ class _MyTestTabState extends State<MyTestTab>
         timer = _presenter!.startCountDown(
             context: context, count: 30, isLessThan2Seconds: true);
         widget.provider.setCountDownTimer(timer);
-        await _record.start(
-          path:
-              '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
-              '\\$audioFile',
-          encoder:
-              Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-          bitRate: 128000,
-          samplingRate: 44100,
-        );
+        //TODO
+        // await _record.start(
+        //   path:
+        //       '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+        //       '\\$audioFile',
+        //   encoder:
+        //       Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+        //   bitRate: 128000,
+        //   samplingRate: 44100,
+        // );
       }
     } else {
       final status = await Permission.microphone.request();
       widget.provider.setPermissionRecord(status);
-      _record.stop();
+      // _record.stop(); //TODO
     }
   }
 

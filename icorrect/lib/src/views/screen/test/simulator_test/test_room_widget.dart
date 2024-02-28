@@ -7,6 +7,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
@@ -40,7 +41,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_question_wi
 import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widget.dart';
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
-import 'package:record/record.dart';
+// import 'package:record/record.dart'; //TODO
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
@@ -68,7 +69,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   PlayAnswerProvider? _playAnswerProvider;
   NativeVideoPlayerController? _nativeVideoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
-  Record? _recordController;
+  // Record? _recordController;
+  FlutterSoundRecorder? _recorder;
   CameraService? _cameraService;
 
   Timer? _countDown;
@@ -99,8 +101,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     super.initState();
 
     _audioPlayerController = AudioPlayers.AudioPlayer();
-    // _recordController = Record();
-    _initRecordController();
+    // _recordController = Record(); //TODO
+    // _initRecordController(); //TODO
+
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -111,6 +114,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _initCameraService();
   }
 
+  /*
   void _initRecordController() async {
     //Add log
     LogModel? log;
@@ -155,6 +159,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
     }
   }
+  */
 
   @override
   void dispose() {
@@ -768,12 +773,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _typeOfActionLog = 2;
         int numPart = _simulatorTestProvider!.currentQuestion.numPart;
 
-        if (numPart == PartOfTest.part2.get &&
-            await _recordController!.isRecording()) {
-          _recordController!.pause();
-        } else {
-          _recordController!.stop();
-        }
+        //TODO
+        // if (numPart == PartOfTest.part2.get &&
+        //     await _recordController!.isRecording()) {
+        //   _recordController!.pause();
+        // } else {
+        //   _recordController!.stop();
+        // }
 
         if (null != _countDown) {
           _countDown!.cancel();
@@ -1551,11 +1557,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       }
 
       if (_simulatorTestProvider!.visibleRecord) {
-        if (Platform.isIOS) {
-          _recordController!.stop();
-        } else {
-          _stopRecord();
-        }
+        //TODO
+        _stopRecord();
+        // if (Platform.isIOS) {
+        //   _recordController!.stop();
+        // } else {
+        //   _stopRecord();
+        // }
 
         if (null != _countDown) {
           _countDown!.cancel();
@@ -1574,10 +1582,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _stopRecord() async {
-    String? path = await _recordController!.stop();
-    if (kDebugMode) {
-      print("DEBUG: RECORD FILE PATH: $path");
+    //TODO
+    if (_recorder != null && _recorder!.isRecording) {
+      await _recorder!.stopRecorder();
+      await _recorder!.closeRecorder();
     }
+    // String? path = await _recordController!.stop();
+    // if (kDebugMode) {
+    //   print("DEBUG: RECORD FILE PATH: $path");
+    // }
   }
 
   void _setVisibleRecord(bool visible, Timer? count, String? fileName) async {
@@ -1593,7 +1606,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   Future<void> _recordAnswer(String fileName) async {
     String newFileName =
-        "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
+        "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.mp3"; //TODO
     String path = await Utils.createNewFilePath(newFileName);
 
     if (kDebugMode) {
@@ -1617,12 +1630,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     Map<String, dynamic>? dataLog = {};
 
     try {
-      await _recordController!.start(
-        path: path,
-        encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-        bitRate: 128000,
-        samplingRate: 44100,
+      //TODO
+      _recorder = FlutterSoundRecorder();
+      await _recorder!.openRecorder();
+      await _recorder!.startRecorder(
+        toFile: path,
+        codec: Codec.mp3,
       );
+      // await _recordController!.start(
+      //   path: path,
+      //   encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+      //   bitRate: 128000,
+      //   samplingRate: 44100,
+      // );
 
       if (context.mounted) {
         log = await Utils.prepareToCreateLog(
@@ -2012,9 +2032,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _countDown!.cancel();
       }
 
-      if (await _recordController!.isPaused()) {
-        _recordController!.resume();
+      //TODO
+      if (_recorder != null && _recorder!.isPaused) {
+        _recorder!.resumeRecorder();
       }
+      // if (await _recordController!.isPaused()) {
+      //   _recordController!.resume();
+      // }
 
       _simulatorTestProvider!.setIsLessThan2Second(true);
       _countDown = _testRoomPresenter!.startCountDown(
@@ -2495,10 +2519,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     //TODO
-    // properties.add(DiagnosticsProperty<FlutterSoundRecorder>(
-    //     '_flutterSoundRecorder', _flutterSoundRecorder));
-    properties.add(
-        DiagnosticsProperty<Record>('_recordController', _recordController));
+    // properties.add(
+    //     DiagnosticsProperty<Record>('_recordController', _recordController));
+    properties.add(DiagnosticsProperty<FlutterSoundRecorder>(
+        '_recordController', _recorder));
   }
 
   @override
