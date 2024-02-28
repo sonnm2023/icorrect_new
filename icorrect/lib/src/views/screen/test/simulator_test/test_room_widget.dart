@@ -1620,7 +1620,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       await _recordController!.start(
         path: path,
         encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
-        bitRate: 96000,
+        bitRate: 128000,
         samplingRate: 16000,
         numChannels: 1,
       );
