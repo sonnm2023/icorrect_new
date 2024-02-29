@@ -92,6 +92,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
   int _questionIndex = 0;
+  int _startRecordCounter =
+      0; // Biến đếm số lần gọi hàm _startRecord không thành công
+  final int _startRecordMaxTimes = 3;
 
   @override
   void initState() {
@@ -1668,7 +1671,52 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         message: e.toString(),
         status: LogEvent.failed,
       );
+
+      // Tăng biến đếm
+      _startRecordCounter++;
+
+      // Nếu số lần đếm đạt đến _startRecordMaxTimes, thông báo cho người dùng và không gọi hàm khởi tạo lại nữa
+      if (_startRecordCounter == _startRecordMaxTimes) {
+        _showStartRecordErrorMessage(); // Hiển thị thông báo lỗi cho người dùng
+        return;
+      }
+
+      // Khởi tạo lại _recordController và gọi lại hàm _startRecord
+      await _initRecorderAndStartRecord(
+          fileName: fileName, path: path, isAnswer: isAnswer);
     }
+  }
+
+  void _showStartRecordErrorMessage() async {
+    String msg =
+        "${Utils.multiLanguage(StringConstants.start_record_error_message)!} $_startRecordMaxTimes ${Utils.multiLanguage(StringConstants.start_record_error_times)!}";
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: msg,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
+  }
+
+  Future<void> _initRecorderAndStartRecord({
+    required String fileName,
+    required String path,
+    required bool isAnswer,
+  }) async {
+    // Khởi tạo lại _recordController
+    _recordController = Record();
+    await _startRecord(fileName: fileName, path: path, isAnswer: isAnswer);
   }
 
   Future<void> _recordForReAnswer(String fileName) async {

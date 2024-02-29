@@ -757,6 +757,9 @@ class StringConstants {
       "An error when update your answers. Please try again!";
   static const String change_password_success_message =
       "Change password successfully!";
+  static const String start_record_error_message =
+      "Failed to start recording after";
+  static const String start_record_error_times = "attempts.";
   static const String multi_language = "Multi Language";
   static const String ens = "English";
   static const String vn = "Tiếng Việt";

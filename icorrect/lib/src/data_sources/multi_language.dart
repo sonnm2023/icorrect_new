@@ -280,6 +280,9 @@ class MultiLanguage {
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng kiểm tra và thử lại!",
     StringConstants.change_password_success_message:
         "Thay đổi mật khẩu thành công!",
+    StringConstants.start_record_error_message:
+        "Xảy ra lỗi trong quá trình thu âm câu trả lời",
+    StringConstants.start_record_error_times: "",
     StringConstants.start_to_pratice: "Bắt Đầu Luyện Tập",
     StringConstants.topic_tab_title: "Chủ Đề",
     StringConstants.practice_setting: "Chế độ luyện tập",
@@ -644,6 +647,9 @@ class MultiLanguage {
         "An error when update your answers. Please try again!",
     StringConstants.change_password_success_message:
         "Change password successfully!",
+    StringConstants.start_record_error_message:
+        "Failed to start recording after",
+    StringConstants.start_record_error_times: "attempts.",
     StringConstants.multi_language: "Multi Language",
     StringConstants.activity_status_out_of_date: "Out Of Date",
     StringConstants.activity_status_not_completed: "Not Completed",
