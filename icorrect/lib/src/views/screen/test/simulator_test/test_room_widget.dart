@@ -100,7 +100,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     _audioPlayerController = AudioPlayers.AudioPlayer();
     // _recordController = Record();
-    _initRecordController();
+    // _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -111,7 +111,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _initCameraService();
   }
 
-  void _initRecordController() async {
+  Future<void> _initRecordController() async {
+    if (kDebugMode) {
+      print("DEBUG: recordController: _initRecordController");
+    }
     //Add log
     LogModel? log;
     Map<String, dynamic>? dataLog = {};
@@ -1574,9 +1577,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _stopRecord() async {
-    String? path = await _recordController!.stop();
-    if (kDebugMode) {
-      print("DEBUG: RECORD FILE PATH: $path");
+    if (null != _recordController) {
+      String? path = await _recordController!.stop();
+      if (kDebugMode) {
+        print("DEBUG: RECORD FILE PATH: $path");
+        print("DEBUG: recordController: dispose");
+      }
+      await _recordController!.dispose();
+      _recordController = null;
     }
   }
 
@@ -1616,12 +1624,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     LogModel? log;
     Map<String, dynamic>? dataLog = {};
 
+    await _initRecordController();
+
     try {
       await _recordController!.start(
         path: path,
         encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
         bitRate: 128000,
-        samplingRate: 44100,
+        samplingRate: 16000,
+        numChannels: 1,
       );
 
       if (context.mounted) {
