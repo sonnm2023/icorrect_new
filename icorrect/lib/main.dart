@@ -186,6 +186,8 @@ void callbackDispatcher() {
     );
 
     var res = await request.send();
+    //For test
+    print("DEBUG-SENDLOG: RESPONSE: ${res.toString()}");
     if (res.statusCode == 200) {
       if (kDebugMode) {
         print("DEBUG: send log success kDebugMode");
