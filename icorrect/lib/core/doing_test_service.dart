@@ -67,6 +67,38 @@ class DoingTestService {
     }
     formData.addEntries([MapEntry(StringConstants.k_duration, "$duration")]);
 
+    //For test: missing file - start
+    List<QuestionTopicModel> introduceList = [];
+    List<QuestionTopicModel> part1List = [];
+    List<QuestionTopicModel> part2List = [];
+    List<QuestionTopicModel> part3List = [];
+
+    for (QuestionTopicModel q in questions) {
+      switch (q.numPart) {
+        case 0:
+          {
+            introduceList.add(q);
+            break;
+          }
+        case 1:
+          {
+            part1List.add(q);
+            break;
+          }
+        case 2:
+          {
+            part2List.add(q);
+            break;
+          }
+        case 3:
+          {
+            part3List.add(q);
+            break;
+          }
+      }
+    }
+    //For test: missing file - end
+
     for (QuestionTopicModel q in questions) {
       String part = '';
       switch (q.numPart) {
@@ -102,7 +134,6 @@ class DoingTestService {
         formData.addEntries(temp);
       }
 
-      //For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
         String path = await Utils.createNewFilePath(
             q.answers.elementAt(i).url.toString());
@@ -112,8 +143,35 @@ class DoingTestService {
           String audioSize = "${audioFile.lengthSync() / (1024 * 1024)} Mb";
           dataLog!.addEntries([MapEntry(q.answers[i].url, audioSize)]);
 
-          request.files.add(
-              await http.MultipartFile.fromPath("$prefix[$i]", audioFile.path));
+          //For test: missing file - start
+          if (introduceList.isNotEmpty) {
+            QuestionTopicModel tempQuestion = introduceList[0];
+            if (tempQuestion.id != q.id) {
+              request.files.add(await http.MultipartFile.fromPath(
+                  "$prefix[$i]", audioFile.path));
+            }
+          } else if (part1List.isNotEmpty) {
+            QuestionTopicModel tempQuestion = introduceList[0];
+            if (tempQuestion.id != q.id) {
+              request.files.add(await http.MultipartFile.fromPath(
+                  "$prefix[$i]", audioFile.path));
+            }
+          } else if (part2List.isNotEmpty) {
+            QuestionTopicModel tempQuestion = introduceList[0];
+            if (tempQuestion.id != q.id) {
+              request.files.add(await http.MultipartFile.fromPath(
+                  "$prefix[$i]", audioFile.path));
+            }
+          } else if (part3List.isNotEmpty) {
+            QuestionTopicModel tempQuestion = introduceList[0];
+            if (tempQuestion.id != q.id) {
+              request.files.add(await http.MultipartFile.fromPath(
+                  "$prefix[$i]", audioFile.path));
+            }
+          }
+          //For test: missing file - end
+          // request.files.add(await http.MultipartFile.fromPath(
+          //       "$prefix[$i]", audioFile.path));
           if (kDebugMode) {
             formData.addEntries([MapEntry("$prefix[$i]", audioFile.path)]);
           }
