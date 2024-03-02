@@ -185,9 +185,10 @@ void callbackDispatcher() {
       ),
     );
 
-    var res = await request.send();
+    http.StreamedResponse res = await request.send();
     //For test
-    print("DEBUG-SENDLOG: RESPONSE: ${res.toString()}");
+    var responseBody = await http.Response.fromStream(res);
+    print('DEBUG-SENDLOG: Response body: ${responseBody.body}');
     if (res.statusCode == 200) {
       if (kDebugMode) {
         print("DEBUG: send log success kDebugMode");
@@ -198,7 +199,6 @@ void callbackDispatcher() {
       if (kDebugMode) {
         print("DEBUG: send log failed  - kDebugMode");
       }
-      print("DEBUG-SENDLOG: ERROR: ${res.toString()}");
     }
 
     return Future.value(true);
