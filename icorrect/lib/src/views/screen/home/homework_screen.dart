@@ -611,10 +611,12 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     );
 
     if (_isCallGetListErrorBefore) {
-      //Goto Login screen without logout because logout error
-      //Send log
+      //Reset _isCallGetListErrorBefore
+      _isCallGetListErrorBefore = false;
+
       Utils.sendLog();
 
+      //Goto Login screen without logout because logout error
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
