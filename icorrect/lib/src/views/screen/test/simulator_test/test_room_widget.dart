@@ -92,6 +92,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   //type : 1 out app: play video  , 2 out app: record answer, 3 out app: takenote
   int _typeOfActionLog = 0; //Default
   int _questionIndex = 0;
+  bool _canInitVideoSource = true;
 
   @override
   void initState() {
@@ -649,7 +650,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (kDebugMode) {
         print("DEBUG: _loadVideoSource fail");
       }
+
+      //Add logic: create video source one more time
+      if (_canInitVideoSource) {
+        _canInitVideoSource = false;
+        videoSource = await _createVideoSource(fileName);
+      }
     } else {
+      //Reset data
+      _canInitVideoSource = true;
+
       // final videoSource = await _createVideoSource(fileName);
       await _nativeVideoPlayerController!.loadVideoSource(videoSource);
     }
