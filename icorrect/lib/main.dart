@@ -191,7 +191,7 @@ void callbackDispatcher() {
         print("DEBUG: send log success kDebugMode");
       }
       print("DEBUG-SENDLOG: SUCCESS");
-      Utils.deleteLogFile();
+      // Utils.deleteLogFile();
     } else {
       if (kDebugMode) {
         print("DEBUG: send log failed  - kDebugMode");

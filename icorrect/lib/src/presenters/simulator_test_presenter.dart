@@ -396,8 +396,7 @@ class SimulatorTestPresenter {
                     [MapEntry(StringConstants.k_activity_id, activityId)]);
               }
               log.addData(
-                  key: "file_download_info",
-                  value: json.encode(fileDownloadInfo));
+                  {"file_download_info": json.encode(fileDownloadInfo)});
             }
 
             try {
@@ -970,8 +969,7 @@ class SimulatorTestPresenter {
           .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
     }
     log.addData(
-        key: "image_file_download_info",
-        value: json.encode(imageFileDownloadInfo));
+        {"image_file_download_info": json.encode(imageFileDownloadInfo)});
 
     try {
       String folderPath = await FileStorageHelper.getExternalDocumentPath();
@@ -994,7 +992,7 @@ class SimulatorTestPresenter {
             .get(imageUrl, options: Options(responseType: ResponseType.bytes));
         await file.writeAsBytes(response.data);
 
-        log.addData(key: "local_image_file_path", value: filePath);
+        log.addData({"local_image_file_path": filePath});
 
         //Add log
         Utils.prepareLogData(

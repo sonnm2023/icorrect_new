@@ -393,28 +393,29 @@ class _LoginScreenState extends State<LoginScreen>
     _loading!.hide();
 
     Utils.checkInternetConnection().then((isConnected) {
-      if (null != errorCode) {
-        if (errorCode == 401) {
-          _finishLoginWithError(message);
-        }
-      } else {
-        String email = emailController.text.trim();
-        String password = passwordController.text.trim();
-        if (isConnected && email.isNotEmpty && password.isNotEmpty) {
-          if (kDebugMode) {
-            print("DEBUG: checkInternetConnection = $isConnected");
-            print("DEBUG: checkInternetConnection email = $email");
-            print("DEBUG: checkInternetConnection pass = $password");
-          }
-          _loginPresenter!.login(
-            emailController.text.trim(),
-            passwordController.text.trim(),
-            context,
-          );
-        } else {
-          _finishLoginWithError(message);
-        }
-      }
+      _finishLoginWithError(message);
+      // if (null != errorCode) {
+      //   if (errorCode == 401) {
+      //     _finishLoginWithError(message);
+      //   }
+      // } else {
+      //   String email = emailController.text.trim();
+      //   String password = passwordController.text.trim();
+      //   if (isConnected && email.isNotEmpty && password.isNotEmpty) {
+      //     if (kDebugMode) {
+      //       print("DEBUG: checkInternetConnection = $isConnected");
+      //       print("DEBUG: checkInternetConnection email = $email");
+      //       print("DEBUG: checkInternetConnection pass = $password");
+      //     }
+      //     _loginPresenter!.login(
+      //       emailController.text.trim(),
+      //       passwordController.text.trim(),
+      //       context,
+      //     );
+      //   } else {
+      //     _finishLoginWithError(message);
+      //   }
+      // }
     });
   }
 

@@ -841,6 +841,7 @@ class StringConstants {
   static const String k_confirmation_password = "password_confirmation";
   static const String k_status = "status";
   static const String k_activity_id = "activity_id";
+  static const String k_activity_name = "activity_name";
   static const String k_distribute_code = "distribute_code";
   static const String k_platform = "platform";
   static const String k_title = "title";

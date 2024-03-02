@@ -732,7 +732,7 @@ class Utils {
     required String previousAction,
     required String status,
     required String message,
-    required Map<String, String> data,
+    required List<Map<String, String>> data,
   }) async {
     LogModel log = LogModel();
     log.action = action;
@@ -764,7 +764,7 @@ class Utils {
     if (null == log) return;
 
     if (null != data) {
-      log.addData(key: StringConstants.k_data, value: jsonEncode(data));
+      log.addData(data);
     }
 
     if (null != message) {
@@ -863,7 +863,7 @@ class Utils {
         previousAction: previousAction,
         status: "",
         message: "",
-        data: {});
+        data: []);
     setPreviousAction(context, action);
 
     return log;

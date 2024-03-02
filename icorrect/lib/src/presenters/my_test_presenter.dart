@@ -321,9 +321,10 @@ class MyTestPresenter {
               fileDownloadInfo.addEntries(
                   [MapEntry(StringConstants.k_activity_id, activityId)]);
             }
-            log.addData(
-                key: StringConstants.k_file_download_info,
-                value: json.encode(fileDownloadInfo));
+            log.addData({
+              StringConstants.k_file_download_info:
+                  json.encode(fileDownloadInfo)
+            });
           }
 
           String fileType = Utils.fileType(fileTopic);

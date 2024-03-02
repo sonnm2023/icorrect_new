@@ -735,8 +735,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           await Utils.prepareToCreateLog(context, action: action);
       if (null != data) {
         if (data.isNotEmpty) {
-          actionLog.addData(
-              key: StringConstants.k_data, value: jsonEncode(data));
+          actionLog.addData({StringConstants.k_data: jsonEncode(data)});
         }
       }
       Utils.addLog(actionLog, LogEvent.none);

@@ -68,7 +68,7 @@ class _ResizeVideoDialogState extends State<ResizeVideoDialog> {
       };
 
       if (null != log) {
-        log.addData(key: "compress_data", value: data);
+        log.addData({"compress_data": data});
       }
 
       await VideoCompress.setLogLevel(0);

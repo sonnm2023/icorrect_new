@@ -504,9 +504,9 @@ class TestRoomPresenter {
       }
 
       //Add information into log
-      log!.addData(key: StringConstants.k_email, value: email);
-      log.addData(key: StringConstants.k_activity_id, value: activityId);
-      log.addData(key: "question_index", value: questionIndex);
+      log!.addData({StringConstants.k_email: email});
+      log.addData({StringConstants.k_activity_id: activityId});
+      log.addData({"question_index": questionIndex});
 
       Map<String, dynamic> dataMap = jsonDecode(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
