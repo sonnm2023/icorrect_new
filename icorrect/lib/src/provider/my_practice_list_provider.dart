@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_response_model.dart';
@@ -190,6 +192,23 @@ class MyPracticeListProvider extends ChangeNotifier {
     return count;
   }
 
+  void saveSettingList(List<SettingModel> list) {
+    final String encodedData = SettingModel.encode(list);
+    AppSharedPref.instance()
+        .putString(key: AppSharedKeys.myPracticeSetting, value: encodedData);
+  }
+
+  Future<List<SettingModel>?> getSettingList() async {
+    // Fetch and decode data
+    final String dataString = await AppSharedPref.instance()
+        .getString(key: AppSharedKeys.myPracticeSetting);
+
+    if (dataString.isEmpty) return null;
+
+    final List<SettingModel> settings = SettingModel.decode(dataString);
+    return settings;
+  }
+
   List<SettingModel> originalSettings = [
     SettingModel(
       title: StringConstants.number_of_topics,
@@ -246,14 +265,31 @@ class MyPracticeListProvider extends ChangeNotifier {
     }
   }
 
-  void initSettings() {
-    for (int i = 0; i < originalSettings.length; i++) {
-      SettingModel s = SettingModel(
-        title: originalSettings[i].title,
-        value: originalSettings[i].value,
-        step: originalSettings[i].step,
-      );
-      _settings.add(s);
+  void initSettings() async {
+    //Check has setting in local first
+    List<SettingModel>? settingList = await getSettingList();
+    if (null != settingList) {
+      for (int i = 0; i < settingList.length; i++) {
+        SettingModel s = SettingModel(
+          title: settingList[i].title,
+          value: settingList[i].value,
+          step: settingList[i].step,
+        );
+        _settings.add(s);
+      }
+    } else {
+      for (int i = 0; i < originalSettings.length; i++) {
+        SettingModel s = SettingModel(
+          title: originalSettings[i].title,
+          value: originalSettings[i].value,
+          step: originalSettings[i].step,
+        );
+        _settings.add(s);
+      }
+    }
+
+    if (!isDisposed) {
+      notifyListeners();
     }
   }
 

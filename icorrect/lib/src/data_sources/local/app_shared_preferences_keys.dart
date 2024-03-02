@@ -8,4 +8,5 @@ enum AppSharedKeys {
   listStatusFilter,
   secretkey,
   logApiUrl,
+  myPracticeSetting,
 }

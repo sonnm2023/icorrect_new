@@ -7,6 +7,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
+import 'package:icorrect/src/models/my_practice_test_model/setting_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/my_practice_setting_presenter.dart';
@@ -259,6 +260,9 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       );
       return false;
     }
+
+    //Save setting list into local
+    _practiceListProvider!.saveSettingList(_practiceListProvider!.settings);
 
     return true;
   }
