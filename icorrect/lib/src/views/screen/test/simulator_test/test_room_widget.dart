@@ -136,6 +136,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         message: "OK",
         status: LogEvent.success,
       );
+      //For test
+      print("DEBUG: recordController: _initRecordController success");
     } catch (e, stackTrace) {
       if (context.mounted) {
         log = await Utils.prepareToCreateLog(
@@ -143,6 +145,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           action: LogEvent.init_audio_record_error,
         );
       }
+
+      //For test
+      print("DEBUG: recordController: _initRecordController failde: $e");
 
       //Add log
       Utils.prepareLogData(
@@ -681,6 +686,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print("DEBUG: init video controller: $result");
         }
 
+        //For test
+        print("DEBUG: init video controller: success - $path");
+
         //Add log
         Utils.prepareLogData(
           log: log,
@@ -692,6 +700,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (kDebugMode) {
           print("DEBUG: init video controller fail");
         }
+        //For test
+        print("DEBUG: init video controller: fail - $path");
 
         //Add log
         Utils.prepareLogData(
@@ -711,6 +721,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         message: "This video is NOT exist!",
         status: LogEvent.failed,
       );
+      //For test
+      print("DEBUG: init video controller: This video is NOT exist!");
 
       result = null;
     }
@@ -1426,6 +1438,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print(
           "DEBUG: _initVideoController: Playing - ${_currentQuestion!.files.first.url} - index: ($_playingIndex/${_simulatorTestProvider!.listVideoSource.length})");
     }
+    //For test
+    print(
+        "DEBUG: _initVideoController: Playing question - ${_currentQuestion!.content}");
 
     Map<String, dynamic> info = {
       StringConstants.k_file_id: _currentQuestion!.id.toString(),
