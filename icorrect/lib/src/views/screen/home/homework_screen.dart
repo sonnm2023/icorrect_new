@@ -45,6 +45,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
   SimulatorTestProvider? _simulatorTestProvider;
+  bool _isCallGetListErrorBefore = false;
 
   List<Widget> _tabsLabel() {
     return [
@@ -577,6 +578,10 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       toastState: ToastStatesType.error,
       isCenter: true,
     );
+
+    //Logout
+    _isCallGetListErrorBefore = true;
+    _homeWorkPresenter!.logout(context);
   }
 
   @override
@@ -604,6 +609,19 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       toastState: ToastStatesType.error,
       isCenter: true,
     );
+
+    if (_isCallGetListErrorBefore) {
+      //Goto Login screen without logout because logout error
+      //Send log
+      Utils.sendLog();
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+    }
   }
 
   @override
