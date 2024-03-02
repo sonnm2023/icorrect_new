@@ -77,8 +77,12 @@ class HomeWorkPresenter {
           status: LogEvent.success,
         );
 
+        //For test - start: need comment success case
         _view!.onGetListHomeworkSuccess(
             homeworks, classes, dataMap[StringConstants.k_current_time]);
+        // _view!.onGetListHomeworkError(
+        //     Utils.multiLanguage(StringConstants.common_error_message)!);
+        //For test - end
       } else {
         //Add log
         Utils.prepareLogData(
