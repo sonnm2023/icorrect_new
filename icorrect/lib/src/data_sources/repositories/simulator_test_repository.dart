@@ -193,6 +193,8 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         if (kDebugMode) {
           print("DEBUG: END - response data: $jsonBody");
         }
+        //For test
+        print("DEBUG: Submit test - response data: $jsonBody");
         return jsonBody;
       });
       // if (streamResponse.statusCode == 200) {
