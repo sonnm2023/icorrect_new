@@ -222,7 +222,7 @@ class MyPracticeListProvider extends ChangeNotifier {
     ),
     SettingModel(
       title: StringConstants.number_question_of_part_2,
-      value: 1,
+      value: 0,
       step: 1,
     ),
     SettingModel(
