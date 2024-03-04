@@ -171,10 +171,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _getActivityType();
     _getTestDetail();
 
-    // Future.delayed(Duration.zero, () {
-    //   _authProvider!
-    //       .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
-    // });
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.simulatorTestScaffoldKey);
+    });
   }
 
   @override
@@ -194,11 +194,6 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     return WillPopScope(
       child: Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTestProvider, child) {
-          if (simulatorTestProvider.isShowConfirmSaveTest) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showConfirmSaveTestBeforeExit();
-            });
-          }
           if (simulatorTestProvider.submitStatus == SubmitStatus.success &&
               widget.activitiesModel != null) {
             return Stack(
@@ -206,7 +201,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 DefaultTabController(
                   length: 3,
                   child: Scaffold(
-                    // key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                    key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                     appBar: AppBar(
                       elevation: 0.0,
                       iconTheme: const IconThemeData(

@@ -458,13 +458,17 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     if (_authProvider.isShowDialog) {
       GlobalKey<ScaffoldState> key = _authProvider.globalScaffoldKey;
       _authProvider.setShowDialogWithGlobalScaffoldKey(false, key);
-
       Navigator.of(key.currentState!.context).pop();
     } else if (_isShowConfirmDuringTest()) {
       _showQuitTheTestConfirmDialog();
     } else if (_isShowConfirmSaveTest()) {
       _simulatorTestProvider!.setShowConfirmSaveTest(true);
-      setState(() {});
+      if (_simulatorTestProvider!.showFullImage) {
+        _simulatorTestProvider!.setShowFullImage(false);
+        _authProvider.scaffoldKeys.removeFirst();
+      } else {
+        _showQuitTheTestConfirmDialog();
+      }
     } else {
       GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
       if (key == GlobalScaffoldKey.homeScreenScaffoldKey) {

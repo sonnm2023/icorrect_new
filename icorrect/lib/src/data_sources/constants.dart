@@ -313,6 +313,8 @@ class GlobalScaffoldKey {
       GlobalKey<ScaffoldState>(debugLabel: 'PracticeScreenTestScaffoldKey');
   static final myPracticeSettingScreenScaffoldKey = GlobalKey<ScaffoldState>(
       debugLabel: 'MyPracticeSettingScreenScaffoldKey');
+  static final fullImageScaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: 'FullImageScaffoldKey');
 }
 
 class FontsSize {

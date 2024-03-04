@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:provider/provider.dart';
 
 class FullImageWidget extends StatefulWidget {
   final String imageUrl;
@@ -22,11 +24,17 @@ class _FullImageWidgetState extends State<FullImageWidget> {
   }
 
   String? localImagePath;
+  AuthProvider? _authProvider;
 
   @override
   void initState() {
     _getLocalImagePath();
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
     super.initState();
+    Future.delayed(Duration.zero, () {
+      _authProvider!
+          .setGlobalScaffoldKey(GlobalScaffoldKey.fullImageScaffoldKey);
+    });
   }
 
   Widget _buildChildWidget() {
@@ -60,6 +68,7 @@ class _FullImageWidgetState extends State<FullImageWidget> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: GlobalScaffoldKey.fullImageScaffoldKey,
         body: Stack(
           children: [
             SizedBox(
