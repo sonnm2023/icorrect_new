@@ -195,22 +195,6 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
         }
         return jsonBody;
       });
-      // if (streamResponse.statusCode == 200) {
-      //   return await http.Response.fromStream(streamResponse)
-      //       .timeout(const Duration(seconds: timeout))
-      //       .then((http.Response response) {
-      //     final String jsonBody = response.body;
-      //     if (kDebugMode) {
-      //       print("DEBUG: END - response data: $jsonBody");
-      //     }
-      //     return jsonBody;
-      //   });
-      // } else {
-      //   if (kDebugMode) {
-      //     print("DEBUG: END - Submit ERROR");
-      //   }
-      //   return '';
-      // }
     });
   }
 
