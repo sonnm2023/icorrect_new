@@ -18,6 +18,7 @@ abstract class HomeWorkViewContract {
   void onGetListHomeworkSuccess(List<ActivitiesModel> homeworks,
       List<NewClassModel> classes, String serverCurrentTime);
   void onGetListHomeworkError(String message);
+  void onGetListHomeworkErrorWithExpiredToken(String message);
   void onLogoutSuccess();
   void onLogoutError(String message);
   void onUpdateCurrentUserInfo(UserDataModel userDataModel);
@@ -83,6 +84,18 @@ class HomeWorkPresenter {
         // _view!.onGetListHomeworkError(
         //     Utils.multiLanguage(StringConstants.common_error_message)!);
         //For test - end
+      } else if (dataMap[StringConstants.k_error_code] == 401) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message:
+              "Loading list homework error: ${dataMap['error_code']}${dataMap['status']}",
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetListHomeworkErrorWithExpiredToken(
+            Utils.multiLanguage(StringConstants.common_error_message)!);
       } else {
         //Add log
         Utils.prepareLogData(

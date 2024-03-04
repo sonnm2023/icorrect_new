@@ -578,10 +578,31 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
       toastState: ToastStatesType.error,
       isCenter: true,
     );
+  }
+
+  @override
+  void onGetListHomeworkErrorWithExpiredToken(String message) {
+    _homeWorkProvider.setProcessingStatus(processing: false);
+
+    //Show error message
+    showToastMsg(
+      msg: message,
+      toastState: ToastStatesType.error,
+      isCenter: true,
+    );
 
     //Logout
     _isCallGetListErrorBefore = true;
     _homeWorkPresenter!.logout(context);
+  }
+
+  @override
+  void onGetListHomeworkSuccess(List<ActivitiesModel> activities,
+      List<NewClassModel> classes, String serverCurrentTime) async {
+    _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
+    await _homeWorkProvider.setListClassForFilter(classes);
+    await _homeWorkProvider.setListHomeWorks(activities);
+    await _homeWorkProvider.initializeListFilter(context);
   }
 
   @override
@@ -630,15 +651,6 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
     _homeWorkProvider.setCurrentUser(userDataModel);
     _homeWorkProvider.setProcessingStatus(processing: true);
-  }
-
-  @override
-  void onGetListHomeworkSuccess(List<ActivitiesModel> activities,
-      List<NewClassModel> classes, String serverCurrentTime) async {
-    _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
-    await _homeWorkProvider.setListClassForFilter(classes);
-    await _homeWorkProvider.setListHomeWorks(activities);
-    await _homeWorkProvider.initializeListFilter(context);
   }
 
   @override
