@@ -14,6 +14,7 @@ import 'package:icorrect/src/presenters/user_authentication_detail_presenter.dar
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/video_authentication_record.dart';
 import 'package:provider/provider.dart';
@@ -471,13 +472,25 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   @override
-  void onGetUserAuthDetailError(String message) {
+  void onGetUserAuthDetailError(String message) async {
     _circleLoading!.hide();
     _provider!.setStartGetUserAuthDetail(false);
-    showDialog(
+
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return MessageDialog.alertDialog(context, message);
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: message,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }

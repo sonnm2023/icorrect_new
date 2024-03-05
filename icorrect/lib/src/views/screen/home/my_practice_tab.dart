@@ -565,32 +565,54 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   }
 
   @override
-  void onGetMyTestListError(String message) {
+  void onGetMyTestListError(String message) async {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
 
     String? msg = Utils.multiLanguage(message);
 
-    showDialog(
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return MessageDialog.alertDialog(context, msg ??= message);
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: msg ??= message,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }
 
   @override
-  void onDeleteTestError(String message) {
+  void onDeleteTestError(String message) async {
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
 
     String? msg = Utils.multiLanguage(message);
 
-    showDialog(
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return MessageDialog.alertDialog(context, msg ??= message);
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: msg ??= message,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }

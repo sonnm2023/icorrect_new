@@ -10,6 +10,7 @@ import 'package:icorrect/src/presenters/ielts_topics_list_presenter.dart';
 import 'package:icorrect/src/provider/ielts_topics_provider.dart';
 import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
@@ -254,12 +255,23 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   }
 
   @override
-  void onGetIELTSTopicsFail(String message) {
+  void onGetIELTSTopicsFail(String message) async {
     _loading!.hide();
-    showDialog(
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return MessageDialog.alertDialog(context, message);
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: message,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }

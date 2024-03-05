@@ -16,6 +16,7 @@ import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
@@ -624,14 +625,25 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   }
 
   @override
-  void onSubmitAuthError(String message) {
+  void onSubmitAuthError(String message) async {
     _videoAuthProvider!.setIsSubmitLoading(false);
     _loading!.hide();
 
-    showDialog(
+    await showDialog(
       context: context,
-      builder: (builder) {
-        return MessageDialog.alertDialog(context, message);
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: message,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
       },
     );
   }
