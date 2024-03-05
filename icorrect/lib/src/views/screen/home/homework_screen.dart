@@ -467,7 +467,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
         _simulatorTestProvider!.setShowFullImage(false);
         _authProvider.scaffoldKeys.removeFirst();
       } else {
-        _showQuitTheTestConfirmDialog();
+        _showConfirmSaveTestBeforeExit();
       }
     } else {
       GlobalKey<ScaffoldState> key = _authProvider.scaffoldKeys.first;
@@ -537,6 +537,48 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
     if (null == presenter) return;
 
     presenter.handleEventBackButtonSystem(isQuitTheTest: isQuitTheTest);
+  }
+
+  void _handleEventBackButtonSystemWhenDoingTestFinish(
+      {required bool isSaveTest}) {
+    SimulatorTestPresenter? presenter =
+        Provider.of<HomeWorkProvider>(context, listen: false)
+            .simulatorTestPresenter;
+    if (null == presenter) return;
+
+    presenter.handleEventBackButtonSystemWhenDoingTestFinish(
+        isSaveTest: isSaveTest);
+  }
+
+  void _showConfirmSaveTestBeforeExit() {
+    SimulatorTestPresenter? presenter =
+        Provider.of<HomeWorkProvider>(context, listen: false)
+            .simulatorTestPresenter;
+
+    if (null == presenter) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext buildContext) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description: Utils.multiLanguage(
+              StringConstants.confirm_before_quit_the_test_message)!,
+          okButtonTitle: Utils.multiLanguage(StringConstants.save_button_title),
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.exit_button_title),
+          borderRadius: 8,
+          hasCloseButton: true,
+          okButtonTapped: () {
+            _handleEventBackButtonSystemWhenDoingTestFinish(isSaveTest: true);
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+            _handleEventBackButtonSystemWhenDoingTestFinish(isSaveTest: false);
+          },
+        );
+      },
+    );
   }
 
   void _showQuitTheTestConfirmDialog() async {

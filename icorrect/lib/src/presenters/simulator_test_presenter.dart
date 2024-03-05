@@ -38,6 +38,8 @@ abstract class SimulatorTestViewContract {
   void onTryAgainToDownload();
   void onHandleBackButtonSystemTapped();
   void onHandleEventBackButtonSystem({required bool isQuitTheTest});
+  void onHandleEventBackButtonSystemWhenDoingTestFinish(
+      {required bool isSaveTest});
   void onPrepareListVideoSource(List<QuestionTopicModel> list);
   void onUpdateHasOrderStatus(bool hasOrder);
 }
@@ -904,6 +906,12 @@ class SimulatorTestPresenter {
 
   void handleBackButtonSystemTapped() {
     _view!.onHandleBackButtonSystemTapped();
+  }
+
+  void handleEventBackButtonSystemWhenDoingTestFinish(
+      {required bool isSaveTest}) {
+    _view!.onHandleEventBackButtonSystemWhenDoingTestFinish(
+        isSaveTest: isSaveTest);
   }
 
   String _getMaxDurationVideo(List<VideoExamRecordInfo> videosSaved) {

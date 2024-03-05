@@ -966,6 +966,24 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
+  void onHandleEventBackButtonSystemWhenDoingTestFinish(
+      {required bool isSaveTest}) {
+    if (kDebugMode) {
+      print(
+          "DEBUG: onHandleEventBackButtonSystemWhenDoingTestFinish - quit this test = $isSaveTest");
+    }
+
+    if (isSaveTest) {
+      //Submit test
+      _startSubmitTest();
+    } else {
+      _deleteAllAnswer();
+      _simulatorTestProvider!.resetTotalDuration();
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
   void onHandleEventBackButtonSystem({required bool isQuitTheTest}) {
     if (kDebugMode) {
       print(
