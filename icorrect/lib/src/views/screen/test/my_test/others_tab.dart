@@ -75,24 +75,26 @@ class _OtherTabState extends State<OtherTab>
     return Consumer<MyTestProvider>(builder: (context, provider, child) {
       if (provider.otherLightHomeWorks.isNotEmpty) {
         return ListView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(8),
-            itemCount: provider.otherLightHomeWorks.length,
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                onTap: () {
-                  StudentResultModel resultModel =
-                      provider.otherLightHomeWorks.elementAt(index);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => StudentTestDetail(
-                              studentResultModel: resultModel)));
-                },
-                child:
-                    _othersItem(provider.otherLightHomeWorks.elementAt(index)),
-              );
-            });
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(8),
+          itemCount: provider.otherLightHomeWorks.length,
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(
+              onTap: () {
+                StudentResultModel resultModel =
+                    provider.otherLightHomeWorks.elementAt(index);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        StudentTestDetail(studentResultModel: resultModel),
+                  ),
+                );
+              },
+              child: _othersItem(provider.otherLightHomeWorks.elementAt(index)),
+            );
+          },
+        );
       } else {
         return EmptyWidget.init().buildNothingWidget(
           context,

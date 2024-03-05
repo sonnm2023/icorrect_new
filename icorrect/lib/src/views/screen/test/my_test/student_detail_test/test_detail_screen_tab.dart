@@ -75,13 +75,22 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     });
     _loading = CircleLoading();
     _presenter = OtherStudentTestPresenter(this);
-    _player = AudioPlayer();
+    // _player = AudioPlayer();
+    _initPlayer();
     _loading!.show(context: context, isViewAIResponse: false);
 
     _getData();
     Future.delayed(Duration.zero, () {
       widget.provider.setDownloadingFile(true);
     });
+  }
+
+  void _initPlayer() {
+    try {
+      _player = AudioPlayer();
+    } catch (e) {
+      print("DEBUG: Init player error $e");
+    }
   }
 
   void _getData() async {
@@ -314,6 +323,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   Future<void> _playAudio(String audioPath, String questionId) async {
     try {
+      print("DEBUG:  play audio file path $audioPath");
       await _player!.play(DeviceFileSource(audioPath));
       await _player!.setVolume(2.5);
       _player!.onPlayerComplete.listen((event) {
@@ -323,6 +333,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
       if (kDebugMode) {
         print("DEBUG:  _playAudio $e");
       }
+      print("DEBUG:  play audio ERROR $e");
     }
   }
 
