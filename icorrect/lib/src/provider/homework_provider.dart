@@ -361,4 +361,12 @@ class HomeWorkProvider with ChangeNotifier {
   void setSimulatorTestPresenter(SimulatorTestPresenter? presenter) {
     _simulatorTestPresenter = presenter;
   }
+
+  bool _isConnected = true;
+  bool get isConnected => _isConnected;
+  void setConnectedStatus(bool value) {
+    _isConnected = value;
+
+    notifyListeners();
+  }
 }

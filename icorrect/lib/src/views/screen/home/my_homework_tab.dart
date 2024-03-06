@@ -24,6 +24,7 @@ import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_scr
 import 'package:icorrect/src/views/widget/filter_content_widget.dart';
 import 'package:icorrect/src/views/widget/homework_widget.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
+import 'package:icorrect/src/views/widget/not_connect_view_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -167,6 +168,15 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
         color: AppColor.defaultWhiteColor,
         child: Consumer<HomeWorkProvider>(
             builder: (context, homeworkProvider, child) {
+          if (!homeworkProvider.isConnected && !homeworkProvider.isProcessing) {
+            homeworkProvider.updateFilterString(
+                Utils.multiLanguage(StringConstants.default_filter_title)!);
+            return NotConnectViewWidget(
+              msg: Utils.multiLanguage(
+                  StringConstants.log_connection_error_message)!,
+              reloadCallBack: _reloadCallBack,
+            );
+          }
           if (homeworkProvider.listFilteredHomeWorks.isEmpty &&
               !homeworkProvider.isProcessing) {
             homeworkProvider.updateFilterString(

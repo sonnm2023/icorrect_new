@@ -65,7 +65,7 @@ class MultiLanguage {
     StringConstants.confirm_to_log_out:
         "Bạn vẫn muốn đăng xuất khỏi tài khoản này ?",
     StringConstants.default_filter_title: "Thêm bộ lọc của bạn",
-    StringConstants.repeat_question: "Yêu cầu nhắc lại câu hỏi !",
+    StringConstants.repeat_question: "Yêu cầu nhắc lại câu hỏi!",
     StringConstants.change_password_screen_title: "Đổi mật khẩu",
     StringConstants.my_homework_screen_title: "BÀI TẬP VỀ NHÀ",
     StringConstants.tips_screen_title: "Gợi ý trả lời câu hỏi",
@@ -113,7 +113,7 @@ class MultiLanguage {
     StringConstants.pronunciation: "Điểm Phát Âm:",
     StringConstants.problem: "Vấn Đề",
     StringConstants.solution: "Giải Pháp",
-    StringConstants.nothing: "Hiện Tại Chưa Có Dữ Liệu !",
+    StringConstants.nothing: "Hiện Tại Chưa Có Dữ Liệu!",
     StringConstants.answer_being_recorded:
         "Câu trả lời của bạn đang được ghi lại",
     StringConstants.confirm_access_micro_permission_message:
@@ -160,10 +160,10 @@ class MultiLanguage {
             " Video xác thực sẽ được sử dụng trong các bài thi sắp tới",
     StringConstants.progress_auth_title: "Đang xác thực",
     StringConstants.progress_auth_content:
-        "Gửi video xác thực thành công. Hãy chờ kết quả xác nhận từ giáo viên !",
+        "Gửi video xác thực thành công. Hãy chờ kết quả xác nhận từ giáo viên!",
     StringConstants.lock_auth_title: "Tính năng gửi mẫu xác thực đã bị khóa",
     StringConstants.email_or_password_wrong_message:
-        "Email hoặc mật khẩu bị sai. Vui lòng thử lại !",
+        "Email hoặc mật khẩu bị sai. Vui lòng thử lại!",
     StringConstants.lock_auth_content:
         "Vui lòng liên hệ với quản trị viên ICorrect để được hỗ trợ",
     StringConstants.error_auth_title: "Xác thực lỗi",
@@ -179,30 +179,30 @@ class MultiLanguage {
     StringConstants.submit_authen_fail_message:
         "Gửi Video để xác thực không thành công!",
     StringConstants.submit_authen_fail_timeout_message:
-        "Gửi Video xác thực không thành công: TimeoutException! Vui lòng kiểm tra lại mạng và thử lại !",
+        "Gửi Video xác thực không thành công: TimeoutException! Vui lòng kiểm tra lại mạng và thử lại!",
     StringConstants.cancel_and_text: "Bỏ Qua Video Xác Thực",
     StringConstants.skip_and_text: "Bỏ Qua Video Xác Thực",
     StringConstants.prepare_compress_video_title: 'Đang chuẩn bị được nộp lên',
     StringConstants.continue_prepare_text: "Tiếp Tục",
-    StringConstants.warning_skip_compress_video_text: "Cảnh Báo !",
+    StringConstants.warning_skip_compress_video_text: "Cảnh Báo!",
     StringConstants.warning_skip_compress_video_content:
         'Bạn có muốn bỏ qua video xác thực và nộp bài không ? '
             'Nếu bỏ qua, bạn sẽ cần bổ sung video xác thực khi giáo viên yêu cầu',
     StringConstants.choose_filter_message:
         "Bạn phải chọn ít nhất một lớp và một trạng thái!",
     StringConstants.no_data_filter_message:
-        "Không có dữ liệu với các điều kiện lọc hiện tại !",
+        "Không có dữ liệu với các điều kiện lọc hiện tại!",
     StringConstants.my_practice_no_data_message:
         "Hiện tại chưa có bài luyện tập nào!",
     StringConstants.test_correction_wait_response_message:
-        "Chưa có điểm, vui lòng chờ kết quả từ giáo viên !",
-    StringConstants.nothing_problem_message: "Chưa có vấn đề được ghi nhận !",
-    StringConstants.no_answer_message: "Chưa có câu trả lời !",
+        "Chưa có điểm, vui lòng chờ kết quả từ giáo viên!",
+    StringConstants.nothing_problem_message: "Chưa có vấn đề được ghi nhận!",
+    StringConstants.no_answer_message: "Chưa có câu trả lời!",
     StringConstants.no_data_message: "Không có dữ liệu, vui lòng quay lại sau!",
     StringConstants.re_answer_not_be_save_message:
         "Câu trả lời của bạn đã thay đổi. Bạn có muốn lưu trước thi thoát không ?",
     StringConstants.can_not_delete_files_message:
-        "Không thể xóa tập tin !", //Bỏ qua thông báo khi xóa , ko cần Toast
+        "Không thể xóa tập tin!", //Bỏ qua thông báo khi xóa , ko cần Toast
     StringConstants.wait_until_the_exam_finished_message:
         "Bạn cần hoàn thành bài trước khi sử dụng tính năng này!",
     StringConstants.feature_not_available_message:
@@ -210,7 +210,7 @@ class MultiLanguage {
     StringConstants.answer_must_be_greater_than_2_seconds_message:
         "Câu trả lời của bạn phải lớn hơn 2 giây",
     StringConstants.no_answer_please_start_your_test_message:
-        "Hiện tại chưa có câu trả lời nào, vui lòng bắt đầu bài của bạn !",
+        "Hiện tại chưa có câu trả lời nào, vui lòng bắt đầu bài của bạn!",
     StringConstants.empty_email_error_message: "Email không được để trống",
     StringConstants.invalid_email_error_message:
         "Email không hợp lệ. Vui lòng thử lại!",
@@ -246,14 +246,14 @@ class MultiLanguage {
     StringConstants.error_when_delete_file:
         'Đã xảy ra lỗi khi xóa tệp video!', //không sử dụng
     StringConstants.log_connection_error_message:
-        'Kết nối mạng không ổn định, vui lòng kiểm tra và thử lại !',
+        'Kết nối mạng không ổn định, vui lòng kiểm tra và thử lại!',
     StringConstants.load_image_error_message: "Không thể tải hình ảnh!",
     StringConstants.load_list_homework_error_message:
-        "Có lỗi xảy ra khi tải danh sách bài về nhà !",
+        "Có lỗi xảy ra khi tải danh sách bài về nhà!",
     StringConstants.load_result_response_error_message:
-        "Có lỗi xảy ra khi tải kết quả bài làm !",
+        "Có lỗi xảy ra khi tải kết quả bài làm!",
     StringConstants.can_not_load_response_message:
-        "Không thể tải kết quả của giáo viên !",
+        "Không thể tải kết quả của giáo viên!",
     StringConstants.load_detail_homework_error_message:
         "Không thể tải thông tin bài tập!",
     StringConstants.submit_test_error_message:
@@ -268,14 +268,18 @@ class MultiLanguage {
         "ClientException: Có lỗi khi gửi bài kiểm tra này!",
     StringConstants.submit_test_error_other:
         "OtherException: Có lỗi khi gửi bài kiểm tra này!",
+    StringConstants.get_activity_list_error_other:
+        "OtherException: Có lỗi khi tải danh sách!",
     StringConstants.submit_test_error_parse_json:
         "ParseJsonException: Có lỗi khi gửi bài kiểm tra này!",
+    StringConstants.get_activity_list_error_parse_json:
+        "ParseJsonException: Có lỗi khi tải danh sách!",
     StringConstants.get_special_homework_error_message:
         "Tải danh sách bài mẫu thất bại!",
     StringConstants.compress_video_error_message:
         "Nén tập tin video không thành công",
     StringConstants.activity_is_loaded_message:
-        "Bài thi đã bị khóa do bạn thoát ra trong quá trình làm bài. Vui lòng liên hệ với đội ngũ hỗ trợ !",
+        "Bài thi đã bị khóa do bạn thoát ra trong quá trình làm bài. Vui lòng liên hệ với đội ngũ hỗ trợ!",
     StringConstants.update_answer_error_message:
         "Có lỗi khi cập nhật câu trả lời của bạn. Vui lòng kiểm tra và thử lại!",
     StringConstants.change_password_success_message:
@@ -287,7 +291,7 @@ class MultiLanguage {
     StringConstants.ens: "Tiếng Anh",
     StringConstants.vn: "Tiếng Việt",
     StringConstants.practice_menu_item_title: "Luyện Tập",
-    StringConstants.choose_at_least_3_topics: "Bạn hãy chọn ít nhất 3 chủ đề !",
+    StringConstants.choose_at_least_3_topics: "Bạn hãy chọn ít nhất 3 chủ đề!",
     StringConstants.choose_at_least_3_topics_at_part1_message:
         "Bạn hãy chọn ít nhất 3 chủ đề ở phần I",
     StringConstants.choose_at_least_1_topics_at_part23_message:
@@ -296,7 +300,7 @@ class MultiLanguage {
     StringConstants.my_test_title: "BÀI LÀM CỦA TÔI",
     StringConstants.delete_action_title: "Xoá",
     StringConstants.loading_title: "Đang tải dữ liệu",
-    StringConstants.delete_test_success_message: "Xóa bài làm thành công !",
+    StringConstants.delete_test_success_message: "Xóa bài làm thành công!",
     StringConstants.delete_this_test_confirm:
         "Bạn có chắc chắn muốn xóa bài làm này ?",
     StringConstants.filter_string: "Lọc",
@@ -306,9 +310,9 @@ class MultiLanguage {
     StringConstants.out_the_exam: 'Thoát Khỏi Bài Làm', //Chưa dùng
     StringConstants.go_to_setting: 'Đi Tới Cài Đặt',
     StringConstants.fail_to_load_your_test_message:
-        'Có lỗi khi tải bài làm !', //Chưa dùng
+        'Có lỗi khi tải bài làm!', //Chưa dùng
     StringConstants.cannot_download_video: //Chưa dùng
-        'Có lỗi khi tải video. Hãy thử lại !',
+        'Có lỗi khi tải video. Hãy thử lại!',
     StringConstants.warning_title: "Cảnh Báo",
     StringConstants.require_micro_permission_content: //Chưa dùng
         "Ứng dụng cần quyền sử dụng micro phone để có thể làm bài",
@@ -319,15 +323,15 @@ class MultiLanguage {
     StringConstants.require_micro_and_camera_permission_content: //Chưa dùng
         "Ứng dụng cần quyền sử dụng micro phone và camera để có thể làm bài",
     StringConstants.require_storage_permission_content: //Chưa dùng
-        "Bạn hãy đồng ý quyền sử dụng lưu trữ để tiếp tục !",
+        "Bạn hãy đồng ý quyền sử dụng lưu trữ để tiếp tục!",
     StringConstants.video_path_incorrect_message: //Chưa dùng
-        'Đường dẫn video không đúng. Hãy thử lại !',
+        'Đường dẫn video không đúng. Hãy thử lại!',
     StringConstants.error_load_this_test_message: //Chưa dùng
-        'Có lỗi khi tải bài làm. Hãy thử lại !',
+        'Có lỗi khi tải bài làm. Hãy thử lại!',
     StringConstants.error_load_test_and_contact_admin_message: //Chưa dùng
-        "Có lỗi khi tải bài làm. Hãy liên hệ với admin để được hỗ trợ !",
+        "Có lỗi khi tải bài làm. Hãy liên hệ với admin để được hỗ trợ!",
     StringConstants.timeout_update_answer_message: //Chưa dùng
-        'Hết thời gian lưu các câu trả lời. Hãy thử lại !',
+        'Hết thời gian lưu các câu trả lời. Hãy thử lại!',
     StringConstants.search_title: "Tìm Kiếm",
     StringConstants.select_your_language_title: 'Chọn Ngôn Ngữ',
     StringConstants.number_of_topics: 'Số chủ đề nói',
@@ -434,7 +438,7 @@ class MultiLanguage {
         "Are you sure to create new sample and sent to review ?",
     StringConstants.confirm_to_log_out: "Do you want to logout?",
     StringConstants.default_filter_title: 'Add your filter!',
-    StringConstants.repeat_question: "Ask for repeating the question !",
+    StringConstants.repeat_question: "Ask for repeating the question!",
     StringConstants.change_password_screen_title: "Change password",
     StringConstants.my_homework_screen_title: "MY HOMEWORK",
     StringConstants.tips_screen_title: "Tips for you",
@@ -513,7 +517,7 @@ class MultiLanguage {
     StringConstants.require_user_authentication_title:
         "Please send video sample for authentication",
     StringConstants.confirm_submit_video_auth_title:
-        "Confirm to submit your video !",
+        "Confirm to submit your video!",
     StringConstants.confirm_submit_video_auth_content:
         "This video will be used to confirm when you do your exam. So you want submit this video ?",
     StringConstants.email_or_password_wrong_message:
@@ -579,7 +583,7 @@ class MultiLanguage {
         "Oops, No answer here, please start your test!",
     StringConstants.empty_email_error_message: "E-mail can't be empty",
     StringConstants.invalid_email_error_message:
-        "Invalid email .Please try again !",
+        "Invalid email .Please try again!",
     StringConstants.empty_password_error_message: "Password can't be empty",
     StringConstants.password_min_lenght_message:
         "Your password must be longer than 6 characters.",
@@ -612,7 +616,7 @@ class MultiLanguage {
     StringConstants.error_when_delete_file:
         'An error occurred while deleting the video file!',
     StringConstants.log_connection_error_message:
-        'Your internet is not connect!',
+        'Your internet is not connect! Please check your internet connection and try again.',
     StringConstants.load_image_error_message: "Can not load image!",
     StringConstants.load_list_homework_error_message:
         "Loading list homework error!",
@@ -633,8 +637,12 @@ class MultiLanguage {
         "ClientException: Has an error when submit this test!",
     StringConstants.submit_test_error_other:
         "OtherException: Has an error when submit this test!",
+    StringConstants.get_activity_list_error_other:
+        "OtherException: Has an error when getting activity list!",
     StringConstants.submit_test_error_parse_json:
         "ParseJsonException: Has an error when submit this test!",
+    StringConstants.get_activity_list_error_parse_json:
+        "ParseJsonException: Has an error when getting activity list!",
     StringConstants.get_special_homework_error_message:
         "GetSpecialHomeWorks: result fail!",
     StringConstants.compress_video_error_message: "Compress video file fail",
@@ -699,13 +707,13 @@ class MultiLanguage {
     StringConstants.require_storage_permission_content:
         "You must allow storage permission to continue.",
     StringConstants.video_path_incorrect_message:
-        'Video path was incorrect. Please try again !',
+        'Video path was incorrect. Please try again!',
     StringConstants.error_load_this_test_message:
-        'Error when load your test. Please try again !',
+        'Error when load your test. Please try again!',
     StringConstants.error_load_test_and_contact_admin_message:
-        "'Error when load your test. Let contact to admin to support !",
+        "'Error when load your test. Let contact to admin to support!",
     StringConstants.timeout_update_answer_message:
-        'Timeout to update your changes. Please try again !',
+        'Timeout to update your changes. Please try again!',
     StringConstants.search_title: "Search",
     StringConstants.select_your_language_title: 'Select your language',
     StringConstants.prepare_compress_video_title: 'Preparing for submitting',

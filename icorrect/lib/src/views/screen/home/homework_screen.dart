@@ -617,6 +617,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onGetListHomeworkError(String message) {
     _homeWorkProvider.setProcessingStatus(processing: false);
+    _homeWorkProvider.setConnectedStatus(true);
 
     //Show error message
     showToastMsg(
@@ -629,6 +630,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onGetListHomeworkErrorWithExpiredToken(String message) {
     _homeWorkProvider.setProcessingStatus(processing: false);
+    _homeWorkProvider.setConnectedStatus(true);
 
     //Show error message
     showToastMsg(
@@ -643,12 +645,19 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   }
 
   @override
+  void onGetListHomeworkErrorWithNotConnect() {
+    _homeWorkProvider.setProcessingStatus(processing: false);
+    _homeWorkProvider.setConnectedStatus(false);
+  }
+
+  @override
   void onGetListHomeworkSuccess(List<ActivitiesModel> activities,
       List<NewClassModel> classes, String serverCurrentTime) async {
     _homeWorkProvider.setServerCurrentTime(serverCurrentTime);
     await _homeWorkProvider.setListClassForFilter(classes);
     await _homeWorkProvider.setListHomeWorks(activities);
     await _homeWorkProvider.initializeListFilter(context);
+    _homeWorkProvider.setConnectedStatus(true);
   }
 
   @override

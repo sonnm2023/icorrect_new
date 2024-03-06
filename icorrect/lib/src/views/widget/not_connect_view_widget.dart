@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 
-class NoDataWidget extends StatelessWidget {
-  const NoDataWidget({
+class NotConnectViewWidget extends StatelessWidget {
+  const NotConnectViewWidget({
     super.key,
     required this.msg,
     required this.reloadCallBack,
@@ -37,18 +36,7 @@ class NoDataWidget extends StatelessWidget {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () async {
-              if (kDebugMode) {
-                print("DEBUG: reload button tapped!");
-              }
-              Utils.checkInternetConnection().then((isConnected) {
-                if (isConnected) {
-                  reloadCallBack();
-                } else {
-                  Utils.showConnectionErrorDialog(context);
-
-                  Utils.addConnectionErrorLog(context);
-                }
-              });
+              reloadCallBack();
             },
             style: ButtonStyle(
               backgroundColor:

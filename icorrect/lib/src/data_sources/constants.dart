@@ -748,8 +748,12 @@ class StringConstants {
       "ClientException: Has an error when submit this test!";
   static const String submit_test_error_other =
       "OtherException: Has an error when submit this test!";
+  static const String get_activity_list_error_other =
+      "OtherException: Has an error when getting activity list!";
   static const String submit_test_error_parse_json =
       "ParseJsonException: Has an error when submit this test!";
+  static const String get_activity_list_error_parse_json =
+      "ParseJsonException: Has an error when getting activity list!";
   static const String get_special_homework_error_message =
       "GetSpecialHomeWorks: result fail!";
   static const String compress_video_error_message = "Compress video file fail";
