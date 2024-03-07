@@ -795,6 +795,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         if (null != _countDownCueCard) {
           _countDownCueCard!.cancel();
         }
+
+        //Hide Save The Test button
+        if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
+          _simulatorTestProvider!.setVisibleSaveTheTest(false);
+        }
       } else {
         if (null != _countDownCueCard) {
           _typeOfActionLog = 3;
@@ -859,19 +864,16 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
-      if (_audioPlayerController != null) {
-        //Re play answer audio
-        // _rePlayCurrentQuestion();
-      } else if (_simulatorTestProvider!.visibleRecord == true) {
-        //Re record reanswer
-        // _reRecordReanswer();
-        _recordController!.start();
-      }
-
       if (_simulatorTestProvider!.submitStatus != SubmitStatus.success ||
           _simulatorTestProvider!.needUpdateReanswer) {
         _hideCameraLive();
         _simulatorTestProvider!.setVisibleSaveTheTest(true);
+      }
+
+      if (_simulatorTestProvider!.visibleRecord == true) {
+        _simulatorTestProvider!.setVisibleSaveTheTest(false);
+        //Re record reanswer
+        _reRecordReAnswer();
       }
     } else {
       if (null != _nativeVideoPlayerController) {
@@ -2051,6 +2053,18 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           isReAnswer: false,
           isLessThan2Seconds: true);
     }
+  }
+
+  void _reRecordReAnswer() {
+    if (null == _currentQuestion) return;
+
+    bool isPart2 = _currentQuestion!.numPart == PartOfTest.part2.get;
+    String fileName =
+        _currentQuestion!.answers[_currentQuestion!.repeatIndex].url;
+    _prepareRecordForReanswer(
+        fileName: fileName,
+        numPart: _currentQuestion!.numPart,
+        isPart2: isPart2);
   }
 
   void _reRecordAnswer() {
