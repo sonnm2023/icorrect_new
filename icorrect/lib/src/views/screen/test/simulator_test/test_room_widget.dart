@@ -1772,7 +1772,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         return;
       }
       //_cameraService!.dispose();
-      _startSubmitTest();
+      _prepareSubmitTest();
     } else {
       //Activity Type = "homework"
       _setVisibleSaveTest(true);
@@ -1811,13 +1811,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   _simulatorTestProvider!.setVideoFile(resizedFile);
                 },
                 onSubmitNow: () {
-                  _startSubmitTest();
+                  _prepareSubmitTest();
                 },
                 onErrorResizeFile: () {
                   if (kDebugMode) {
                     print('DEBUG: Error when compress video');
                   }
-                  _startSubmitTest();
+                  _prepareSubmitTest();
                 }),
             onWillPop: () async {
               return false;
@@ -1826,11 +1826,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     );
   }
 
-  void _startSubmitTest({File? videoConfirmFile}) async {
+  void _prepareSubmitTest({File? videoConfirmFile}) async {
     _createLog(action: LogEvent.actionSubmitTest, data: null);
 
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
+    if (_simulatorTestProvider!.videosSaved.isNotEmpty) {
+      await _showResizeVideoDialog();
+    } else {
+      _startSubmitTest(videoConfirmFile: videoConfirmFile);
+    }
+  }
+
+  void _startSubmitTest({File? videoConfirmFile}) {
     List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
 
     String activityId = "";
@@ -2348,7 +2356,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   borderRadius: 8,
                   hasCloseButton: true,
                   okButtonTapped: () {
-                    _startSubmitTest();
+                    _prepareSubmitTest();
                   },
                   cancelButtonTapped: () {
                     Navigator.of(context).pop();
