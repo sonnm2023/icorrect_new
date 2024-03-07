@@ -44,6 +44,10 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiGetResponse,
+        parameters: {StringConstants.k_response: jsonBody},
+      );
       return jsonBody;
     });
   }
@@ -62,6 +66,10 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiGetSpecialHomework,
+        parameters: {StringConstants.k_response: jsonBody},
+      );
       return jsonBody;
     });
   }
@@ -98,6 +106,10 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiGetTestDetail,
+        parameters: {StringConstants.k_response: jsonBody},
+      );
       return jsonBody;
     });
   }
