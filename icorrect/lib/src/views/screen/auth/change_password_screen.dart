@@ -175,9 +175,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                 if (isConnected) {
                   //Add firebase log
                   Utils.addFirebaseLog(
-                    eventName: "button_click",
+                    eventName: "change_password_button_click",
                     parameters: {
-                      "button_name": "change password",
+                      "user_id": "111", //Test user id
                     },
                   );
                   _changePasswordPresenter!.changePassword(

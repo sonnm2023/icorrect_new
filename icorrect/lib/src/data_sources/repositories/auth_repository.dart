@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/data_sources/utils.dart';
 
 abstract class AuthRepository {
   Future<String> login(String email, String password);
@@ -36,14 +39,24 @@ class AuthRepositoryImpl implements AuthRepository {
         .timeout(const Duration(seconds: 30))
         .then((http.Response response) {
           final String jsonBody = response.body;
+          Utils.addFirebaseLog(
+            eventName: LogEvent.callApiLogin,
+            parameters: {StringConstants.k_response: jsonBody},
+          );
           return jsonBody;
         })
-        // ignore: body_might_complete_normally_catch_error
-        .catchError((onError) {
-          if (kDebugMode) {
-            print("DEBUG: error: ${onError.toString()}");
-          }
-        });
+        .catchError(
+          // ignore: body_might_complete_normally_catch_error
+          (onError) {
+            if (kDebugMode) {
+              print("DEBUG: error: ${onError.toString()}");
+            }
+            Utils.addFirebaseLog(
+              eventName: LogEvent.callApiLogin,
+              parameters: {StringConstants.k_response: onError.toString()},
+            );
+          },
+        );
   }
 
   @override
@@ -64,6 +77,10 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
+          Utils.addFirebaseLog(
+            eventName: LogEvent.callApiGetUserInfo,
+            parameters: {StringConstants.k_response: response.body},
+          );
           return response.body;
         });
   }
@@ -82,6 +99,10 @@ class AuthRepositoryImpl implements AuthRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiLogout,
+        parameters: {StringConstants.k_response: jsonBody},
+      );
       return jsonBody;
     });
   }
@@ -108,6 +129,10 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
+          Utils.addFirebaseLog(
+            eventName: LogEvent.callApiChangePassword,
+            parameters: {StringConstants.k_response: response.body},
+          );
           return response.body;
         });
   }
@@ -127,6 +152,10 @@ class AuthRepositoryImpl implements AuthRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiAppConfig,
+        parameters: {StringConstants.k_response: response.body},
+      );
       return response.body;
     });
   }

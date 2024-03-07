@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 
 import '../api_urls.dart';
 import 'app_repository.dart';
@@ -27,6 +28,10 @@ class MyTestImpl implements MyTestRepository {
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       final String jsonBody = response.body;
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiGetMyTestDetail,
+        parameters: {StringConstants.k_response: jsonBody},
+      );
       return jsonBody;
     });
   }

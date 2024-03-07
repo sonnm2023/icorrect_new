@@ -150,10 +150,8 @@ class _LoginScreenState extends State<LoginScreen>
             if (isConnected) {
               //Add firebase log
               Utils.addFirebaseLog(
-                eventName: "button_click",
-                parameters: {
-                  "button_name": "login",
-                },
+                eventName: LogEvent.actionLogin,
+                parameters: {},
               );
 
               _loginPresenter!.login(

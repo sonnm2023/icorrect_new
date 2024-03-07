@@ -1007,8 +1007,17 @@ class Utils {
   static void addFirebaseLog({
     required String eventName,
     required Map<String, Object> parameters,
-  }) {
-    analytics.logEvent(name: eventName, parameters: parameters);
+  }) async {
+    try {
+      await analytics.logEvent(name: eventName, parameters: parameters);
+      if (kDebugMode) {
+        print('Log event $eventName successfully sent.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Failed to log event $eventName: $e');
+      }
+    }
   }
 
   static Future<String> createNewFilePath(String fileName) async {

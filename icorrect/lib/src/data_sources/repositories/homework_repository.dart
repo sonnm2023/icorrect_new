@@ -4,6 +4,7 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:icorrect/src/data_sources/utils.dart';
 
 abstract class HomeWorkRepository {
   Future<String> getListHomeWork(String email, String status);
@@ -30,6 +31,10 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
+      Utils.addFirebaseLog(
+        eventName: LogEvent.callApiGetListHomework,
+        parameters: {StringConstants.k_response: response.body},
+      );
       return response.body;
     });
   }
