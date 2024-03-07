@@ -811,6 +811,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _countRecording!.cancel();
     }
 
+    //Pause Video Recording
     if (widget.isExam) {
       if (null == _cameraService) return;
 
@@ -860,9 +861,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
       if (_audioPlayerController != null) {
         //Re play answer audio
+        // _rePlayCurrentQuestion();
       } else if (_simulatorTestProvider!.visibleRecord == true) {
         //Re record reanswer
         // _reRecordReanswer();
+        _recordController!.start();
       }
 
       if (_simulatorTestProvider!.submitStatus != SubmitStatus.success ||
@@ -879,9 +882,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             _rePlayEndOfTakeNote();
           } else if (_simulatorTestProvider!.visibleRecord) {
             _continueRecordPart2();
+          } else if (null != _countDownCueCard) {
+            if (!_countDownCueCard!.isActive) {
+              //Play video before recording answer of part 2
+              _playMediaFile(isRepeat: false);
+            }
           }
-
-          //Recording the answer for Part 2 ==> Re record the answer
         } else {
           if (_simulatorTestProvider!.doingStatus != DoingStatus.finish &&
               _simulatorTestProvider!.reviewingStatus != ReviewingStatus.none &&
@@ -2210,7 +2216,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       //Reset count repeat
       _countRepeat = 0;
 
-      _playMediaFile(isRepeat: false);
+      if (!_isBackgroundMode) {
+        _playMediaFile(isRepeat: false);
+      }
     } else {
       //Add question or followup into List Question & show it
       _simulatorTestProvider!.addCurrentQuestionIntoList(
@@ -2231,35 +2239,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _simulatorTestProvider!.setVisibleSaveTheTest(true);
     }
   }
-
-  @override
-  void onPlayEndOfTakeNote(String fileName) {
-    if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _playingIndex++;
-      _endOfTakeNoteIndex = _playingIndex;
-      _initVideoController();
-    }
-  }
-
-  @override
-  void onPlayEndOfTest(String fileName) {
-    if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _playingIndex++;
-      _initVideoController();
-    }
-  }
-
-  @override
-  void onPlayIntroduce() {
-    if (false == _simulatorTestProvider!.isLoadingVideo) {
-      _initVideoController();
-    }
-  }
-
-  // @override
-  // void onIntroduceFileEmpty() {
-  //   _startToPlayFollowup();
-  // }
 
   @override
   void onCountDownForCueCard(String countDownString) {

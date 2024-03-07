@@ -9,21 +9,16 @@ import 'package:icorrect/core/doing_test_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
-import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/repositories/simulator_test_repository.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
-import 'package:icorrect/src/models/simulator_test_models/topic_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 
 abstract class TestRoomViewContract {
-  void onPlayIntroduce();
-  void onPlayEndOfTakeNote(String fileName);
-  void onPlayEndOfTest(String fileName);
   void onCountDown(
       String countDownString, bool isLessThan2Seconds, int timeCounting);
   void onUpdateDuration(int duration);
@@ -150,43 +145,8 @@ class TestRoomPresenter {
     });
   }
 
-  Future<void> playEndOfTakeNoteFile(TopicModel topic) async {
-    String fileName = topic.endOfTakeNote.url;
-
-    if (fileName.isNotEmpty) {
-      bool isExist = await FileStorageHelper.checkExistFile(
-          fileName, MediaType.video, null);
-      if (isExist) {
-        _view!.onPlayEndOfTakeNote(fileName);
-      } else {
-        _view!.onReDownload();
-      }
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: This topic has not end of take note file");
-      }
-    }
-  }
-
   void clickSaveTheTest() {
     _view!.onClickSaveTheTest();
-  }
-
-  Future<void> playEndOfTestFile(TopicModel topic) async {
-    String fileName = topic.fileEndOfTest.url;
-
-    if (fileName.isNotEmpty) {
-      bool isExist = await FileStorageHelper.checkExistFile(
-          fileName, MediaType.video, null);
-      if (isExist) {
-        _view!.onPlayEndOfTest(fileName);
-      } else {
-        _view!.onReDownload();
-      }
-    } else {
-      //The test has not End of test file
-      _view!.onFinishTheTest();
-    }
   }
 
   Timer startCountRecording({int? countFrom}) {
