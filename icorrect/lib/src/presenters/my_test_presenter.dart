@@ -84,6 +84,7 @@ class MyTestPresenter {
     assert(_view != null && _repository != null);
 
     if (kDebugMode) {
+      print('DEBUG: activityId: ${activityId.toString()}');
       print('DEBUG: testId: ${testId.toString()}');
     }
 
