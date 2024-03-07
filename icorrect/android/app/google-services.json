@@ -1,193 +1,26 @@
 {
   "project_info": {
-    "project_number": "854161914448",
-    "firebase_url": "https://icorrect-193913.firebaseio.com",
-    "project_id": "icorrect-193913",
-    "storage_bucket": "icorrect-193913.appspot.com"
+    "project_number": "529107106305",
+    "project_id": "icorrectvn-a20a2",
+    "storage_bucket": "icorrectvn-a20a2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:854161914448:android:1c30971afd535459",
-        "android_client_info": {
-          "package_name": "com.correct.ielts.speaking.test"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "854161914448-314hg2v8h26fgs2s254hvohq908ut446.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.correct.ielts.speaking.test",
-            "certificate_hash": "90ac68b194591639acddc2612edda2255bc3186c"
-          }
-        },
-        {
-          "client_id": "854161914448-62fpthq07g4utukoga6b64saj5bdq2fs.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.correct.ielts.speaking.test",
-            "certificate_hash": "4a99e172efba41eca8ec00e5e5c684d29fcb6bd9"
-          }
-        },
-        {
-          "client_id": "854161914448-r2vcqfuobulbamni10el2cr69lfqcmk0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.correct.ielts.speaking.test",
-            "certificate_hash": "72b1fc9408f8c609f7ffa7c29eb3307463a5ccd3"
-          }
-        },
-        {
-          "client_id": "854161914448-j3ap8ge6jc8dvks3k8jnttk4d2e6fijs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDkqyd3VIzhBoHcH29OzRnHgYRaz6QZVdM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "107971810039177298629",
-              "client_type": 3
-            },
-            {
-              "client_id": "854161914448-8ls17llg7s3out7i4u9npua2mug0fk3t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.correct.ielts.speaking"
-              }
-            }
-          ]
-        }
-      },
-      "admob_app_id": "ca-app-pub-8534195046425956~5577012892"
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:854161914448:android:8b4f75aa9e54c0c0",
-        "android_client_info": {
-          "package_name": "com.correct.ielts.speaking.test1"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "854161914448-c39asd0ehtf3ne5phj6uv1kvugsul5r0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.correct.ielts.speaking.test1",
-            "certificate_hash": "90ac68b194591639acddc2612edda2255bc3186c"
-          }
-        },
-        {
-          "client_id": "854161914448-j3ap8ge6jc8dvks3k8jnttk4d2e6fijs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDkqyd3VIzhBoHcH29OzRnHgYRaz6QZVdM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "107971810039177298629",
-              "client_type": 3
-            },
-            {
-              "client_id": "854161914448-8ls17llg7s3out7i4u9npua2mug0fk3t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.correct.ielts.speaking"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:854161914448:android:a2750c6f75c799caa66f55",
+        "mobilesdk_app_id": "1:529107106305:android:4e79c4b132bd6853d89e00",
         "android_client_info": {
           "package_name": "com.csupporter.icorrectvn"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "854161914448-j3ap8ge6jc8dvks3k8jnttk4d2e6fijs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDkqyd3VIzhBoHcH29OzRnHgYRaz6QZVdM"
+          "current_key": "AIzaSyDjTQp6lm_fZzn8f5Wq_06GJjG2VO6i8KM"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "107971810039177298629",
-              "client_type": 3
-            },
-            {
-              "client_id": "854161914448-8ls17llg7s3out7i4u9npua2mug0fk3t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.correct.ielts.speaking"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:854161914448:android:fc5251c203f9a403",
-        "android_client_info": {
-          "package_name": "test.speaking.ielts.correct.com.myapplication"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "854161914448-q4b4mfbr5cat2j5btlfk7vg1tm2efku0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "test.speaking.ielts.correct.com.myapplication",
-            "certificate_hash": "814fbe364a23f3b6b535d0c7b80807289c95e61f"
-          }
-        },
-        {
-          "client_id": "854161914448-j3ap8ge6jc8dvks3k8jnttk4d2e6fijs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDkqyd3VIzhBoHcH29OzRnHgYRaz6QZVdM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "107971810039177298629",
-              "client_type": 3
-            },
-            {
-              "client_id": "854161914448-8ls17llg7s3out7i4u9npua2mug0fk3t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.correct.ielts.speaking"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
