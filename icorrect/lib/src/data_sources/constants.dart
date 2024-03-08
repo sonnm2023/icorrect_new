@@ -752,8 +752,8 @@ class StringConstants {
       "OtherException: Has an error when getting activity list!";
   static const String submit_test_error_parse_json =
       "ParseJsonException: Has an error when submit this test!";
-  static const String get_activity_list_error_parse_json =
-      "ParseJsonException: Has an error when getting activity list!";
+  static const String parse_json_error =
+      "ParseJsonException: Has an error when parse json from response!";
   static const String get_special_homework_error_message =
       "GetSpecialHomeWorks: result fail!";
   static const String compress_video_error_message = "Compress video file fail";
@@ -884,7 +884,7 @@ class StringConstants {
   static const String k_refresh = "refresh";
   static const String k_topic_type = "topic_type[]";
   static const String k_test_option = "option";
-  static const String k_required_topic = "required_topic[]";
+  static const String k_required_topic = "required_topic";
   static const String k_is_predict = "is_predict";
   static const String k_has_order = "has_order";
   static const String k_duration = "duration";

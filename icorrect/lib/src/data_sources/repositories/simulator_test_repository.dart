@@ -93,10 +93,6 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
 
     String url = getTestPracticeInfoEP(queryParams);
 
-    for (int i = 0; i < topicsId.length; i++) {
-      url += "&${StringConstants.k_required_topic}=${topicsId[i]}";
-    }
-
     if (kDebugMode) {
       print(
           'DEBUG: SimulatorTestRepositoryImpl - getTestDetailFromPractice: $url');
@@ -109,12 +105,18 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
       print("DEBUG: request data: $jsonString");
     }
 
+    String? bodyData;
+    if (topicsId.isNotEmpty) {
+      bodyData = json.encode({StringConstants.k_required_topic: topicsId});
+    }
+
     return AppRepository.init()
         .sendRequest(
           RequestMethod.post,
           url,
           true,
           false,
+          body: bodyData,
         )
         .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {

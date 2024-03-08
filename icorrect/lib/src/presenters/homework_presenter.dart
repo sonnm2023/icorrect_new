@@ -128,12 +128,12 @@ class HomeWorkPresenter {
         Utils.prepareLogData(
           log: log,
           data: dataLog,
-          message: "${StringConstants.get_activity_list_error_parse_json}: $e",
+          message: "${StringConstants.parse_json_error}: $e",
           status: LogEvent.failed,
         );
 
-        _view!.onGetListHomeworkError(Utils.multiLanguage(
-            StringConstants.get_activity_list_error_parse_json)!);
+        _view!.onGetListHomeworkError(
+            Utils.multiLanguage(StringConstants.parse_json_error)!);
       }
     } on TimeoutException catch (e) {
       // Add log

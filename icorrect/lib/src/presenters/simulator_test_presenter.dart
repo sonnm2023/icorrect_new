@@ -1080,43 +1080,57 @@ class SimulatorTestPresenter {
   }
 
   void _handleResponse(String value, LogModel? log) {
-    Map<String, dynamic> map = jsonDecode(value);
-    if (map[StringConstants.k_error_code] == 200) {
-      Map<String, dynamic> dataMap = map[StringConstants.k_data];
-      testDetail = TestDetailModel.fromJson(dataMap);
+    try {
+      Map<String, dynamic> map = jsonDecode(value);
+      if (map[StringConstants.k_error_code] == 200) {
+        Map<String, dynamic> dataMap = map[StringConstants.k_data];
+        testDetail = TestDetailModel.fromJson(dataMap);
 
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: jsonDecode(value),
-        message: null,
-        status: LogEvent.success,
-      );
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: jsonDecode(value),
+          message: null,
+          status: LogEvent.success,
+        );
 
-      _view!.onGetTestDetailSuccess(testDetail!);
-    } else if (map[StringConstants.k_error_code] == 501 ||
-        map[StringConstants.k_error_code] == 5010) {
+        _view!.onGetTestDetailSuccess(testDetail!);
+      } else if (map[StringConstants.k_error_code] == 501 ||
+          map[StringConstants.k_error_code] == 5010) {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message:
+              "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_messages]}",
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(map[StringConstants.k_messages]);
+      } else {
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message:
+              "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
+          status: LogEvent.failed,
+        );
+
+        _view!.onGetTestDetailError(
+            Utils.multiLanguage(StringConstants.common_error_message)!);
+      }
+    } catch (e) {
       //Add log
       Utils.prepareLogData(
         log: log,
         data: null,
-        message:
-            "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_messages]}",
+        message: "${StringConstants.parse_json_error}: $e",
         status: LogEvent.failed,
       );
 
-      _view!.onGetTestDetailError(map[StringConstants.k_messages]);
-    } else {
-      //Add log
-      Utils.prepareLogData(
-        log: log,
-        data: null,
-        message:
-            "Loading homework detail error: ${map[StringConstants.k_error_code]} ${map[StringConstants.k_status]}",
-        status: LogEvent.failed,
-      );
-
-      _view!.onGetTestDetailError(StringConstants.common_error_message);
+      _view!.onGetTestDetailError(
+          Utils.multiLanguage(StringConstants.parse_json_error)!);
     }
   }
 }

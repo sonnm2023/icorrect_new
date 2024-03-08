@@ -272,8 +272,8 @@ class MultiLanguage {
         "OtherException: Có lỗi khi tải danh sách!",
     StringConstants.submit_test_error_parse_json:
         "ParseJsonException: Có lỗi khi gửi bài kiểm tra này!",
-    StringConstants.get_activity_list_error_parse_json:
-        "ParseJsonException: Có lỗi khi tải danh sách!",
+    StringConstants.parse_json_error:
+        "ParseJsonException: Có lỗi khi parse json!",
     StringConstants.get_special_homework_error_message:
         "Tải danh sách bài mẫu thất bại!",
     StringConstants.compress_video_error_message:
@@ -641,8 +641,8 @@ class MultiLanguage {
         "OtherException: Has an error when getting activity list!",
     StringConstants.submit_test_error_parse_json:
         "ParseJsonException: Has an error when submit this test!",
-    StringConstants.get_activity_list_error_parse_json:
-        "ParseJsonException: Has an error when getting activity list!",
+    StringConstants.parse_json_error:
+        "ParseJsonException: Has an error when parse json from response!",
     StringConstants.get_special_homework_error_message:
         "GetSpecialHomeWorks: result fail!",
     StringConstants.compress_video_error_message: "Compress video file fail",
