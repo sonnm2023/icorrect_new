@@ -162,12 +162,14 @@ void callbackDispatcher() {
     if (logApiUrl.isEmpty || secretkey.isEmpty) {
       if (kDebugMode) {
         print("DEBUG: Not have log url or secretkey");
+        print("DEBUG-SENDLOG: HAS NOT LOG URL OR SECRETKEY");
       }
-      print("DEBUG-SENDLOG: HAS NOT LOG URL OR SECRETKEY");
       return Future.value(false);
     }
 
-    print("DEBUG-SENDLOG: URL: $logApiUrl");
+    if (kDebugMode) {
+      print("DEBUG-SENDLOG: URL: $logApiUrl");
+    }
 
     http.MultipartRequest request =
         http.MultipartRequest(RequestMethod.post, Uri.parse(logApiUrl));
@@ -186,17 +188,16 @@ void callbackDispatcher() {
     );
 
     var res = await request.send();
+
     if (res.statusCode == 200) {
       if (kDebugMode) {
         print("DEBUG: send log success kDebugMode");
       }
-      print("DEBUG-SENDLOG: SUCCESS");
       Utils.deleteLogFile();
     } else {
       if (kDebugMode) {
-        print("DEBUG: send log failed  - kDebugMode");
+        print("DEBUG-SENDLOG: ERROR: ${res.toString()}");
       }
-      print("DEBUG-SENDLOG: ERROR: ${res.toString()}");
     }
 
     return Future.value(true);
