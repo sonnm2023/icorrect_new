@@ -53,6 +53,13 @@ import Foundation
                     let param: [String : Any] = ["secretkey": secretkey, "file": content]
                     NetworkManager.shared.callingHttpPostMethodWithFile(params: param, apiname: apiUrl, filePath: filePath, success: { [weak self](data) in
                         guard self != nil else {return}
+                        if let response = data {
+        // Show dialog message
+        DispatchQueue.main.async {
+            self.showDialogMessage(message: response)
+        }
+    }
+    
                         if data == nil {
                             success(true)
                         } else {
@@ -83,6 +90,14 @@ import Foundation
         catch let error as NSError {
             debugPrint("DEBUG: An error took place: \(error)")
         }
+    }
+
+    // Function to show dialog message
+    private func showDialogMessage(message: String) {
+        let alertController = UIAlertController(title: "Response", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
