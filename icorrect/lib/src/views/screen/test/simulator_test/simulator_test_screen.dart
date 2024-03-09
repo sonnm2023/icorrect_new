@@ -229,7 +229,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             return Stack(
               children: [
                 Scaffold(
-                  // key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+                  key: GlobalScaffoldKey.simulatorTestScaffoldKey,
                   body: Align(
                     alignment: Alignment.topLeft,
                     child: SafeArea(

@@ -886,8 +886,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             _continueRecordPart2();
           } else if (null != _countDownCueCard) {
             if (!_countDownCueCard!.isActive) {
-              //Play video before recording answer of part 2
-              _playMediaFile(isRepeat: false);
+              if (_currentQuestion!.files.first.fileTopicType ==
+                  FileTopicType.question) {
+                //Play video before recording answer of part 2
+                _playMediaFile(isRepeat: false);
+              } else if (_currentQuestion!.files.first.fileTopicType ==
+                  FileTopicType.end_of_take_note) {
+                //Or Start record the answer of part 2
+                _prepareForRecordingQuestionOfPart2();
+              }
             }
           }
         } else {
@@ -1389,12 +1396,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           }
         case FileTopicType.end_of_take_note:
           {
-            int previousIndex = _playingIndex - 1;
-            QuestionTopicModel q =
-                _simulatorTestProvider!.listVideoSource[previousIndex];
-            _currentQuestion = q;
-            _endOfTakeNoteIndex = 0;
-            _prepareRecordForAnswer(fileName: q.files.first.url, isPart2: true);
+            _prepareForRecordingQuestionOfPart2();
             break;
           }
         case FileTopicType.end_of_test:
@@ -1413,6 +1415,15 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         print("DEBUG: _checkStatusWhenFinishVideo: App is in background mode!");
       }
     }
+  }
+
+  void _prepareForRecordingQuestionOfPart2() {
+    int previousIndex = _playingIndex - 1;
+    QuestionTopicModel q =
+        _simulatorTestProvider!.listVideoSource[previousIndex];
+    _currentQuestion = q;
+    _endOfTakeNoteIndex = 0;
+    _prepareRecordForAnswer(fileName: q.files.first.url, isPart2: true);
   }
 
   void _showQuestionImage() async {
