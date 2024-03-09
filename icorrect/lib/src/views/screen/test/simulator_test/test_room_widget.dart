@@ -93,6 +93,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _typeOfActionLog = 0; //Default
   int _questionIndex = 0;
   bool _canInitVideoSource = true;
+  final int MAX_TIME_VIDEO_CONFIRM_RECORD = 15;
 
   @override
   void initState() {
@@ -1814,25 +1815,26 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       barrierDismissible: false,
       builder: (builderContext) {
         return WillPopScope(
-            child: ResizeVideoDialog(
-                videoFile: File(savedVideoPath),
-                isVideoExam: true,
-                onResizeCompleted: (resizedFile) {
-                  _startSubmitTest(videoConfirmFile: resizedFile);
-                  _simulatorTestProvider!.setVideoFile(resizedFile);
-                },
-                onSubmitNow: () {
-                  _prepareSubmitTest();
-                },
-                onErrorResizeFile: () {
-                  if (kDebugMode) {
-                    print('DEBUG: Error when compress video');
-                  }
-                  _prepareSubmitTest();
-                }),
-            onWillPop: () async {
-              return false;
-            });
+          child: ResizeVideoDialog(
+              videoFile: File(savedVideoPath),
+              isVideoExam: true,
+              onResizeCompleted: (resizedFile) {
+                _startSubmitTest(videoConfirmFile: resizedFile);
+                _simulatorTestProvider!.setVideoFile(resizedFile);
+              },
+              onSubmitNow: () {
+                _startSubmitTest(videoConfirmFile: null);
+              },
+              onErrorResizeFile: () {
+                if (kDebugMode) {
+                  print('DEBUG: Error when compress video');
+                }
+                _prepareSubmitTest();
+              }),
+          onWillPop: () async {
+            return false;
+          },
+        );
       },
     );
   }
@@ -2183,6 +2185,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("RECORDING_VIDEO: onCountRecording : $currentCount ");
     }
     _simulatorTestProvider!.setCurrentCountRecordingVideo(currentCount);
+
+    if (currentCount > MAX_TIME_VIDEO_CONFIRM_RECORD) {
+      _saveVideoRecording();
+    }
   }
 
   @override
