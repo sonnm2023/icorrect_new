@@ -369,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
-      isCenter: false,
+      isCenter: true,
     );
   }
 
@@ -427,7 +427,7 @@ class _LoginScreenState extends State<LoginScreen>
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,
-      isCenter: false,
+      isCenter: true,
     );
   }
 
