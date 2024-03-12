@@ -96,12 +96,14 @@ class _IELTSFullPartScreenState extends State<IELTSFullPartScreen> {
 
   _tabBarView() {
     return [
-      ChangeNotifierProvider(
-          create: (_) => IELTSIndividualPartScreenProvider(),
-          child: IELTSIndividualPartScreen(topicTypes: IELTSPartType.part1.get)),
-      ChangeNotifierProvider(
-          create: (_) => IELTSIndividualPartScreenProvider(),
-          child: IELTSIndividualPartScreen(topicTypes: IELTSPartType.part2and3.get))
+      IELTSIndividualPartScreen(partType: IELTSPartType.part1),
+      IELTSIndividualPartScreen(partType: IELTSPartType.part2and3)
+      // ChangeNotifierProvider(
+      //     create: (_) => IELTSIndividualPartScreenProvider(),
+      //     child: IELTSIndividualPartScreen(topicTypes: IELTSPartType.part1.get)),
+      // ChangeNotifierProvider(
+      //     create: (_) => IELTSIndividualPartScreenProvider(),
+      //     child: IELTSIndividualPartScreen(topicTypes: IELTSPartType.part2and3.get))
     ];
   }
 }

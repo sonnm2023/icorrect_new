@@ -15,11 +15,13 @@ import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/multi_language.dart';
+import 'package:icorrect/src/models/auth_models/topic_id.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/my_practice_test_model.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
+import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/ui_models/user_authen_status.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
@@ -461,22 +463,27 @@ class Utils {
   }
 
   static int getTestOption(IELTSPartType partType) {
-    switch(partType) {
-      case IELTSPartType.part1: {
-        return IELTSTestOption.part1.get;
-      }
-      case IELTSPartType.part2: {
-        return IELTSTestOption.part2.get;
-      }
-      case IELTSPartType.part3: {
-        return IELTSTestOption.part3.get;
-      }
-      case IELTSPartType.part2and3: {
-        return IELTSTestOption.part2and3.get;
-      }
-      case IELTSPartType.full: {
-        return IELTSTestOption.full.get;
-      }
+    switch (partType) {
+      case IELTSPartType.part1:
+        {
+          return IELTSTestOption.part1.get;
+        }
+      case IELTSPartType.part2:
+        {
+          return IELTSTestOption.part2.get;
+        }
+      case IELTSPartType.part3:
+        {
+          return IELTSTestOption.part3.get;
+        }
+      case IELTSPartType.part2and3:
+        {
+          return IELTSTestOption.part2and3.get;
+        }
+      case IELTSPartType.full:
+        {
+          return IELTSTestOption.full.get;
+        }
     }
   }
 
@@ -1154,27 +1161,33 @@ class Utils {
     return result;
   }
 
-  // static Future<int> getAudioDuration(List<QuestionTopicModel> list) async {
-  //   audio.AudioPlayer audioPlayer = audio.AudioPlayer();
-  //   int totalDuration = 0;
-  //   for (QuestionTopicModel q in list) {
-  //     String path = await Utils.createNewFilePath(q.answers[q.repeatIndex].url);
+  static List<String> convertPartTypeToString(IELTSPartType partType) {
+    switch (partType) {
+      case IELTSPartType.part1:
+        {
+          return IELTSPartType.part1.get;
+        }
+      case IELTSPartType.part2:
+        {
+          return IELTSPartType.part2.get;
+        }
+      case IELTSPartType.part3:
+        {
+          return IELTSPartType.part3.get;
+        }
+      case IELTSPartType.part2and3:
+        {
+          return IELTSPartType.part2and3.get;
+        }
+      case IELTSPartType.full:
+        {
+          return [];
+        }
+    }
+  }
 
-  //     audioPlayer.setSourceDeviceFile(path);
-  //     Duration? duration = await audioPlayer.getDuration();
-
-  //     if (duration != null) {
-  //       totalDuration += duration.inMilliseconds;
-  //     }
-  //   }
-
-  //   // Print the duration.
-  //   if (kDebugMode) {
-  //     print('Total audio duration: $totalDuration');
-  //   }
-
-  //   audioPlayer.dispose();
-
-  //   return totalDuration;
-  // }
+  static bool isSelectedAll(
+      List<IELTSTopicModel> originalList, List<TopicId> selectedList) {
+    return originalList.length == selectedList.length;
+  }
 }

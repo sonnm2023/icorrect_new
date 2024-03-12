@@ -148,6 +148,11 @@ enum IELTSTestOption {
 }
 
 enum IELTSStatus {
+  /*
+    empty: ALL
+    2: Basic
+    3: VIP
+   */
   eachPart('3'),
   fullPart('2');
 

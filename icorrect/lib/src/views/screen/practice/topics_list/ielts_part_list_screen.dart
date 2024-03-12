@@ -9,7 +9,6 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/topic_id.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
-import 'package:icorrect/src/provider/ielts_individual_part_screen_provider.dart';
 import 'package:icorrect/src/provider/ielts_part_list_screen_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/topics_list/ielts_individual_part_screen.dart';
@@ -41,7 +40,7 @@ class _TopicsScreenState extends State<IELTSPartListScreen>
     Future.delayed(
       Duration.zero,
       () {
-        _provider!.removeAllSelectedTopicIdList();
+        _provider!.removeAllSelectedTopicList();
       },
     );
   }
@@ -154,14 +153,6 @@ class _TopicsScreenState extends State<IELTSPartListScreen>
   Widget _startTestButton() {
     return InkWell(
       onTap: () {
-        if (kDebugMode) {
-          print(
-              "DEBUG: Selected topics id length: ${_provider!.selectedTopicIdList.length}");
-          for (int i = 0; i < _provider!.selectedTopicIdList.length; i++) {
-            print("DEBUG: topic id : ${_provider!.selectedTopicIdList[i].id},"
-                " testOption:${_provider!.selectedTopicIdList[i].testOption} ");
-          }
-        }
         _onClickStartTest();
       },
       child: Wrap(
@@ -227,28 +218,28 @@ class _TopicsScreenState extends State<IELTSPartListScreen>
   }
 
   void _checkConditionFullPart() {
-    List<TopicId> topicsId = _provider!.selectedTopicIdList;
-    var topicsPart1 = topicsId
-        .where((element) => element.testOption == IELTSTestOption.part1.get);
-    var topicsPart23 = topicsId.where(
-        (element) => element.testOption == IELTSTestOption.part2and3.get);
-    if (topicsPart1.length < 3) {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.choose_at_least_3_topics_at_part1_message)!,
-        toastState: ToastStatesType.warning,
-        isCenter: true,
-      );
-    } else if (topicsPart23.isEmpty) {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.choose_at_least_1_topics_at_part23_message)!,
-        toastState: ToastStatesType.warning,
-        isCenter: true,
-      );
-    } else {
-      _goToTestScreen();
-    }
+    // List<TopicId> topicsId = _provider!.selectedTopicIdList;
+    // var topicsPart1 = topicsId
+    //     .where((element) => element.testOption == IELTSTestOption.part1.get);
+    // var topicsPart23 = topicsId.where(
+    //     (element) => element.testOption == IELTSTestOption.part2and3.get);
+    // if (topicsPart1.length < 3) {
+    //   showToastMsg(
+    //     msg: Utils.multiLanguage(
+    //         StringConstants.choose_at_least_3_topics_at_part1_message)!,
+    //     toastState: ToastStatesType.warning,
+    //     isCenter: true,
+    //   );
+    // } else if (topicsPart23.isEmpty) {
+    //   showToastMsg(
+    //     msg: Utils.multiLanguage(
+    //         StringConstants.choose_at_least_1_topics_at_part23_message)!,
+    //     toastState: ToastStatesType.warning,
+    //     isCenter: true,
+    //   );
+    // } else {
+    //   _goToTestScreen();
+    // }
   }
 
   Future _requestMicroPermission() async {

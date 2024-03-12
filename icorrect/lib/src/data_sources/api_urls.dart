@@ -91,6 +91,8 @@ String getTestPracticeInfoEP(Map<String, String> queryParameters) {
   return '$icorrectDomain/api/v1/ielts-test/create?${Uri(queryParameters: queryParameters).query}';
 }
 
+const String getTestPracticeInfoEPNEW = '$icorrectDomain/api/v1/ielts-test/create?';
+
 String getMyPracticeTestEP(String page) {
   return '$icorrectDomain/api/v1/ielts-test/index?page=$page';
 }

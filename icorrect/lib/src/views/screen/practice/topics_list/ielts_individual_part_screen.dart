@@ -21,7 +21,8 @@ class IELTSIndividualPartScreen extends StatefulWidget {
   IELTSPartType partType;
 
   @override
-  State<IELTSIndividualPartScreen> createState() => _IELTSIndividualPartScreenState();
+  State<IELTSIndividualPartScreen> createState() =>
+      _IELTSIndividualPartScreenState();
 }
 
 class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
@@ -40,7 +41,8 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
     _presenter = IELTSTopicsListPresenter(this);
     // _ieltsTopicsProvider =
     //     Provider.of<IELTSIndividualPartScreenProvider>(context, listen: false);
-    _provider = Provider.of<IELTSPartListScreenProvider>(context, listen: false);
+    _provider =
+        Provider.of<IELTSPartListScreenProvider>(context, listen: false);
 
     _loading!.show(context: context, isViewAIResponse: false);
     _getTopicsList();
@@ -50,11 +52,10 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser != null) {
       String status = "";
-      if (widget.topicTypes == IELTSPartType.full.get) {
-        widget.topicTypes = [];
-        status = IELTSStatus.fullPart.get;
-      }
-      _presenter!.getIELTSTopicList(widget.topicTypes, status);
+      // if (widget.partType == IELTSPartType.full) {
+      //   status = IELTSStatus.fullPart.get;
+      // }
+      _presenter!.getIELTSTopicList(widget.partType, status);
     }
   }
 
@@ -71,9 +72,9 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
     super.build(context);
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
-    return Consumer<IELTSIndividualPartScreenProvider>(
+    return Consumer<IELTSPartListScreenProvider>(
       builder: (context, provider, child) {
-        int testOption = Utils.getTestOption(widget.topicTypes);
+        // int testOption = Utils.getTestOption(widget.topicTypes);
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,14 +97,17 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
                     child: Checkbox(
                       tristate: true,
                       activeColor: AppColor.defaultPurpleColor,
-                      value: provider.topicsId.length ==
-                          provider.topicsList.length,
+                      //TODO
+                      value: true,
+                      // value: provider.topicsId.length ==
+                      //     provider.topicsList.length,
                       onChanged: (bool? value) {
                         if (value ?? false) {
                           _addAllTopics();
                         } else {
-                          provider.clearTopicSelection();
-                          _provider!.clearTopicsByTestOption(testOption);
+                          //TODO
+                          // provider.clearTopicSelection();
+                          // _provider!.clearTopicsByTestOption(testOption);
                         }
                       },
                     ),
@@ -112,8 +116,9 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
                     alignment: Alignment.center,
                     child: Text(
                       context.formatString(StringConstants.selected_topics, [
-                        provider.topicsId.length,
-                        provider.topicsList.length
+                        //TODO
+                        // provider.topicsId.length,
+                        // provider.topicsList.length
                       ]),
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
@@ -128,8 +133,9 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        provider.clearTopicSelection();
-                        _provider!.clearTopicsByTestOption(testOption);
+                        //TODO
+                        // provider.clearTopicSelection();
+                        // _provider!.clearTopicsByTestOption(testOption);
                       },
                       child: Text(
                         Utils.multiLanguage(
@@ -149,9 +155,10 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
             ),
             Consumer<IELTSPartListScreenProvider>(
               builder: (context, parentScreenProvider, child) {
-                var listSearched = provider.topicsList.where((element) =>
-                    element.title.toLowerCase().contains(
-                        parentScreenProvider.queryChanged.toLowerCase()));
+                var listSearched = []; //TODO
+                // var listSearched = provider.topicsList.where((element) =>
+                //     element.title.toLowerCase().contains(
+                //         parentScreenProvider.queryChanged.toLowerCase()));
                 return Expanded(
                   child: ListView.separated(
                     itemCount: listSearched.length,
@@ -177,8 +184,12 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
 
   Widget _buildInTopicCard(BuildContext context,
       {required IELTSTopicModel ieltsTopicModel}) {
+    //TODO
+    return const SizedBox();
+    /*
     int option = Utils.getTestOption(widget.topicTypes);
-    return Consumer<IELTSIndividualPartScreenProvider>(builder: (context, provider, child) {
+    return Consumer<IELTSIndividualPartScreenProvider>(
+        builder: (context, provider, child) {
       bool isChecked = provider.topicsId.contains(ieltsTopicModel.id);
       return InkWell(
         onTap: () {
@@ -252,6 +263,7 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
         ),
       );
     });
+    */
   }
 
   @override
@@ -279,20 +291,19 @@ class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
   @override
   void onGetIELTSTopicsSuccess(List<IELTSTopicModel> topicsList) {
     _loading!.hide();
-    _ieltsTopicsProvider!.setIELTSTopics(topicsList);
-
-    _addAllTopics();
+    _provider!.setupDataWithPartType(widget.partType, topicsList);
   }
 
   void _addAllTopics() {
-    int testOption = Utils.getTestOption(widget.topicTypes);
-    _ieltsTopicsProvider!.addAllTopics();
-    List<TopicId> topicsId = [];
-    for (int i = 0; i < _ieltsTopicsProvider!.topicsId.length; i++) {
-      topicsId.add(TopicId(
-          id: _ieltsTopicsProvider!.topicsId[i], testOption: testOption));
-    }
-    _provider!.setTopicsId(topicsId, testOption);
+    //TODO
+    // int testOption = Utils.getTestOption(widget.topicTypes);
+    // _ieltsTopicsProvider!.addAllTopics();
+    // List<TopicId> topicsId = [];
+    // for (int i = 0; i < _ieltsTopicsProvider!.topicsId.length; i++) {
+    //   topicsId.add(TopicId(
+    //       id: _ieltsTopicsProvider!.topicsId[i], testOption: testOption));
+    // }
+    // _provider!.setTopicsId(topicsId, testOption);
   }
 
   @override

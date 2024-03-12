@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
-import 'package:icorrect/src/models/auth_models/topic_id.dart';
-
+import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
 
 class IELTSPartListScreenProvider extends ChangeNotifier {
   bool isDisposed = false;
@@ -18,36 +17,114 @@ class IELTSPartListScreenProvider extends ChangeNotifier {
     }
   }
 
-  final List<TopicId> _selectedTopicIdList = [];
-  List<TopicId> get selectedTopicIdList => _selectedTopicIdList;
+  final List<IELTSTopicModel> _selectedTopicList = [];
+  List<IELTSTopicModel> get selectedTopicIdList => _selectedTopicList;
 
-  void addSelectedTopicId(TopicId topicId) {
-    _selectedTopicIdList.add(topicId);
-
-    if (!isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  void removeSelectedTopicId(TopicId topicId) {
-    _selectedTopicIdList.removeWhere((element) => element.id == topicId.id && element.testOption == topicId.testOption);
+  void addSelectedTopic(IELTSTopicModel topic) {
+    _selectedTopicList.add(topic);
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
-  void addAllSelectedTopicIdList(List<TopicId> list) {
-    _selectedTopicIdList.clear();
-    _selectedTopicIdList.addAll(list);
+  void removeSelectedTopic(IELTSTopicModel topic) {
+    _selectedTopicList.removeWhere((element) => element.id == topic.id);
+    // _selectedTopicIdList.removeWhere((element) =>
+    // element.id == topic.id && element.testOption == topicId.testOption);
 
     if (!isDisposed) {
       notifyListeners();
     }
   }
 
-  void removeAllSelectedTopicIdList() {
-    _selectedTopicIdList.clear();
+  void addAllSelectedTopicList(List<IELTSTopicModel> list) {
+    _selectedTopicList.clear();
+    _selectedTopicList.addAll(list);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void removeAllSelectedTopicList() {
+    _selectedTopicList.clear();
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  //Case: FULL PART
+  //SUB 1: Part 1 Topic Selected List
+  final List<IELTSTopicModel> _fullPartPart1SelectedTopicList = [];
+  List<IELTSTopicModel> get fullPartPart1SelectedTopicList => _fullPartPart1SelectedTopicList;
+
+  void addTopicFullPartPart1SelectedTopicList(IELTSTopicModel topic) {
+    _fullPartPart1SelectedTopicList.add(topic);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void removeTopicFullPartPart1SelectedTopicList(IELTSTopicModel topic) {
+    _fullPartPart1SelectedTopicList.removeWhere((element) => element.id == topic.id);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void addAllFullPartPart1SelectedTopicList(List<IELTSTopicModel> list) {
+    _fullPartPart1SelectedTopicList.clear();
+    _fullPartPart1SelectedTopicList.addAll(list);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void removeAllFullPartPart1SelectedTopicList() {
+    _fullPartPart1SelectedTopicList.clear();
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  //Case: FULL PART
+  //SUB 1: Part 23 Topic Selected List
+  final List<IELTSTopicModel> _fullPartPart23SelectedTopicList = [];
+  List<IELTSTopicModel> get fullPartPart23SelectedTopicList => _fullPartPart23SelectedTopicList;
+
+  void addTopicFullPartPart23SelectedTopicList(IELTSTopicModel topic) {
+    _fullPartPart23SelectedTopicList.add(topic);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void removeTopicFullPartPart23SelectedTopicList(IELTSTopicModel topic) {
+    _fullPartPart23SelectedTopicList.removeWhere((element) => element.id == topic.id);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void addAllFullPartPart23SelectedTopicList(List<IELTSTopicModel> list) {
+    _fullPartPart23SelectedTopicList.clear();
+    _fullPartPart23SelectedTopicList.addAll(list);
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void removeAllFullPartPart23SelectedTopicList() {
+    _fullPartPart23SelectedTopicList.clear();
 
     if (!isDisposed) {
       notifyListeners();
@@ -55,97 +132,143 @@ class IELTSPartListScreenProvider extends ChangeNotifier {
   }
 
   //Original topic id list of part 1
-  final List<TopicId> _originalTopicIdListPart1 = [];
-  List<TopicId> get originalTopicIdListPart1 => _originalTopicIdListPart1;
+  final List<IELTSTopicModel> _originalPart1TopicList = [];
+  List<IELTSTopicModel> get originalPart1TopicList =>
+      _originalPart1TopicList;
 
   //Original topic id list of part 2
-  final List<TopicId> _originalTopicIdListPart2 = [];
-  List<TopicId> get originalTopicIdListPart2 => _originalTopicIdListPart2;
+  final List<IELTSTopicModel> _originalPart2TopicList = [];
+  List<IELTSTopicModel> get originalTopicIdListPart2 =>
+      _originalPart2TopicList;
 
   //Original topic id list of part 3
-  final List<TopicId> _originalTopicIdListPart3 = [];
-  List<TopicId> get originalTopicIdListPart3 => _originalTopicIdListPart3;
+  final List<IELTSTopicModel> _originalPart3TopicList = [];
+  List<IELTSTopicModel> get originalTopicIdListPart3 =>
+      _originalPart3TopicList;
 
   //Original topic id list of part 2,3
-  final List<TopicId> _originalTopicIdListPart23 = [];
-  List<TopicId> get originalTopicIdListPart23 => _originalTopicIdListPart23;
+  final List<IELTSTopicModel> _originalPart23TopicList = [];
+  List<IELTSTopicModel> get originalTopicIdListPart23 =>
+      _originalPart23TopicList;
 
-  //Original topic id list of full part
-  final List<TopicId> _originalTopicIdListFullPart = [];
-  List<TopicId> get originalTopicIdListFullPart => _originalTopicIdListFullPart;
+  //Original Part 1 topic list of FULL PART
+  final List<IELTSTopicModel> _originalFullPartPart1TopicList = [];
+  List<IELTSTopicModel> get originalFullPartPart1TopicList =>
+      _originalFullPartPart1TopicList;
 
-  void setOriginalTopicListWithPartType(IELTSPartType partType, List<TopicId> list) {
-    switch(partType) {
-      case IELTSPartType.part1: {
-        _originalTopicIdListPart1.clear();
-        _originalTopicIdListPart1.addAll(list);
-        break;
-      }
+  //Original Part 2,3 topic list of FULL PART
+  final List<IELTSTopicModel> _originalFullPartPart23TopicList = [];
+  List<IELTSTopicModel> get originalFullPartPart23TopicList =>
+      _originalFullPartPart23TopicList;
 
-      case IELTSPartType.part2: {
-        _originalTopicIdListPart2.clear();
-        _originalTopicIdListPart2.addAll(list);
-        break;
-      }
+  void setupDataWithPartType(
+      //For first time after get list topic of part
+      IELTSPartType partType,
+      List<IELTSTopicModel> list) {
+    switch (partType) {
+      case IELTSPartType.part1:
+        {
+          _originalPart1TopicList.clear();
+          _originalPart1TopicList.addAll(list);
 
-      case IELTSPartType.part3: {
-        _originalTopicIdListPart3.clear();
-        _originalTopicIdListPart3.addAll(list);
-        break;
-      }
+          //For selected topic list
+          _selectedTopicList.clear();
+          _selectedTopicList.addAll(list);
+          break;
+        }
 
-      case IELTSPartType.part2and3: {
-        _originalTopicIdListPart23.clear();
-        _originalTopicIdListPart23.addAll(list);
-        break;
-      }
+      case IELTSPartType.part2:
+        {
+          _originalPart2TopicList.clear();
+          _originalPart2TopicList.addAll(list);
 
-      case IELTSPartType.full: {
-        _originalTopicIdListFullPart.clear();
-        _originalTopicIdListFullPart.addAll(list);
-        break;
-      }
+          //For selected topic list
+          _selectedTopicList.clear();
+          _selectedTopicList.addAll(list);
+          break;
+        }
+
+      case IELTSPartType.part3:
+        {
+          _originalPart3TopicList.clear();
+          _originalPart3TopicList.addAll(list);
+
+          //For selected topic list
+          _selectedTopicList.clear();
+          _selectedTopicList.addAll(list);
+          break;
+        }
+
+      case IELTSPartType.part2and3:
+        {
+          _originalPart23TopicList.clear();
+          _originalPart23TopicList.addAll(list);
+
+          //For selected topic list
+          _selectedTopicList.clear();
+          _selectedTopicList.addAll(list);
+          break;
+        }
+
+      case IELTSPartType.full:
+        {
+          _initDataForFullPart(list);
+          break;
+        }
+    }
+  }
+
+  void _initDataForFullPart(List<IELTSTopicModel> list) {
+    List<IELTSTopicModel> part1 = list.where((element) => element.topicType.toString() == IELTSPartType.part1.get.first).toList();
+    _originalFullPartPart1TopicList.addAll(part1);
+    _originalFullPartPart23TopicList.addAll(list.where((element) => !part1.contains(element)));
+    if(kDebugMode) {
+      print("Part 1 - length = ${_originalFullPartPart1TopicList.length}");
+      print("Part 2,3 - length = ${_originalFullPartPart23TopicList.length}");
     }
   }
 
   void removeOriginalTopicListWithPartType(IELTSPartType partType) {
-    switch(partType) {
-      case IELTSPartType.part1: {
-        _originalTopicIdListPart1.clear();
-        break;
-      }
+    switch (partType) {
+      case IELTSPartType.part1:
+        {
+          _originalPart1TopicList.clear();
+          break;
+        }
 
-      case IELTSPartType.part2: {
-        _originalTopicIdListPart2.clear();
-        break;
-      }
+      case IELTSPartType.part2:
+        {
+          _originalPart2TopicList.clear();
+          break;
+        }
 
-      case IELTSPartType.part3: {
-        _originalTopicIdListPart3.clear();
-        break;
-      }
+      case IELTSPartType.part3:
+        {
+          _originalPart3TopicList.clear();
+          break;
+        }
 
-      case IELTSPartType.part2and3: {
-        _originalTopicIdListPart23.clear();
-        break;
-      }
+      case IELTSPartType.part2and3:
+        {
+          _originalPart23TopicList.clear();
+          break;
+        }
 
-      case IELTSPartType.full: {
-        _originalTopicIdListFullPart.clear();
-        break;
-      }
+      case IELTSPartType.full:
+        {
+          _originalFullPartPart1TopicList.clear();
+          _originalFullPartPart23TopicList.clear();
+          break;
+        }
     }
   }
 
-
-
   void resetData() {
-    _selectedTopicIdList.clear();
-    _originalTopicIdListPart1.clear();
-    _originalTopicIdListPart2.clear();
-    _originalTopicIdListPart3.clear();
-    _originalTopicIdListPart23.clear();
-    _originalTopicIdListFullPart.clear();
+    _selectedTopicList.clear();
+    _originalPart1TopicList.clear();
+    _originalPart2TopicList.clear();
+    _originalPart3TopicList.clear();
+    _originalPart23TopicList.clear();
   }
 
   /*
