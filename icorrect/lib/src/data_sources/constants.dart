@@ -125,14 +125,14 @@ enum ReviewingStatus {
   final int get;
 }
 
-enum IELTSTopicType {
+enum IELTSPartType {
   part1(['1']),
   part2(['2']),
   part3(['3']),
   part2and3(['2', '3']),
   full(['4']);
 
-  const IELTSTopicType(this.get);
+  const IELTSPartType(this.get);
   final List<String> get;
 }
 

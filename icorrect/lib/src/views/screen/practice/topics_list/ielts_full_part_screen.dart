@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
-import 'package:icorrect/src/provider/ielts_topics_provider.dart';
+import 'package:icorrect/src/provider/ielts_individual_part_screen_provider.dart';
 import 'package:provider/provider.dart';
-import 'ielts_each_part_topics.dart';
+import 'ielts_individual_part_screen.dart';
 
-class IELTSFullPartTopics extends StatefulWidget {
-  const IELTSFullPartTopics({super.key});
+class IELTSFullPartScreen extends StatefulWidget {
+  const IELTSFullPartScreen({super.key});
 
   @override
-  State<IELTSFullPartTopics> createState() => _IELTSFullPartTopicsState();
+  State<IELTSFullPartScreen> createState() => _IELTSFullPartScreenState();
 }
 
-class _IELTSFullPartTopicsState extends State<IELTSFullPartTopics> {
+class _IELTSFullPartScreenState extends State<IELTSFullPartScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -97,11 +97,11 @@ class _IELTSFullPartTopicsState extends State<IELTSFullPartTopics> {
   _tabBarView() {
     return [
       ChangeNotifierProvider(
-          create: (_) => IELTSTopicsProvider(),
-          child: IELTSEachPartTopics(topicTypes: IELTSTopicType.part1.get)),
+          create: (_) => IELTSIndividualPartScreenProvider(),
+          child: IELTSIndividualPartScreen(topicTypes: IELTSPartType.part1.get)),
       ChangeNotifierProvider(
-          create: (_) => IELTSTopicsProvider(),
-          child: IELTSEachPartTopics(topicTypes: IELTSTopicType.part2and3.get))
+          create: (_) => IELTSIndividualPartScreenProvider(),
+          child: IELTSIndividualPartScreen(topicTypes: IELTSPartType.part2and3.get))
     ];
   }
 }

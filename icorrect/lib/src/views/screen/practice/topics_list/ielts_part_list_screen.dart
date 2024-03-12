@@ -9,37 +9,39 @@ import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/topic_id.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
-import 'package:icorrect/src/provider/ielts_topics_provider.dart';
-import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
+import 'package:icorrect/src/provider/ielts_individual_part_screen_provider.dart';
+import 'package:icorrect/src/provider/ielts_part_list_screen_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
-import 'package:icorrect/src/views/screen/practice/topics_list/ielts_each_part_topics.dart';
-import 'package:icorrect/src/views/screen/practice/topics_list/ielts_full_part_topics.dart';
+import 'package:icorrect/src/views/screen/practice/topics_list/ielts_individual_part_screen.dart';
+import 'package:icorrect/src/views/screen/practice/topics_list/ielts_full_part_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/simulator_test_screen.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-class IELTSTopicsScreen extends StatefulWidget {
-  IELTSTopicsScreen({required this.topicTypes, super.key});
-  List<String> topicTypes;
+class IELTSPartListScreen extends StatefulWidget {
+  IELTSPartListScreen({required this.partType, super.key});
+  // List<String> partType;
+  IELTSPartType partType;
 
   @override
-  State<IELTSTopicsScreen> createState() => _TopicsScreenState();
+  State<IELTSPartListScreen> createState() => _TopicsScreenState();
 }
 
-class _TopicsScreenState extends State<IELTSTopicsScreen>
+class _TopicsScreenState extends State<IELTSPartListScreen>
     implements ActionAlertListener {
-  IELTSTopicsScreenProvider? _provider;
+  IELTSPartListScreenProvider? _provider;
   FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _provider = Provider.of<IELTSTopicsScreenProvider>(context, listen: false);
+    _provider =
+        Provider.of<IELTSPartListScreenProvider>(context, listen: false);
     Future.delayed(
       Duration.zero,
       () {
-        _provider!.clearTopicsId();
+        _provider!.removeAllSelectedTopicIdList();
       },
     );
   }
@@ -61,7 +63,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
           backgroundColor: Colors.white,
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Consumer<IELTSTopicsScreenProvider>(
+            title: Consumer<IELTSPartListScreenProvider>(
               builder: (context, provider, child) {
                 return (provider.isShowSearchBar)
                     ? _buildSearchBar()
@@ -94,20 +96,25 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
             ),
             backgroundColor: AppColor.defaultWhiteColor,
           ),
-          body: Consumer<IELTSTopicsScreenProvider>(
+          body: Consumer<IELTSPartListScreenProvider>(
             builder: (context, provider, child) {
               return SafeArea(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: widget.topicTypes == IELTSTopicType.full.get
-                          ? IELTSFullPartTopics()
-                          : ChangeNotifierProvider(
-                              create: (_) => IELTSTopicsProvider(),
-                              child: IELTSEachPartTopics(
-                                  topicTypes: widget.topicTypes),
+                      child: widget.partType == IELTSPartType.full.get
+                          ? const IELTSFullPartScreen()
+                          : IELTSIndividualPartScreen(
+                              partType: widget.partType,
                             ),
+                      // : ChangeNotifierProvider(
+                      //     create: (_) =>
+                      //         IELTSIndividualPartScreenProvider(),
+                      //     child: IELTSIndividualPartScreen(
+                      //       partType: widget.partType,
+                      //     ),
+                      //   ),
                     ),
                     Container(
                       height: 50,
@@ -149,10 +156,10 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
       onTap: () {
         if (kDebugMode) {
           print(
-              "DEBUG : topics id length: ${_provider!.getTopicsIdList().length}");
-          for (int i = 0; i < _provider!.topicsId.length; i++) {
-            print("DEBUG : topic id : ${_provider!.topicsId[i].id},"
-                " testOption:${_provider!.topicsId[i].testOption} ");
+              "DEBUG: Selected topics id length: ${_provider!.selectedTopicIdList.length}");
+          for (int i = 0; i < _provider!.selectedTopicIdList.length; i++) {
+            print("DEBUG: topic id : ${_provider!.selectedTopicIdList[i].id},"
+                " testOption:${_provider!.selectedTopicIdList[i].testOption} ");
           }
         }
         _onClickStartTest();
@@ -189,35 +196,38 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
   }
 
   Future _prepareBeforeToDoTest() async {
-    List<TopicId> topicsId = _provider!.topicsId;
-    if (widget.topicTypes == IELTSTopicType.part2and3.get) {
-      if (topicsId.isNotEmpty) {
-        _goToTestScreen();
-      } else {
-        showToastMsg(
-          msg: Utils.multiLanguage(
-              StringConstants.choose_at_least_1_topics_at_part23_message)!,
-          toastState: ToastStatesType.warning,
-          isCenter: true,
-        );
-      }
-    } else if (topicsId.length >= 3 &&
-        widget.topicTypes == IELTSTopicType.full.get) {
-      _onTopicsIsFullTest();
-    } else if (topicsId.length >= 3 &&
-        widget.topicTypes != IELTSTopicType.full.get) {
-      _goToTestScreen();
-    } else {
-      showToastMsg(
-        msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics)!,
-        toastState: ToastStatesType.warning,
-        isCenter: true,
-      );
+    switch (widget.partType) {
+      case IELTSPartType.part1:
+        {
+          if (_provider!.selectedTopicIdList.length < 3) {
+            showToastMsg(
+              msg: Utils.multiLanguage(
+                  StringConstants.choose_at_least_3_topics)!,
+              toastState: ToastStatesType.warning,
+              isCenter: true,
+            );
+          } else {
+            _goToTestScreen();
+          }
+          break;
+        }
+      case IELTSPartType.part2:
+      case IELTSPartType.part3:
+      case IELTSPartType.part2and3:
+        {
+          _goToTestScreen();
+          break;
+        }
+      case IELTSPartType.full:
+        {
+          _checkConditionFullPart();
+          break;
+        }
     }
   }
 
-  void _onTopicsIsFullTest() {
-    List<TopicId> topicsId = _provider!.topicsId;
+  void _checkConditionFullPart() {
+    List<TopicId> topicsId = _provider!.selectedTopicIdList;
     var topicsPart1 = topicsId
         .where((element) => element.testOption == IELTSTestOption.part1.get);
     var topicsPart23 = topicsId.where(
@@ -288,15 +298,22 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
     }
   }
 
+  List<int> _convertSelectedTopicIdList() {
+    List<int> result = [];
+    return result;
+  }
+
   Future<void> _goToTestScreen() async {
-    int testOption = Utils.getTestOption(widget.topicTypes);
+    int testOption = Utils.getTestOption(widget.partType);
+    List<int> topicIdList = _convertSelectedTopicIdList();
+
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => SimulatorTestScreen(
           activitiesModel: null,
           testOption: testOption,
-          topicsId: _provider!.getTopicsIdList(),
+          topicsId: topicIdList,
           isPredict: IELTSPredict.normalQuestion.get,
           testDetail: null,
           onRefresh: null,

@@ -7,8 +7,8 @@ import 'package:icorrect/src/models/auth_models/topic_id.dart';
 import 'package:icorrect/src/models/practice_model/ielts_topic_model.dart';
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect/src/presenters/ielts_topics_list_presenter.dart';
-import 'package:icorrect/src/provider/ielts_topics_provider.dart';
-import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
+import 'package:icorrect/src/provider/ielts_individual_part_screen_provider.dart';
+import 'package:icorrect/src/provider/ielts_part_list_screen_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
@@ -16,31 +16,31 @@ import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class IELTSEachPartTopics extends StatefulWidget {
-  List<String> topicTypes;
-  IELTSEachPartTopics({required this.topicTypes, super.key});
+class IELTSIndividualPartScreen extends StatefulWidget {
+  IELTSIndividualPartScreen({required this.partType, super.key});
+  IELTSPartType partType;
 
   @override
-  State<IELTSEachPartTopics> createState() => _IELTSEachPartTopicsState();
+  State<IELTSIndividualPartScreen> createState() => _IELTSIndividualPartScreenState();
 }
 
-class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
-    with AutomaticKeepAliveClientMixin<IELTSEachPartTopics>
+class _IELTSIndividualPartScreenState extends State<IELTSIndividualPartScreen>
+    with AutomaticKeepAliveClientMixin<IELTSIndividualPartScreen>
     implements IELTSTopicsListConstract {
   double w = 0, h = 0;
-  IELTSTopicsProvider? _ieltsTopicsProvider;
+  // IELTSIndividualPartScreenProvider? _ieltsTopicsProvider;
   CircleLoading? _loading;
   IELTSTopicsListPresenter? _presenter;
-  IELTSTopicsScreenProvider? _provider;
+  IELTSPartListScreenProvider? _provider;
 
   @override
   void initState() {
     super.initState();
     _loading = CircleLoading();
     _presenter = IELTSTopicsListPresenter(this);
-    _ieltsTopicsProvider =
-        Provider.of<IELTSTopicsProvider>(context, listen: false);
-    _provider = Provider.of<IELTSTopicsScreenProvider>(context, listen: false);
+    // _ieltsTopicsProvider =
+    //     Provider.of<IELTSIndividualPartScreenProvider>(context, listen: false);
+    _provider = Provider.of<IELTSPartListScreenProvider>(context, listen: false);
 
     _loading!.show(context: context, isViewAIResponse: false);
     _getTopicsList();
@@ -50,11 +50,11 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
     UserDataModel? currentUser = await Utils.getCurrentUser();
     if (currentUser != null) {
       String status = "";
-      if (widget.topicTypes == IELTSTopicType.full.get) {
+      if (widget.topicTypes == IELTSPartType.full.get) {
         widget.topicTypes = [];
         status = IELTSStatus.fullPart.get;
       }
-      _presenter!.getIELTSTopicsList(widget.topicTypes, status);
+      _presenter!.getIELTSTopicList(widget.topicTypes, status);
     }
   }
 
@@ -71,7 +71,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
     super.build(context);
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
-    return Consumer<IELTSTopicsProvider>(
+    return Consumer<IELTSIndividualPartScreenProvider>(
       builder: (context, provider, child) {
         int testOption = Utils.getTestOption(widget.topicTypes);
         return Column(
@@ -147,7 +147,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
                 ],
               ),
             ),
-            Consumer<IELTSTopicsScreenProvider>(
+            Consumer<IELTSPartListScreenProvider>(
               builder: (context, parentScreenProvider, child) {
                 var listSearched = provider.topicsList.where((element) =>
                     element.title.toLowerCase().contains(
@@ -178,7 +178,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
   Widget _buildInTopicCard(BuildContext context,
       {required IELTSTopicModel ieltsTopicModel}) {
     int option = Utils.getTestOption(widget.topicTypes);
-    return Consumer<IELTSTopicsProvider>(builder: (context, provider, child) {
+    return Consumer<IELTSIndividualPartScreenProvider>(builder: (context, provider, child) {
       bool isChecked = provider.topicsId.contains(ieltsTopicModel.id);
       return InkWell(
         onTap: () {

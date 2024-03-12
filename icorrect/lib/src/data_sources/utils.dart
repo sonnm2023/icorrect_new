@@ -460,19 +460,39 @@ class Utils {
     return nameFile;
   }
 
-  static int getTestOption(List<String> topicType) {
-    int testOption = IELTSTestOption.full.get;
-    if (topicType == IELTSTopicType.part1.get) {
-      testOption = IELTSTestOption.part1.get;
-    } else if (topicType == IELTSTopicType.part2.get) {
-      testOption = IELTSTestOption.part2.get;
-    } else if (topicType == IELTSTopicType.part3.get) {
-      testOption = IELTSTestOption.part3.get;
-    } else if (topicType == IELTSTopicType.part2and3.get) {
-      testOption = IELTSTestOption.part2and3.get;
+  static int getTestOption(IELTSPartType partType) {
+    switch(partType) {
+      case IELTSPartType.part1: {
+        return IELTSTestOption.part1.get;
+      }
+      case IELTSPartType.part2: {
+        return IELTSTestOption.part2.get;
+      }
+      case IELTSPartType.part3: {
+        return IELTSTestOption.part3.get;
+      }
+      case IELTSPartType.part2and3: {
+        return IELTSTestOption.part2and3.get;
+      }
+      case IELTSPartType.full: {
+        return IELTSTestOption.full.get;
+      }
     }
-    return testOption;
   }
+
+  // static int getTestOption(List<String> topicType) {
+  //   int testOption = IELTSTestOption.full.get;
+  //   if (topicType == IELTSPartType.part1.get) {
+  //     testOption = IELTSTestOption.part1.get;
+  //   } else if (topicType == IELTSPartType.part2.get) {
+  //     testOption = IELTSTestOption.part2.get;
+  //   } else if (topicType == IELTSPartType.part3.get) {
+  //     testOption = IELTSTestOption.part3.get;
+  //   } else if (topicType == IELTSPartType.part2and3.get) {
+  //     testOption = IELTSTestOption.part2and3.get;
+  //   }
+  //   return testOption;
+  // }
 
   static File changeFileNameSync(File file, String newFileName) {
     var path = file.path;

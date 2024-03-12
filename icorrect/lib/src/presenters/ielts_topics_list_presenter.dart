@@ -21,7 +21,7 @@ class IELTSTopicsListPresenter {
     _repository = Injector().getPracticeRepository();
   }
 
-  Future getIELTSTopicsList(List<String> topicTypes, String status) async {
+  Future getIELTSTopicList(List<String> topicTypes, String status) async {
     assert(_view != null && _repository != null);
 
     _repository!.getPracticeTopicsList(topicTypes, status).then((value) {
