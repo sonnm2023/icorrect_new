@@ -115,7 +115,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         supportedLocales: _localization.supportedLocales,
         localizationsDelegates: _localization.localizationsDelegates,
-        title: 'Flutter Demo',
+        title: 'ICorrect For School',
         theme: ThemeData(
           colorScheme:
               ColorScheme.fromSeed(seedColor: AppColor.defaultWhiteColor),
