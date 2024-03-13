@@ -75,6 +75,7 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   flutter_rating_bar: ^4.0.1
   flutter_secure_storage: ^9.0.0
+  wakelock_plus: ^1.1.1
 
 dev_dependencies:
   flutter_test:

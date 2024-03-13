@@ -42,6 +42,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widg
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
@@ -101,6 +102,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    WakelockPlus.enable();
     super.initState();
 
     _audioPlayerController = AudioPlayers.AudioPlayer();
@@ -170,6 +172,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _deallocateMemory();
+    WakelockPlus.disable();
     super.dispose();
   }
 
