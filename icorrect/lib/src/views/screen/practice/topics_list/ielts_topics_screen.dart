@@ -220,19 +220,10 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
     List<TopicId> topicsId = _provider!.topicsId;
     var topicsPart1 = topicsId
         .where((element) => element.testOption == IELTSTestOption.part1.get);
-    var topicsPart23 = topicsId.where(
-        (element) => element.testOption == IELTSTestOption.part2and3.get);
     if (topicsPart1.length < 3) {
       showToastMsg(
         msg: Utils.multiLanguage(
             StringConstants.choose_at_least_3_topics_at_part1_message)!,
-        toastState: ToastStatesType.warning,
-        isCenter: true,
-      );
-    } else if (topicsPart23.isEmpty) {
-      showToastMsg(
-        msg: Utils.multiLanguage(
-            StringConstants.choose_at_least_1_topics_at_part23_message)!,
         toastState: ToastStatesType.warning,
         isCenter: true,
       );
