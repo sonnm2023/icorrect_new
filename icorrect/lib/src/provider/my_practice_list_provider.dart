@@ -335,4 +335,14 @@ class MyPracticeListProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool _needRefreshPracticeList = false;
+  bool get needRefreshPracticeList => _needRefreshPracticeList;
+  void setNeedRefreshPracticeList(bool value) {
+    _needRefreshPracticeList = value;
+
+    if (!isDisposed && value) {
+      notifyListeners();
+    }
+  }
 }

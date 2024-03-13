@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/ui_models/alert_info.dart';
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
@@ -47,7 +48,6 @@ class SimulatorTestScreen extends StatefulWidget {
   final int? testOption; //From Practice screen
   final List<int>? topicsId; //From Practice screen
   final int? isPredict; //From Practice screen
-  // final Map<String, dynamic>? data; //From MyPractice
   final TestDetailModel? testDetail; //From MyPractice
   final Function? onRefresh; //For refresh My practice list if needed
 
@@ -60,6 +60,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     implements SimulatorTestViewContract {
   SimulatorTestPresenter? _simulatorTestPresenter;
   SimulatorTestProvider? _simulatorTestProvider;
+  MyPracticeListProvider? _myPracticeListProvider;
   HomeWorkProvider? _homeWorkProvider;
   AuthProvider? _authProvider;
 
@@ -161,6 +162,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     });
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
+    _myPracticeListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
     _simulatorTestPresenter = SimulatorTestPresenter(this);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
@@ -415,7 +418,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
         //Call back refresh list of my practice if need
         //For from My Practice Test
-        _callToRefesh();
+        _callToRefresh();
 
         Navigator.pop(context, StringConstants.k_refresh);
       }
@@ -473,7 +476,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  void _callToRefesh() {
+  void _callToRefresh() {
     if (widget.testDetail != null) {
       if (widget.onRefresh != null) {
         widget.onRefresh!();
@@ -916,7 +919,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       isCenter: false,
     );
 
-    _callToRefesh();
+    //Refresh Activity List
+    _callToRefresh();
+
+    //Refresh Practice List
+    _myPracticeListProvider!.setNeedRefreshPracticeList(true);
 
     Navigator.pop(context, 'refresh');
   }

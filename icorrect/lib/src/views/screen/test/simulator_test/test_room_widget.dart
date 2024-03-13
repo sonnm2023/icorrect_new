@@ -23,6 +23,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/provider/timer_provider.dart';
@@ -63,6 +64,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     implements TestRoomViewContract {
   TestRoomPresenter? _testRoomPresenter;
   SimulatorTestProvider? _simulatorTestProvider;
+  MyPracticeListProvider? _myPracticeListProvider;
 
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
@@ -106,6 +108,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
+    _myPracticeListProvider =
+        Provider.of<MyPracticeListProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
     _playAnswerProvider =
         Provider.of<PlayAnswerProvider>(context, listen: false);
@@ -2342,6 +2346,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
     _simulatorTestProvider!.setNeedRefreshActivityList(true);
+
+    //Refresh Practice List
+    _myPracticeListProvider!.setNeedRefreshPracticeList(true);
 
     //Send log
     Utils.sendLog();

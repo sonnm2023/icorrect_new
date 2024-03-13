@@ -191,39 +191,6 @@ class SimulatorTestPresenter {
     );
   }
 
-  /*
-  Future getTestDetailFromMyPractice(
-      {required BuildContext context,
-      required Map<String, dynamic> data}) async {
-    LogModel? log;
-    if (context.mounted) {
-      log = await Utils.prepareToCreateLog(context,
-          action: LogEvent.callApiGetTestDetail);
-    }
-
-    _testRepository!
-        .getTestDetailFromMyPractice(data: data)
-        .then((value) async {
-      _handleResponse(value, log);
-    });
-    // .catchError(
-    //   // ignore: invalid_return_type_for_catch_error
-    //   (onError) {
-    //     //Add log
-    //     Utils.prepareLogData(
-    //       log: log,
-    //       data: null,
-    //       message: onError.toString(),
-    //       status: LogEvent.failed,
-    //     );
-
-    //     //TODO: CHECK
-    //     _view!.onGetTestDetailError(StringConstants.common_error_message);
-    //   },
-    // );
-  }
-  */
-
   void prepareDataForDownload({
     required BuildContext context,
     required String? activityId,

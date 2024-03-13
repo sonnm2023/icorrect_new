@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -8,7 +7,6 @@ import 'package:icorrect/src/models/my_practice_test_model/bank_model.dart';
 import 'package:icorrect/src/models/my_practice_test_model/bank_topic_model.dart';
 import 'package:icorrect/src/presenters/my_practice_topic_list_presenter.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
-import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +24,6 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
     implements MyPracticeTopicListViewContract {
   MyPracticeTopicListPresenter? _presenter;
   CircleLoading? _loading;
-  // MyPracticeTopicsProvider? _myPracticeTopicsProvider;
   MyPracticeListProvider? _practiceListProvider;
 
   @override
@@ -34,8 +31,6 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
     super.initState();
     _presenter = MyPracticeTopicListPresenter(this);
     _loading = CircleLoading();
-    // _myPracticeTopicsProvider =
-    //     Provider.of<MyPracticeTopicsProvider>(context, listen: false);
     _practiceListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
     _getTopicList();
