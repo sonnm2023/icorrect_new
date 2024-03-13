@@ -15,7 +15,6 @@ import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_detai
 import 'package:icorrect/src/views/screen/home/my_practice_tab/my_practice_setting/my_practice_setting.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/no_data_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +32,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
   MyTestsListPresenter? _presenter;
   CircleLoading? _loading;
   MyPracticeListProvider? _myPracticeListProvider;
+  bool _isRefresh = false;
 
   @override
   void initState() {
@@ -42,6 +42,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
     _myPracticeListProvider!.refreshList(false);
+    _myPracticeListProvider!.setNeedRefreshPracticeList(false);
 
     _getMyTestsList(isRefresh: false, needShowLoading: true);
     _getBankList();
@@ -212,9 +213,14 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
   Widget _buildList() {
     return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       child: Consumer<MyPracticeListProvider>(
         builder: (context, provider, child) {
+          if (provider.needRefreshPracticeList) {
+            provider.setNeedRefreshPracticeList(false);
+            _reloadCallBack();
+          }
+
           if (provider.myTestsList.isEmpty && !provider.isProcessing) {
             return NoDataWidget(
               msg: Utils.multiLanguage(
@@ -222,6 +228,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
               reloadCallBack: _reloadCallBack,
             );
           }
+
           return Container(
             height: h,
             padding: const EdgeInsets.only(bottom: 150),
@@ -231,9 +238,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                 if (metrics.atEdge) {
                   bool isTop = metrics.pixels == 0;
                   if (isTop) {
-                    if (kDebugMode) {
-                      print("DEBUG :Scroll To Top");
-                    }
+                    _reloadCallBack();
                   } else {
                     _startLoadMoreData();
                     if (kDebugMode) {
@@ -551,11 +556,14 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  void _reloadCallBack() async {
+  Future<void> _reloadCallBack() async {
     if (kDebugMode) {
       print("DEBUG: MyPracticeList - _reloadCallBack");
     }
-    _getMyTestsList(isRefresh: true, needShowLoading: true);
+    if (!_isRefresh) {
+      _isRefresh = true;
+      _getMyTestsList(isRefresh: true, needShowLoading: true);
+    }
   }
 
   @override
@@ -563,6 +571,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     _loading!.hide();
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
+    _isRefresh = false;
 
     String? msg = Utils.multiLanguage(message);
 
@@ -652,6 +661,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     required bool isLoadMore,
     required bool isRefresh,
   }) {
+    _isRefresh = false;
     if (isRefresh) {
       _myPracticeListProvider!.clearOldDataMyTestsList();
     }
