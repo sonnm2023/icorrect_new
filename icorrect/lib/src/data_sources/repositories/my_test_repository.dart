@@ -24,7 +24,7 @@ class MyTestImpl implements MyTestRepository {
     }
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -36,7 +36,7 @@ class MyTestImpl implements MyTestRepository {
     String url = responseEP(orderId);
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -54,7 +54,7 @@ class MyTestImpl implements MyTestRepository {
 
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -65,11 +65,11 @@ class MyTestImpl implements MyTestRepository {
   Future<String> updateAnswers(http.MultipartRequest multiRequest) async {
     return await multiRequest
         .send()
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.StreamedResponse streamResponse) async {
       if (streamResponse.statusCode == 200) {
         return await http.Response.fromStream(streamResponse)
-            .timeout(const Duration(seconds: timeout))
+            .timeout(const Duration(seconds: TIME_OUT))
             .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;
@@ -90,7 +90,7 @@ class MyTestImpl implements MyTestRepository {
 
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, true, false)
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;

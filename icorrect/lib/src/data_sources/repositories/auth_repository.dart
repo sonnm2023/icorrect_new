@@ -62,7 +62,7 @@ class AuthRepositoryImpl implements AuthRepository {
             StringConstants.k_os: os
           },
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
           return response.body;
         });
@@ -79,7 +79,7 @@ class AuthRepositoryImpl implements AuthRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -106,7 +106,7 @@ class AuthRepositoryImpl implements AuthRepository {
             StringConstants.k_confirmation_password: confirmNewPassword,
           },
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
           return response.body;
         });
@@ -125,7 +125,7 @@ class AuthRepositoryImpl implements AuthRepository {
           false,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });

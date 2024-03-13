@@ -890,4 +890,5 @@ class StringConstants {
   static const String k_duration = "duration";
 }
 
-const int timeout = 60;
+const int TIME_OUT = 60;
+const int SUBMIT_TIME_OUT = 90;

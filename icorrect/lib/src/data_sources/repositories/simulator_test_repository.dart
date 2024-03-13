@@ -70,7 +70,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             StringConstants.k_device_id: deviceId,
           },
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
           final String jsonBody = response.body;
           if (kDebugMode) {
@@ -118,7 +118,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           false,
           body: bodyData,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       if (kDebugMode) {
@@ -149,7 +149,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           true,
           body: body,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       if (kDebugMode) {
@@ -186,10 +186,10 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
 
     return await multiRequest
         .send()
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: SUBMIT_TIME_OUT))
         .then((http.StreamedResponse streamResponse) async {
       return await http.Response.fromStream(streamResponse)
-          .timeout(const Duration(seconds: timeout))
+          .timeout(const Duration(seconds: SUBMIT_TIME_OUT))
           .then((http.Response response) {
         final String jsonBody = response.body;
         if (kDebugMode) {
@@ -234,7 +234,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
             "pass": pass,
           },
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then(
           (http.Response response) {
             final String jsonBody = response.body;

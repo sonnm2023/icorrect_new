@@ -20,7 +20,7 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       final String jsonBody = response.body;
       return jsonBody;
@@ -31,11 +31,11 @@ class UserAuthRepositoryImpl implements UserAuthRepository {
   Future<String> submitAuth(http.MultipartRequest multiRequest) async {
     return await multiRequest
         .send()
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.StreamedResponse streamResponse) async {
       if (streamResponse.statusCode == 200) {
         return await http.Response.fromStream(streamResponse)
-            .timeout(const Duration(seconds: timeout))
+            .timeout(const Duration(seconds: TIME_OUT))
             .then((http.Response response) {
           final String jsonBody = response.body;
           return jsonBody;

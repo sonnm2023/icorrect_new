@@ -37,7 +37,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });
@@ -53,7 +53,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });
@@ -69,7 +69,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });
@@ -85,7 +85,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });
@@ -101,7 +101,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });
@@ -117,7 +117,7 @@ class PracticeReporitoryImpl implements PracticeRepository {
           true,
           false,
         )
-        .timeout(const Duration(seconds: timeout))
+        .timeout(const Duration(seconds: TIME_OUT))
         .then((http.Response response) {
       return response.body;
     });
