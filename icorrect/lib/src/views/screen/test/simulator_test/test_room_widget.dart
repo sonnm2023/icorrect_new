@@ -94,6 +94,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   int _questionIndex = 0;
   bool _canInitVideoSource = true;
   final int MAX_TIME_VIDEO_CONFIRM_RECORD = 15;
+  bool _isEnableToPlayVideo = false;
 
   @override
   void initState() {
@@ -357,11 +358,13 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                       height: 50,
                       child: InkWell(
                         onTap: () {
-                          _simulatorTestProvider!
-                              .updateDoingStatus(DoingStatus.doing);
-                          simulatorTestProvider
-                              .updateReviewingStatus(ReviewingStatus.playing);
-                          _startToPlayVideo();
+                          if (_isEnableToPlayVideo) {
+                            _simulatorTestProvider!
+                                .updateDoingStatus(DoingStatus.doing);
+                            _simulatorTestProvider!
+                                .updateReviewingStatus(ReviewingStatus.playing);
+                            _startToPlayVideo();
+                          }
                         },
                         child: const Icon(
                           Icons.play_arrow,
@@ -620,7 +623,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             status: LogEvent.success,
           );
 
-          _nativeVideoPlayerController!.stop();
+          await _nativeVideoPlayerController!.stop();
+
+          //Already to play video to doing test
+          _setupAlreadyToDoTest();
         });
       }
     } catch (e, stackTrace) {
@@ -643,6 +649,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         status: LogEvent.failed,
       );
     }
+  }
+
+  void _setupAlreadyToDoTest() {
+    _isEnableToPlayVideo = true;
   }
 
   Future<void> _loadVideoSource(String fileName) async {
