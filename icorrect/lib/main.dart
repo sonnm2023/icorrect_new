@@ -8,7 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/core/secure_storage.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -30,6 +32,8 @@ import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:http/http.dart' as http;
 import 'src/provider/my_test_provider.dart';
@@ -49,6 +53,19 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((value) => runApp(const MyApp()));
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+  if (isFirstRun) {
+    try {
+      await SecureStorage.deleteCredentials();
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print("Failed to invoke method: '${e.message}'.");
+      }
+    }
+    await prefs.setBool('isFirstRun', false);
+  }
 
   runApp(const MyApp());
 }
