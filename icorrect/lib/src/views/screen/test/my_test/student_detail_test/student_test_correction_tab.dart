@@ -162,7 +162,6 @@ class _StudentCorrectionState extends State<StudentCorrection>
                         fontsSize: FontsSize.fontSize_14,
                         fontWeight: FontWeight.w400,
                       ),
-                      maxLines: 4,
                     ),
             ),
             if (appState.responseModel.isTooLong())

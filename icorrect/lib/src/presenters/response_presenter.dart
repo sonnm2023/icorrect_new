@@ -42,7 +42,7 @@ class ResponsePresenter {
         print(dataMap.toString());
       }
 
-      if (dataMap['error_code'] == 200 && dataMap.isNotEmpty) {
+      if (dataMap.isNotEmpty) {
         ResultResponseModel responseModel =
             ResultResponseModel.fromJson(dataMap);
 
