@@ -1526,6 +1526,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   _showQuestionImage();
                 });
               }
+
+              if (_currentQuestion!.files.first.fileTopicType == FileTopicType.end_of_take_note) {
+                _endOfTakeNoteIndex = _playingIndex;
+              }
             });
           } catch (e) {
             //Add log
