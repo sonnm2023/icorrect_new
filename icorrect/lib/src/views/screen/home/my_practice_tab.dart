@@ -282,7 +282,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColor.defaultPurpleColor, width: 1),
+        border: Border.all(color: AppColor.defaultPurpleColor, width: 0.5),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -293,7 +293,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
             alignment: Alignment.center,
             decoration: BoxDecoration(
               border: Border.all(
-                width: 2.0,
+                width: 1.0,
                 color: AppColor.defaultPurpleColor,
               ),
               borderRadius: BorderRadius.circular(CustomSize.size_100),
@@ -303,7 +303,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
               style: CustomTextStyle.textWithCustomInfo(
                 context: context,
                 color: AppColor.defaultPurpleColor,
-                fontsSize: FontsSize.fontSize_16,
+                fontsSize: FontsSize.fontSize_14,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -320,9 +320,9 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                         title,
                         style: CustomTextStyle.textWithCustomInfo(
                           context: context,
-                          color: AppColor.defaultPurpleColor,
-                          fontsSize: FontsSize.fontSize_16,
-                          fontWeight: FontWeight.w600,
+                          color: AppColor.defaultBlackColor,
+                          fontsSize: FontsSize.fontSize_15,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -332,8 +332,8 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                       style: CustomTextStyle.textWithCustomInfo(
                         context: context,
                         color: AppColor.defaultGrayColor,
-                        fontsSize: FontsSize.fontSize_15,
-                        fontWeight: FontWeight.w600,
+                        fontsSize: FontsSize.fontSize_14,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -345,8 +345,9 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                     Row(
                       children: [
                         const Icon(
-                          Icons.access_time,
+                          Icons.access_time_sharp,
                           color: AppColor.defaultGrayColor,
+                          size: 18,
                         ),
                         const SizedBox(width: 1),
                         Text(
@@ -354,8 +355,8 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultGrayColor,
-                            fontsSize: FontsSize.fontSize_16,
-                            fontWeight: FontWeight.w500,
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w400,
                           ),
                         )
                       ],
@@ -363,13 +364,13 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                     Row(
                       children: [
                         Container(
-                          width: 20,
-                          height: 20,
+                          width: 18,
+                          height: 18,
                           alignment: Alignment.center,
                           child: Icon(
                             Icons.star,
                             color: scoreColor,
-                            size: 20,
+                            size: 18,
                           ),
                         ),
                         const SizedBox(width: 5),
@@ -378,8 +379,8 @@ class _MyPracticeTabState extends State<MyPracticeTab>
                           style: CustomTextStyle.textWithCustomInfo(
                             context: context,
                             color: AppColor.defaultGrayColor,
-                            fontsSize: FontsSize.fontSize_16,
-                            fontWeight: FontWeight.w500,
+                            fontsSize: FontsSize.fontSize_14,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],
