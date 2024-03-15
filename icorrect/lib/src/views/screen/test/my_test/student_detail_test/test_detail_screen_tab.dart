@@ -23,6 +23,8 @@ import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/load_local_image_widget.dart';
 import 'package:provider/provider.dart';
 import 'download_again_widget.dart';
 import 'download_progressing_widget.dart';
@@ -190,6 +192,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                       otherStudentTestPresenter: _presenter,
                     )
                   : const SizedBox(),
+              _buildFullImageView(),
             ],
           );
         }
@@ -197,7 +200,25 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     );
   }
 
+  Widget _buildFullImageView() {
+    return Consumer<StudentTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.showFullImage) {
+          return FullImageWidget(
+            imageUrl: provider.selectedQuestionImageUrl,
+            provider: provider,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
   Widget _questionItem(QuestionTopicModel question) {
+    bool hasImage = Utils.checkHasImage(question: question);
+    String fileName = question.files.last.url;
+
     return Consumer<StudentTestProvider>(
       builder: (context, provider, child) {
         return Card(
@@ -280,7 +301,18 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                         ],
                       ),
                     ),
+                  ),
+                  hasImage
+                      ? InkWell(
+                    onTap: () {
+                      _showFullImage(fileName: fileName);
+                    },
+                    child: LoadLocalImageWidget(
+                      imageUrl: fileName,
+                      isInRow: true,
+                    ),
                   )
+                      : const SizedBox(),
                 ],
               ),
             );
@@ -288,6 +320,19 @@ class _TestDetailScreenState extends State<TestDetailScreen>
         );
       },
     );
+  }
+
+  void _showFullImage({required String fileName}) {
+    if (kDebugMode) {
+      print("DEBUG: _showFullImage");
+    }
+
+    //For test
+    // widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
+    // widget.simulatorTestProvider.setShowFullImage(true);
+
+    widget.provider.setSelectedQuestionImageUrl(fileName);
+    widget.provider.setShowFullImage(true);
   }
 
   Future _onClickPlayAnswer(QuestionTopicModel question) async {

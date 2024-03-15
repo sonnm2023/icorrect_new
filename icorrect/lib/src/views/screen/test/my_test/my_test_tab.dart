@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -28,6 +29,8 @@ import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog
 import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
 import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/load_local_image_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
@@ -184,10 +187,10 @@ class _MyTestTabState extends State<MyTestTab>
                       ),
                       TestRecordWidget(
                         finishAnswer: (currentQuestion) {
-                          _onFinishReanswer(currentQuestion);
+                          _onFinishReAnswer(currentQuestion);
                         },
                         cancelAnswer: () {
-                          _onCancelReanswer();
+                          _onCancelReAnswer();
                         },
                       ),
                       (provider.reAnswerOfQuestions.isNotEmpty &&
@@ -230,6 +233,7 @@ class _MyTestTabState extends State<MyTestTab>
                               myTestPresenter: null,
                             )
                           : const SizedBox(),
+                      _buildFullImageView(),
                     ],
                   ),
             (widget.homeWorkModel != null) ? _aiResponseButton() : Container()
@@ -374,7 +378,7 @@ class _MyTestTabState extends State<MyTestTab>
     );
   }
 
-  void _onFinishReanswer(QuestionTopicModel question) {
+  void _onFinishReAnswer(QuestionTopicModel question) {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
       return;
@@ -398,10 +402,10 @@ class _MyTestTabState extends State<MyTestTab>
       }
       widget.provider.setCurrentQuestion(question);
     }
-    _resetReanswerData();
+    _resetReAnswerData();
   }
 
-  Future<void> _onCancelReanswer() async {
+  Future<void> _onCancelReAnswer() async {
     String path =
         '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
         '\\$audioFile';
@@ -411,10 +415,10 @@ class _MyTestTabState extends State<MyTestTab>
         print("DEBUG: File Record is delete: ${File(path).existsSync()}");
       }
     }
-    _resetReanswerData();
+    _resetReAnswerData();
   }
 
-  void _resetReanswerData() {
+  void _resetReAnswerData() {
     widget.provider.setVisibleRecord(false);
     widget.provider.setTimerCount('00:00');
     _stopCountTimer();
@@ -423,6 +427,9 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   Widget _questionItem(QuestionTopicModel question) {
+    bool hasImage = Utils.checkHasImage(question: question);
+    String fileName = question.files.last.url;
+
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         return Container(
@@ -512,10 +519,10 @@ class _MyTestTabState extends State<MyTestTab>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                _canReanswerQuestion()
+                                _canReAnswerQuestion()
                                     ? InkWell(
                                         onTap: () async {
-                                          _onClickReanswer(provider, question);
+                                          _onClickReAnswer(provider, question);
                                         },
                                         child: Text(
                                           Utils.multiLanguage(StringConstants
@@ -556,7 +563,18 @@ class _MyTestTabState extends State<MyTestTab>
                           ],
                         ),
                       ),
+                    ),
+                    hasImage
+                        ? InkWell(
+                      onTap: () {
+                        _showFullImage(fileName: fileName);
+                      },
+                      child: LoadLocalImageWidget(
+                        imageUrl: fileName,
+                        isInRow: true,
+                      ),
                     )
+                        : const SizedBox(),
                   ],
                 ),
               );
@@ -567,12 +585,25 @@ class _MyTestTabState extends State<MyTestTab>
     );
   }
 
-  bool _canReanswerQuestion() {
+  void _showFullImage({required String fileName}) {
+    if (kDebugMode) {
+      print("DEBUG: _showFullImage");
+    }
+
+    //For test
+    // widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
+    // widget.simulatorTestProvider.setShowFullImage(true);
+
+    widget.provider.setSelectedQuestionImageUrl(fileName);
+    widget.provider.setShowFullImage(true);
+  }
+
+  bool _canReAnswerQuestion() {
     if (widget.practiceTestId != null) {
       return true;
     }
     if (widget.homeWorkModel != null) {
-      return widget.homeWorkModel!.canReanswer();
+      return widget.homeWorkModel!.canReAnswer();
     }
     return false;
   }
@@ -582,7 +613,7 @@ class _MyTestTabState extends State<MyTestTab>
         questionId == widget.provider.questionId;
   }
 
-  void _onClickReanswer(MyTestProvider provider, QuestionTopicModel question) {
+  void _onClickReAnswer(MyTestProvider provider, QuestionTopicModel question) {
     widget.provider.setPlayAnswer(Status.playOff.get, question.id);
     _stopAudio();
     if (!provider.visibleRecord) {
@@ -724,9 +755,24 @@ class _MyTestTabState extends State<MyTestTab>
     return false;
   }
 
+  Widget _buildFullImageView() {
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.showFullImage) {
+          return FullImageWidget(
+            imageUrl: provider.selectedQuestionImageUrl,
+            provider: provider,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
   @override
   void onFinishCountDown() {
-    _onFinishReanswer(widget.provider.currentQuestion);
+    _onFinishReAnswer(widget.provider.currentQuestion);
   }
 
   @override
