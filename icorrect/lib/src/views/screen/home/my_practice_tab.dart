@@ -93,7 +93,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
           child: Stack(
             children: [
               _buildList(),
-              _buildLoadmore(),
+              _buildLoadMore(),
               _buildBankListButton(),
             ],
           ),
@@ -415,7 +415,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
     );
   }
 
-  Widget _buildLoadmore() {
+  Widget _buildLoadMore() {
     return Consumer<MyPracticeListProvider>(
       builder: (context, provider, child) {
         return Visibility(
