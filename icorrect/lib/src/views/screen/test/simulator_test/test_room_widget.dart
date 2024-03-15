@@ -1675,8 +1675,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         path: path,
         encoder: Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bit,
         bitRate: 128000,
-        samplingRate: 16000,
-        numChannels: 1,
+        samplingRate: 44100,
       );
 
       if (context.mounted) {
