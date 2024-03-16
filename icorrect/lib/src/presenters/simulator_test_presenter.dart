@@ -380,7 +380,7 @@ class SimulatorTestPresenter {
                 return;
               }
 
-              dio!.head(url).timeout(const Duration(seconds: timeout));
+              dio!.head(url).timeout(const Duration(seconds: TIME_OUT));
               // use client.get as you would http.get
 
               String savePath =
