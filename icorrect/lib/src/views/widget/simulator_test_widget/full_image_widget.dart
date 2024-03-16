@@ -90,7 +90,16 @@ class _FullImageWidgetState extends State<FullImageWidget> {
                   onTap: () {
                     if (widget.provider is SimulatorTestProvider ||
                         widget.provider is MyTestProvider ||
-                    widget.provider is StudentTestProvider) {
+                        widget.provider is StudentTestProvider) {
+                      GlobalKey<ScaffoldState> key =
+                          Provider.of<AuthProvider>(context, listen: false)
+                              .scaffoldKeys
+                              .first;
+                      if (key == GlobalScaffoldKey.fullImageScaffoldKey) {
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .scaffoldKeys
+                            .removeFirst();
+                      }
                       widget.provider.resetSelectedQuestionImageUrl();
                       widget.provider.setShowFullImage(false);
                     }

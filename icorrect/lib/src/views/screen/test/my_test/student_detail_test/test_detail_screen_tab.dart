@@ -53,6 +53,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    _resetFullImageData();
     super.initState();
 
     connection = Connectivity()
@@ -156,6 +157,10 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     WidgetsBinding.instance.removeObserver(this);
     _player!.dispose();
     super.dispose();
+  }
+
+  void _resetFullImageData() {
+    widget.provider.resetShowFullImage();
   }
 
   @override

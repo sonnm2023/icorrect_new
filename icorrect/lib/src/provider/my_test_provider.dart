@@ -17,6 +17,7 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   void clearData() {
+    _showFullImage = false;
     _selectedQuestionImageUrl = '';
     _isLessThan2Second = true;
     _visibleOverViewComment = false;

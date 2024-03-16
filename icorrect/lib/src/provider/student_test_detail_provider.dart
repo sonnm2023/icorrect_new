@@ -232,8 +232,6 @@ class StudentTestProvider extends ChangeNotifier {
     }
   }
 
-
-
   String _selectedQuestionImageUrl = '';
   String get selectedQuestionImageUrl => _selectedQuestionImageUrl;
   void setSelectedQuestionImageUrl(String url) {
@@ -252,5 +250,9 @@ class StudentTestProvider extends ChangeNotifier {
     if (!isDisposed) {
       notifyListeners();
     }
+  }
+
+  void resetShowFullImage() {
+    _showFullImage = false;
   }
 }

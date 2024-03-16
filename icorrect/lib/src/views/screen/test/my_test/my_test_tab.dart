@@ -69,6 +69,8 @@ class _MyTestTabState extends State<MyTestTab>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    _resetFullImageData();
+
     connection = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -148,6 +150,10 @@ class _MyTestTabState extends State<MyTestTab>
     _presenter!.closeClientRequest();
     _presenter!.pauseDownload();
     super.dispose();
+  }
+
+  void _resetFullImageData() {
+    widget.provider.clearData();
   }
 
   @override
