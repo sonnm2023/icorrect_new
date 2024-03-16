@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_asset.dart';
 import 'package:icorrect/core/app_color.dart';
-import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
@@ -566,14 +565,14 @@ class _MyTestTabState extends State<MyTestTab>
                     ),
                     hasImage
                         ? InkWell(
-                      onTap: () {
-                        _showFullImage(fileName: fileName);
-                      },
-                      child: LoadLocalImageWidget(
-                        imageUrl: fileName,
-                        isInRow: true,
-                      ),
-                    )
+                            onTap: () {
+                              _showFullImage(fileName: fileName);
+                            },
+                            child: LoadLocalImageWidget(
+                              imageUrl: fileName,
+                              isInRow: true,
+                            ),
+                          )
                         : const SizedBox(),
                   ],
                 ),
