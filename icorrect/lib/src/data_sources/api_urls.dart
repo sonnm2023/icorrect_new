@@ -132,4 +132,3 @@ class RequestMethod {
   static const put = 'PUT';
   static const delete = 'DELETE';
 }
-
