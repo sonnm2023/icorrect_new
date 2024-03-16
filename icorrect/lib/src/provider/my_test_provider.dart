@@ -17,6 +17,8 @@ class MyTestProvider extends ChangeNotifier {
   }
 
   void clearData() {
+    _showFullImage = false;
+    _selectedQuestionImageUrl = '';
     _isLessThan2Second = true;
     _visibleOverViewComment = false;
     _responseModel = ResultResponseModel();
@@ -287,6 +289,26 @@ class MyTestProvider extends ChangeNotifier {
   bool get isLessThan2Second => _isLessThan2Second;
   void setIsLessThan2Second(bool isLess) {
     _isLessThan2Second = isLess;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _selectedQuestionImageUrl = '';
+  String get selectedQuestionImageUrl => _selectedQuestionImageUrl;
+  void setSelectedQuestionImageUrl(String url) {
+    _selectedQuestionImageUrl = url;
+  }
+
+  void resetSelectedQuestionImageUrl() {
+    _selectedQuestionImageUrl = '';
+  }
+
+  bool _showFullImage = false;
+  bool get showFullImage => _showFullImage;
+  void setShowFullImage(bool show) {
+    _showFullImage = show;
 
     if (!isDisposed) {
       notifyListeners();

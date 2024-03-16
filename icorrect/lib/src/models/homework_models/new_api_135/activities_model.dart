@@ -69,7 +69,7 @@ class ActivitiesModel {
   set activityAnswer(ActivityAnswer? activityAnswer) =>
       _activityAnswer = activityAnswer;
 
-  bool canReanswer() {
+  bool canReAnswer() {
     if (_activityAnswer != null &&
             (_activityAnswer!.aiOrder != 0 || _activityAnswer!.orderId != 0) ||
         _activityType == ActivityType.test.name ||

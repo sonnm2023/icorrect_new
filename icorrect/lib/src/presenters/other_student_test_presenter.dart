@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/dependency_injection.dart';
@@ -12,6 +13,7 @@ import 'package:icorrect/src/data_sources/repositories/my_test_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/log_models/log_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
@@ -48,7 +50,8 @@ class OtherStudentTestPresenter {
   }
 
   TestDetailModel? testDetail;
-  List<FileTopicModel>? filesTopic;
+  List<QuestionTopicModel>? filesTopic;
+  List<FileTopicModel> imageFiles = [];
 
   Future<void> initializeData() async {
     dio ??= Dio();
@@ -66,7 +69,10 @@ class OtherStudentTestPresenter {
     }
   }
 
-  void getMyTest(String testId) {
+  void getMyTest({
+    required BuildContext context,
+    required String testId,
+  }) {
     assert(_view != null && _repository != null);
 
     if (kDebugMode) {
@@ -85,12 +91,20 @@ class OtherStudentTestPresenter {
               TestDetailModel.fromMyTestJson(dataMap);
           testDetail = TestDetailModel.fromMyTestJson(dataMap);
 
-          List<FileTopicModel> tempFilesTopic =
-              _prepareFileTopicListForDownload(testDetailModel);
+          _prepareFileTopicListForDownload(testDetailModel);
 
-          filesTopic = _prepareFileTopicListForDownload(testDetailModel);
-
-          downloadFiles(testDetailModel, tempFilesTopic);
+          if (imageFiles.isNotEmpty) {
+            //Download images
+            _prepareDownloadImages(
+              context: context,
+              testDetail: testDetail!,
+              activityId: null,
+              list: filesTopic!,
+            );
+          } else {
+            //Download video
+            downloadFiles(testDetailModel, filesTopic!);
+          }
 
           _view!.onGetMyTestSuccess(_getQuestionsAnswer(testDetailModel));
         } else {
@@ -107,6 +121,124 @@ class OtherStudentTestPresenter {
     });
   }
 
+  Future _prepareDownloadImages({
+    required BuildContext context,
+    String? activityId,
+    required TestDetailModel testDetail,
+    required List<QuestionTopicModel> list,
+  }) async {
+    if (null != dio) {
+      int imagesDownloaded = 0;
+      List<String> imageUrls = [];
+
+      for (FileTopicModel fileTopicModel in imageFiles) {
+        String url = downloadFileEP(fileTopicModel.url);
+        if (!imageUrls.contains(url)) {
+          imageUrls.add(url);
+        }
+      }
+
+      for (String imageUrl in imageUrls) {
+        await _downloadAndSaveImage(
+          context,
+          activityId,
+          testDetail.testId.toString(),
+          imageUrl,
+        ).then((isDownloaded) {
+          if (isDownloaded) {
+            imagesDownloaded++;
+            if (imagesDownloaded == imageUrls.length) {
+              if (kDebugMode) {
+                print('Đã tải hết ${imageUrls.length} hình ảnh');
+              }
+              //Start to download files (video)
+              downloadFiles(
+                testDetail,
+                list,
+              );
+            }
+          }
+        });
+      }
+    } else {
+      if (kDebugMode) {
+        print("DEBUG: Dio is closed!");
+      }
+    }
+  }
+
+  Future<bool> _downloadAndSaveImage(
+    BuildContext context,
+    String? activityId,
+    String testId,
+    String imageUrl,
+  ) async {
+    //Add log
+    LogModel log =
+        await Utils.prepareToCreateLog(context, action: LogEvent.imageDownload);
+    //Add more information into log
+    Map<String, dynamic> imageFileDownloadInfo = {
+      StringConstants.k_test_id: testId,
+      StringConstants.k_image_url: imageUrl,
+    };
+    if (activityId != null) {
+      imageFileDownloadInfo
+          .addEntries([MapEntry(StringConstants.k_activity_id, activityId)]);
+    }
+    log.addData(
+        key: "image_file_download_info",
+        value: json.encode(imageFileDownloadInfo));
+
+    try {
+      String folderPath = await FileStorageHelper.getExternalDocumentPath();
+
+      final fileName = imageUrl.split('=').last;
+      final filePath = '$folderPath/$fileName';
+      File file = File(filePath);
+
+      if (await file.exists()) {
+        if (kDebugMode) {
+          print('Hình ảnh $fileName đã có tại: $filePath');
+        }
+        return true; // Trả về true khi tải thành công
+      } else {
+        if (kDebugMode) {
+          print('Tải và lưu hình ảnh tại $filePath');
+        }
+
+        final Response response = await dio!
+            .get(imageUrl, options: Options(responseType: ResponseType.bytes));
+        await file.writeAsBytes(response.data);
+
+        log.addData(key: "local_image_file_path", value: filePath);
+
+        //Add log
+        Utils.prepareLogData(
+          log: log,
+          data: null,
+          message: null,
+          status: LogEvent.success,
+        );
+
+        return true; // Trả về false khi có lỗi
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Download image file error: $e');
+      }
+
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: null,
+        message: 'Download image file error: $e',
+        status: LogEvent.failed,
+      );
+
+      return false; // Trả về false khi có lỗi
+    }
+  }
+
   List<QuestionTopicModel> _getQuestionsAnswer(
       TestDetailModel testDetailModel) {
     List<QuestionTopicModel> questions = [];
@@ -119,20 +251,34 @@ class OtherStudentTestPresenter {
     return questions;
   }
 
-  List<FileTopicModel> _prepareFileTopicListForDownload(
-      TestDetailModel testDetail) {
-    List<FileTopicModel> filesTopic = [];
-    filesTopic.addAll(getAllFilesOfTopic(testDetail.introduce));
-
-    for (int i = 0; i < testDetail.part1.length; i++) {
-      TopicModel temp = testDetail.part1[i];
-      filesTopic.addAll(getAllFilesOfTopic(temp));
+  void _prepareFileTopicListForDownload(TestDetailModel testDetail) {
+    if (filesTopic != null) {
+      if (filesTopic!.isNotEmpty) {
+        filesTopic!.clear();
+      }
+    } else {
+      filesTopic = [];
     }
 
-    filesTopic.addAll(getAllFilesOfTopic(testDetail.part2));
+    //Introduce
+    filesTopic!
+        .addAll(getAllFilesOfTopic(testDetail.introduce, PartOfTest.introduce));
 
-    filesTopic.addAll(getAllFilesOfTopic(testDetail.part3));
-    return filesTopic;
+    //Part 1
+    for (int i = 0; i < testDetail.part1.length; i++) {
+      TopicModel temp = testDetail.part1[i];
+      filesTopic!.addAll(getAllFilesOfTopic(temp, PartOfTest.part1));
+    }
+
+    //Part 2
+    filesTopic!.addAll(getAllFilesOfTopic(testDetail.part2, PartOfTest.part2));
+
+    //Part 3
+    filesTopic!.addAll(getAllFilesOfTopic(testDetail.part3, PartOfTest.part3));
+
+    if (kDebugMode) {
+      print("DEBUG: AllFiles = ${filesTopic!.length}");
+    }
   }
 
   MediaType _mediaType(String type) {
@@ -143,30 +289,100 @@ class OtherStudentTestPresenter {
     return (downloaded / total);
   }
 
-  List<FileTopicModel> getAllFilesOfTopic(TopicModel topic) {
-    List<FileTopicModel> allFiles = [];
-    //Add introduce file
-    allFiles.addAll(topic.files);
+  List<QuestionTopicModel> getAllFilesOfTopic(
+    TopicModel topic,
+    PartOfTest partOfTest,
+  ) {
+    List<QuestionTopicModel> allFiles = [];
 
-    //Add question files
-    for (QuestionTopicModel q in topic.questionList) {
-      allFiles.add(q.files.first);
-      allFiles.addAll(q.answers);
+    //For Part 2 Data Error
+    if (partOfTest == PartOfTest.part2) {
+      if (topic.questionList.isEmpty) {
+        if (kDebugMode) {
+          print("DEBUG: Has no Part 2");
+        }
+      } else {
+        allFiles = _getAllFilesOfTopic(topic, partOfTest, allFiles);
+      }
+    } else {
+      allFiles = _getAllFilesOfTopic(topic, partOfTest, allFiles);
     }
 
-    for (QuestionTopicModel q in topic.followUp) {
-      allFiles.add(q.files.first);
-      allFiles.addAll(q.answers);
+    return allFiles;
+  }
+
+  List<QuestionTopicModel> _getAllFilesOfTopic(
+    TopicModel topic,
+    PartOfTest partOfTest,
+    List<QuestionTopicModel> allFiles,
+  ) {
+    //Add all files of introduce part
+    if (topic.files.isNotEmpty) {
+      for (FileTopicModel file in topic.files) {
+        QuestionTopicModel q = QuestionTopicModel();
+        if (q.files.isEmpty) {
+          q.files = [];
+        }
+        file.fileTopicType = FileTopicType.introduce;
+        q.files.add(file);
+        q.numPart = partOfTest.get;
+        allFiles.add(q);
+      }
+    }
+
+    //Add followup files
+    if (topic.followUp.isNotEmpty) {
+      for (QuestionTopicModel q in topic.followUp) {
+        q.files.first.fileTopicType = FileTopicType.followup;
+        q.files.first.numPart = topic.numPart;
+        q.numPart = partOfTest.get;
+        allFiles.add(q);
+      }
+    }
+
+    //Add question files
+    if (topic.questionList.isNotEmpty) {
+      for (QuestionTopicModel q in topic.questionList) {
+        if (q.files.isNotEmpty) {
+          //Add video url
+          q.files.first.fileTopicType = FileTopicType.question;
+          q.files.first.numPart = topic.numPart;
+          q.numPart = partOfTest.get;
+          allFiles.add(q);
+        }
+
+        //Add image url
+        //For question has an image
+        bool hasImage = Utils.checkHasImage(question: q);
+        if (hasImage) {
+          imageFiles.add(q.files.elementAt(1));
+        }
+      }
     }
 
     if (topic.endOfTakeNote.url.isNotEmpty) {
-      allFiles.add(topic.endOfTakeNote);
+      topic.endOfTakeNote.fileTopicType = FileTopicType.end_of_take_note;
+      topic.endOfTakeNote.numPart = topic.numPart;
+      QuestionTopicModel q = QuestionTopicModel();
+      if (q.files.isEmpty) {
+        q.files = [];
+      }
+      q.files.add(topic.endOfTakeNote);
+      q.numPart = partOfTest.get;
+      allFiles.add(q);
     }
 
     if (topic.fileEndOfTest.url.isNotEmpty) {
-      allFiles.add(topic.fileEndOfTest);
+      topic.fileEndOfTest.fileTopicType = FileTopicType.end_of_test;
+      topic.fileEndOfTest.numPart = topic.numPart;
+      QuestionTopicModel q = QuestionTopicModel();
+      if (q.files.isEmpty) {
+        q.files = [];
+      }
+      q.files.add(topic.fileEndOfTest);
+      q.numPart = partOfTest.get;
+      allFiles.add(q);
     }
-
     return allFiles;
   }
 
@@ -175,12 +391,12 @@ class OtherStudentTestPresenter {
   }
 
   Future downloadFiles(
-      TestDetailModel testDetail, List<FileTopicModel> filesTopic) async {
+      TestDetailModel testDetail, List<QuestionTopicModel> filesTopic) async {
     if (null != dio) {
       loop:
       for (int index = 0; index < filesTopic.length; index++) {
-        FileTopicModel temp = filesTopic[index];
-        String fileTopic = temp.url;
+        QuestionTopicModel temp = filesTopic[index];
+        String fileTopic = temp.files.first.url;
         String fileNameForDownload = Utils.reConvertFileName(fileTopic);
 
         if (filesTopic.isNotEmpty) {
@@ -254,7 +470,7 @@ class OtherStudentTestPresenter {
   }
 
   void reDownloadAutomatic(
-      TestDetailModel testDetail, List<FileTopicModel> filesTopic) {
+      TestDetailModel testDetail, List<QuestionTopicModel> filesTopic) {
     //Download again
     if (autoRequestDownloadTimes <= 3) {
       if (kDebugMode) {

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/my_test_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
+import 'package:icorrect/src/provider/student_test_detail_provider.dart';
 import 'package:provider/provider.dart';
 
 class FullImageWidget extends StatefulWidget {
   final String imageUrl;
-  final SimulatorTestProvider provider;
+  final dynamic provider;
 
   const FullImageWidget(
       {super.key, required this.imageUrl, required this.provider});
@@ -86,8 +88,21 @@ class _FullImageWidgetState extends State<FullImageWidget> {
                 height: 50,
                 child: InkWell(
                   onTap: () {
-                    widget.provider.resetSelectedQuestionImageUrl();
-                    widget.provider.setShowFullImage(false);
+                    if (widget.provider is SimulatorTestProvider ||
+                        widget.provider is MyTestProvider ||
+                        widget.provider is StudentTestProvider) {
+                      GlobalKey<ScaffoldState> key =
+                          Provider.of<AuthProvider>(context, listen: false)
+                              .scaffoldKeys
+                              .first;
+                      if (key == GlobalScaffoldKey.fullImageScaffoldKey) {
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .scaffoldKeys
+                            .removeFirst();
+                      }
+                      widget.provider.resetSelectedQuestionImageUrl();
+                      widget.provider.setShowFullImage(false);
+                    }
                   },
                   child: const Icon(
                     Icons.close,

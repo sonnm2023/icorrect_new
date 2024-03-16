@@ -231,4 +231,28 @@ class StudentTestProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  String _selectedQuestionImageUrl = '';
+  String get selectedQuestionImageUrl => _selectedQuestionImageUrl;
+  void setSelectedQuestionImageUrl(String url) {
+    _selectedQuestionImageUrl = url;
+  }
+
+  void resetSelectedQuestionImageUrl() {
+    _selectedQuestionImageUrl = '';
+  }
+
+  bool _showFullImage = false;
+  bool get showFullImage => _showFullImage;
+  void setShowFullImage(bool show) {
+    _showFullImage = show;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void resetShowFullImage() {
+    _showFullImage = false;
+  }
 }
