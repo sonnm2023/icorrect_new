@@ -34,79 +34,82 @@ class _MyPracticeDetailState extends State<MyPracticeDetail> {
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
     return WillPopScope(
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-              left: true,
-              top: true,
-              right: true,
-              bottom: true,
-              child: SingleChildScrollView(
-                  child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    padding: const EdgeInsets.all(10),
-                    child: Stack(
-                      children: [
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (_myTestProvider!
-                                  .reAnswerOfQuestions.isNotEmpty) {
-                                _showDialogConfirmToOutScreen(
-                                    provider: _myTestProvider!);
-                              } else {
-                                _myTestProvider!.clearData();
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: const Icon(
-                              Icons.arrow_back_outlined,
-                              color: AppColor.defaultPurpleColor,
-                              size: 25,
-                            ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          left: true,
+          top: true,
+          right: true,
+          bottom: true,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.all(10),
+                  child: Stack(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_myTestProvider!
+                                .reAnswerOfQuestions.isNotEmpty) {
+                              _showDialogConfirmToOutScreen(
+                                  provider: _myTestProvider!);
+                            } else {
+                              _myTestProvider!.clearData();
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: const Icon(
+                            Icons.arrow_back_outlined,
+                            color: AppColor.defaultPurpleColor,
+                            size: 25,
                           ),
                         ),
-                        Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            Utils.multiLanguage(
-                                StringConstants.test_detail_tab_title)!,
-                            style: CustomTextStyle.textWithCustomInfo(
-                              context: context,
-                              color: AppColor.defaultPurpleColor,
-                              fontsSize: FontsSize.fontSize_18,
-                              fontWeight: FontWeight.w800,
-                            ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          Utils.multiLanguage(
+                              StringConstants.test_detail_tab_title)!,
+                          style: CustomTextStyle.textWithCustomInfo(
+                            context: context,
+                            color: AppColor.defaultPurpleColor,
+                            fontsSize: FontsSize.fontSize_18,
+                            fontWeight: FontWeight.w800,
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      )
+                    ],
                   ),
-                  const CustomDivider(),
-                  Container(
-                    height: h - 60,
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: MyTestTab(
-                      homeWorkModel: null,
-                      practiceTestId: widget.testId,
-                      provider: _myTestProvider!,
-                    ),
-                  )
-                ],
-              ))),
+                ),
+                const CustomDivider(),
+                Container(
+                  height: h - 60,
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: MyTestTab(
+                    homeWorkModel: null,
+                    practiceTestId: widget.testId,
+                    provider: _myTestProvider!,
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
-        onWillPop: () async {
-          if (_myTestProvider!.reAnswerOfQuestions.isNotEmpty) {
-            _showDialogConfirmToOutScreen(provider: _myTestProvider!);
-          } else {
-            _myTestProvider!.clearData();
-            Navigator.of(context).pop();
-          }
-          return false;
-        });
+      ),
+      onWillPop: () async {
+        if (_myTestProvider!.reAnswerOfQuestions.isNotEmpty) {
+          _showDialogConfirmToOutScreen(provider: _myTestProvider!);
+        } else {
+          _myTestProvider!.clearData();
+          Navigator.of(context).pop();
+        }
+        return false;
+      },
+    );
   }
 
   void _showDialogConfirmToOutScreen({required MyTestProvider provider}) {

@@ -154,9 +154,29 @@ class _MyTestTabState extends State<MyTestTab>
     return _buildMyTest();
   }
 
+  bool _checkAIScoring() {
+    if (widget.homeWorkModel == null) {
+      return false;
+    }
+
+    if (widget.homeWorkModel!.activityAnswer == null) {
+      return false;
+    }
+
+    if (widget.homeWorkModel!.activityAnswer!.aiResponseLink.isNotEmpty) {
+      return true;
+    }
+
+    return false;
+  }
+
   Widget _buildMyTest() {
     w = MediaQuery.of(context).size.width;
     h = MediaQuery.of(context).size.height;
+
+    bool isAIScoring = _checkAIScoring();
+    double bottomMargin = isAIScoring ? 60 : 0;
+
     return Consumer<MyTestProvider>(
       builder: (context, provider, child) {
         return Stack(
@@ -171,7 +191,7 @@ class _MyTestTabState extends State<MyTestTab>
                         color: AppColor.defaultGraySlightColor,
                         height: h,
                         alignment: Alignment.topCenter,
-                        padding: const EdgeInsets.only(top: 10, bottom: 70),
+                        padding: EdgeInsets.only(top: 10, bottom: bottomMargin),
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const AlwaysScrollableScrollPhysics(),
