@@ -91,7 +91,9 @@ class _TestDetailScreenState extends State<TestDetailScreen>
     Utils.checkInternetConnection().then(
       (isConnected) async {
         if (isConnected) {
-          _presenter!.getMyTest(widget.studentResultModel.testId.toString());
+          _presenter!.getMyTest(
+              context: context,
+              testId: widget.studentResultModel.testId.toString());
         } else {
           //Show connect error here
           if (kDebugMode) {
@@ -304,14 +306,14 @@ class _TestDetailScreenState extends State<TestDetailScreen>
                   ),
                   hasImage
                       ? InkWell(
-                    onTap: () {
-                      _showFullImage(fileName: fileName);
-                    },
-                    child: LoadLocalImageWidget(
-                      imageUrl: fileName,
-                      isInRow: true,
-                    ),
-                  )
+                          onTap: () {
+                            _showFullImage(fileName: fileName);
+                          },
+                          child: LoadLocalImageWidget(
+                            imageUrl: fileName,
+                            isInRow: true,
+                          ),
+                        )
                       : const SizedBox(),
                 ],
               ),
