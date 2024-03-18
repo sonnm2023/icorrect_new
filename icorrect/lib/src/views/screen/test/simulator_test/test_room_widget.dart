@@ -42,6 +42,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widg
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class TestRoomWidget extends StatefulWidget {
@@ -110,6 +111,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
+    _simulatorTestProvider!.initSimulatorTestProvider();
+
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -493,12 +496,25 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
           return Stack(
             children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: NativeVideoPlayerView(
-                  onViewReady: _initController,
-                ),
+              FutureBuilder(
+                future: _simulatorTestProvider!.initializeVideoPlayerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: VideoPlayer(_simulatorTestProvider!.controller),
+                    );
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
+              // AspectRatio(
+              //   aspectRatio: 16 / 9,
+              //   child: NativeVideoPlayerView(
+              //     onViewReady: _initController,
+              //   ),
+              // ),
 
               //Play video controller buttons
               _simulatorTestProvider!.doingStatus != DoingStatus.finish
@@ -1530,7 +1546,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 });
               }
 
-              if (_currentQuestion!.files.first.fileTopicType == FileTopicType.end_of_take_note) {
+              if (_currentQuestion!.files.first.fileTopicType ==
+                  FileTopicType.end_of_take_note) {
                 _endOfTakeNoteIndex = _playingIndex;
               }
             });

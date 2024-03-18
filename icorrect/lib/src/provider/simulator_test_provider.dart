@@ -2,14 +2,68 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:video_player/video_player.dart';
 // import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
   bool isDisposed = false;
+
+  late VideoPlayerController controller;
+  late Future<void> initializeVideoPlayerFuture;
+
+  int _currentPlayingIndex = 0;
+  void increasePlayingIndex() {
+    _currentPlayingIndex++;
+  }
+
+  Future<void> initSimulatorTestProvider() async {
+    String path = await _getPath();
+
+    controller = VideoPlayerController.asset(path);
+    initializeVideoPlayerFuture = controller.initialize().then((_) {
+      controller.play();
+    });
+    controller.addListener(_onVideoStateChanged);
+  }
+
+  void _onVideoStateChanged() {
+    if (controller.value.isPlaying &&
+        controller.value.duration == controller.value.position) {
+      _moveToNextVideo();
+    }
+  }
+
+  void _moveToNextVideo() {
+    if (_currentPlayingIndex < listVideoSource.length - 1) {
+      increasePlayingIndex();
+
+      controller = VideoPlayerController.asset(
+        listVideoSource[_currentPlayingIndex].files.first.url,
+      );
+      initializeVideoPlayerFuture = controller.initialize().then((_) {
+        controller.play();
+      });
+      controller.addListener(_onVideoStateChanged);
+      notifyListeners();
+    }
+  }
+
+  Future<String> _getPath() async {
+    if (listVideoSource.isEmpty) {
+      return "";
+    }
+
+    String result = await FileStorageHelper.getFilePath(
+        listVideoSource[_currentPlayingIndex].files.first.url,
+        MediaType.video,
+        null);
+    return result;
+  }
 
   @override
   void dispose() {
