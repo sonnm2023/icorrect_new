@@ -80,7 +80,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             if (homeWorkProvider.isProcessing) {
               _loading!.show(context: context, isViewAIResponse: false);
             } else {
-              _loading!.hide();
+              Utils.hideLoading(_loading);
             }
             return const SizedBox();
           },

@@ -205,16 +205,11 @@ class _HighLightTabState extends State<HighLightTab>
       print('DEBUG: getSpecialHomeWork ${studentsResults.length}');
     }
     widget.provider.setHighLightHomeworks(studentsResults);
-    _loading?.hide();
+    Utils.hideLoading(_loading);
   }
 
   @override
   void onGetSpecialHomeWorksError(String message) {
-    _loading?.hide();
-    // Fluttertoast.showToast(
-    //   msg: message,
-    //   backgroundColor: AppColor.defaultGrayColor,
-    //   textColor: Colors.black,
-    // );
+    Utils.hideLoading(_loading);
   }
 }

@@ -868,9 +868,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       print("DEBUG: onGetTestDetailError");
     }
 
-    if (null != _loading) {
-      _loading!.hide();
-    }
+    Utils.hideLoading(_loading);
 
     String? msg = Utils.multiLanguage(message);
 
@@ -885,9 +883,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestError(String msg) {
-    if (null != _loading) {
-      _loading!.hide();
-    }
+    Utils.hideLoading(_loading);
+
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
@@ -903,10 +900,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   @override
   void onSubmitTestSuccess(String msg) {
-    if (_simulatorTestProvider!.doingStatus == DoingStatus.finish) {
-      _loading!.hide();
-    } else {
-      _loading!.hide();
+    Utils.hideLoading(_loading);
+    if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
     }
 

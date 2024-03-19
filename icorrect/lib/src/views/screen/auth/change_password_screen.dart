@@ -121,19 +121,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                   ),
                 ],
               ),
-              // Consumer<AuthProvider>(
-              //   builder: (context, authProvider, child) {
-              //     // if (context
-              //     //         .select((AuthProvider value) => value.isChanging) &&
-              //     //     _loading!.isShowing) {
-              //     if (authProvider.isChanging) {
-              //       _loading!.show(context: context, isViewAIResponse: false);
-              //     } else {
-              //       _loading!.hide();
-              //     }
-              //     return Container();
-              //   },
-              // ),
             ],
           ),
         ),
@@ -238,19 +225,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordSuccess(String message) {
-    // _loading!.isShowing = false;
-    // _loading!.hide();
-    // _authProvider.updateChangePasswordStatus(processing: false).then((value) {
-    //   //Show error message
-    //   showToastMsg(
-    //     msg: message,
-    //     toastState: ToastStatesType.success,
-    //     isCenter: false,
-    //   );
-
-    //   //Go back login screen
-    //   Navigator.of(context).pop();
-    // });
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.success,
@@ -263,16 +237,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
 
   @override
   void onChangePasswordError(String message) {
-    // _loading!.isShowing = false;
-    // _loading!.hide();
-    //Show error message
-    // _authProvider.updateChangePasswordStatus(processing: false).then((value) {
-    //   showToastMsg(
-    //     msg: message,
-    //     toastState: ToastStatesType.error,
-    //     isCenter: false,
-    //   );
-    // });
     showToastMsg(
       msg: message,
       toastState: ToastStatesType.error,

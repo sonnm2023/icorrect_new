@@ -432,7 +432,9 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
       _cameraService!.saveVideoDoingTest(
         (savedFile) {
           _cameraService!.cameraController!.pausePreview();
-          _loading!.hide();
+
+          Utils.hideLoading(_loading);
+
           if (savedFile.existsSync() &&
               (savedFile.lengthSync() / (1024 * 1024)) > 40) {
             _showResizeFileDialog(savedFile);
@@ -627,7 +629,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
   @override
   void onSubmitAuthError(String message) async {
     _videoAuthProvider!.setIsSubmitLoading(false);
-    _loading!.hide();
+    Utils.hideLoading(_loading);
 
     await showDialog(
       context: context,
@@ -650,7 +652,7 @@ class _VideoAuthenticationRecordState extends State<VideoAuthenticationRecord>
 
   @override
   void onSubmitAuthSuccess(File savedFile, String message) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
 
     _deleteFile(File(savedFile.path)).then(
       (value) {

@@ -822,13 +822,13 @@ class _MyTestTabState extends State<MyTestTab>
 
   @override
   void onGetMyTestSuccess(List<QuestionTopicModel> questions) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     widget.provider.setAnswerOfQuestions(questions);
   }
 
   @override
   void onDownloadFilesFail(AlertInfo alertInfo) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     Fluttertoast.showToast(
       msg: alertInfo.description,
       backgroundColor: AppColor.defaultGrayColor,
@@ -843,7 +843,7 @@ class _MyTestTabState extends State<MyTestTab>
 
   @override
   void onGetMyTestFail(AlertInfo alertInfo) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     Fluttertoast.showToast(
         msg: alertInfo.description,
         backgroundColor: AppColor.defaultGrayColor,
@@ -876,7 +876,7 @@ class _MyTestTabState extends State<MyTestTab>
         fontSize: 18,
         toastLength: Toast.LENGTH_LONG);
 
-    _loading!.hide();
+    Utils.hideLoading(_loading);
   }
 
   @override
@@ -885,7 +885,8 @@ class _MyTestTabState extends State<MyTestTab>
       print("DEBUG: updateAnswerFail ${info.description.toString()}");
     }
     //AlertsDialog.init().showDialog(context, info, this);
-    _loading!.hide();
+    Utils.hideLoading(_loading);
+
     Fluttertoast.showToast(
       msg: info.description,
       backgroundColor: AppColor.defaultGrayColor,

@@ -182,7 +182,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
             if (provider.isTestDetailLoading) {
               _loading!.show(context: context, isViewAIResponse: false);
             } else {
-              _loading!.hide();
+              Utils.hideLoading(_loading);
             }
             return const SizedBox();
           },
@@ -414,9 +414,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
       print("DEBUG: onGetTestDetailError");
     }
 
-    if (null != _loading) {
-      _loading!.hide();
-    }
+    Utils.hideLoading(_loading);
 
     String? msg = Utils.multiLanguage(message);
 

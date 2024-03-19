@@ -569,7 +569,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
   @override
   void onGetMyTestListError(String message) async {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     _myPracticeListProvider!.setShowLoadingBottom(false);
     _myPracticeListProvider!.setIsProcessing(false);
     _isRefresh = false;
@@ -597,7 +597,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
   @override
   void onDeleteTestError(String message) async {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     _myPracticeListProvider!.setShowLoadingBottom(false);
 
     String? msg = Utils.multiLanguage(message);
@@ -623,7 +623,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
 
   @override
   void onDeleteTestSuccess(String message, int indexDeleted) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
 
     String? msg = Utils.multiLanguage(message);
 
@@ -671,7 +671,7 @@ class _MyPracticeTabState extends State<MyPracticeTab>
       _myPracticeListProvider!.setShowLoadingBottom(false);
       _myPracticeListProvider!.addMyTestsList(practiceTests);
     } else {
-      _loading!.hide();
+      Utils.hideLoading(_loading);
       _myPracticeListProvider!.setMyTestsList(practiceTests);
     }
 

@@ -1530,7 +1530,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                 });
               }
 
-              if (_currentQuestion!.files.first.fileTopicType == FileTopicType.end_of_take_note) {
+              if (_currentQuestion!.files.first.fileTopicType ==
+                  FileTopicType.end_of_take_note) {
                 _endOfTakeNoteIndex = _playingIndex;
               }
             });
@@ -2310,9 +2311,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onSubmitTestError(String msg) async {
-    if (null != _loading) {
-      _loading!.hide();
-    }
+    Utils.hideLoading(_loading);
+
     //Update indicator process status
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
@@ -2505,9 +2505,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onUpdateReAnswersError(String msg) {
-    if (null != _loading) {
-      _loading!.hide();
-    }
+    Utils.hideLoading(_loading);
+
     //Update indicator process status
     _simulatorTestProvider!.setVisibleSaveTheTest(true);
 
@@ -2529,9 +2528,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   @override
   void onUpdateReAnswersSuccess(String msg) {
-    if (null != _loading) {
-      _loading!.hide();
-    }
+    Utils.hideLoading(_loading);
 
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();

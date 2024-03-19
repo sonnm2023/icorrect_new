@@ -188,20 +188,13 @@ class _OtherTabState extends State<OtherTab>
 
   @override
   void onGetSpecialHomeWorkSuccess(List<StudentResultModel> studentsResults) {
-    _loading?.hide();
+    Utils.hideLoading(_loading);
     widget.provider.setOtherLightHomeWorks(studentsResults);
   }
 
   @override
   void onGetSpecialHomeWorksError(String message) {
-    _loading?.hide();
-    // Fluttertoast.showToast(
-    //     msg: message,
-    //     backgroundColor: AppColor.defaultGrayColor,
-    //     textColor: Colors.black,
-    //     toastLength: Toast.LENGTH_LONG,
-    //     gravity: ToastGravity.CENTER,
-    // );
+    Utils.hideLoading(_loading);
   }
 
   @override

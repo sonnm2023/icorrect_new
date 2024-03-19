@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen>
                 if (context.select((AuthProvider value) => value.isLogining)) {
                   _loading!.show(context: context, isViewAIResponse: false);
                 } else {
-                  _loading!.hide();
+                  Utils.hideLoading(_loading);
                 }
                 return Container();
               },
@@ -390,7 +390,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (kDebugMode) {
       print("DEBUG: onLoginError");
     }
-    _loading!.hide();
+    Utils.hideLoading(_loading);
 
     Utils.checkInternetConnection().then((isConnected) {
       if (null != errorCode) {

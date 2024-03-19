@@ -27,6 +27,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/presenters/homework_presenter.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
@@ -1134,27 +1135,9 @@ class Utils {
     return result;
   }
 
-  // static Future<int> getAudioDuration(List<QuestionTopicModel> list) async {
-  //   audio.AudioPlayer audioPlayer = audio.AudioPlayer();
-  //   int totalDuration = 0;
-  //   for (QuestionTopicModel q in list) {
-  //     String path = await Utils.createNewFilePath(q.answers[q.repeatIndex].url);
-
-  //     audioPlayer.setSourceDeviceFile(path);
-  //     Duration? duration = await audioPlayer.getDuration();
-
-  //     if (duration != null) {
-  //       totalDuration += duration.inMilliseconds;
-  //     }
-  //   }
-
-  //   // Print the duration.
-  //   if (kDebugMode) {
-  //     print('Total audio duration: $totalDuration');
-  //   }
-
-  //   audioPlayer.dispose();
-
-  //   return totalDuration;
-  // }
+  static void hideLoading(CircleLoading? loading) {
+    if (null != loading) {
+      loading.hide();
+    }
+  }
 }

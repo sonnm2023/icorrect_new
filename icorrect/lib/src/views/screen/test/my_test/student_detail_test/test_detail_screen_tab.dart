@@ -409,7 +409,8 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   @override
   void onDownloadFilesFail(AlertInfo alertInfo) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
+
     Fluttertoast.showToast(
       msg: alertInfo.description,
       backgroundColor: AppColor.defaultGrayColor,
@@ -482,7 +483,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   @override
   void onGetMyTestFail(AlertInfo alertInfo) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
 
     Fluttertoast.showToast(
         msg: alertInfo.description,
@@ -497,7 +498,7 @@ class _TestDetailScreenState extends State<TestDetailScreen>
 
   @override
   void onGetMyTestSuccess(List<QuestionTopicModel> questions) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     widget.provider.setAnswerOfQuestions(questions);
   }
 

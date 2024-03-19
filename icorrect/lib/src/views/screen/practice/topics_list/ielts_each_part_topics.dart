@@ -256,7 +256,8 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
 
   @override
   void onGetIELTSTopicsFail(String message) async {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -278,7 +279,7 @@ class _IELTSEachPartTopicsState extends State<IELTSEachPartTopics>
 
   @override
   void onGetIELTSTopicsSuccess(List<IELTSTopicModel> topicsList) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     _ieltsTopicsProvider!.setIELTSTopics(topicsList);
 
     _addAllTopics();

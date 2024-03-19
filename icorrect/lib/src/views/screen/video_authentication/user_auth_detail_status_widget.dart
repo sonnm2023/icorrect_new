@@ -32,13 +32,13 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   double w = 0, h = 0;
   VideoPlayerController? _playerController;
   UserAuthDetailPresenter? _authDetailPresenter;
-  CircleLoading? _circleLoading;
+  CircleLoading? _loading;
   UserAuthDetailProvider? _provider;
 
   @override
   void initState() {
     super.initState();
-    _circleLoading = CircleLoading();
+    _loading = CircleLoading();
     _authDetailPresenter = UserAuthDetailPresenter(this);
     _provider = Provider.of<UserAuthDetailProvider>(context, listen: false);
     _playerController = VideoPlayerController.file(File(""));
@@ -47,7 +47,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
   }
 
   void _getUserAuthDetail() {
-    _circleLoading!.show(context: context, isViewAIResponse: false);
+    _loading!.show(context: context, isViewAIResponse: false);
     _authDetailPresenter!.getUserAuthDetail(context);
     Future.delayed(Duration.zero, () {
       _provider!.clearData();
@@ -473,7 +473,8 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   @override
   void onGetUserAuthDetailError(String message) async {
-    _circleLoading!.hide();
+    Utils.hideLoading(_loading);
+
     _provider!.setStartGetUserAuthDetail(false);
 
     await showDialog(
@@ -497,8 +498,8 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   @override
   void onGetUserAuthDetailSuccess(UserAuthenDetailModel userAuthenDetailModel) {
+    Utils.hideLoading(_loading);
     _provider!.setStartGetUserAuthDetail(false);
-    _circleLoading!.hide();
     _provider!.setUserAuthenModel(userAuthenDetailModel);
     if (userAuthenDetailModel.videosAuthDetail.isNotEmpty) {
       String urlVideo = fileEP(userAuthenDetailModel.videosAuthDetail.last.url);
@@ -513,7 +514,7 @@ class _UserAuthDetailStatusState extends State<UserAuthDetailStatus>
 
   @override
   void userNotFoundWhenLoadAuth(String message) {
-    _circleLoading!.hide();
+    Utils.hideLoading(_loading);
     _provider!.setStartGetUserAuthDetail(false);
   }
 }

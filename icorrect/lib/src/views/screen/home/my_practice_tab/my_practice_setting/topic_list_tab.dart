@@ -339,7 +339,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
 
   @override
   void onGetListTopicOfBankError(String message) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     if (kDebugMode) {
       print("DEBUG: implement onGetListTopicOfBankFail");
     }
@@ -347,7 +347,7 @@ class _TopicListTabScreenState extends State<TopicListTabScreen>
 
   @override
   void onGetListTopicOfBankSuccess(List<Topic> topics) {
-    _loading!.hide();
+    Utils.hideLoading(_loading);
     if (kDebugMode) {
       print("DEBUG: implement onGetListTopicOfBankSuccess");
     }
