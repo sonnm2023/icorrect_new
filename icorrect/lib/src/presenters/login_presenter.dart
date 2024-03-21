@@ -250,7 +250,7 @@ class LoginPresenter {
 
         _view!.onLoginError(
           Utils.multiLanguage(StringConstants.common_error_message)!,
-          null,
+          dataMap[StringConstants.k_error_code],
         );
       }
     }).catchError(

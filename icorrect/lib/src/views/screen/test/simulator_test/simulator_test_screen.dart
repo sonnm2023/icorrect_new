@@ -22,6 +22,7 @@ import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/new_logic/doing_test_screen.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/other_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
@@ -68,6 +69,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   bool _isOffline = false;
   CircleLoading? _loading;
   bool _isExam = false;
+  List<String> _videoPathList = [];
 
   TabBar get _tabBar {
     return TabBar(
@@ -654,10 +656,24 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
+  Future<void> _prepareVideoPathList() async {
+    if (null == _simulatorTestProvider) return;
+
+    if (_simulatorTestProvider!.listVideoSource.isEmpty) return;
+
+    for (QuestionTopicModel q in _simulatorTestProvider!.listVideoSource) {
+      String path = await FileStorageHelper.getFilePath(
+          q.files.first.url, MediaType.video, null);
+      _videoPathList.add(path);
+    }
+  }
+
   Widget _buildBody(SimulatorTestProvider provider) {
     if (kDebugMode) {
       print("DEBUG: SimulatorTest --- build -- buildBody");
     }
+
+    bool isNewLogic = true;
 
     if (provider.isDownloadProgressing) {
       return Column(
@@ -684,11 +700,15 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       return SizedBox(
         child: Stack(
           children: [
-            TestRoomWidget(
-              activitiesModel: widget.activitiesModel,
-              simulatorTestPresenter: _simulatorTestPresenter!,
-              isExam: _isExam,
-            ),
+            //TODO
+            //Check setting isNewLogic
+            isNewLogic
+                ? DoingTestScreen(videoPaths: _videoPathList, currentIndex: 0)
+                : TestRoomWidget(
+                    activitiesModel: widget.activitiesModel,
+                    simulatorTestPresenter: _simulatorTestPresenter!,
+                    isExam: _isExam,
+                  ),
             Visibility(
               visible: provider.submitStatus == SubmitStatus.submitting,
               child: const DefaultLoadingIndicator(
@@ -1015,6 +1035,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       QuestionTopicModel q = list[i];
       _simulatorTestProvider!.addVideoSource(q);
     }
+
+    await _prepareVideoPathList();
   }
 
   @override
