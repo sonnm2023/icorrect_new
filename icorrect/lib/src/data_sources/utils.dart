@@ -31,6 +31,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -1138,6 +1139,29 @@ class Utils {
   static void hideLoading(CircleLoading? loading) {
     if (null != loading) {
       loading.hide();
+    }
+  }
+
+  static Future<String> getVideoFilePath(String videoFileName) async {
+    // Lấy đường dẫn của thư mục tạm thời
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+
+    // Đường dẫn tệp video trong thư mục assets
+    String assetsPath = 'assets/video_test/$videoFileName';
+
+    // Đường dẫn tệp video trong thư mục tạm thời
+    String tempFilePath = '$tempPath/$videoFileName';
+
+    // Kiểm tra xem tệp đã tồn tại trong thư mục tạm thời chưa
+    if (await File(tempFilePath).exists()) {
+      return tempFilePath; // Trả về đường dẫn nếu đã tồn tại
+    } else {
+      // Nếu tệp không tồn tại, sao chép tệp từ thư mục assets vào thư mục tạm thời
+      ByteData data = await rootBundle.load(assetsPath);
+      List<int> bytes = data.buffer.asUint8List();
+      await File(tempFilePath).writeAsBytes(bytes);
+      return tempFilePath;
     }
   }
 }
