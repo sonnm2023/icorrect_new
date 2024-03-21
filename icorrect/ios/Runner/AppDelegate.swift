@@ -52,10 +52,20 @@ import Foundation
                     debugPrint("DEBUG: log content: \(String(describing: content))")
                     let param: [String : Any] = ["secretkey": secretkey, "file": content]
                     NetworkManager.shared.callingHttpPostMethodWithFile(params: param, apiname: apiUrl, filePath: filePath, success: { [weak self](data) in
-                        guard self != nil else {return}
+                        guard self != nil else {return}    
                         if data == nil {
                             success(true)
                         } else {
+                            if let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []) {
+                                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                                    DispatchQueue.main.async {
+                                        self!.showDialogMessage(message: jsonString)
+                                    }
+                                } else {
+                                    // Không thể chuyển đổi thành String, xử lý tùy thuộc vào trường hợp cụ thể của bạn
+                                    debugPrint("Không thể chuyển đổi response thành String.")
+                                }
+                            }
                             success(false)
                         }
                     }, failure: { (error) in
@@ -83,6 +93,20 @@ import Foundation
         catch let error as NSError {
             debugPrint("DEBUG: An error took place: \(error)")
         }
+    }
+
+    // Function to show dialog message
+    private func showDialogMessage(message: String) {
+        guard let rootViewController = UIApplication.shared.keyWindow?.rootViewController else {
+            print("Không thể tìm thấy rootViewController")
+            return
+        }
+        
+        let alertController = UIAlertController(title: "Send log: Response", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        
+        rootViewController.present(alertController, animated: true, completion: nil)
     }
 }
 
