@@ -1140,4 +1140,15 @@ class Utils {
       loading.hide();
     }
   }
+
+  static Future<String> streamedResponseToString(
+      http.StreamedResponse response) async {
+    // Đọc tất cả dữ liệu từ StreamedResponse vào một List
+    List<int> bytes = await response.stream.toBytes();
+
+    // Decode List<int> thành String bằng utf8
+    String responseBody = utf8.decode(bytes);
+
+    return responseBody;
+  }
 }

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/secure_storage.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
@@ -145,6 +146,18 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+void _showLog(String message) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.CENTER,
+    timeInSecForIosWeb: 5,
+    backgroundColor: Colors.red,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
+}
+
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
@@ -216,6 +229,11 @@ void callbackDispatcher() {
         print("DEBUG-SENDLOG: ERROR: ${res.toString()}");
       }
     }
+
+    // Show dialog when send log
+    String responseBody = "SEND LOG:\n";
+    responseBody += await Utils.streamedResponseToString(res);
+    _showLog(responseBody);
 
     return Future.value(true);
   });
