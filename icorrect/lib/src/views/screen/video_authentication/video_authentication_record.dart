@@ -17,7 +17,6 @@ import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/submit_video_auth.dart';
 import 'package:icorrect/src/views/widget/focus_user_face_widget.dart';

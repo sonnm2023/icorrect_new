@@ -15,7 +15,6 @@ import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/screen/video_authentication/video_authentication_record.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';

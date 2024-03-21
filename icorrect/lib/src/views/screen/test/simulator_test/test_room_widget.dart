@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+// ignore: library_prefixes
 import 'package:audioplayers/audioplayers.dart' as AudioPlayers;
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';

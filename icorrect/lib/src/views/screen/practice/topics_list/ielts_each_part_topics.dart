@@ -11,7 +11,6 @@ import 'package:icorrect/src/provider/ielts_topics_provider.dart';
 import 'package:icorrect/src/provider/ielts_topics_screen_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
-import 'package:icorrect/src/views/screen/other_views/dialog/message_dialog.dart';
 import 'package:icorrect/src/views/widget/divider.dart';
 import 'package:provider/provider.dart';
 
