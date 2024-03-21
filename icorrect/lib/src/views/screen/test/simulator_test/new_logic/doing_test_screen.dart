@@ -28,22 +28,19 @@ class QuestionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _buildBody(context);
+  }
+
+  Widget _buildBody(BuildContext context) {
     return Consumer<VideoRecordingProvider>(
         builder: (context, provider, child) {
-      final provider = Provider.of<VideoRecordingProvider>(context);
-      final _videoPlayerController = provider.videoPlayerController;
-      final _showRecordView = provider.showRecordView;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
             children: [
-              // Widget để phát video
-              _videoPlayerController!.value.isInitialized
-                  ? _buildVideoContainer(context, _videoPlayerController)
-                  : const CircularProgressIndicator(),
-              // Widget để hiển thị view record
-              _showRecordView ? const RecordView() : Container(),
+              _buildVideoPlayerContainer(context, provider),
+              provider.showRecordView ? const RecordView() : const SizedBox(),
             ],
           ),
         ],
@@ -51,25 +48,29 @@ class QuestionWidget extends StatelessWidget {
     });
   }
 
-  Widget _buildVideoContainer(
-      BuildContext context, VideoPlayerController videoPlayerController) {
+  Widget _buildVideoPlayerContainer(
+      BuildContext context, VideoRecordingProvider provider) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 200,
+      height: 230,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage("assets/images/bg_test_room.png"),
           fit: BoxFit.cover,
         ),
       ),
-      child: _buildVideoPlayerView(videoPlayerController),
-    );
-  }
-
-  Widget _buildVideoPlayerView(VideoPlayerController videoPlayerController) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: VideoPlayer(videoPlayerController),
+      child: provider.isReady
+          ? AspectRatio(
+              aspectRatio: 16 / 9,
+              child: VideoPlayer(provider.videoPlayerController!),
+            )
+          : const Center(
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: CircularProgressIndicator(),
+              ),
+            ),
     );
   }
 }
@@ -123,6 +124,17 @@ class VideoRecordingProvider with ChangeNotifier {
 
   int get currentIndex => _currentIndex; // Getter để lấy currentIndex
 
+  bool _isReady = false;
+  bool get isReady => _isReady;
+  void setIsReady(bool value) {
+    _isReady = value;
+    notifyListeners();
+  }
+
+  void resetIsReady() {
+    _isReady = false;
+  }
+
   VideoRecordingProvider(this._videoPaths) {
     String videoPath = _videoPaths[_currentIndex];
     File videoFile = File(videoPath);
@@ -147,7 +159,12 @@ class VideoRecordingProvider with ChangeNotifier {
       // Thêm lắng nghe sự kiện khi video đã phát xong
       _videoPlayerController!.addListener(_onVideoPlayerStateChanged);
       // Bắt đầu phát video
-      _videoPlayerController!.play();
+      if (_currentIndex == 0) {
+        setIsReady(true);
+        _videoPlayerController!.pause();
+      } else {
+        _videoPlayerController!.play();
+      }
     } else {
       // Nếu đã phát hết danh sách video, không làm gì cả
       print("Đã phát hết danh sách video");
