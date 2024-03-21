@@ -32,46 +32,51 @@ class QuestionWidget extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
+    return Stack(
+      children: [
+        _buildVideoPlayerContainer(context),
+        const RecordView(),
+      ],
+    );
+  }
+
+  Widget _buildVideoPlayerContainer(BuildContext context) {
     return Consumer<VideoRecordingProvider>(
         builder: (context, provider, child) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              _buildVideoPlayerContainer(context, provider),
-              provider.showRecordView ? const RecordView() : const SizedBox(),
-            ],
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 230,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/bg_test_room.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: provider.isReady
+                ? AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: VideoPlayer(provider.videoPlayerController!),
+                  )
+                : const Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+          ),
+          //Question list
+          Expanded(
+            child: const SizedBox(
+              child: Text("Question list"),
+            ),
           ),
         ],
       );
     });
-  }
-
-  Widget _buildVideoPlayerContainer(
-      BuildContext context, VideoRecordingProvider provider) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 230,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/bg_test_room.png"),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: provider.isReady
-          ? AspectRatio(
-              aspectRatio: 16 / 9,
-              child: VideoPlayer(provider.videoPlayerController!),
-            )
-          : const Center(
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-    );
   }
 }
 
@@ -80,29 +85,38 @@ class RecordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<VideoRecordingProvider>(context);
-    final _timerSeconds = provider.timerSeconds;
-
-    return Positioned.fill(
-      child: Container(
-        color: Colors.black.withOpacity(0.5),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Recording...',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+    return Consumer<VideoRecordingProvider>(
+      builder: (context, provider, child) {
+        return Visibility(
+          visible: provider.showRecordView,
+          child: Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Recording...',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      '${provider.timerSeconds}',
+                      style: const TextStyle(color: Colors.white, fontSize: 36),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                '$_timerSeconds',
-                style: const TextStyle(color: Colors.white, fontSize: 36),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -119,6 +133,14 @@ class VideoRecordingProvider with ChangeNotifier {
   VideoPlayerController? get videoPlayerController => _videoPlayerController;
 
   bool get showRecordView => _showRecordView;
+  void setShowRecordView(bool value) {
+    _showRecordView = value;
+    notifyListeners();
+  }
+
+  void resetShowRecordView() {
+    _showRecordView = false;
+  }
 
   int get timerSeconds => _timerSeconds;
 
@@ -161,7 +183,7 @@ class VideoRecordingProvider with ChangeNotifier {
       // Bắt đầu phát video
       if (_currentIndex == 0) {
         setIsReady(true);
-        _videoPlayerController!.pause();
+        _videoPlayerController!.play();
       } else {
         _videoPlayerController!.play();
       }
@@ -172,14 +194,12 @@ class VideoRecordingProvider with ChangeNotifier {
   }
 
   void _onVideoPlayerStateChanged() {
-    if (_videoPlayerController!.value.isPlaying &&
-        _videoPlayerController!.value.position ==
-            _videoPlayerController!.value.duration) {
-      // Khi video phát xong, bắt đầu hiển thị view record
-      _showRecordView = true;
+    // if (_videoPlayerController!.value.isPlaying &&
+    if (_videoPlayerController!.value.position ==
+        _videoPlayerController!.value.duration) {
       // Bắt đầu đếm ngược
       _startCountdown();
-      notifyListeners();
+      setShowRecordView(true);
     }
   }
 

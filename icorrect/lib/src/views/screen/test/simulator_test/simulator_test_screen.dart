@@ -662,8 +662,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (_simulatorTestProvider!.listVideoSource.isEmpty) return;
 
     //For test with low quality video local
-    String path1 = await Utils.getVideoFilePath("r5_173a.mp4");
-    _videoPathList.add(path1);
+    // String path1 = await Utils.getVideoFilePath("r5_173a.mp4");
+    // _videoPathList.add(path1);
 
     for (QuestionTopicModel q in _simulatorTestProvider!.listVideoSource) {
       String path = await FileStorageHelper.getFilePath(
