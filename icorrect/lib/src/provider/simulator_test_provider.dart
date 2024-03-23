@@ -601,7 +601,33 @@ class SimulatorTestProvider with ChangeNotifier {
     _totalDuration = 0;
   }
 
+  List<QuestionTopicModel> _errorQuestionList = [];
+  List<QuestionTopicModel> get errorQuestionList => _errorQuestionList;
+  void addErrorQuestion(QuestionTopicModel q) {
+    _errorQuestionList.add(q);
+  }
+
+  void resetErrorQuestionList() {
+    _errorQuestionList.clear();
+  }
+
+  void removeErrorQuestion(QuestionTopicModel q) {
+    if (errorQuestionList.isEmpty) return;
+    if (errorQuestionList.contains(q)) {
+      _errorQuestionList.remove(q);
+    }
+  }
+
+  void updateQuestionStatus(QuestionTopicModel q) {
+    int index = questionList.indexWhere((question) => question.id == q.id);
+    if (index != -1) {
+      questionList[index] = q;
+      notifyListeners();
+    }
+  }
+
   void resetAll() {
+    _errorQuestionList = [];
     _totalDuration = 0;
     _needRefreshActivityList = false;
     _hasOrder = false;

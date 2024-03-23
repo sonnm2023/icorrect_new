@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 // ignore: depend_on_referenced_packages
@@ -8,6 +9,9 @@ import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
+
+final double DURATION_MIN = 5;
 
 class DoingTestService {
   static Future<http.MultipartRequest> formDataRequest({
@@ -20,6 +24,7 @@ class DoingTestService {
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
     required int duration,
+    required SimulatorTestProvider simulatorTestProvider,
   }) async {
     String url = submitHomeWorkV2EP();
 
@@ -107,6 +112,12 @@ class DoingTestService {
         String path = await Utils.createNewFilePath(
             q.answers.elementAt(i).url.toString());
         File audioFile = File(path);
+        final duration = await Utils.getAudioDuration(path);
+        if (duration.inSeconds < DURATION_MIN) {
+          //Add index of question has duration < DURATION_MIN
+          q.isError = true;
+          simulatorTestProvider.addErrorQuestion(q);
+        }
 
         if (await audioFile.exists()) {
           String audioSize = "${audioFile.lengthSync() / (1024 * 1024)} Mb";

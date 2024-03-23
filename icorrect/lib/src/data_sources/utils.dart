@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
@@ -1139,5 +1141,14 @@ class Utils {
     if (null != loading) {
       loading.hide();
     }
+  }
+
+  static Future<Duration> getAudioDuration(String path) async {
+    Completer<Duration> completer = Completer();
+    AudioPlayer audioPlayer = AudioPlayer();
+    await audioPlayer.setSourceDeviceFile(path);
+    Duration? duration = await audioPlayer.getDuration();
+    completer.complete(duration);
+    return completer.future;
   }
 }

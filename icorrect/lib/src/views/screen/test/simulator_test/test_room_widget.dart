@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
+import 'package:icorrect/core/doing_test_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -111,6 +112,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
+    _simulatorTestProvider!.resetErrorQuestionList();
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -1068,7 +1070,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _reAnswerCallBack(QuestionTopicModel question) async {
+  void _reAnswerCallBack(
+    QuestionTopicModel question,
+    int selectedQuestionIndex,
+  ) async {
     if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
       return;
     }
@@ -1891,6 +1896,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       videoConfirmFile: videoConfirmFile,
       logAction: _simulatorTestProvider!.logActions,
       duration: _simulatorTestProvider!.totalDuration,
+      simulatorTestProvider: _simulatorTestProvider!,
     );
   }
 
@@ -2151,6 +2157,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       reQuestions: _simulatorTestProvider!.questionList,
       isExam: widget.isExam,
       duration: _simulatorTestProvider!.totalDuration,
+      simulatorTestProvider: _simulatorTestProvider!,
     );
   }
 
@@ -2235,7 +2242,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onFinishAnswer(bool isPart2) {
+  void onFinishAnswer(bool isPart2) async {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
       _resetEnableFinishStatus();
@@ -2461,11 +2468,26 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onFinishForReAnswer() {
+  void onFinishForReAnswer() async {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
       _resetEnableFinishStatus();
       return;
+    }
+
+    //Check duration of re answer of error question
+    if (_reanswerFilePath.isNotEmpty) {
+      // String path = await Utils.createNewFilePath(
+      //   question.answers[question.repeatIndex].url);
+      String path = await Utils.createNewFilePath(_reanswerFilePath);
+      Duration duration = await Utils.getAudioDuration(path);
+      if (duration.inSeconds >= DURATION_MIN) {
+        _currentQuestion!.isError = false;
+        _simulatorTestProvider!.removeErrorQuestion(_currentQuestion!);
+      } else {
+        _currentQuestion!.isError = true;
+      }
+      _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
     }
 
     _timerProvider!.strCount;
@@ -2560,6 +2582,39 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //     '_flutterSoundRecorder', _flutterSoundRecorder));
     properties.add(
         DiagnosticsProperty<Record>('_recordController', _recordController));
+  }
+
+  @override
+  void onErrorQuestionList() {
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.none);
+
+    for (var q in _simulatorTestProvider!.errorQuestionList) {
+      _simulatorTestProvider!.updateQuestionStatus(q);
+    }
+
+    //Show thong bao error question
+    _showErrorAnswerDialog();
+  }
+
+  void _showErrorAnswerDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description:
+              "Một vài câu trả lời có thời lượng nhỏ hơn mức quy định!\n Bạn hãy trả lời lại",
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
   }
 
   @override

@@ -392,6 +392,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     videoConfirmFile: videoConfirmFile,
                     logAction: _simulatorTestProvider!.logActions,
                     duration: _simulatorTestProvider!.totalDuration,
+                    simulatorTestProvider: _simulatorTestProvider!,
                   );
                 } else {
                   /////Handle practice submit
@@ -589,6 +590,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             videoConfirmFile: videoConfirmFile,
             logAction: _simulatorTestProvider!.logActions,
             duration: _simulatorTestProvider!.totalDuration,
+            simulatorTestProvider: _simulatorTestProvider!,
           );
           _simulatorTestProvider!.setShowConfirmSaveTest(false);
         } else {
