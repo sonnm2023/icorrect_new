@@ -35,7 +35,6 @@ abstract class TestRoomViewContract {
   void onFinishTheTest();
   void onReDownload();
   void onUpdateHasOrderStatus(bool hasOrder);
-  void onErrorQuestionList();
 }
 
 class TestRoomPresenter {
@@ -195,126 +194,121 @@ class TestRoomPresenter {
       simulatorTestProvider: simulatorTestProvider,
     );
 
-    if (simulatorTestProvider.errorQuestionList.isNotEmpty) {
-      _view!.onErrorQuestionList();
-    } else {
+    if (kDebugMode) {
+      print("DEBUG: submitTest");
+      print("DEBUG: testId = $testId");
+      print("DEBUG: activityId = $activityId");
+    }
+
+    try {
+      final String value = await _testRepository!.submitTest(multiRequest);
+      dataLog[StringConstants.k_response] = value;
+
       if (kDebugMode) {
-        print("DEBUG: submitTest");
-        print("DEBUG: testId = $testId");
-        print("DEBUG: activityId = $activityId");
+        print("DEBUG: submit response: $value");
       }
-
       try {
-        final String value = await _testRepository!.submitTest(multiRequest);
-        dataLog[StringConstants.k_response] = value;
-
-        if (kDebugMode) {
-          print("DEBUG: submit response: $value");
-        }
-        try {
-          Map<String, dynamic> json = jsonDecode(value) ?? {};
-          if (json[StringConstants.k_error_code] == 200 ||
-              json[StringConstants.k_error_code] == 5013) {
-            // Add log
-            Utils.prepareLogData(
-              log: log,
-              data: dataLog,
-              message: null,
-              status: LogEvent.success,
-            );
-
-            bool hasOrder = false;
-            if (null != json[StringConstants.k_has_order]) {
-              hasOrder = json[StringConstants.k_has_order];
-            }
-
-            _view!.onUpdateHasOrderStatus(hasOrder);
-
-            String message = Utils.multiLanguage(
-                StringConstants.submit_test_success_message)!;
-            if (json[StringConstants.k_error_code] == 5013) {
-              if (!isExam) {
-                message = Utils.multiLanguage(StringConstants
-                    .submit_test_success_message_with_code_5013)!;
-              }
-            }
-
-            _view!.onSubmitTestSuccess(message);
-          } else {
-            // Add log
-            Utils.prepareLogData(
-              log: log,
-              data: dataLog,
-              message: StringConstants.submit_test_error_message,
-              status: LogEvent.failed,
-            );
-
-            String errorCode = "";
-            if (json[StringConstants.k_error_code] != null) {
-              errorCode =
-                  " [Error Code: ${json[StringConstants.k_error_code]}]";
-            }
-
-            _view!.onSubmitTestError(
-                "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
-          }
-        } catch (e) {
+        Map<String, dynamic> json = jsonDecode(value) ?? {};
+        if (json[StringConstants.k_error_code] == 200 ||
+            json[StringConstants.k_error_code] == 5013) {
           // Add log
           Utils.prepareLogData(
             log: log,
             data: dataLog,
-            message: "${StringConstants.submit_test_error_parse_json}: $e",
+            message: null,
+            status: LogEvent.success,
+          );
+
+          bool hasOrder = false;
+          if (null != json[StringConstants.k_has_order]) {
+            hasOrder = json[StringConstants.k_has_order];
+          }
+
+          _view!.onUpdateHasOrderStatus(hasOrder);
+
+          String message =
+              Utils.multiLanguage(StringConstants.submit_test_success_message)!;
+          if (json[StringConstants.k_error_code] == 5013) {
+            if (!isExam) {
+              message = Utils.multiLanguage(
+                  StringConstants.submit_test_success_message_with_code_5013)!;
+            }
+          }
+
+          _view!.onSubmitTestSuccess(message);
+        } else {
+          // Add log
+          Utils.prepareLogData(
+            log: log,
+            data: dataLog,
+            message: StringConstants.submit_test_error_message,
             status: LogEvent.failed,
           );
 
-          _view!.onSubmitTestError(Utils.multiLanguage(
-              StringConstants.submit_test_error_parse_json)!);
+          String errorCode = "";
+          if (json[StringConstants.k_error_code] != null) {
+            errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
+          }
+
+          _view!.onSubmitTestError(
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
         }
-      } on TimeoutException catch (e) {
-        // Add log
-        Utils.prepareLogData(
-          log: log,
-          data: dataLog,
-          message: "${StringConstants.submit_test_error_timeout}: $e",
-          status: LogEvent.failed,
-        );
-
-        _view!.onSubmitTestError(
-            Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
-      } on SocketException catch (e) {
-        // Add log
-        Utils.prepareLogData(
-          log: log,
-          data: dataLog,
-          message: "${StringConstants.submit_test_error_socket}: $e",
-          status: LogEvent.failed,
-        );
-
-        _view!.onSubmitTestError(
-            Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
-      } on http.ClientException catch (e) {
-        // Add log
-        Utils.prepareLogData(
-          log: log,
-          data: dataLog,
-          message: "${StringConstants.submit_test_error_client}: $e",
-          status: LogEvent.failed,
-        );
-
-        _view!.onSubmitTestError(
-            Utils.multiLanguage(StringConstants.submit_test_error_client)!);
       } catch (e) {
         // Add log
         Utils.prepareLogData(
           log: log,
           data: dataLog,
-          message: e.toString(),
+          message: "${StringConstants.submit_test_error_parse_json}: $e",
           status: LogEvent.failed,
         );
 
         _view!.onSubmitTestError(
-            Utils.multiLanguage(StringConstants.submit_test_error_other)!);
+            Utils.multiLanguage(StringConstants.submit_test_error_parse_json)!);
       }
+    } on TimeoutException catch (e) {
+      // Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: "${StringConstants.submit_test_error_timeout}: $e",
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestError(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
+    } on SocketException catch (e) {
+      // Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: "${StringConstants.submit_test_error_socket}: $e",
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestError(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
+    } on http.ClientException catch (e) {
+      // Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: "${StringConstants.submit_test_error_client}: $e",
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestError(
+          Utils.multiLanguage(StringConstants.submit_test_error_client)!);
+    } catch (e) {
+      // Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: e.toString(),
+        status: LogEvent.failed,
+      );
+
+      _view!.onSubmitTestError(
+          Utils.multiLanguage(StringConstants.submit_test_error_other)!);
     }
   }
 
@@ -349,100 +343,99 @@ class TestRoomPresenter {
       simulatorTestProvider: simulatorTestProvider,
     );
 
-    if (simulatorTestProvider.errorQuestionList.isNotEmpty) {
-      _view!.onErrorQuestionList();
-    } else {
-      if (kDebugMode) {
-        print("DEBUG: update reanswer");
-        print("DEBUG: testId = $testId");
-        print("DEBUG: activityId = $activityId");
-      }
+    // if (simulatorTestProvider.errorQuestionList.isNotEmpty) {
+    //   _view!.onErrorQuestionList();
+    // } else {
+    if (kDebugMode) {
+      print("DEBUG: update reanswer");
+      print("DEBUG: testId = $testId");
+      print("DEBUG: activityId = $activityId");
+    }
 
-      try {
-        _testRepository!.submitTest(multiRequest).then((value) {
-          if (kDebugMode) {
-            print("DEBUG: submit response: $value");
-          }
+    try {
+      _testRepository!.submitTest(multiRequest).then((value) {
+        if (kDebugMode) {
+          print("DEBUG: submit response: $value");
+        }
 
-          Map<String, dynamic> json = jsonDecode(value) ?? {};
-          dataLog[StringConstants.k_response] = json;
+        Map<String, dynamic> json = jsonDecode(value) ?? {};
+        dataLog[StringConstants.k_response] = json;
 
-          if (json[StringConstants.k_error_code] == 200) {
-            //Add log
-            Utils.prepareLogData(
-              log: log,
-              data: dataLog,
-              message: null,
-              status: LogEvent.success,
-            );
-
-            _view!.onUpdateReAnswersSuccess(Utils.multiLanguage(
-                StringConstants.save_answer_success_message)!);
-          } else {
-            //Add log
-            Utils.prepareLogData(
-              log: log,
-              data: dataLog,
-              message: StringConstants.submit_test_error_message,
-              status: LogEvent.failed,
-            );
-
-            String errorCode = "";
-            if (json[StringConstants.k_error_code] != null) {
-              errorCode =
-                  " [Error Code: ${json[StringConstants.k_error_code]}]";
-            }
-
-            _view!.onUpdateReAnswersError(
-                "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
-          }
-        }).catchError((onError) {
+        if (json[StringConstants.k_error_code] == 200) {
           //Add log
           Utils.prepareLogData(
             log: log,
             data: dataLog,
-            message: onError.toString(),
+            message: null,
+            status: LogEvent.success,
+          );
+
+          _view!.onUpdateReAnswersSuccess(Utils.multiLanguage(
+              StringConstants.save_answer_success_message)!);
+        } else {
+          //Add log
+          Utils.prepareLogData(
+            log: log,
+            data: dataLog,
+            message: StringConstants.submit_test_error_message,
             status: LogEvent.failed,
           );
 
-          // ignore: invalid_return_type_for_catch_error
-          _view!.onUpdateReAnswersError(Utils.multiLanguage(
-              StringConstants.submit_test_error_invalid_return_type_message)!);
-        });
-      } on TimeoutException {
+          String errorCode = "";
+          if (json[StringConstants.k_error_code] != null) {
+            errorCode = " [Error Code: ${json[StringConstants.k_error_code]}]";
+          }
+
+          _view!.onUpdateReAnswersError(
+              "${Utils.multiLanguage(StringConstants.submit_test_error_message)}\n$errorCode");
+        }
+      }).catchError((onError) {
         //Add log
         Utils.prepareLogData(
           log: log,
           data: dataLog,
-          message: StringConstants.submit_test_error_timeout,
+          message: onError.toString(),
           status: LogEvent.failed,
         );
 
-        _view!.onUpdateReAnswersError(
-            Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
-      } on SocketException {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: dataLog,
-          message: StringConstants.submit_test_error_socket,
-          status: LogEvent.failed,
-        );
+        // ignore: invalid_return_type_for_catch_error
+        _view!.onUpdateReAnswersError(Utils.multiLanguage(
+            StringConstants.submit_test_error_invalid_return_type_message)!);
+      });
+    } on TimeoutException {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: StringConstants.submit_test_error_timeout,
+        status: LogEvent.failed,
+      );
 
-        _view!.onUpdateReAnswersError(
-            Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
-      } on http.ClientException {
-        //Add log
-        Utils.prepareLogData(
-          log: log,
-          data: dataLog,
-          message: StringConstants.submit_test_error_client,
-          status: LogEvent.failed,
-        );
-        _view!.onUpdateReAnswersError(
-            Utils.multiLanguage(StringConstants.submit_test_error_client)!);
-      }
+      _view!.onUpdateReAnswersError(
+          Utils.multiLanguage(StringConstants.submit_test_error_timeout)!);
+    } on SocketException {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: StringConstants.submit_test_error_socket,
+        status: LogEvent.failed,
+      );
+
+      _view!.onUpdateReAnswersError(
+          Utils.multiLanguage(StringConstants.submit_test_error_socket)!);
+    } on http.ClientException {
+      //Add log
+      Utils.prepareLogData(
+        log: log,
+        data: dataLog,
+        message: StringConstants.submit_test_error_client,
+        status: LogEvent.failed,
+      );
+      _view!.onUpdateReAnswersError(
+          Utils.multiLanguage(StringConstants.submit_test_error_client)!);
     }
+    // }
   }
 
   void callTestPositionApi(

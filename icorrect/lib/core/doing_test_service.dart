@@ -11,8 +11,6 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 
-final double DURATION_MIN = 5;
-
 class DoingTestService {
   static Future<http.MultipartRequest> formDataRequest({
     required String testId,
@@ -109,16 +107,9 @@ class DoingTestService {
 
       //For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
-        String path = await Utils.createNewFilePath(
-            q.answers.elementAt(i).url.toString());
+        String path =
+            await Utils.createNewFilePath(q.answers.last.url.toString());
         File audioFile = File(path);
-        final duration = await Utils.getAudioDuration(path);
-        if (duration.inSeconds < DURATION_MIN) {
-          //Add index of question has duration < DURATION_MIN
-          q.isError = true;
-          simulatorTestProvider.addErrorQuestion(q);
-        }
-
         if (await audioFile.exists()) {
           String audioSize = "${audioFile.lengthSync() / (1024 * 1024)} Mb";
           dataLog!.addEntries([MapEntry(q.answers[i].url, audioSize)]);

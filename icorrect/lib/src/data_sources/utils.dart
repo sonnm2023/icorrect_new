@@ -1143,9 +1143,9 @@ class Utils {
     }
   }
 
-  static Future<Duration> getAudioDuration(String path) async {
+  static Future<Duration> getAudioDuration(
+      AudioPlayer audioPlayer, String path) async {
     Completer<Duration> completer = Completer();
-    AudioPlayer audioPlayer = AudioPlayer();
     await audioPlayer.setSourceDeviceFile(path);
     Duration? duration = await audioPlayer.getDuration();
     completer.complete(duration);

@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect/core/app_color.dart';
 import 'package:icorrect/core/camera_service.dart';
-import 'package:icorrect/core/doing_test_service.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
@@ -45,6 +44,8 @@ import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+
+final double DURATION_MIN = 1.5;
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
@@ -980,6 +981,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
       _audioPlayerController!.stop();
+      _audioPlayerController!.dispose();
     }
 
     if (null != _nativeVideoPlayerController) {
@@ -1740,7 +1742,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _recordForReAnswer(String fileName) async {
-    _reanswerFilePath = '${await Utils.generateAudioFileName()}.$fileName';
+    _reanswerFilePath = '${await Utils.generateAudioFileName()}.wav';
     _originalAnswerFilePath = await Utils.createNewFilePath(fileName);
 
     String path = await Utils.createNewFilePath(_reanswerFilePath);
@@ -1879,25 +1881,58 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _startSubmitTest({File? videoConfirmFile}) {
-    List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
-
-    String activityId = "";
-    if (widget.activitiesModel != null) {
-      activityId = widget.activitiesModel!.activityId.toString();
+  Future<bool> _checkDuration() async {
+    bool result = true;
+    for (QuestionTopicModel q in _simulatorTestProvider!.questionList) {
+      String path =
+          await Utils.createNewFilePath(q.answers.last.url.toString());
+      if (q.answers.length > 1) {
+        path = await Utils.createNewFilePath(
+            q.answers[q.repeatIndex].url.toString());
+      }
+      final duration =
+          await Utils.getAudioDuration(_audioPlayerController!, path);
+      if (duration.inSeconds < DURATION_MIN) {
+        //Add index of question has duration < DURATION_MIN
+        q.isError = true;
+        if (!_simulatorTestProvider!.errorQuestionList.contains(q)) {
+          _simulatorTestProvider!.addErrorQuestion(q);
+        }
+        result = false;
+      } else {
+        q.isError = false;
+        _simulatorTestProvider!.removeErrorQuestion(q);
+        _simulatorTestProvider!.updateQuestionStatus(q);
+      }
     }
+    return result;
+  }
 
-    _testRoomPresenter!.submitTest(
-      context: context,
-      testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      activityId: activityId,
-      questions: questions,
-      isExam: widget.isExam,
-      videoConfirmFile: videoConfirmFile,
-      logAction: _simulatorTestProvider!.logActions,
-      duration: _simulatorTestProvider!.totalDuration,
-      simulatorTestProvider: _simulatorTestProvider!,
-    );
+  void _startSubmitTest({File? videoConfirmFile}) async {
+    //Check duration of all answers
+    bool isValidDuration = await _checkDuration();
+    if (isValidDuration) {
+      List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+
+      String activityId = "";
+      if (widget.activitiesModel != null) {
+        activityId = widget.activitiesModel!.activityId.toString();
+      }
+
+      _testRoomPresenter!.submitTest(
+        context: context,
+        testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+        activityId: activityId,
+        questions: questions,
+        isExam: widget.isExam,
+        videoConfirmFile: videoConfirmFile,
+        logAction: _simulatorTestProvider!.logActions,
+        duration: _simulatorTestProvider!.totalDuration,
+        simulatorTestProvider: _simulatorTestProvider!,
+      );
+    } else {
+      _updateUIWithErrorQuestionList();
+    }
   }
 
   List<QuestionTopicModel> _prepareQuestionListForSubmit() {
@@ -2475,33 +2510,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       return;
     }
 
-    //Check duration of re answer of error question
-    if (_reanswerFilePath.isNotEmpty) {
-      // String path = await Utils.createNewFilePath(
-      //   question.answers[question.repeatIndex].url);
-      String path = await Utils.createNewFilePath(_reanswerFilePath);
-      Duration duration = await Utils.getAudioDuration(path);
-      if (duration.inSeconds >= DURATION_MIN) {
-        _currentQuestion!.isError = false;
-        _simulatorTestProvider!.removeErrorQuestion(_currentQuestion!);
-      } else {
-        _currentQuestion!.isError = true;
-      }
-      _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
-    }
-
     _timerProvider!.strCount;
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
 
-    if (kDebugMode) {
-      print("DEBUG: onFinishForReAnswer");
-    }
     // widget.provider.setReAnswerOfQuestions(question);
     if (null == _currentQuestion) {
-      if (kDebugMode) {
-        print("DEBUG: onFinishForReAnswer: _currentQuestion == null");
-      }
       return;
     }
 
@@ -2523,6 +2537,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _currentQuestion!.reAnswerCount++;
     }
     _simulatorTestProvider!.questionList[index] = _currentQuestion!;
+
+    //Check duration of re answer of error question
+    if (_reanswerFilePath.isNotEmpty) {
+      String path = await Utils.createNewFilePath(
+          _currentQuestion!.answers[_currentQuestion!.repeatIndex].url);
+      final duration =
+          await Utils.getAudioDuration(_audioPlayerController!, path);
+      if (duration.inSeconds >= DURATION_MIN) {
+        _currentQuestion!.isError = false;
+        _simulatorTestProvider!.removeErrorQuestion(_currentQuestion!);
+      } else {
+        _currentQuestion!.isError = true;
+      }
+      _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
+    }
+
     _resetDataAfterReanswer(isCancel: false);
   }
 
@@ -2584,8 +2614,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         DiagnosticsProperty<Record>('_recordController', _recordController));
   }
 
-  @override
-  void onErrorQuestionList() {
+  void _updateUIWithErrorQuestionList() {
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.none);
 
     for (var q in _simulatorTestProvider!.errorQuestionList) {
