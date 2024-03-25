@@ -221,14 +221,17 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           print("DEBUG: TestRoomWidget --- build");
         }
 
-        if (provider.visibleRecord) {
+        if (provider.visibleRecord &&
+            _simulatorTestProvider!.doingStatus != DoingStatus.finish) {
           _startVideoRecord();
         }
         bool showSaveTheExamButton = _simulatorTestProvider!.activityType ==
                 ActivityType.homework.name ||
             _simulatorTestProvider!.activityType ==
                 ActivityType.practice.name ||
-            _simulatorTestProvider!.submitStatus == SubmitStatus.fail;
+            _simulatorTestProvider!.submitStatus == SubmitStatus.fail ||
+            (widget.isExam &&
+                _simulatorTestProvider!.errorQuestionList.isNotEmpty);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -310,10 +313,19 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                           height: 200,
                           child: Stack(
                             children: [
-                              TestRecordWidget(
-                                finishAnswer: _finishAnswerCallBack,
-                                repeatQuestion: _repeatQuestionCallBack,
-                                cancelReAnswer: _cancelReanswerCallBack,
+                              Consumer<SimulatorTestProvider>(
+                                builder: (context, simulatorTestProvider, _) {
+                                  if (simulatorTestProvider.visibleRecord) {
+                                    return TestRecordWidget(
+                                      finishAnswer: _finishAnswerCallBack,
+                                      repeatQuestion: _repeatQuestionCallBack,
+                                      cancelReAnswer: _cancelReanswerCallBack,
+                                      isExam: widget.isExam,
+                                    );
+                                  } else {
+                                    return const SizedBox();
+                                  }
+                                },
                               ),
                               showSaveTheExamButton
                                   ? SaveTheTestWidget(
@@ -1121,6 +1133,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
         //Save into current question
         _currentQuestion = question;
+        _simulatorTestProvider!.setCurrentQuestion(question);
+
+        if (widget.isExam) {
+          _simulatorTestProvider!.setIsReAnswer();
+        }
 
         _prepareRecordForReanswer(
           fileName: question.answers[question.repeatIndex].url,
@@ -1259,12 +1276,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _countDown!.cancel();
 
     _setVisibleRecord(false, null, null);
-    //TODO
-    // if (Platform.isIOS) {
-    //   _recordController!.stop();
-    // } else {
-    //   _stopRecord();
-    // }
+
+    //Auto submit again after reanswer all error question
+    if (widget.isExam && _simulatorTestProvider!.errorQuestionList.isEmpty) {
+      _prepareSubmitTest(
+          videoConfirmFile: _simulatorTestProvider!.savedVideoFile);
+    }
   }
 
   void _resetEnableFinishStatus() {
@@ -2513,6 +2530,11 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _timerProvider!.strCount;
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
+    _simulatorTestProvider!.resetIsReAnswer();
+
+    _currentQuestion!.isError = false;
+    _simulatorTestProvider!.removeErrorQuestion(_currentQuestion!);
+    _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
 
     // widget.provider.setReAnswerOfQuestions(question);
     if (null == _currentQuestion) {
@@ -2539,7 +2561,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.questionList[index] = _currentQuestion!;
 
     //Check duration of re answer of error question
-    if (_reanswerFilePath.isNotEmpty) {
+    if (_reanswerFilePath.isNotEmpty && _currentQuestion!.isError) {
       String path = await Utils.createNewFilePath(
           _currentQuestion!.answers[_currentQuestion!.repeatIndex].url);
       final duration =
@@ -2547,10 +2569,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (duration.inSeconds >= DURATION_MIN) {
         _currentQuestion!.isError = false;
         _simulatorTestProvider!.removeErrorQuestion(_currentQuestion!);
-      } else {
-        _currentQuestion!.isError = true;
+        _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
       }
-      _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
     }
 
     _resetDataAfterReanswer(isCancel: false);

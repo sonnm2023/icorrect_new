@@ -9,67 +9,71 @@ import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:provider/provider.dart';
 
 class TestRecordWidget extends StatelessWidget {
-  const TestRecordWidget(
-      {super.key,
-      required this.finishAnswer,
-      required this.repeatQuestion,
-      required this.cancelReAnswer});
+  const TestRecordWidget({
+    super.key,
+    required this.finishAnswer,
+    required this.repeatQuestion,
+    required this.cancelReAnswer,
+    required this.isExam,
+  });
 
   final Function(QuestionTopicModel questionTopicModel) finishAnswer;
   final Function(QuestionTopicModel questionTopicModel) repeatQuestion;
   final Function() cancelReAnswer;
+  final bool isExam;
 
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
 
-    QuestionTopicModel currentQuestion =
-        Provider.of<SimulatorTestProvider>(context, listen: false)
-            .currentQuestion;
+    SimulatorTestProvider simulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
+    QuestionTopicModel currentQuestion = simulatorTestProvider.currentQuestion;
 
     bool isRepeat = (currentQuestion.numPart == PartOfTest.part1.get ||
             currentQuestion.numPart == PartOfTest.part3.get) &&
-        Provider.of<SimulatorTestProvider>(context, listen: false)
-            .enableRepeatButton;
+        simulatorTestProvider.enableRepeatButton;
 
-    return Consumer<SimulatorTestProvider>(
-      builder: (context, simulatorTestProvider, _) {
-        if (simulatorTestProvider.visibleRecord) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+    bool hideBottomButton = false;
+    hideBottomButton =
+        (isExam && simulatorTestProvider.isReAnswer && currentQuestion.isError);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Container(
+          width: w,
+          height: 200,
+          alignment: Alignment.center,
+          color: AppColor.defaultLightGrayColor,
+          child: Column(
             children: [
-              Container(
-                width: w,
-                height: 200,
-                alignment: Alignment.center,
-                color: AppColor.defaultLightGrayColor,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    Text(Utils.multiLanguage(
-                      StringConstants.answer_being_recorded,
-                    )!),
-                    const SizedBox(height: 20),
-                    Image.asset(
-                      'assets/images/ic_record_2.png',
-                      width: 25,
-                      height: 25,
-                    ),
-                    const SizedBox(height: 5),
-                    Consumer<TimerProvider>(
-                        builder: (context, timerProvider, _) {
-                      return Text(
-                        timerProvider.strCount,
-                        style: CustomTextStyle.textWithCustomInfo(
-                          context: context,
-                          color: AppColor.defaultBlackColor,
-                          fontsSize: FontsSize.fontSize_20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      );
-                    }),
-                    const SizedBox(height: 10),
-                    Row(
+              const SizedBox(height: 20),
+              Text(Utils.multiLanguage(
+                StringConstants.answer_being_recorded,
+              )!),
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/images/ic_record_2.png',
+                width: 25,
+                height: 25,
+              ),
+              const SizedBox(height: 5),
+              Consumer<TimerProvider>(builder: (context, timerProvider, _) {
+                return Text(
+                  timerProvider.strCount,
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultBlackColor,
+                    fontsSize: FontsSize.fontSize_20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                );
+              }),
+              const SizedBox(height: 10),
+              hideBottomButton
+                  ? const SizedBox()
+                  : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildOtherButton(
@@ -86,16 +90,11 @@ class TestRecordWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 20),
             ],
-          );
-        } else {
-          return const SizedBox();
-        }
-      },
+          ),
+        ),
+      ],
     );
   }
 

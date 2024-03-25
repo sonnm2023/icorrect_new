@@ -626,7 +626,18 @@ class SimulatorTestProvider with ChangeNotifier {
     }
   }
 
+  bool _isReAnswer = false;
+  bool get isReAnswer => _isReAnswer;
+  void setIsReAnswer() {
+    _isReAnswer = true;
+  }
+
+  void resetIsReAnswer() {
+    _isReAnswer = false;
+  }
+
   void resetAll() {
+    _isReAnswer = false;
     _errorQuestionList = [];
     _totalDuration = 0;
     _needRefreshActivityList = false;

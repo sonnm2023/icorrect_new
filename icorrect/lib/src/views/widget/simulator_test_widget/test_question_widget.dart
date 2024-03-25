@@ -321,7 +321,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (hasReAnswer && !widget.isExam)
+                        if ((hasReAnswer && !widget.isExam) || question.isError)
                           InkWell(
                             onTap: () {
                               widget.reAnswerCallBack(question, index);
