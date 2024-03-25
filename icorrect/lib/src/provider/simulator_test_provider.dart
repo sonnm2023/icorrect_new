@@ -1,14 +1,74 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:video_player/video_player.dart';
 // import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
+  VideoPlayerController? _videoPlayerController;
+  VideoPlayerController? get videoPlayerController => _videoPlayerController;
+  Timer? _timer;
+  int _currentIndex = 0;
+
+  Future<String> _getVideoFilePath(String fileName) async {
+    String savePath =
+        '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileName';
+    return savePath;
+  }
+
+  void initData() async {
+    String videoFilePath =
+        await _getVideoFilePath(listVideoSource[0].files.first.url);
+    File videoFile = File(videoFilePath);
+
+    // Khởi tạo VideoPlayerController từ tệp cục bộ
+    _videoPlayerController = VideoPlayerController.file(videoFile);
+    _timer = Timer(const Duration(), () {});
+
+    _playNextQuestion();
+  }
+
+  Future<void> _playNextQuestion() async {
+    if (_currentIndex < listVideoSource.length) {
+      String videoPath =
+          listVideoSource[_currentIndex].files.first.url; //??? Them path o day
+      File videoFile = File(videoPath);
+
+      _videoPlayerController = VideoPlayerController.file(videoFile);
+
+      await _videoPlayerController!.initialize();
+      // Thêm lắng nghe sự kiện khi video đã phát xong
+      _videoPlayerController!.addListener(_onVideoPlayerStateChanged);
+
+      // Bắt đầu phát video
+      if (_currentIndex == 0) {
+        //Chuyển sang trạng thái sẵn sàng play question video tại đây
+        _videoPlayerController!.play();
+      } else {
+        _videoPlayerController!.play();
+      }
+    } else {
+      if (kDebugMode) {
+        print("Đã phát hết danh sách video");
+      }
+    }
+  }
+
+  void _onVideoPlayerStateChanged() {
+    if (_videoPlayerController!.value.position ==
+        _videoPlayerController!.value.duration) {
+      //Lắng nghe sự kiện khi play hết câu hỏi,
+      //tuỳ thuộc vào loại question video để detech logic tại đây
+    }
+  }
+
   bool isDisposed = false;
 
   @override

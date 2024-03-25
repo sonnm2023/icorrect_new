@@ -31,6 +31,7 @@ import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/test_room_new_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_compress/video_compress.dart';
@@ -128,6 +129,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => RatingProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeListProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeTopicsProvider()),
+        ChangeNotifierProvider(create: (_) => VideoPlayerProvider()),
       ],
       child: MaterialApp(
         supportedLocales: _localization.supportedLocales,

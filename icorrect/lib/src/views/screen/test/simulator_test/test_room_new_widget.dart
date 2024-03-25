@@ -5,6 +5,7 @@ import 'dart:io';
 // ignore: library_prefixes
 import 'package:audioplayers/audioplayers.dart' as AudioPlayers;
 import 'package:camera/camera.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,8 +44,10 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/test_record_widg
 import 'package:native_video_player/native_video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+/*
 final double DURATION_MIN = 1.5;
 
 class TestRoomNewWidget extends StatefulWidget {
@@ -115,6 +118,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
     // _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
+    _simulatorTestProvider!.initData();
     _simulatorTestProvider!.resetErrorQuestionList();
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
@@ -513,21 +517,14 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: NativeVideoPlayerView(
-                  onViewReady: _initController,???
-                ),
+                child:
+                    VideoPlayer(simulatorTestProvider.videoPlayerController!),
               ),
 
               //Play video controller buttons
               _simulatorTestProvider!.doingStatus != DoingStatus.finish
                   ? buttonsControllerSubView
                   : Container(),
-
-              //TODO
-              // Visibility(
-              //   visible: simulatorTestProvider.isReviewingPlayAnswer,
-              //   child: playAudioBackground(w, h),
-              // )
             ],
           );
         }
@@ -2678,4 +2675,143 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
 
   @override
   bool get wantKeepAlive => true;
+}
+*/
+class VideoPlayerProvider extends ChangeNotifier {
+  VideoPlayerController? _videoPlayerController;
+  VideoPlayerController? get videoPlayerController => _videoPlayerController;
+  ChewieController? _chewieController;
+  ChewieController? get chewieController => _chewieController;
+
+  void initializeVideo(File videoFile) {
+    _videoPlayerController = VideoPlayerController.file(videoFile);
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController!,
+      autoPlay: true, // Không tự động phát
+      looping: false, // Không lặp lại video
+      aspectRatio: 16 / 9, // Tỉ lệ khung hình
+    );
+    // _videoPlayerController!.initialize().then((_) {
+    //   _videoPlayerController!.play();
+    //   notifyListeners();
+    // });
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController?.dispose();
+    _chewieController?.dispose();
+    super.dispose();
+  }
+}
+
+class TestRoomNewWidget extends StatefulWidget {
+  const TestRoomNewWidget({super.key});
+
+  @override
+  State<TestRoomNewWidget> createState() => _TestRoomNewWidgetState();
+}
+
+class _TestRoomNewWidgetState extends State<TestRoomNewWidget> {
+  List<String> videoList = [];
+  SimulatorTestProvider? _simulatorTestProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _simulatorTestProvider =
+        Provider.of<SimulatorTestProvider>(context, listen: false);
+    for (QuestionTopicModel q in _simulatorTestProvider!.listVideoSource) {
+      videoList.add(q.files.first.url);
+    }
+
+    // Khởi tạo video đầu tiên khi màn hình được tạo ra
+    _initializeFirstVideo();
+  }
+
+  Future<String> getVideoFilePath(String fileName) async {
+    String savePath =
+        '${await FileStorageHelper.getFolderPath(MediaType.video, null)}\\$fileName';
+    return savePath;
+  }
+
+  // Hàm khởi tạo video đầu tiên
+  void _initializeFirstVideo() async {
+    String videoFilePath =
+        await getVideoFilePath(videoList[0]); // Lấy đường dẫn video
+    File videoFile = File(videoFilePath); // Tạo đối tượng file
+    // Khởi tạo video player
+    Provider.of<VideoPlayerProvider>(context, listen: false)
+        .initializeVideo(videoFile);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            height: 230,
+            color: Colors.grey, // Placeholder color
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: VideoPlayerView(),
+              // child: Consumer<VideoPlayerProvider>(
+              //   builder: (context, videoProvider, _) {
+              //     final chewieController = videoProvider.chewieController;
+              //     return chewieController != null
+              //         ? Chewie(controller: chewieController)
+              //         : const Center(child: CircularProgressIndicator());
+              //   },
+              // ),
+            ),
+          ),
+          Expanded(
+            child: QuestionListView(videoList: videoList),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Widget để phát video
+class VideoPlayerView extends StatefulWidget {
+  const VideoPlayerView({Key? key}) : super(key: key);
+
+  @override
+  State<VideoPlayerView> createState() => _VideoPlayerViewState();
+}
+
+class _VideoPlayerViewState extends State<VideoPlayerView> {
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<VideoPlayerProvider>(context);
+    final chewieController = provider.chewieController;
+    return chewieController != null
+        ? Chewie(controller: chewieController)
+        : const Center(child: CircularProgressIndicator());
+  }
+}
+
+class QuestionListView extends StatelessWidget {
+  final List<String> videoList;
+
+  const QuestionListView({Key? key, required this.videoList}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: videoList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text('Question ${index + 1}'),
+          onTap: () {
+            // Play video for the selected question
+            // Implement your logic here
+          },
+        );
+      },
+    );
+  }
 }

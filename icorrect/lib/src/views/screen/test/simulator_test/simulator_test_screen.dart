@@ -695,11 +695,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         child: Stack(
           children: [
             _isUseVideoPlayerLib
-                ? TestRoomNewWidget(
-                    activitiesModel: widget.activitiesModel,
-                    simulatorTestPresenter: _simulatorTestPresenter!,
-                    isExam: _isExam,
-                  )
+                // ? TestRoomNewWidget(
+                //     activitiesModel: widget.activitiesModel,
+                //     simulatorTestPresenter: _simulatorTestPresenter!,
+                //     isExam: _isExam,
+                //   )
+                ? const TestRoomNewWidget()
                 : TestRoomWidget(
                     activitiesModel: widget.activitiesModel,
                     simulatorTestPresenter: _simulatorTestPresenter!,
