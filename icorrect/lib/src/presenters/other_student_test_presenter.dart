@@ -327,6 +327,20 @@ class OtherStudentTestPresenter {
         q.files.add(file);
         q.numPart = partOfTest.get;
         allFiles.add(q);
+
+        //Add audio answer
+        if (q.answers.isNotEmpty) {
+          for (FileTopicModel answer in q.answers) {
+            QuestionTopicModel temp = QuestionTopicModel();
+            if (temp.files.isEmpty) {
+              temp.files = [];
+            }
+            answer.fileTopicType = FileTopicType.answer;
+            temp.files.add(answer);
+            temp.numPart = partOfTest.get;
+            allFiles.add(temp);
+          }
+        }
       }
     }
 
@@ -337,6 +351,20 @@ class OtherStudentTestPresenter {
         q.files.first.numPart = topic.numPart;
         q.numPart = partOfTest.get;
         allFiles.add(q);
+
+        //Add audio answer
+        if (q.answers.isNotEmpty) {
+          for (FileTopicModel answer in q.answers) {
+            QuestionTopicModel temp = QuestionTopicModel();
+            if (temp.files.isEmpty) {
+              temp.files = [];
+            }
+            answer.fileTopicType = FileTopicType.answer;
+            temp.files.add(answer);
+            temp.numPart = partOfTest.get;
+            allFiles.add(temp);
+          }
+        }
       }
     }
 
@@ -356,6 +384,20 @@ class OtherStudentTestPresenter {
         bool hasImage = Utils.checkHasImage(question: q);
         if (hasImage) {
           imageFiles.add(q.files.elementAt(1));
+        }
+
+        //Add audio answer
+        if (q.answers.isNotEmpty) {
+          for (FileTopicModel answer in q.answers) {
+            QuestionTopicModel temp = QuestionTopicModel();
+            if (temp.files.isEmpty) {
+              temp.files = [];
+            }
+            answer.fileTopicType = FileTopicType.answer;
+            temp.files.add(answer);
+            temp.numPart = partOfTest.get;
+            allFiles.add(temp);
+          }
         }
       }
     }
