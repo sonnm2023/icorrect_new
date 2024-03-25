@@ -74,7 +74,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
 
   TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
-  NativeVideoPlayerController? _nativeVideoPlayerController;
+  // NativeVideoPlayerController? _nativeVideoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
   Record? _recordController;
   CameraService? _cameraService;
@@ -514,7 +514,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
               AspectRatio(
                 aspectRatio: 16 / 9,
                 child: NativeVideoPlayerView(
-                  onViewReady: _initController,
+                  onViewReady: _initController,???
                 ),
               ),
 
@@ -621,6 +621,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
     );
   }
 
+/*
   Future<void> _initController(NativeVideoPlayerController controller) async {
     //Add log
     LogModel? log;
@@ -675,11 +676,12 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
       );
     }
   }
-
+*/
   void _setupAlreadyToDoTest() {
     _isEnableToPlayVideo = true;
   }
 
+/*
   Future<void> _loadVideoSource(String fileName) async {
     VideoSource? videoSource = await _createVideoSource(fileName);
     if (null == videoSource) {
@@ -700,7 +702,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
       await _nativeVideoPlayerController!.loadVideoSource(videoSource);
     }
   }
-
+*/
   Future<VideoSource?> _createVideoSource(String fileName) async {
     LogModel? log;
     if (context.mounted) {
@@ -805,7 +807,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
     if (kDebugMode) {
       print("DEBUG: action log starttime: $_logStartTime");
     }
-
+/*
     if (null != _nativeVideoPlayerController) {
       bool isPlaying = await _nativeVideoPlayerController!.isPlaying();
       if (isPlaying) {
@@ -847,7 +849,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
-
+*/
     if (null != _countRecording) {
       _countRecording!.cancel();
     }
@@ -912,6 +914,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
         _reRecordReAnswer();
       }
     } else {
+      /*
       if (null != _nativeVideoPlayerController) {
         if (_simulatorTestProvider!.visibleCueCard) {
           //Playing end_of_take_note ==> replay end_of_take_note
@@ -945,6 +948,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
           }
         }
       }
+      */
     }
 
     if (widget.isExam) {
@@ -997,10 +1001,11 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
       _audioPlayerController!.stop();
       _audioPlayerController!.dispose();
     }
-
+/*
     if (null != _nativeVideoPlayerController) {
       _nativeVideoPlayerController = null;
     }
+    */
   }
 
   void _playAnswerCallBack(
@@ -1487,6 +1492,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
   }
 
   Future<void> _initVideoController() async {
+    /*
     if (_simulatorTestProvider!.playingIndexWhenReDownload != 0) {
       _playingIndex = _simulatorTestProvider!.playingIndexWhenReDownload;
 
@@ -1597,6 +1603,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
         }
       }
     }
+    */
   }
 
   double _getSpeedOfPlaying(int countRepeat) {
@@ -1625,7 +1632,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
   void _redownload() async {
     _simulatorTestProvider!.setNeedDownloadAgain(true);
     _setVisibleRecord(false, null, null);
-
+/*
     if (null != _nativeVideoPlayerController) {
       bool isPlaying = await _nativeVideoPlayerController!.isPlaying();
       if (isPlaying) {
@@ -1653,6 +1660,7 @@ class _TestRoomWidgetState extends State<TestRoomNewWidget>
         _playAnswerProvider!.resetSelectedQuestionIndex();
       }
     }
+    */
   }
 
   Future<void> _stopRecord() async {
