@@ -23,6 +23,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/other_tab.dart';
+import 'package:icorrect/src/views/screen/test/simulator_test/test_room_new_widget.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
 import 'package:icorrect/src/views/widget/download_again_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/back_button_widget.dart';
@@ -31,6 +32,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/download_progres
 import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestScreen extends StatefulWidget {
@@ -68,6 +70,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   bool _isOffline = false;
   CircleLoading? _loading;
   bool _isExam = false;
+  bool _isUseVideoPlayerLib = true;
 
   TabBar get _tabBar {
     return TabBar(
@@ -170,7 +173,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _homeWorkProvider!.setSimulatorTestPresenter(_simulatorTestPresenter);
 
     _loading = CircleLoading();
-
+    _getSettingData();
     _getActivityType();
     _getTestDetail();
 
@@ -263,6 +266,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         return false;
       },
     );
+  }
+
+  Future<void> _getSettingData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _isUseVideoPlayerLib = prefs.getBool('use_video_player_lib') ?? true;
   }
 
   Widget _buildBackButton() {
@@ -686,11 +694,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       return SizedBox(
         child: Stack(
           children: [
-            TestRoomWidget(
-              activitiesModel: widget.activitiesModel,
-              simulatorTestPresenter: _simulatorTestPresenter!,
-              isExam: _isExam,
-            ),
+            _isUseVideoPlayerLib
+                ? TestRoomNewWidget(
+                    activitiesModel: widget.activitiesModel,
+                    simulatorTestPresenter: _simulatorTestPresenter!,
+                    isExam: _isExam,
+                  )
+                : TestRoomWidget(
+                    activitiesModel: widget.activitiesModel,
+                    simulatorTestPresenter: _simulatorTestPresenter!,
+                    isExam: _isExam,
+                  ),
             Visibility(
               visible: provider.submitStatus == SubmitStatus.submitting,
               child: const DefaultLoadingIndicator(
