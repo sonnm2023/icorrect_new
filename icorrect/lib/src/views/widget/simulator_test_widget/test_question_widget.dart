@@ -28,7 +28,9 @@ class TestQuestionWidget extends StatefulWidget {
   final Function(
           QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
       playAnswerCallBack;
-  final Function(QuestionTopicModel questionTopicModel) reAnswerCallBack;
+  final Function(
+          QuestionTopicModel questionTopicModel, int selectedQuestionIndex)
+      reAnswerCallBack;
   final Function(QuestionTopicModel questionTopicModel) showTipCallBack;
   final bool isExam;
 
@@ -44,169 +46,170 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.simulatorTestProvider.questionList.isEmpty) {
-      return Container(
-        alignment: Alignment.center,
-        margin: const EdgeInsets.all(20),
-        height: 300,
-        color: Colors.transparent,
-        child: Text(
-          Utils.multiLanguage(
-            StringConstants.no_answer_please_start_your_test_message,
-          )!,
-          style: CustomTextStyle.textWithCustomInfo(
-            context: context,
-            color: AppColor.defaultBlackColor,
-            fontsSize: FontsSize.fontSize_15,
-            fontWeight: FontWeight.w600,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else {
-      return Container(
-        color: AppColor.defaultGraySlightColor,
-        child: Column(
-          children: [
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const ScrollPhysics(),
-              itemCount: widget.simulatorTestProvider.questionList.length,
-              itemBuilder: (BuildContext context, int index) {
-                //Header part 1
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      Container(
-                        color: AppColor.defaultGraySlightColor,
-                        height: 40,
-                        child: ListTile(
-                          title: Center(
-                            child: Text(
-                              Utils.multiLanguage(
-                                StringConstants.part_1_header,
-                              )!,
-                              textAlign: TextAlign.center,
-                              style: CustomTextStyle.textWithCustomInfo(
-                                context: context,
-                                color: AppColor.defaultPurpleColor,
-                                fontsSize: FontsSize.fontSize_16,
-                                fontWeight: FontWeight.w600,
+    return widget.simulatorTestProvider.questionList.isNotEmpty
+        ? Container(
+            color: AppColor.defaultGraySlightColor,
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount: widget.simulatorTestProvider.questionList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    //Header part 1
+                    if (index == 0) {
+                      return Column(
+                        children: [
+                          Container(
+                            color: AppColor.defaultGraySlightColor,
+                            height: 40,
+                            child: ListTile(
+                              title: Center(
+                                child: Text(
+                                  Utils.multiLanguage(
+                                    StringConstants.part_1_header,
+                                  )!,
+                                  textAlign: TextAlign.center,
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
+                                    color: AppColor.defaultPurpleColor,
+                                    fontsSize: FontsSize.fontSize_16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
 
-                      // The fist list item
-                      Container(
-                        margin: const EdgeInsets.only(top: 15),
-                        child: _buildTestQuestionItem(
-                          context,
-                          widget.simulatorTestProvider.questionList
-                              .elementAt(index),
-                          index,
-                        ),
-                      ),
-                    ],
-                  );
-                }
+                          // The fist list item
+                          Container(
+                            margin: const EdgeInsets.only(top: 15),
+                            child: _buildTestQuestionItem(
+                              context,
+                              widget.simulatorTestProvider.questionList
+                                  .elementAt(index),
+                              index,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
-                //Header part 2
-                if (widget.simulatorTestProvider.indexOfHeaderPart2 != 0 &&
-                    index == widget.simulatorTestProvider.indexOfHeaderPart2) {
-                  return Column(
-                    children: [
-                      Container(
-                        color: AppColor.defaultGraySlightColor,
-                        height: 44,
-                        child: ListTile(
-                          title: Center(
-                            child: Text(
-                              Utils.multiLanguage(
-                                StringConstants.part_2_header,
-                              )!,
-                              textAlign: TextAlign.center,
-                              style: CustomTextStyle.textWithCustomInfo(
-                                context: context,
-                                color: AppColor.defaultPurpleColor,
-                                fontsSize: FontsSize.fontSize_16,
-                                fontWeight: FontWeight.w600,
+                    //Header part 2
+                    if (widget.simulatorTestProvider.indexOfHeaderPart2 != 0 &&
+                        index ==
+                            widget.simulatorTestProvider.indexOfHeaderPart2) {
+                      return Column(
+                        children: [
+                          Container(
+                            color: AppColor.defaultGraySlightColor,
+                            height: 44,
+                            child: ListTile(
+                              title: Center(
+                                child: Text(
+                                  Utils.multiLanguage(
+                                    StringConstants.part_2_header,
+                                  )!,
+                                  textAlign: TextAlign.center,
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
+                                    color: AppColor.defaultPurpleColor,
+                                    fontsSize: FontsSize.fontSize_16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
 
-                      // The fist list item
-                      Container(
-                        margin: const EdgeInsets.only(top: 15),
-                        child: _buildTestQuestionItem(
-                          context,
-                          widget.simulatorTestProvider.questionList
-                              .elementAt(index),
-                          index,
-                        ),
-                      ),
-                    ],
-                  );
-                }
+                          // The fist list item
+                          Container(
+                            margin: const EdgeInsets.only(top: 15),
+                            child: _buildTestQuestionItem(
+                              context,
+                              widget.simulatorTestProvider.questionList
+                                  .elementAt(index),
+                              index,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
-                //Header part 3
-                if (widget.simulatorTestProvider.indexOfHeaderPart3 != 0 &&
-                    index == widget.simulatorTestProvider.indexOfHeaderPart3) {
-                  return Column(
-                    children: [
-                      Container(
-                        color: AppColor.defaultGraySlightColor,
-                        height: 44,
-                        child: ListTile(
-                          title: Center(
-                            child: Text(
-                              Utils.multiLanguage(
-                                StringConstants.part_3_header,
-                              )!,
-                              textAlign: TextAlign.center,
-                              style: CustomTextStyle.textWithCustomInfo(
-                                context: context,
-                                color: AppColor.defaultPurpleColor,
-                                fontsSize: FontsSize.fontSize_16,
-                                fontWeight: FontWeight.w600,
+                    //Header part 3
+                    if (widget.simulatorTestProvider.indexOfHeaderPart3 != 0 &&
+                        index ==
+                            widget.simulatorTestProvider.indexOfHeaderPart3) {
+                      return Column(
+                        children: [
+                          Container(
+                            color: AppColor.defaultGraySlightColor,
+                            height: 44,
+                            child: ListTile(
+                              title: Center(
+                                child: Text(
+                                  Utils.multiLanguage(
+                                    StringConstants.part_3_header,
+                                  )!,
+                                  textAlign: TextAlign.center,
+                                  style: CustomTextStyle.textWithCustomInfo(
+                                    context: context,
+                                    color: AppColor.defaultPurpleColor,
+                                    fontsSize: FontsSize.fontSize_16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
 
-                      // The fist list item
-                      Container(
-                        margin: const EdgeInsets.only(top: 15),
-                        child: _buildTestQuestionItem(
-                          context,
-                          widget.simulatorTestProvider.questionList
-                              .elementAt(index),
-                          index,
-                        ),
-                      ),
-                    ],
-                  );
-                }
+                          // The fist list item
+                          Container(
+                            margin: const EdgeInsets.only(top: 15),
+                            child: _buildTestQuestionItem(
+                              context,
+                              widget.simulatorTestProvider.questionList
+                                  .elementAt(index),
+                              index,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
-                return Container(
-                  margin: const EdgeInsets.only(top: 15),
-                  child: _buildTestQuestionItem(
-                    context,
-                    widget.simulatorTestProvider.questionList.elementAt(index),
-                    index,
-                  ),
-                );
-              },
+                    return Container(
+                      margin: const EdgeInsets.only(top: 15),
+                      child: _buildTestQuestionItem(
+                        context,
+                        widget.simulatorTestProvider.questionList
+                            .elementAt(index),
+                        index,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 60),
+              ],
             ),
-            const SizedBox(height: 60),
-          ],
-        ),
-      );
-    }
+          )
+        : Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(20),
+            height: 300,
+            color: Colors.transparent,
+            child: Text(
+              Utils.multiLanguage(
+                StringConstants.no_answer_please_start_your_test_message,
+              )!,
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultBlackColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          );
   }
 
   Widget _buildTestQuestionItem(
@@ -235,7 +238,9 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
     String fileName = question.files.last.url;
 
     return Container(
-      color: Colors.white,
+      color: question.isError
+          ? const Color.fromARGB(255, 245, 95, 95)
+          : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -319,7 +324,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                         if (hasReAnswer && !widget.isExam)
                           InkWell(
                             onTap: () {
-                              widget.reAnswerCallBack(question);
+                              widget.reAnswerCallBack(question, index);
                             },
                             child: Text(
                               Utils.multiLanguage(

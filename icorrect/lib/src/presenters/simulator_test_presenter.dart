@@ -25,6 +25,7 @@ import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 
 abstract class SimulatorTestViewContract {
   void onGetTestDetailSuccess(TestDetailModel testDetailModel);
@@ -582,6 +583,7 @@ class SimulatorTestPresenter {
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
     required int duration,
+    required SimulatorTestProvider simulatorTestProvider,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -604,6 +606,7 @@ class SimulatorTestPresenter {
       videoConfirmFile: videoConfirmFile,
       logAction: logAction,
       duration: duration,
+      simulatorTestProvider: simulatorTestProvider,
     );
 
     if (kDebugMode) {

@@ -45,6 +45,8 @@ import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+final double DURATION_MIN = 1.5;
+
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
     super.key,
@@ -111,6 +113,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // _initRecordController();
     _simulatorTestProvider =
         Provider.of<SimulatorTestProvider>(context, listen: false);
+    _simulatorTestProvider!.resetErrorQuestionList();
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
     _timerProvider = Provider.of<TimerProvider>(context, listen: false);
@@ -978,6 +981,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     if (_audioPlayerController!.state == AudioPlayers.PlayerState.playing) {
       _audioPlayerController!.stop();
+      _audioPlayerController!.dispose();
     }
 
     if (null != _nativeVideoPlayerController) {
@@ -1068,7 +1072,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _reAnswerCallBack(QuestionTopicModel question) async {
+  void _reAnswerCallBack(
+    QuestionTopicModel question,
+    int selectedQuestionIndex,
+  ) async {
     if (_simulatorTestProvider!.submitStatus == SubmitStatus.submitting) {
       return;
     }
@@ -1735,7 +1742,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   Future<void> _recordForReAnswer(String fileName) async {
-    _reanswerFilePath = '${await Utils.generateAudioFileName()}.$fileName';
+    _reanswerFilePath = '${await Utils.generateAudioFileName()}.wav';
     _originalAnswerFilePath = await Utils.createNewFilePath(fileName);
 
     String path = await Utils.createNewFilePath(_reanswerFilePath);
@@ -1874,24 +1881,58 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _startSubmitTest({File? videoConfirmFile}) {
-    List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
-
-    String activityId = "";
-    if (widget.activitiesModel != null) {
-      activityId = widget.activitiesModel!.activityId.toString();
+  Future<bool> _checkDuration() async {
+    bool result = true;
+    for (QuestionTopicModel q in _simulatorTestProvider!.questionList) {
+      String path =
+          await Utils.createNewFilePath(q.answers.last.url.toString());
+      if (q.answers.length > 1) {
+        path = await Utils.createNewFilePath(
+            q.answers[q.repeatIndex].url.toString());
+      }
+      final duration =
+          await Utils.getAudioDuration(_audioPlayerController!, path);
+      if (duration.inSeconds < DURATION_MIN) {
+        //Add index of question has duration < DURATION_MIN
+        q.isError = true;
+        if (!_simulatorTestProvider!.errorQuestionList.contains(q)) {
+          _simulatorTestProvider!.addErrorQuestion(q);
+        }
+        result = false;
+      } else {
+        q.isError = false;
+        _simulatorTestProvider!.removeErrorQuestion(q);
+        _simulatorTestProvider!.updateQuestionStatus(q);
+      }
     }
+    return result;
+  }
 
-    _testRoomPresenter!.submitTest(
-      context: context,
-      testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      activityId: activityId,
-      questions: questions,
-      isExam: widget.isExam,
-      videoConfirmFile: videoConfirmFile,
-      logAction: _simulatorTestProvider!.logActions,
-      duration: _simulatorTestProvider!.totalDuration,
-    );
+  void _startSubmitTest({File? videoConfirmFile}) async {
+    //Check duration of all answers
+    bool isValidDuration = await _checkDuration();
+    if (isValidDuration) {
+      List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+
+      String activityId = "";
+      if (widget.activitiesModel != null) {
+        activityId = widget.activitiesModel!.activityId.toString();
+      }
+
+      _testRoomPresenter!.submitTest(
+        context: context,
+        testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
+        activityId: activityId,
+        questions: questions,
+        isExam: widget.isExam,
+        videoConfirmFile: videoConfirmFile,
+        logAction: _simulatorTestProvider!.logActions,
+        duration: _simulatorTestProvider!.totalDuration,
+        simulatorTestProvider: _simulatorTestProvider!,
+      );
+    } else {
+      _updateUIWithErrorQuestionList();
+    }
   }
 
   List<QuestionTopicModel> _prepareQuestionListForSubmit() {
@@ -2151,6 +2192,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       reQuestions: _simulatorTestProvider!.questionList,
       isExam: widget.isExam,
       duration: _simulatorTestProvider!.totalDuration,
+      simulatorTestProvider: _simulatorTestProvider!,
     );
   }
 
@@ -2235,7 +2277,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onFinishAnswer(bool isPart2) {
+  void onFinishAnswer(bool isPart2) async {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
       _resetEnableFinishStatus();
@@ -2461,7 +2503,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   @override
-  void onFinishForReAnswer() {
+  void onFinishForReAnswer() async {
     //Check answer of user must be greater than 2 seconds
     if (_checkAnswerDuration()) {
       _resetEnableFinishStatus();
@@ -2472,14 +2514,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
 
-    if (kDebugMode) {
-      print("DEBUG: onFinishForReAnswer");
-    }
     // widget.provider.setReAnswerOfQuestions(question);
     if (null == _currentQuestion) {
-      if (kDebugMode) {
-        print("DEBUG: onFinishForReAnswer: _currentQuestion == null");
-      }
       return;
     }
 
@@ -2501,6 +2537,22 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _currentQuestion!.reAnswerCount++;
     }
     _simulatorTestProvider!.questionList[index] = _currentQuestion!;
+
+    //Check duration of re answer of error question
+    if (_reanswerFilePath.isNotEmpty) {
+      String path = await Utils.createNewFilePath(
+          _currentQuestion!.answers[_currentQuestion!.repeatIndex].url);
+      final duration =
+          await Utils.getAudioDuration(_audioPlayerController!, path);
+      if (duration.inSeconds >= DURATION_MIN) {
+        _currentQuestion!.isError = false;
+        _simulatorTestProvider!.removeErrorQuestion(_currentQuestion!);
+      } else {
+        _currentQuestion!.isError = true;
+      }
+      _simulatorTestProvider!.updateQuestionStatus(_currentQuestion!);
+    }
+
     _resetDataAfterReanswer(isCancel: false);
   }
 
@@ -2560,6 +2612,38 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //     '_flutterSoundRecorder', _flutterSoundRecorder));
     properties.add(
         DiagnosticsProperty<Record>('_recordController', _recordController));
+  }
+
+  void _updateUIWithErrorQuestionList() {
+    _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.none);
+
+    for (var q in _simulatorTestProvider!.errorQuestionList) {
+      _simulatorTestProvider!.updateQuestionStatus(q);
+    }
+
+    //Show thong bao error question
+    _showErrorAnswerDialog();
+  }
+
+  void _showErrorAnswerDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description:
+              "Một vài câu trả lời có thời lượng nhỏ hơn mức quy định!\n Bạn hãy trả lời lại",
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
   }
 
   @override

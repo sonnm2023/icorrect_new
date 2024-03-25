@@ -22,21 +22,24 @@ class QuestionTopicModel {
   //0 - first answer  1 - second answer(repeat 1)  2 - third answer (repeat 2)
   int? _repeatIndex = 0;
   List<FileTopicModel>? _files;
+  bool _isError = false;
 
-  QuestionTopicModel(
-      {int? id,
-      String? content,
-      int? type,
-      int? topicId,
-      String? tips,
-      int? tipType,
-      int? isFollowUp,
-      String? cueCard,
-      int? reAnswerCount,
-      List<FileTopicModel>? answers,
-      int? numPart,
-      int? repeatIndex,
-      List<FileTopicModel>? files}) {
+  QuestionTopicModel({
+    int? id,
+    String? content,
+    int? type,
+    int? topicId,
+    String? tips,
+    int? tipType,
+    int? isFollowUp,
+    String? cueCard,
+    int? reAnswerCount,
+    List<FileTopicModel>? answers,
+    int? numPart,
+    int? repeatIndex,
+    List<FileTopicModel>? files,
+    bool isError = false,
+  }) {
     _id = id;
     _content = content;
     _type = type;
@@ -50,6 +53,7 @@ class QuestionTopicModel {
     _numPart = numPart;
     _repeatIndex = repeatIndex;
     _files = files;
+    _isError = isError;
   }
 
   int get id => _id ?? 0;
@@ -77,6 +81,8 @@ class QuestionTopicModel {
   set numPart(int numPart) => _numPart = numPart;
   int get repeatIndex => _repeatIndex ?? 0;
   set repeatIndex(int repeatIndex) => _repeatIndex = repeatIndex;
+  bool get isError => _isError;
+  set isError(bool value) => _isError = value;
 
   List<FileTopicModel> get files => _files ?? [];
   set files(List<FileTopicModel> files) => _files = files;
@@ -153,6 +159,7 @@ class QuestionTopicModel {
     int? numPart,
     int? repeatIndex,
     List<FileTopicModel>? files,
+    bool? isError,
   }) =>
       QuestionTopicModel(
         id: id ?? this.id,
@@ -168,5 +175,6 @@ class QuestionTopicModel {
         numPart: numPart ?? this.numPart,
         repeatIndex: repeatIndex ?? this.repeatIndex,
         files: files ?? this.files,
+        isError: isError ?? this.isError,
       );
 }

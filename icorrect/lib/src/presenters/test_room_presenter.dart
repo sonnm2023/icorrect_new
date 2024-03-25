@@ -17,6 +17,7 @@ import 'package:icorrect/src/models/simulator_test_models/question_topic_model.d
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:icorrect/src/models/user_data_models/user_data_model.dart';
+import 'package:icorrect/src/provider/simulator_test_provider.dart';
 
 abstract class TestRoomViewContract {
   void onCountDown(
@@ -167,6 +168,7 @@ class TestRoomPresenter {
     required File? videoConfirmFile,
     required List<Map<String, dynamic>>? logAction,
     required int duration,
+    required SimulatorTestProvider simulatorTestProvider,
   }) async {
     assert(_view != null && _testRepository != null);
 
@@ -189,6 +191,7 @@ class TestRoomPresenter {
       videoConfirmFile: videoConfirmFile,
       logAction: logAction,
       duration: duration,
+      simulatorTestProvider: simulatorTestProvider,
     );
 
     if (kDebugMode) {
@@ -316,6 +319,7 @@ class TestRoomPresenter {
     required List<QuestionTopicModel> reQuestions,
     required bool isExam,
     required int duration,
+    required SimulatorTestProvider simulatorTestProvider,
   }) async {
     //Add log
     LogModel? log;
@@ -336,7 +340,12 @@ class TestRoomPresenter {
       videoConfirmFile: null,
       logAction: null,
       duration: duration,
+      simulatorTestProvider: simulatorTestProvider,
     );
+
+    // if (simulatorTestProvider.errorQuestionList.isNotEmpty) {
+    //   _view!.onErrorQuestionList();
+    // } else {
     if (kDebugMode) {
       print("DEBUG: update reanswer");
       print("DEBUG: testId = $testId");
@@ -426,6 +435,7 @@ class TestRoomPresenter {
       _view!.onUpdateReAnswersError(
           Utils.multiLanguage(StringConstants.submit_test_error_client)!);
     }
+    // }
   }
 
   void callTestPositionApi(
