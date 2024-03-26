@@ -2,7 +2,7 @@
 // final Uri API_USER_LIST = Uri.parse('https://api.randomuser.me/?results=50');
 
 //================START PRODUCT API URLs========================================
-/*
+
 import 'package:icorrect/src/data_sources/utils.dart';
 
 const icorrectDomain = "https://ielts-correction.com/";
@@ -116,13 +116,13 @@ class RequestMethod {
   static const put = 'PUT';
   static const delete = 'DELETE';
 }
-*/
+
 //================END PRODUCT API URLs========================================
 
 //================START DEV API URLs========================================
 //Example
 // final Uri API_USER_LIST = Uri.parse('https://api.randomuser.me/?results=50');
-
+/*
 import 'package:icorrect/src/data_sources/utils.dart';
 
 const dev_icorrectDomain = "http://devapi.ielts-correction.com/";
@@ -239,5 +239,5 @@ class RequestMethod {
   static const put = 'PUT';
   static const delete = 'DELETE';
 }
-
+*/
 //================END DEV API URLs==========================================
