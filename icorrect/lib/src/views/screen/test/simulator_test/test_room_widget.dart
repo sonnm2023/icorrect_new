@@ -45,7 +45,8 @@ import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-final double DURATION_MIN = 1.5;
+final double DURATION_MIN = 0.5; //For Product
+// final double DURATION_MIN = 5; //For Test
 
 class TestRoomWidget extends StatefulWidget {
   const TestRoomWidget({
@@ -1804,6 +1805,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     // if (null != _cameraService) {
     //   _cameraService!.dispose();
+    //   _cameraService = null;
     // }
 
     //Reset playingIndex
@@ -1901,12 +1903,20 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   Future<bool> _checkDuration() async {
     bool result = true;
     for (QuestionTopicModel q in _simulatorTestProvider!.questionList) {
+      if (q.answers.length > 1) {
+        if (q.repeatIndex != q.answers.length - 1) {
+          continue;
+        }
+      }
+
       String path =
           await Utils.createNewFilePath(q.answers.last.url.toString());
-      if (q.answers.length > 1) {
-        path = await Utils.createNewFilePath(
-            q.answers[q.repeatIndex].url.toString());
-      }
+
+      // //Check all answer
+      // if (q.answers.length > 1) {
+      //   path = await Utils.createNewFilePath(
+      //       q.answers[q.repeatIndex].url.toString());
+      // }
       final duration =
           await Utils.getAudioDuration(_audioPlayerController!, path);
       if (duration.inSeconds < DURATION_MIN) {

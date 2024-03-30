@@ -72,7 +72,12 @@ class TestRecordWidget extends StatelessWidget {
               }),
               const SizedBox(height: 10),
               hideBottomButton
-                  ? const SizedBox()
+                  ? _buildFinishButton(
+                      simulatorTestProvider,
+                      context: context,
+                      question: currentQuestion,
+                      isLess2Second: simulatorTestProvider.isLessThan2Second,
+                    )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -6,7 +6,15 @@ FileTopicModel fileTopicModelFromJson(String str) =>
     FileTopicModel.fromJson(json.decode(str));
 String fileTopicModelToJson(FileTopicModel data) => json.encode(data.toJson());
 
-enum FileTopicType {none, introduce, question, answer, followup, end_of_take_note, end_of_test }
+enum FileTopicType {
+  none,
+  introduce,
+  question,
+  answer,
+  followup,
+  end_of_take_note,
+  end_of_test
+}
 
 class FileTopicModel {
   int? _id;
@@ -14,13 +22,21 @@ class FileTopicModel {
   int? _type;
   int? _numPart;
   FileTopicType? _fileTopicType;
+  int? _duration;
 
-  FileTopicModel({int? id, String? url, int? type, int? numPart, FileTopicType? fileTopicType}) {
+  FileTopicModel(
+      {int? id,
+      String? url,
+      int? type,
+      int? numPart,
+      FileTopicType? fileTopicType,
+      int? duration}) {
     _id = id;
     _url = url;
     _type = type;
     _numPart = numPart;
     _fileTopicType = fileTopicType;
+    _duration = duration;
   }
 
   int get id => _id ?? 0;
@@ -32,7 +48,10 @@ class FileTopicModel {
   int get numPart => _numPart ?? 0;
   set numPart(int numPart) => _numPart = numPart;
   FileTopicType get fileTopicType => _fileTopicType ?? FileTopicType.none;
-  set fileTopicType(FileTopicType fileTopicType) => _fileTopicType = fileTopicType;
+  set fileTopicType(FileTopicType fileTopicType) =>
+      _fileTopicType = fileTopicType;
+  int get duration => _duration ?? 0;
+  set duration(int value) => _duration = value;
 
   FileTopicModel.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
