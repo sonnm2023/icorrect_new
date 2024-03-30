@@ -691,11 +691,16 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
               simulatorTestPresenter: _simulatorTestPresenter!,
               isExam: _isExam,
             ),
-            Visibility(
-              visible: provider.submitStatus == SubmitStatus.submitting,
-              child: const DefaultLoadingIndicator(
-                color: AppColor.defaultPurpleColor,
-              ),
+            Consumer<SimulatorTestProvider>(
+              builder: (context, provider, child) {
+                if (SubmitStatus.submitting == provider.submitStatus) {
+                  return const DefaultLoadingIndicator(
+                    color: AppColor.defaultPurpleColor,
+                  );
+                }
+
+                return const SizedBox();
+              },
             ),
           ],
         ),
