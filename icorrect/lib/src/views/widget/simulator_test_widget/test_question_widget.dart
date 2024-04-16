@@ -5,6 +5,7 @@ import 'package:icorrect/src/data_sources/constant_methods.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/presenters/simulator_test_presenter.dart';
 import 'package:icorrect/src/presenters/test_room_presenter.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
@@ -14,6 +15,7 @@ import 'package:provider/provider.dart';
 class TestQuestionWidget extends StatefulWidget {
   const TestQuestionWidget({
     super.key,
+    required this.simulatorTestPresenter,
     required this.testRoomPresenter,
     required this.playAnswerCallBack,
     required this.reAnswerCallBack,
@@ -21,7 +23,7 @@ class TestQuestionWidget extends StatefulWidget {
     required this.simulatorTestProvider,
     required this.isExam,
   });
-
+  final SimulatorTestPresenter simulatorTestPresenter;
   final TestRoomPresenter testRoomPresenter;
   final SimulatorTestProvider simulatorTestProvider;
 
@@ -236,6 +238,15 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
 
     bool hasImage = Utils.checkHasImage(question: question);
     String fileName = question.files.last.url;
+    bool notAllowReanswer = false;
+    if (widget.simulatorTestPresenter.testDetail != null) {
+      if (widget.simulatorTestPresenter.testDetail!.notAllowReanswer == 1) {
+        notAllowReanswer = true;
+      }
+    }
+    bool allowReAnswer =
+        (hasReAnswer && !widget.isExam && (notAllowReanswer == false)) ||
+            question.isError;
 
     return Container(
       color: question.isError
@@ -321,7 +332,7 @@ class _TestQuestionWidgetState extends State<TestQuestionWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if ((hasReAnswer && !widget.isExam) || question.isError)
+                        if (allowReAnswer)
                           InkWell(
                             onTap: () {
                               widget.reAnswerCallBack(question, index);

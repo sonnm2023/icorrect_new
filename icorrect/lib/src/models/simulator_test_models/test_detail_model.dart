@@ -30,6 +30,7 @@ class TestDetailModel {
   int? _part2Time;
   int? _part3Time;
   int? _takeNoteTime;
+  int? _notAllowReanswer;
 
   TestDetailModel({
     String? activityType,
@@ -52,6 +53,8 @@ class TestDetailModel {
     int? part2Time,
     int? part3Time,
     int? takeNoteTime,
+    int? notAllowReanswer = 0,
+    // int? notAllowReanswer = 1, //For test
   }) {
     _activityType = activityType;
     _testOption = testOption;
@@ -73,6 +76,7 @@ class TestDetailModel {
     _part2Time = part2Time;
     _part3Time = part3Time;
     _takeNoteTime = takeNoteTime;
+    _notAllowReanswer = notAllowReanswer;
   }
 
   String get activityType => _activityType ?? "";
@@ -117,6 +121,10 @@ class TestDetailModel {
   set part3Time(int part3Time) => _part3Time = part3Time;
   int get takeNoteTime => _takeNoteTime ?? 60;
   set takeNoteTime(int takeNoteTime) => _takeNoteTime = takeNoteTime;
+  int get notAllowReanswer => _notAllowReanswer ?? 0;
+  // int get notAllowReanswer => _notAllowReanswer ?? 1; //For test
+  set notAllowReanswer(int notAllowReanswer) =>
+      _notAllowReanswer = notAllowReanswer;
 
   TestDetailModel.fromJson(Map<String, dynamic> json) {
     _activityType = json['activity_type'];
@@ -161,6 +169,8 @@ class TestDetailModel {
     _part2Time = json['part2_time'] ?? 120;
     _part3Time = json['part3_time'] ?? 45;
     _takeNoteTime = json['take_note_time'] ?? 60;
+    _notAllowReanswer = json['not_allow_reanswer'] ?? 0;
+    // _notAllowReanswer = json['not_allow_reanswer'] ?? 1; //For test
   }
 
   Map<String, dynamic> toJson() {
@@ -193,6 +203,7 @@ class TestDetailModel {
     data['part2_time'] = _part2Time;
     data['part3_time'] = _part3Time;
     data['take_note_time'] = _takeNoteTime;
+    data['not_allow_reanswer'] = _notAllowReanswer;
 
     return data;
   }

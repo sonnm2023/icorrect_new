@@ -268,6 +268,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                   children: [
                     SingleChildScrollView(
                       child: TestQuestionWidget(
+                        simulatorTestPresenter: widget.simulatorTestPresenter,
                         testRoomPresenter: _testRoomPresenter!,
                         playAnswerCallBack: _playAnswerCallBack,
                         reAnswerCallBack: _reAnswerCallBack,
