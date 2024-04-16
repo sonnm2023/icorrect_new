@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -50,7 +54,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 children: [
                   _buildSwitchVideoLib(),
+                  const Divider(),
                   _buildShareLog(),
+                  const Divider(),
                 ],
               ),
             ),
@@ -76,6 +82,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildShareLog() {
-    return Container();
+    return InkWell(
+      onTap: () {
+        showShareBottomSheet(context);
+      },
+      child: const Row(
+        children: [
+          SizedBox(
+            height: 44,
+            child: Center(child: Text('Share log')),
+          )
+        ],
+      ),
+    );
+  }
+
+  void showShareBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.facebook),
+              title: const Text('Share via Facebook'),
+              onTap: () {
+                shareFileViaFacebook();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share via Zalo'),
+              onTap: () {
+                shareFileViaZalo();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void shareFileViaFacebook() async {
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String filePath = "$folderPath/flutter_logs.txt";
+    File file = File(filePath);
+    if (await file.exists()) {
+      XFile xFile = XFile(filePath);
+      Share.shareXFiles([xFile],
+              text: 'Check out this file!',
+              sharePositionOrigin: const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0))
+          .then((value) => print('File shared via Facebook'))
+          .catchError((error) => print('Error sharing file: $error'));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hiện không có file để share. Làm ơn quay lại sau!'),
+        ),
+      );
+    }
+  }
+
+  void shareFileViaZalo() async {
+    String folderPath = await FileStorageHelper.getExternalDocumentPath();
+    String filePath = "$folderPath/flutter_logs.txt";
+    File file = File(filePath);
+    if (await file.exists()) {
+      XFile xFile = XFile(filePath);
+      Share.shareXFiles([xFile],
+              text: 'Check out this file!',
+              sharePositionOrigin: const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0))
+          .then((value) => print('File shared via Zalo'))
+          .catchError((error) => print('Error sharing file: $error'));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hiện không có file để share. Làm ơn quay lại sau!'),
+        ),
+      );
+    }
   }
 }
