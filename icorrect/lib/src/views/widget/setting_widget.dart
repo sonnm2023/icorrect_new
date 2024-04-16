@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -36,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
         centerTitle: true,
       ),
       body: isLoading // Kiểm tra trạng thái loading
@@ -44,23 +46,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child:
                   CircularProgressIndicator()) // Hiển thị loading indicator nếu đang tải
           : Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 children: [
-                  Text('Using video player library'),
-                  Switch(
-                    value: setting,
-                    onChanged: (value) async {
-                      await _saveSetting(value);
-                      setState(() {
-                        setting = value;
-                      });
-                    },
-                  ),
+                  _buildSwitchVideoLib(),
+                  _buildShareLog(),
                 ],
               ),
             ),
     );
+  }
+
+  Widget _buildSwitchVideoLib() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text('Using video player library'),
+        Switch(
+          value: setting,
+          onChanged: (value) async {
+            await _saveSetting(value);
+            setState(() {
+              setting = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShareLog() {
+    return Container();
   }
 }
