@@ -1151,4 +1151,25 @@ class Utils {
     completer.complete(duration);
     return completer.future;
   }
+
+  static String convertDateTimeFormat(String inputFormat) {
+    try {
+      // Định dạng đầu vào
+      DateFormat inputFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+      // Định dạng đầu ra
+      DateFormat outputFormatter = DateFormat('yyyy-MM-dd HH:mm');
+
+      // Chuyển đổi chuỗi thành đối tượng DateTime
+      DateTime dateTime = inputFormatter.parse(inputFormat);
+      // Chuyển đổi thành định dạng mới
+      String outputFormat = outputFormatter.format(dateTime);
+
+      return outputFormat;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      return "0000-00-00 00:00"; // Trả về null hoặc một giá trị mặc định nếu xảy ra lỗi
+    }
+  }
 }

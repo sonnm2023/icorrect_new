@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activity_answer_model.dart';
 
 ActivitiesModel activitiesModelFromJson(String str) =>
@@ -85,7 +86,7 @@ class ActivitiesModel {
     _syllabusId = json['syllabus_id'];
     _activityId = json['activity_id'];
     _activityName = json['activity_name'];
-    _activityEndTime = json['activity_end_time'];
+    _activityEndTime = Utils.convertDateTimeFormat(json['activity_end_time']);
     _activityReleaseTime = json['activity_release_time'];
     _activityType = json['activity_type'];
     _activityStatus = json['activity_status'];

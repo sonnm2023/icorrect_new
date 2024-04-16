@@ -103,12 +103,13 @@ class HomeWorkWidget extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         overflow: TextOverflow.clip,
+                        maxLines: 1,
                       ),
                     ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          left: CustomSize.size_20,
+                          left: CustomSize.size_10,
                         ),
                         child: Text(
                           _statusOfActivity(context),
@@ -142,35 +143,58 @@ class HomeWorkWidget extends StatelessWidget {
       prefix = "EXAM: ";
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          prefix,
-          maxLines: 2,
-          style: CustomTextStyle.textWithCustomInfo(
-            context: context,
-            color: AppColor.defaultBlackColor,
-            fontsSize: FontsSize.fontSize_15,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 1.7,
-          child: Text(
-            homeWorkModel.activityName,
-            maxLines: 2,
-            overflow: TextOverflow.clip,
-            style: CustomTextStyle.textWithCustomInfo(
-              context: context,
-              color: AppColor.defaultBlackColor,
-              fontsSize: FontsSize.fontSize_15,
-              fontWeight: FontWeight.w400,
+    if (prefix.isEmpty) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              homeWorkModel.activityName,
+              maxLines: 2,
+              overflow: TextOverflow.clip,
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultBlackColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
-        )
-      ],
-    );
+        ],
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              prefix,
+              maxLines: 2,
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultBlackColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 1.7,
+            child: Text(
+              homeWorkModel.activityName,
+              maxLines: 2,
+              overflow: TextOverflow.clip,
+              style: CustomTextStyle.textWithCustomInfo(
+                context: context,
+                color: AppColor.defaultBlackColor,
+                fontsSize: FontsSize.fontSize_15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          )
+        ],
+      );
+    }
   }
 
   String _statusOfActivity(BuildContext context) {
