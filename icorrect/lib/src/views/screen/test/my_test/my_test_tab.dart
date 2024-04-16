@@ -624,6 +624,14 @@ class _MyTestTabState extends State<MyTestTab>
   }
 
   bool _canReAnswerQuestion() {
+    if (_presenter != null) {
+      if (_presenter!.testDetail != null) {
+        if (_presenter!.testDetail!.notAllowReanswer == 1) {
+          return false;
+        }
+      }
+    }
+
     if (widget.practiceTestId != null) {
       return true;
     }
