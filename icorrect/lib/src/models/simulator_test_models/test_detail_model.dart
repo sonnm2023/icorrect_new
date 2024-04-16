@@ -235,5 +235,6 @@ class TestDetailModel {
     _part3 = json['test']['part3'] != null
         ? TopicModel.fromJson(json['test']['part3'])
         : null;
+    _notAllowReanswer = json['test']['not_allow_reanswer'] ?? 0;
   }
 }
