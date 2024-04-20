@@ -194,6 +194,10 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
+    if (kDebugMode) {
+      print("DEBUG: SimulatorTestScreen build");
+    }
+
     return WillPopScope(
       child: Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTestProvider, child) {
