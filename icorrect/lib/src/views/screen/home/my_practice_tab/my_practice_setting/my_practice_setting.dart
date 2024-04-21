@@ -387,16 +387,16 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
         .getTestDetailFromMyPractice(context: context, data: data);
   }
 
-  Future<void> _goToTestScreen(TestDetailModel testDetail) async {
+  Future<void> _gotoTestScreen(TestDetailModel testDetail) async {
     if (kDebugMode) {
-      print("DEBUG: _goToTestScreen $testDetail");
+      print("DEBUG: _gotoTestScreen $testDetail");
     }
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SimulatorTestScreen(
-          activitiesModel: null,
+          activity: null,
           testOption: null,
           topicsId: null,
           isPredict: null,
@@ -428,7 +428,7 @@ class _MyPracticeSettingScreenState extends State<MyPracticeSettingScreen>
   @override
   void onGetTestDetailSuccess(TestDetailModel testDetail) {
     _practiceListProvider!.setIsTestDetailLoading(false);
-    _goToTestScreen(testDetail);
+    _gotoTestScreen(testDetail);
   }
 
   @override

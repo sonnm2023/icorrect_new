@@ -36,7 +36,7 @@ import 'package:video_compress/video_compress.dart';
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({
     super.key,
-    required this.activitiesModel,
+    required this.activity,
     required this.testOption,
     required this.topicsId,
     required this.isPredict,
@@ -44,7 +44,7 @@ class SimulatorTestScreen extends StatefulWidget {
     required this.onRefresh,
   });
 
-  final ActivitiesModel? activitiesModel; //From Main screen
+  final ActivitiesModel? activity; //From Main screen
   final int? testOption; //From Practice screen
   final List<int>? topicsId; //From Practice screen
   final int? isPredict; //From Practice screen
@@ -135,8 +135,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
         if (_simulatorTestPresenter!.isDownloading) {
           String? activityId;
-          if (widget.activitiesModel != null) {
-            activityId = widget.activitiesModel!.activityId.toString();
+          if (widget.activity != null) {
+            activityId = widget.activity!.activityId.toString();
           }
 
           _simulatorTestPresenter!.reDownloadFiles(
@@ -202,7 +202,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       child: Consumer<SimulatorTestProvider>(
         builder: (context, simulatorTestProvider, child) {
           if (simulatorTestProvider.submitStatus == SubmitStatus.success &&
-              widget.activitiesModel != null) {
+              widget.activity != null) {
             return Stack(
               children: [
                 DefaultTabController(
@@ -283,9 +283,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Widget _buildTitle() {
     return Text(
-      (widget.activitiesModel != null)
-          ? widget.activitiesModel!.activityName
-          : "",
+      (widget.activity != null) ? widget.activity!.activityName : "",
       style: CustomTextStyle.textWithCustomInfo(
         context: context,
         color: AppColor.defaultPurpleColor,
@@ -344,14 +342,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildHighLightTab() {
     return HighLightTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.activitiesModel!,
+      homeWorkModel: widget.activity!,
     );
   }
 
   Widget _buildOtherTab() {
     return OtherTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.activitiesModel!,
+      homeWorkModel: widget.activity!,
     );
   }
 
@@ -385,12 +383,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
-                if (widget.activitiesModel != null) {
+                if (widget.activity != null) {
                   _simulatorTestPresenter!.submitTest(
                     context: buildContext,
                     testId: _simulatorTestProvider!.currentTestDetail.testId
                         .toString(),
-                    activityId: widget.activitiesModel!.activityId.toString(),
+                    activityId: widget.activity!.activityId.toString(),
                     questions: _simulatorTestProvider!.questionList,
                     isExam: _isExam,
                     videoConfirmFile: videoConfirmFile,
@@ -581,8 +579,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
           String activityId = "";
-          if (widget.activitiesModel != null) {
-            activityId = widget.activitiesModel!.activityId.toString();
+          if (widget.activity != null) {
+            activityId = widget.activity!.activityId.toString();
           }
 
           _simulatorTestPresenter!.submitTest(
@@ -691,7 +689,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         child: Stack(
           children: [
             TestRoomWidget(
-              activitiesModel: widget.activitiesModel,
+              activitiesModel: widget.activity,
               simulatorTestPresenter: _simulatorTestPresenter!,
               isExam: _isExam,
             ),
@@ -731,10 +729,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Create a crash bug for testing
     // Utils.testCrashBug();
 
-    if (widget.activitiesModel != null) {
-      _isExam =
-          widget.activitiesModel!.activityType == ActivityType.exam.name ||
-              widget.activitiesModel!.activityType == ActivityType.test.name;
+    if (widget.activity != null) {
+      _isExam = widget.activity!.activityType == ActivityType.exam.name ||
+          widget.activity!.activityType == ActivityType.test.name;
     } else {
       _isExam = false;
     }
@@ -743,11 +740,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _getTestDetail() async {
     _simulatorTestPresenter!.initializeData().then(
       (_) {
-        if (widget.activitiesModel != null) {
+        if (widget.activity != null) {
           //From main screen
           _simulatorTestPresenter!.getTestDetailFromHomeWork(
             context: context,
-            activityId: widget.activitiesModel!.activityId.toString(),
+            activityId: widget.activity!.activityId.toString(),
           );
         } else if (widget.testDetail != null) {
           //From my practice screen
@@ -836,9 +833,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setTotal(total);
     _simulatorTestProvider!.updateDownloadingIndex(index);
     _simulatorTestProvider!.updateDownloadingPercent(percent);
-    if (widget.activitiesModel != null) {
-      _simulatorTestProvider!
-          .setActivityType(widget.activitiesModel!.activityType);
+    if (widget.activity != null) {
+      _simulatorTestProvider!.setActivityType(widget.activity!.activityType);
     } else {
       _simulatorTestProvider!.setActivityType(ActivityType.practice.name);
     }
@@ -866,9 +862,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestPresenter!.testDetail = testDetail;
     _simulatorTestPresenter!.prepareDataForDownload(
       context: context,
-      activityId: widget.activitiesModel != null
-          ? widget.activitiesModel!.activityId.toString()
-          : null,
+      activityId: widget.activity?.activityId.toString(),
       testDetail: testDetail,
     );
   }
@@ -969,11 +963,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
         _simulatorTestProvider!.setIsReDownload(true);
         _simulatorTestProvider!.setStartNowStatus(false);
-        _simulatorTestPresenter!.reDownloadFiles(
-            context,
-            widget.activitiesModel != null
-                ? widget.activitiesModel!.activityId.toString()
-                : null);
+        _simulatorTestPresenter!
+            .reDownloadFiles(context, widget.activity?.activityId.toString());
       }
     }
   }

@@ -18,11 +18,9 @@ import 'package:provider/provider.dart';
 
 class MyTestScreen extends StatefulWidget {
   const MyTestScreen(
-      {super.key,
-      required this.activitiesModel,
-      required this.isFromSimulatorTest});
+      {super.key, required this.activity, required this.isFromSimulatorTest});
 
-  final ActivitiesModel activitiesModel;
+  final ActivitiesModel activity;
   final bool isFromSimulatorTest;
 
   @override
@@ -34,8 +32,8 @@ class _MyTestScreenState extends State<MyTestScreen> {
   AuthProvider? _authProvider;
 
   TabBar get _tabBar {
-    bool hasTeacherResponse = widget.activitiesModel.activityAnswer != null &&
-        widget.activitiesModel.activityAnswer!.hasTeacherResponse();
+    bool hasTeacherResponse = widget.activity.activityAnswer != null &&
+        widget.activity.activityAnswer!.hasTeacherResponse();
     return TabBar(
       physics: const BouncingScrollPhysics(),
       isScrollable: hasTeacherResponse ? true : false,
@@ -82,8 +80,8 @@ class _MyTestScreenState extends State<MyTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasTeacherResponse = widget.activitiesModel.activityAnswer != null &&
-        widget.activitiesModel.activityAnswer!.hasTeacherResponse();
+    bool hasTeacherResponse = widget.activity.activityAnswer != null &&
+        widget.activity.activityAnswer!.hasTeacherResponse();
     return DefaultTabController(
       length: hasTeacherResponse ? 4 : 3,
       child: Scaffold(
@@ -150,7 +148,7 @@ class _MyTestScreenState extends State<MyTestScreen> {
   }
 
   List<Widget> _tabsLabel() {
-    return widget.activitiesModel.activityAnswer!.hasTeacherResponse()
+    return widget.activity.activityAnswer!.hasTeacherResponse()
         ? [
             Tab(
               child: Text(
@@ -237,36 +235,31 @@ class _MyTestScreenState extends State<MyTestScreen> {
   _tabBarView() {
     if (kDebugMode) {
       print(
-        'DEBUG: test id: ${widget.activitiesModel.activityAnswer!.testId.toString()}',
+        'DEBUG: test id: ${widget.activity.activityAnswer!.testId.toString()}',
       );
     }
-    return widget.activitiesModel.activityAnswer!.hasTeacherResponse()
+    return widget.activity.activityAnswer!.hasTeacherResponse()
         ? [
             MyTestTab(
-                homeWorkModel: widget.activitiesModel,
+                homeWorkModel: widget.activity,
                 practiceTestId: null,
                 provider: _myTestProvider!),
             ResponseTab(
-                homeWorkModel: widget.activitiesModel,
-                provider: _myTestProvider!),
+                homeWorkModel: widget.activity, provider: _myTestProvider!),
             HighLightTab(
-                provider: _myTestProvider!,
-                homeWorkModel: widget.activitiesModel),
+                provider: _myTestProvider!, homeWorkModel: widget.activity),
             OtherTab(
-                provider: _myTestProvider!,
-                homeWorkModel: widget.activitiesModel),
+                provider: _myTestProvider!, homeWorkModel: widget.activity),
           ]
         : [
             MyTestTab(
-                homeWorkModel: widget.activitiesModel,
+                homeWorkModel: widget.activity,
                 practiceTestId: null,
                 provider: _myTestProvider!),
             HighLightTab(
-                provider: _myTestProvider!,
-                homeWorkModel: widget.activitiesModel),
+                provider: _myTestProvider!, homeWorkModel: widget.activity),
             OtherTab(
-                provider: _myTestProvider!,
-                homeWorkModel: widget.activitiesModel),
+                provider: _myTestProvider!, homeWorkModel: widget.activity),
           ];
   }
 
