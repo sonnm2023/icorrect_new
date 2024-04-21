@@ -2426,6 +2426,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _hideCameraLive();
 
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+    widget.simulatorTestPresenter.updateUIWhenSubmitSuccess();
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
     _simulatorTestProvider!.setNeedRefreshActivityList(true);
