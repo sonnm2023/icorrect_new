@@ -718,11 +718,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   Widget _buildBody() {
-    if (kDebugMode) {
-      print("DEBUG: AAA SimulatorTest --- build -- buildBody");
-    }
-
     return Consumer<SimulatorTestProvider>(builder: (context, provider, _) {
+      if (kDebugMode) {
+        print("DEBUG: AAA SimulatorTest --- build -- buildBody");
+      }
+
       if (provider.isDownloadProgressing) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
