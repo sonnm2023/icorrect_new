@@ -36,7 +36,7 @@ import 'package:video_compress/video_compress.dart';
 class SimulatorTestScreen extends StatefulWidget {
   const SimulatorTestScreen({
     super.key,
-    required this.activitiesModel,
+    required this.activity,
     required this.testOption,
     required this.topicsId,
     required this.isPredict,
@@ -44,7 +44,7 @@ class SimulatorTestScreen extends StatefulWidget {
     required this.onRefresh,
   });
 
-  final ActivitiesModel? activitiesModel; //From Main screen
+  final ActivitiesModel? activity; //From Main screen
   final int? testOption; //From Practice screen
   final List<int>? topicsId; //From Practice screen
   final int? isPredict; //From Practice screen
@@ -68,6 +68,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   bool _isOffline = false;
   CircleLoading? _loading;
   bool _isExam = false;
+  bool _isDoingTestFinish = false;
 
   TabBar get _tabBar {
     return TabBar(
@@ -123,6 +124,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void initState() {
     super.initState();
+    _isDoingTestFinish = false;
 
     _connection = Connectivity()
         .onConnectivityChanged
@@ -135,8 +137,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
         if (_simulatorTestPresenter!.isDownloading) {
           String? activityId;
-          if (widget.activitiesModel != null) {
-            activityId = widget.activitiesModel!.activityId.toString();
+          if (widget.activity != null) {
+            activityId = widget.activity!.activityId.toString();
           }
 
           _simulatorTestPresenter!.reDownloadFiles(
@@ -187,6 +189,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestPresenter!.closeClientRequest();
     _simulatorTestPresenter!.resetAutoRequestDownloadTimes();
     _simulatorTestProvider!.resetAll();
+    _isDoingTestFinish = false;
     super.dispose();
   }
 
@@ -194,12 +197,13 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
+    if (kDebugMode) {
+      print("DEBUG: SimulatorTestScreen build");
+    }
+
     return WillPopScope(
-      child: Consumer<SimulatorTestProvider>(
-        builder: (context, simulatorTestProvider, child) {
-          if (simulatorTestProvider.submitStatus == SubmitStatus.success &&
-              widget.activitiesModel != null) {
-            return Stack(
+      child: _isDoingTestFinish
+          ? Stack(
               children: [
                 DefaultTabController(
                   length: 3,
@@ -218,7 +222,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     ),
                     body: TabBarView(
                       children: [
-                        _buildSimulatorTestTab(simulatorTestProvider),
+                        _buildSimulatorTestTab(),
                         _buildHighLightTab(),
                         _buildOtherTab(),
                       ],
@@ -227,9 +231,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 ),
                 _buildFullImageView(),
               ],
-            );
-          } else {
-            return Stack(
+            )
+          : Stack(
               children: [
                 Scaffold(
                   key: GlobalScaffoldKey.simulatorTestScaffoldKey,
@@ -242,7 +245,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                       bottom: true,
                       child: Stack(
                         children: [
-                          _buildBody(simulatorTestProvider),
+                          _buildBody(),
                           _buildDownloadAgain(),
                           BackButtonWidget(
                             backButtonTapped: _backButtonTapped,
@@ -254,10 +257,70 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 ),
                 _buildFullImageView(),
               ],
-            );
-          }
-        },
-      ),
+            ),
+      // child: Consumer<SimulatorTestProvider>(
+      //   builder: (context, simulatorTestProvider, child) {
+      //     if (simulatorTestProvider.submitStatus == SubmitStatus.success &&
+      //         widget.activity != null) {
+      //       return Stack(
+      //         children: [
+      //           DefaultTabController(
+      //             length: 3,
+      //             child: Scaffold(
+      //               key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+      //               appBar: AppBar(
+      //                 elevation: 0.0,
+      //                 iconTheme: const IconThemeData(
+      //                   color: AppColor.defaultPurpleColor,
+      //                 ),
+      //                 centerTitle: true,
+      //                 leading: _buildBackButton(),
+      //                 title: _buildTitle(),
+      //                 bottom: _buildBottomNavigatorTabBar(),
+      //                 backgroundColor: AppColor.defaultWhiteColor,
+      //               ),
+      //               body: TabBarView(
+      //                 children: [
+      //                   _buildSimulatorTestTab(simulatorTestProvider),
+      //                   _buildHighLightTab(),
+      //                   _buildOtherTab(),
+      //                 ],
+      //               ),
+      //             ),
+      //           ),
+      //           _buildFullImageView(),
+      //         ],
+      //       );
+      //     } else {
+      //       return Stack(
+      //         children: [
+      //           Scaffold(
+      //             key: GlobalScaffoldKey.simulatorTestScaffoldKey,
+      //             body: Align(
+      //               alignment: Alignment.topLeft,
+      //               child: SafeArea(
+      //                 left: true,
+      //                 top: true,
+      //                 right: true,
+      //                 bottom: true,
+      //                 child: Stack(
+      //                   children: [
+      //                     _buildBody(simulatorTestProvider),
+      //                     _buildDownloadAgain(),
+      //                     BackButtonWidget(
+      //                       backButtonTapped: _backButtonTapped,
+      //                     ),
+      //                   ],
+      //                 ),
+      //               ),
+      //             ),
+      //           ),
+      //           _buildFullImageView(),
+      //         ],
+      //       );
+      //     }
+      //   },
+      // ),
       onWillPop: () async {
         _backButtonTapped();
         return false;
@@ -279,9 +342,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
 
   Widget _buildTitle() {
     return Text(
-      (widget.activitiesModel != null)
-          ? widget.activitiesModel!.activityName
-          : "",
+      (widget.activity != null) ? widget.activity!.activityName : "",
       style: CustomTextStyle.textWithCustomInfo(
         context: context,
         color: AppColor.defaultPurpleColor,
@@ -309,7 +370,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     );
   }
 
-  Widget _buildSimulatorTestTab(SimulatorTestProvider simulatorTestProvider) {
+  Widget _buildSimulatorTestTab() {
     return Align(
       alignment: Alignment.topLeft,
       child: SafeArea(
@@ -317,7 +378,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         top: true,
         right: true,
         bottom: true,
-        child: _buildBody(simulatorTestProvider),
+        child: _buildBody(),
       ),
     );
   }
@@ -340,14 +401,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   Widget _buildHighLightTab() {
     return HighLightTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.activitiesModel!,
+      homeWorkModel: widget.activity!,
     );
   }
 
   Widget _buildOtherTab() {
     return OtherTab(
       provider: _simulatorTestProvider!,
-      homeWorkModel: widget.activitiesModel!,
+      homeWorkModel: widget.activity!,
     );
   }
 
@@ -381,12 +442,12 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                     .randomVideoRecordExam(_simulatorTestProvider!.videosSaved);
                 File? videoConfirmFile = _isExam ? File(savedVideoPath) : null;
 
-                if (widget.activitiesModel != null) {
+                if (widget.activity != null) {
                   _simulatorTestPresenter!.submitTest(
                     context: buildContext,
                     testId: _simulatorTestProvider!.currentTestDetail.testId
                         .toString(),
-                    activityId: widget.activitiesModel!.activityId.toString(),
+                    activityId: widget.activity!.activityId.toString(),
                     questions: _simulatorTestProvider!.questionList,
                     isExam: _isExam,
                     videoConfirmFile: videoConfirmFile,
@@ -577,8 +638,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
 
           String activityId = "";
-          if (widget.activitiesModel != null) {
-            activityId = widget.activitiesModel!.activityId.toString();
+          if (widget.activity != null) {
+            activityId = widget.activity!.activityId.toString();
           }
 
           _simulatorTestPresenter!.submitTest(
@@ -656,56 +717,58 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
   }
 
-  Widget _buildBody(SimulatorTestProvider provider) {
-    if (kDebugMode) {
-      print("DEBUG: SimulatorTest --- build -- buildBody");
-    }
+  Widget _buildBody() {
+    return Consumer<SimulatorTestProvider>(builder: (context, provider, _) {
+      if (kDebugMode) {
+        print("DEBUG: AAA SimulatorTest --- build -- buildBody");
+      }
 
-    if (provider.isDownloadProgressing) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const DownloadProgressingWidget(),
-          Visibility(
-            visible: provider.startNowAvailable,
-            child: StartNowButtonWidget(
-              startNowButtonTapped: () {
-                _startToDoTest();
-              },
-            ),
-          ),
-        ],
-      );
-    }
-
-    if (provider.isGettingTestDetail) {
-      return const DefaultLoadingIndicator(
-        color: AppColor.defaultPurpleColor,
-      );
-    } else {
-      return SizedBox(
-        child: Stack(
+      if (provider.isDownloadProgressing) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TestRoomWidget(
-              activitiesModel: widget.activitiesModel,
-              simulatorTestPresenter: _simulatorTestPresenter!,
-              isExam: _isExam,
-            ),
-            Consumer<SimulatorTestProvider>(
-              builder: (context, provider, child) {
-                if (SubmitStatus.submitting == provider.submitStatus) {
-                  return const DefaultLoadingIndicator(
-                    color: AppColor.defaultPurpleColor,
-                  );
-                }
-
-                return const SizedBox();
-              },
+            const DownloadProgressingWidget(),
+            Visibility(
+              visible: provider.startNowAvailable,
+              child: StartNowButtonWidget(
+                startNowButtonTapped: () {
+                  _startToDoTest();
+                },
+              ),
             ),
           ],
-        ),
-      );
-    }
+        );
+      }
+
+      if (provider.isGettingTestDetail) {
+        return const DefaultLoadingIndicator(
+          color: AppColor.defaultPurpleColor,
+        );
+      } else {
+        return SizedBox(
+          child: Stack(
+            children: [
+              TestRoomWidget(
+                activitiesModel: widget.activity,
+                simulatorTestPresenter: _simulatorTestPresenter!,
+                isExam: _isExam,
+              ),
+              Consumer<SimulatorTestProvider>(
+                builder: (context, provider, child) {
+                  if (SubmitStatus.submitting == provider.submitStatus) {
+                    return const DefaultLoadingIndicator(
+                      color: AppColor.defaultPurpleColor,
+                    );
+                  }
+
+                  return const SizedBox();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   Widget _buildDownloadAgain() {
@@ -727,10 +790,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Create a crash bug for testing
     // Utils.testCrashBug();
 
-    if (widget.activitiesModel != null) {
-      _isExam =
-          widget.activitiesModel!.activityType == ActivityType.exam.name ||
-              widget.activitiesModel!.activityType == ActivityType.test.name;
+    if (widget.activity != null) {
+      _isExam = widget.activity!.activityType == ActivityType.exam.name ||
+          widget.activity!.activityType == ActivityType.test.name;
     } else {
       _isExam = false;
     }
@@ -739,11 +801,11 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   void _getTestDetail() async {
     _simulatorTestPresenter!.initializeData().then(
       (_) {
-        if (widget.activitiesModel != null) {
+        if (widget.activity != null) {
           //From main screen
           _simulatorTestPresenter!.getTestDetailFromHomeWork(
             context: context,
-            activityId: widget.activitiesModel!.activityId.toString(),
+            activityId: widget.activity!.activityId.toString(),
           );
         } else if (widget.testDetail != null) {
           //From my practice screen
@@ -832,9 +894,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestProvider!.setTotal(total);
     _simulatorTestProvider!.updateDownloadingIndex(index);
     _simulatorTestProvider!.updateDownloadingPercent(percent);
-    if (widget.activitiesModel != null) {
-      _simulatorTestProvider!
-          .setActivityType(widget.activitiesModel!.activityType);
+    if (widget.activity != null) {
+      _simulatorTestProvider!.setActivityType(widget.activity!.activityType);
     } else {
       _simulatorTestProvider!.setActivityType(ActivityType.practice.name);
     }
@@ -862,9 +923,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     _simulatorTestPresenter!.testDetail = testDetail;
     _simulatorTestPresenter!.prepareDataForDownload(
       context: context,
-      activityId: widget.activitiesModel != null
-          ? widget.activitiesModel!.activityId.toString()
-          : null,
+      activityId: widget.activity?.activityId.toString(),
       testDetail: testDetail,
     );
   }
@@ -910,6 +969,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     Utils.hideLoading(_loading);
     if (_simulatorTestProvider!.doingStatus != DoingStatus.finish) {
       _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+      _simulatorTestPresenter!.updateUIWhenSubmitSuccess();
     }
 
     //Send log
@@ -965,11 +1025,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         }
         _simulatorTestProvider!.setIsReDownload(true);
         _simulatorTestProvider!.setStartNowStatus(false);
-        _simulatorTestPresenter!.reDownloadFiles(
-            context,
-            widget.activitiesModel != null
-                ? widget.activitiesModel!.activityId.toString()
-                : null);
+        _simulatorTestPresenter!
+            .reDownloadFiles(context, widget.activity?.activityId.toString());
       }
     }
   }
@@ -1027,6 +1084,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   @override
   void onUpdateHasOrderStatus(bool hasOrder) {
     _simulatorTestProvider!.setHasOrderStatus(hasOrder);
+  }
+
+  @override
+  void onUpdateUIWhenSubmitSuccess() {
+    if (kDebugMode) {
+      print("DEBUG: AAA onUpdateUIWhenSubmitSuccess");
+    }
+
+    setState(() {
+      _isDoingTestFinish = true;
+    });
   }
 
   @override

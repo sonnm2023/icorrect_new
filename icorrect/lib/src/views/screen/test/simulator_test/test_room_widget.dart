@@ -71,7 +71,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   SimulatorTestProvider? _simulatorTestProvider;
   MyPracticeListProvider? _myPracticeListProvider;
 
-  TimerProvider? _timerProvider;
+  // TimerProvider? _timerProvider;
   PlayAnswerProvider? _playAnswerProvider;
   NativeVideoPlayerController? _nativeVideoPlayerController;
   AudioPlayers.AudioPlayer? _audioPlayerController;
@@ -117,7 +117,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.resetErrorQuestionList();
     _myPracticeListProvider =
         Provider.of<MyPracticeListProvider>(context, listen: false);
-    _timerProvider = Provider.of<TimerProvider>(context, listen: false);
+    // _timerProvider = Provider.of<TimerProvider>(context, listen: false);
     _playAnswerProvider =
         Provider.of<PlayAnswerProvider>(context, listen: false);
     _testRoomPresenter = TestRoomPresenter(this);
@@ -2064,7 +2064,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     String timeString = Utils.getTimeRecordString(timeRecord);
 
     //Record the answer
-    _timerProvider!.setCountDown(timeString);
+    // _timerProvider!.setCountDown(timeString); //TODO
+    _simulatorTestProvider!.setCountDown(timeString);
 
     if (null != _countDown) {
       _countDown!.cancel();
@@ -2093,7 +2094,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     int timeRecord = _getRecordTime(_currentQuestion!.numPart);
     String timeString = Utils.getTimeRecordString(timeRecord);
     //Record the answer
-    _timerProvider!.setCountDown(timeString);
+    // _timerProvider!.setCountDown(timeString); //TODO
+    _simulatorTestProvider!.setCountDown(timeString);
 
     if (null != _countDown) {
       _countDown!.cancel();
@@ -2149,7 +2151,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     // int totalTimeRecordPart2 = Utils.getRecordTime(PartOfTest.part2.get);
 
     if (timeRecordCounting < totalTimeRecordPart2) {
-      _timerProvider!.setCountDown(timeString);
+      // _timerProvider!.setCountDown(timeString); //TODO
+      _simulatorTestProvider!.setCountDown(timeString);
+
       if (null != _countDown) {
         _countDown!.cancel();
       }
@@ -2292,7 +2296,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       if (numPart == PartOfTest.part2.get) {
         _simulatorTestProvider!.setTimeRecordCounting(timeCounting);
       }
-      _timerProvider!.setCountDown(countDownString);
+      // _timerProvider!.setCountDown(countDownString);//TODO
+      _simulatorTestProvider!.setCountDown(countDownString);
       if (_simulatorTestProvider!.isLessThan2Second) {
         _simulatorTestProvider!.setIsLessThan2Second(isLessThan2Second);
       }
@@ -2421,6 +2426,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _hideCameraLive();
 
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.success);
+    widget.simulatorTestPresenter.updateUIWhenSubmitSuccess();
     _simulatorTestProvider!.setVisibleSaveTheTest(false);
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
     _simulatorTestProvider!.setNeedRefreshActivityList(true);
@@ -2538,7 +2544,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       return;
     }
 
-    _timerProvider!.strCount;
+    // _timerProvider!.strCount; //TODO
     //Change need update reanswer status
     _simulatorTestProvider!.setNeedUpdateReanswerStatus(true);
     _simulatorTestProvider!.resetIsReAnswer();

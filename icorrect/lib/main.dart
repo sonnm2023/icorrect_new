@@ -118,7 +118,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MyTestProvider()),
-        ChangeNotifierProvider(create: (_) => TimerProvider()),
+        // ChangeNotifierProvider(create: (_) => TimerProvider()),
         ChangeNotifierProvider(create: (_) => PlayAnswerProvider()),
         ChangeNotifierProvider(create: (_) => ReAnswerProvider()),
         ChangeNotifierProvider(create: (_) => SimulatorTestProvider()),

@@ -192,7 +192,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
     List<TopicId> topicsId = _provider!.topicsId;
     if (widget.topicTypes == IELTSTopicType.part2and3.get) {
       if (topicsId.isNotEmpty) {
-        _goToTestScreen();
+        _gotoTestScreen();
       } else {
         showToastMsg(
           msg: Utils.multiLanguage(
@@ -206,7 +206,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
       _onTopicsIsFullTest();
     } else if (topicsId.length >= 3 &&
         widget.topicTypes != IELTSTopicType.full.get) {
-      _goToTestScreen();
+      _gotoTestScreen();
     } else {
       showToastMsg(
         msg: Utils.multiLanguage(StringConstants.choose_at_least_3_topics)!,
@@ -228,7 +228,7 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
         isCenter: true,
       );
     } else {
-      _goToTestScreen();
+      _gotoTestScreen();
     }
   }
 
@@ -279,13 +279,13 @@ class _TopicsScreenState extends State<IELTSTopicsScreen>
     }
   }
 
-  Future<void> _goToTestScreen() async {
+  Future<void> _gotoTestScreen() async {
     int testOption = Utils.getTestOption(widget.topicTypes);
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => SimulatorTestScreen(
-          activitiesModel: null,
+          activity: null,
           testOption: testOption,
           topicsId: _provider!.getTopicsIdList(),
           isPredict: IELTSPredict.normalQuestion.get,

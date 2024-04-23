@@ -59,9 +59,10 @@ class TestRecordWidget extends StatelessWidget {
                 height: 25,
               ),
               const SizedBox(height: 5),
-              Consumer<TimerProvider>(builder: (context, timerProvider, _) {
+              Consumer<SimulatorTestProvider>(
+                  builder: (context, simulatorTestProvider, _) {
                 return Text(
-                  timerProvider.strCount,
+                  simulatorTestProvider.strCount,
                   style: CustomTextStyle.textWithCustomInfo(
                     context: context,
                     color: AppColor.defaultBlackColor,

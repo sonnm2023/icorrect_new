@@ -636,7 +636,18 @@ class SimulatorTestProvider with ChangeNotifier {
     _isReAnswer = false;
   }
 
+  String? _strCount;
+  String get strCount => _strCount ?? '00:00';
+  void setCountDown(String strCount) {
+    _strCount = strCount;
+
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
   void resetAll() {
+    _strCount = "";
     _isReAnswer = false;
     _errorQuestionList = [];
     _totalDuration = 0;

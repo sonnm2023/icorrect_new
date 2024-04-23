@@ -43,6 +43,7 @@ abstract class SimulatorTestViewContract {
       {required bool isSaveTest});
   void onPrepareListVideoSource(List<QuestionTopicModel> list);
   void onUpdateHasOrderStatus(bool hasOrder);
+  void onUpdateUIWhenSubmitSuccess();
 }
 
 class SimulatorTestPresenter {
@@ -739,6 +740,10 @@ class SimulatorTestPresenter {
       {required bool isSaveTest}) {
     _view!.onHandleEventBackButtonSystemWhenDoingTestFinish(
         isSaveTest: isSaveTest);
+  }
+
+  void updateUIWhenSubmitSuccess() {
+    _view!.onUpdateUIWhenSubmitSuccess();
   }
 
   String _getMaxDurationVideo(List<VideoExamRecordInfo> videosSaved) {

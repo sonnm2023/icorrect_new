@@ -487,7 +487,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
               context,
               MaterialPageRoute(
                 builder: (_) => SimulatorTestScreen(
-                  activitiesModel: _selectedActivityModel!,
+                  activity: _selectedActivityModel!,
                   testOption: null,
                   topicsId: null,
                   isPredict: null,
@@ -507,7 +507,7 @@ class _MyHomeWorkTabState extends State<MyHomeWorkTab>
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => MyTestScreen(
-                  activitiesModel: _selectedActivityModel!,
+                  activity: _selectedActivityModel!,
                   isFromSimulatorTest: false,
                 ),
               ),
