@@ -34,7 +34,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "com.csupporter.icorrectvn"
-    compileSdkVersion 33//flutter.compileSdkVersion
+    compileSdkVersion 34//flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
