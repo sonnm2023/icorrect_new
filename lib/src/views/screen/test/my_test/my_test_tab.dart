@@ -1,0 +1,943 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:icorrect/core/app_asset.dart';
+import 'package:icorrect/core/app_color.dart';
+import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
+import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/file_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
+import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:icorrect/src/models/ui_models/alert_info.dart';
+import 'package:icorrect/src/presenters/my_test_presenter.dart';
+import 'package:icorrect/src/provider/auth_provider.dart';
+import 'package:icorrect/src/provider/my_test_provider.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
+import 'package:icorrect/src/views/screen/test/my_test/download_progressing_widget.dart';
+import 'package:icorrect/src/views/screen/test/my_test/test_record_widget.dart';
+import 'package:icorrect/src/views/widget/download_again_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
+import 'package:icorrect/src/views/widget/simulator_test_widget/load_local_image_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:record/record.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class MyTestTab extends StatefulWidget {
+  final ActivitiesModel? homeWorkModel;
+  final String? practiceTestId;
+  final MyTestProvider provider;
+
+  const MyTestTab(
+      {super.key,
+      this.homeWorkModel,
+      this.practiceTestId,
+      required this.provider});
+
+  @override
+  State<MyTestTab> createState() => _MyTestTabState();
+}
+
+class _MyTestTabState extends State<MyTestTab>
+    with AutomaticKeepAliveClientMixin<MyTestTab>, WidgetsBindingObserver
+    implements MyTestContract, ActionAlertListener {
+  double w = 0, h = 0;
+  MyTestPresenter? _presenter;
+  CircleLoading? _loading;
+
+  AudioPlayer? _player;
+  final AudioRecorder _record = AudioRecorder();
+  bool isOffline = false;
+  StreamSubscription? connection;
+  String audioFile = "";
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    _resetFullImageData();
+
+    connection = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        isOffline = true;
+      } else if (result == ConnectivityResult.mobile) {
+        if (kDebugMode) {
+          print("DEBUG: connect via 3G/4G");
+        }
+        if (_presenter!.isDownloading) {
+          String activityId = "";
+          if (widget.homeWorkModel != null) {
+            activityId = widget.homeWorkModel!.activityId.toString();
+          } else if (widget.practiceTestId != null) {
+            activityId = widget.practiceTestId!;
+          } else {
+            if (kDebugMode) {
+              print(
+                  "DEBUG: Can not continue to download with empty activityId");
+            }
+            return;
+          }
+
+          _presenter!.reDownloadFiles(context, activityId);
+        }
+        isOffline = false;
+      } else if (result == ConnectivityResult.wifi) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.ethernet) {
+        isOffline = false;
+      } else if (result == ConnectivityResult.bluetooth) {
+        isOffline = false;
+      }
+
+      if (kDebugMode) {
+        print("DEBUG: NO INTERNET === $isOffline");
+      }
+    });
+
+    _loading = CircleLoading();
+    _presenter = MyTestPresenter(this);
+    _player = AudioPlayer();
+    _loading!.show(context: context, isViewAIResponse: true);
+
+    _prepareDataForMyTestDetail();
+  }
+
+  void _prepareDataForMyTestDetail() async {
+    final status = await Permission.microphone.status;
+    await _presenter!.initializeData();
+
+    String activityId = "";
+    String testId = widget.practiceTestId ?? "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+      testId = widget.homeWorkModel!.activityAnswer!.testId.toString();
+    }
+
+    _presenter!.getMyTest(
+      context: context,
+      activityId: activityId,
+      testId: testId,
+    );
+
+    Future.delayed(Duration.zero, () {
+      widget.provider.clearData();
+      widget.provider.setPermissionRecord(status);
+      widget.provider.setDownloadingFile(true);
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _player!.dispose();
+    _record.dispose();
+    _presenter!.closeClientRequest();
+    _presenter!.pauseDownload();
+    super.dispose();
+  }
+
+  void _resetFullImageData() {
+    widget.provider.clearData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return _buildMyTest();
+  }
+
+  bool _checkAIScoring() {
+    if (widget.homeWorkModel == null) {
+      return false;
+    }
+
+    if (widget.homeWorkModel!.activityAnswer == null) {
+      return false;
+    }
+
+    if (widget.homeWorkModel!.activityAnswer!.aiResponseLink.isNotEmpty) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Widget _buildMyTest() {
+    w = MediaQuery.of(context).size.width;
+    h = MediaQuery.of(context).size.height;
+
+    bool isAIScoring = _checkAIScoring();
+    double bottomMargin = isAIScoring ? 60 : 0;
+
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            (provider.isDownloading)
+                ? const DownloadProgressingWidget()
+                : Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Container(
+                        color: AppColor.defaultGraySlightColor,
+                        height: h,
+                        alignment: Alignment.topCenter,
+                        padding: EdgeInsets.only(top: 10, bottom: bottomMargin),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: provider.myAnswerOfQuestions.length,
+                          itemBuilder: (context, index) {
+                            return _questionItem(
+                                provider.myAnswerOfQuestions[index]);
+                          },
+                        ),
+                      ),
+                      TestRecordWidget(
+                        finishAnswer: (currentQuestion) {
+                          _onFinishReAnswer(currentQuestion);
+                        },
+                        cancelAnswer: () {
+                          _onCancelReAnswer();
+                        },
+                      ),
+                      (provider.reAnswerOfQuestions.isNotEmpty &&
+                              !provider.visibleRecord)
+                          ? LayoutBuilder(
+                              builder: (_, constraint) {
+                                return InkWell(
+                                  onTap: () {
+                                    _showDialogConfirmSaveChange(
+                                        provider: provider);
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: CustomSize.size_10,
+                                    ),
+                                    color: AppColor.defaultPurpleColor,
+                                    width: constraint.maxWidth,
+                                    child: Center(
+                                      child: Text(
+                                        Utils.multiLanguage(StringConstants
+                                            .update_answer_button_title)!,
+                                        style:
+                                            CustomTextStyle.textWithCustomInfo(
+                                          context: context,
+                                          color: AppColor.defaultAppColor,
+                                          fontsSize: FontsSize.fontSize_16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(),
+                      provider.needDownloadAgain
+                          ? const DownloadAgainWidget(
+                              simulatorTestPresenter: null,
+                              myTestPresenter: null,
+                            )
+                          : const SizedBox(),
+                      _buildFullImageView(),
+                    ],
+                  ),
+            (widget.homeWorkModel != null) ? _aiResponseButton() : Container()
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _aiResponseButton() {
+    return (Utils.haveAiResponse(widget.homeWorkModel!).isNotEmpty)
+        ? LayoutBuilder(
+            builder: (_, constraint) {
+              return InkWell(
+                onTap: () async {
+                  String aiResponseLink =
+                      '${widget.homeWorkModel!.activityAnswer!.aiResponseLink}&token=${await Utils.getAccessToken()}';
+                  Uri toLaunch = Uri.parse(aiResponseLink);
+
+                  await launchUrl(toLaunch);
+                },
+                child: Container(
+                  height: 51,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: CustomSize.size_10,
+                  ),
+                  color: Colors.green,
+                  width: constraint.maxWidth,
+                  child: Center(
+                    child: Text(
+                      Utils.multiLanguage(
+                          StringConstants.view_ai_response_button_title)!,
+                      style: CustomTextStyle.textWithCustomInfo(
+                        context: context,
+                        color: AppColor.defaultAppColor,
+                        fontsSize: FontsSize.fontSize_16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+        : Container();
+  }
+
+  void _showDialogConfirmSaveChange({required MyTestProvider provider}) {
+    showDialog(
+      context: context,
+      builder: (builder) {
+        return ConfirmDialogWidget(
+          title: Utils.multiLanguage(StringConstants.confirm_title)!,
+          message: Utils.multiLanguage(
+              StringConstants.confirm_save_change_answers_message)!,
+          cancelButtonTitle:
+              Utils.multiLanguage(StringConstants.cancel_button_title)!,
+          okButtonTitle:
+              Utils.multiLanguage(StringConstants.save_button_title)!,
+          cancelButtonTapped: () {},
+          okButtonTapped: () {
+            _onClickUpdateReAnswer(provider.reAnswerOfQuestions);
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _onAppActive();
+        break;
+      case AppLifecycleState.paused:
+        if (kDebugMode) {
+          print('DEBUG: App paused');
+        }
+        break;
+      case AppLifecycleState.inactive:
+        _onAppInBackground();
+        break;
+      case AppLifecycleState.detached:
+        if (kDebugMode) {
+          print('DEBUG:App detached');
+        }
+        break;
+      case AppLifecycleState.hidden:
+        if (kDebugMode) {
+          print('DEBUG:App hidden');
+        }
+        break;
+    }
+  }
+
+  Future _onAppInBackground() async {
+    if (widget.provider.visibleRecord) {
+      _record.stop();
+      _stopCountTimer();
+
+      String path =
+          '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+          '\\$audioFile';
+      if (File(path).existsSync()) {
+        await File(path).delete();
+        if (kDebugMode) {
+          print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+        }
+      }
+    }
+
+    if (_player!.state == PlayerState.playing) {
+      QuestionTopicModel q = widget.provider.currentQuestion;
+      widget.provider.setPlayAnswer(Status.playOff.get, q.id);
+      _stopAudio();
+    }
+  }
+
+  Future _onAppActive() async {
+    if (widget.provider.visibleRecord) {
+      _recordReAnswer();
+    }
+  }
+
+  void _onClickUpdateReAnswer(List<QuestionTopicModel> requestions) {
+    _loading!.show(context: context, isViewAIResponse: false);
+
+    String activityId = "";
+    String testId = widget.practiceTestId ?? "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+      testId = widget.homeWorkModel!.activityAnswer!.testId.toString();
+    }
+
+    _presenter!.updateMyAnswer(
+      context: context,
+      testId: testId,
+      activityId: activityId,
+      reQuestions: requestions,
+    );
+  }
+
+  void _onFinishReAnswer(QuestionTopicModel question) {
+    //Check answer of user must be greater than 2 seconds
+    if (_checkAnswerDuration()) {
+      return;
+    }
+
+    widget.provider.setReAnswerOfQuestions(question);
+    int index = widget.provider.myAnswerOfQuestions.indexWhere(
+        (q) => q.id == question.id && q.repeatIndex == question.repeatIndex);
+    widget.provider.myAnswerOfQuestions[index] = question;
+    widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
+    if (audioFile.isNotEmpty) {
+      if (question.answers.isNotEmpty) {
+        question.answers[question.repeatIndex].url = audioFile;
+      } else {
+        FileTopicModel fileTopicModel = FileTopicModel();
+        fileTopicModel.url = audioFile;
+        question.answers.add(fileTopicModel);
+      }
+      if (_isLastAnswer(question)) {
+        question.reAnswerCount++;
+      }
+      widget.provider.setCurrentQuestion(question);
+    }
+    _resetReAnswerData();
+  }
+
+  Future<void> _onCancelReAnswer() async {
+    String path =
+        '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+        '\\$audioFile';
+    if (File(path).existsSync()) {
+      await File(path).delete();
+      if (kDebugMode) {
+        print("DEBUG: File Record is delete: ${File(path).existsSync()}");
+      }
+    }
+    _resetReAnswerData();
+  }
+
+  void _resetReAnswerData() {
+    widget.provider.setVisibleRecord(false);
+    widget.provider.setTimerCount('00:00');
+    _stopCountTimer();
+    widget.provider.setCountDownTimer(null);
+    _record.stop();
+  }
+
+  Widget _questionItem(QuestionTopicModel question) {
+    bool hasImage = Utils.checkHasImage(question: question);
+    String fileName = question.files.last.url;
+
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          color: Colors.white,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          child: LayoutBuilder(
+            builder: (_, constraint) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: CustomSize.size_10,
+                  vertical: CustomSize.size_10,
+                ),
+                margin: const EdgeInsets.only(
+                  top: CustomSize.size_10,
+                ),
+                width: constraint.maxWidth,
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    (_isAudioPlay(question.repeatIndex, question.id))
+                        ? InkWell(
+                            onTap: () async {
+                              widget.provider.setPlayAnswer(
+                                  Status.playOff.get, question.id);
+                              _stopAudio();
+                            },
+                            child: const Image(
+                              image: AssetImage(AppAsset.play),
+                              width: CustomSize.size_50,
+                              height: CustomSize.size_50,
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () async {
+                              widget.provider.setPlayAnswer(
+                                  question.repeatIndex, question.id);
+
+                              if (question.answers.isNotEmpty) {
+                                _prepareToPlayAudio(
+                                    fileName: Utils.convertFileName(question
+                                        .answers[question.repeatIndex].url
+                                        .toString()),
+                                    questionId: question.id);
+                              }
+                            },
+                            child: const Image(
+                              image: AssetImage(AppAsset.stop),
+                              width: CustomSize.size_50,
+                              height: CustomSize.size_50,
+                            ),
+                          ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          left: CustomSize.size_20,
+                        ),
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              question.content.toString(),
+                              style: CustomTextStyle.textWithCustomInfo(
+                                context: context,
+                                color: AppColor.defaultBlackColor,
+                                fontsSize: FontsSize.fontSize_15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            (question.cueCard.isNotEmpty)
+                                ? Text(
+                                    question.cueCard.toString(),
+                                    style: CustomTextStyle.textWithCustomInfo(
+                                      context: context,
+                                      color: AppColor.defaultBlackColor,
+                                      fontsSize: FontsSize.fontSize_15,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                : Container(),
+                            const SizedBox(
+                              height: CustomSize.size_10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                _canReAnswerQuestion()
+                                    ? InkWell(
+                                        onTap: () async {
+                                          _onClickReAnswer(provider, question);
+                                        },
+                                        child: Text(
+                                          Utils.multiLanguage(StringConstants
+                                              .re_answer_button_title)!,
+                                          style: CustomTextStyle
+                                              .textWithCustomInfo(
+                                            context: context,
+                                            color: AppColor.defaultPurpleColor,
+                                            fontsSize: FontsSize.fontSize_14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                                const SizedBox(
+                                  width: CustomSize.size_20,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    _showTips(question);
+                                  },
+                                  child: (question.tips.isNotEmpty)
+                                      ? Text(
+                                          Utils.multiLanguage(StringConstants
+                                              .view_tips_button_title)!,
+                                          style: CustomTextStyle
+                                              .textWithCustomInfo(
+                                            context: context,
+                                            color: AppColor.defaultPurpleColor,
+                                            fontsSize: FontsSize.fontSize_14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )
+                                      : Container(),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    hasImage
+                        ? InkWell(
+                            onTap: () {
+                              _showFullImage(fileName: fileName);
+                            },
+                            child: LoadLocalImageWidget(
+                              imageUrl: fileName,
+                              isInRow: true,
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _showFullImage({required String fileName}) {
+    if (kDebugMode) {
+      print("DEBUG: _showFullImage");
+    }
+
+    //For test
+    // widget.simulatorTestProvider.setSelectedQuestionImageUrl(fileName);
+    // widget.simulatorTestProvider.setShowFullImage(true);
+
+    widget.provider.setSelectedQuestionImageUrl(fileName);
+    widget.provider.setShowFullImage(true);
+  }
+
+  bool _canReAnswerQuestion() {
+    if (_presenter != null) {
+      if (_presenter!.testDetail != null) {
+        if (_presenter!.testDetail!.notAllowReanswer == 1) {
+          return false;
+        }
+      }
+    }
+
+    if (widget.practiceTestId != null) {
+      return true;
+    }
+    if (widget.homeWorkModel != null) {
+      return widget.homeWorkModel!.canReAnswer();
+    }
+    return false;
+  }
+
+  bool _isAudioPlay(int repeatIndex, int questionId) {
+    return widget.provider.indexAudio == repeatIndex &&
+        questionId == widget.provider.questionId;
+  }
+
+  void _onClickReAnswer(MyTestProvider provider, QuestionTopicModel question) {
+    widget.provider.setPlayAnswer(Status.playOff.get, question.id);
+    _stopAudio();
+    if (!provider.visibleRecord) {
+      widget.provider.setCurrentQuestion(question);
+      _recordReAnswer();
+    }
+  }
+
+  _showTips(QuestionTopicModel questionTopicModel) {
+    Provider.of<AuthProvider>(context, listen: false)
+        .setShowDialogWithGlobalScaffoldKey(
+            true, GlobalScaffoldKey.showTipScaffoldKey);
+
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        enableDrag: false,
+        barrierColor: AppColor.defaultGrayColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(CustomSize.size_20),
+            topRight: Radius.circular(CustomSize.size_20),
+          ),
+        ),
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height - CustomSize.size_20),
+        builder: (_) {
+          return TipQuestionDialog.tipQuestionDialog(
+              context, questionTopicModel);
+        });
+  }
+
+  Future _recordReAnswer() async {
+    if (widget.provider.recordPermission.isGranted) {
+      _stopCountTimer();
+      widget.provider.setVisibleRecord(true);
+      widget.provider.setIsLessThan2Second(true);
+      if (widget.provider.visibleRecord) {
+        audioFile = '${await Utils.generateAudioFileName()}.wav';
+
+        timer = _presenter!.startCountDown(
+            context: context, count: 30, isLessThan2Seconds: true);
+        widget.provider.setCountDownTimer(timer);
+        await _record.start(
+           RecordConfig(encoder:
+          Platform.isAndroid ? AudioEncoder.wav : AudioEncoder.pcm16bits,
+            bitRate: 128000,
+            sampleRate: 44100),
+          path:
+              '${await FileStorageHelper.getFolderPath(MediaType.audio, null)}'
+              '\\$audioFile',
+
+        );
+      }
+    } else {
+      final status = await Permission.microphone.request();
+      widget.provider.setPermissionRecord(status);
+      _record.stop();
+    }
+  }
+
+  void _stopCountTimer() {
+    widget.provider.setTimerCount("00:30");
+    if (timer != null) {
+      timer!.cancel();
+    }
+    if (widget.provider.countDownTimer != null) {
+      widget.provider.countDownTimer!.cancel();
+    }
+  }
+
+  bool _isLastAnswer(QuestionTopicModel question) {
+    return question.answers[question.repeatIndex].url ==
+        question.answers.last.url;
+  }
+
+  Future _prepareToPlayAudio(
+      {required String fileName, required int questionId}) async {
+    Utils.prepareAudioFile(fileName, null).then((value) {
+      if (kDebugMode) {
+        print('DEBUG: _playAudio:${value.path.toString()}');
+      }
+      _playAudio(value.path.toString(), questionId);
+    });
+  }
+
+  Future<void> _playAudio(String audioPath, int questionId) async {
+    try {
+      await _player!.play(DeviceFileSource(audioPath));
+      await _player!.setVolume(2.5);
+      _player!.onPlayerComplete.listen((event) {
+        widget.provider.setPlayAnswer(Status.playOff.get, questionId);
+      });
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print("DEBUG:  _playAudio $e");
+      }
+    }
+  }
+
+  Future<void> _stopAudio() async {
+    await _player!.stop();
+  }
+
+  void _showCheckNetworkDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.multiLanguage(StringConstants.dialog_title)!,
+          description:
+              Utils.multiLanguage(StringConstants.network_error_message)!,
+          okButtonTitle: Utils.multiLanguage(StringConstants.ok_button_title),
+          cancelButtonTitle: null,
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+          cancelButtonTapped: null,
+        );
+      },
+    );
+  }
+
+  bool _checkAnswerDuration() {
+    if (widget.provider.isLessThan2Second) {
+      Fluttertoast.showToast(
+        msg: Utils.multiLanguage(
+            StringConstants.answer_must_be_greater_than_2_seconds_message)!,
+        backgroundColor: Colors.blueGrey,
+        textColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+        fontSize: 15,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return true;
+    }
+    return false;
+  }
+
+  Widget _buildFullImageView() {
+    return Consumer<MyTestProvider>(
+      builder: (context, provider, child) {
+        if (provider.showFullImage) {
+          return FullImageWidget(
+            imageUrl: provider.selectedQuestionImageUrl,
+            provider: provider,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+  @override
+  void onFinishCountDown() {
+    _onFinishReAnswer(widget.provider.currentQuestion);
+  }
+
+  @override
+  void onCountDown(String time, bool isLessThan2Second) {
+    widget.provider.setTimerCount(time);
+    widget.provider.setIsLessThan2Second(isLessThan2Second);
+  }
+
+  @override
+  void onDownloadSuccess(TestDetailModel testDetail, String nameFile,
+      double percent, int index, int total) {
+    widget.provider.setTotal(total);
+    widget.provider.updateDownloadingPercent(percent);
+    widget.provider.updateDownloadingIndex(index);
+    if (index == total) {
+      widget.provider.setDownloadingFile(false);
+      widget.provider.setTotal(0);
+      widget.provider.updateDownloadingPercent(0.0);
+      widget.provider.updateDownloadingIndex(0);
+    }
+  }
+
+  @override
+  void onGetMyTestSuccess(List<QuestionTopicModel> questions) {
+    Utils.hideLoading(_loading);
+    widget.provider.setAnswerOfQuestions(questions);
+  }
+
+  @override
+  void onDownloadFilesFail(AlertInfo alertInfo) {
+    Utils.hideLoading(_loading);
+    Fluttertoast.showToast(
+      msg: alertInfo.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: AppColor.defaultBlackColor,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+    );
+    if (kDebugMode) {
+      print('DEBUG: downloadFilesFail: ${alertInfo.description.toString()}');
+    }
+  }
+
+  @override
+  void onGetMyTestFail(AlertInfo alertInfo) {
+    Utils.hideLoading(_loading);
+    Fluttertoast.showToast(
+        msg: alertInfo.description,
+        backgroundColor: AppColor.defaultGrayColor,
+        textColor: AppColor.defaultBlackColor,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER);
+    if (kDebugMode) {
+      print('DEBUG: getMyTestFail: ${alertInfo.description.toString()}');
+    }
+  }
+
+  @override
+  void onAlertExit(String keyInfo) {}
+
+  @override
+  void onAlertNextStep(String keyInfo) {}
+
+  @override
+  void onUpdateAnswersSuccess(String message) {
+    widget.provider.setAnswerOfQuestions(widget.provider.myAnswerOfQuestions);
+    widget.provider.setVisibleRecord(false);
+    widget.provider.setTimerCount('00:00');
+    widget.provider.clearReAnswerOfQuestions();
+
+    Fluttertoast.showToast(
+        msg: message,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+        fontSize: 18,
+        toastLength: Toast.LENGTH_LONG);
+
+    Utils.hideLoading(_loading);
+  }
+
+  @override
+  void onUpdateAnswerFail(AlertInfo info) {
+    if (kDebugMode) {
+      print("DEBUG: updateAnswerFail ${info.description.toString()}");
+    }
+    //AlertsDialog.init().showDialog(context, info, this);
+    Utils.hideLoading(_loading);
+
+    Fluttertoast.showToast(
+      msg: info.description,
+      backgroundColor: AppColor.defaultGrayColor,
+      textColor: AppColor.defaultBlackColor,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void onReDownload() {
+    if (kDebugMode) {
+      print("DEBUG: TODO: implement onReDownload");
+    }
+    widget.provider.setNeedDownloadAgain(true);
+  }
+
+  @override
+  void onTryAgainToDownload() {
+    //Check internet connection status
+    if (isOffline) {
+      _showCheckNetworkDialog();
+    } else {
+      if (null != _presenter!.testDetail && null != _presenter!.filesTopic) {
+        updateStatusForReDownload();
+        if (null == _presenter!.dio) {
+          _presenter!.initializeData();
+        }
+
+        String activityId = "";
+        if (widget.homeWorkModel != null) {
+          activityId = widget.homeWorkModel!.activityId.toString();
+        }
+        _presenter!.reDownloadFiles(context, activityId);
+      }
+    }
+  }
+
+  void updateStatusForReDownload() {
+    widget.provider.setNeedDownloadAgain(false);
+  }
+}

@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Apple on 09/12/2023.
+  
+*/
+"NSAppleMusicUsageDescription"="Play using while you are doing the exam.";
+"NSCameraUsageDescription"="This app require permission to access to the camera to record video file for answering the question.";
+"NSMicrophoneUsageDescription"="This app require permission to access to the microphone to record audio file for answering the question.";
+"NSPhotoLibraryUsageDescription"="This app require permission to access to the library.";
