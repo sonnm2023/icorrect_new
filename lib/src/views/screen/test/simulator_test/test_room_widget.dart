@@ -814,7 +814,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     };
 
     _createLog(action: LogEvent.actionStartToDoTest, data: info);
-    _createLogDoingTest(action: LogEvent.actionStartToDoTest, data: logData);
+    // _createLogDoingTest(action: LogEvent.actionStartToDoTest, data: logData);
 
     _simulatorTestProvider!.resetTotalDuration();
 
@@ -841,11 +841,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _typeOfActionLog = 2;
         int numPart = _simulatorTestProvider!.currentQuestion.numPart;
 
-        if (numPart == PartOfTest.part2.get &&
-            await _recordController!.isRecording()) {
-          _recordController!.pause();
-        } else {
-          _recordController!.stop();
+        if (_recordController != null) {
+          if (numPart == PartOfTest.part2.get &&
+              await _recordController!.isRecording()) {
+            _recordController!.pause();
+          } else {
+            _recordController!.stop();
+            // _stopRecord();
+          }
         }
 
         if (null != _countDown) {
@@ -1531,7 +1534,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       StringConstants.k_question_content: _currentQuestion!.content
     };
     _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
-    _createLogDoingTest(action: LogEvent.actionPlayVideoQuestion, data: info);
+    // _createLogDoingTest(action: LogEvent.actionPlayVideoQuestion, data: info);
 
     //Remove old listener
     // ignore: invalid_use_of_protected_member
@@ -1690,6 +1693,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   Future<void> _stopRecord() async {
     if (null != _recordController) {
+      if (kDebugMode) {
+        print('DEBUG: stop RECORD');
+      }
       String? path = await _recordController!.stop();
       if (kDebugMode) {
         print("DEBUG: RECORD FILE PATH: $path");
@@ -2129,6 +2135,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     required bool isPart2,
   }) async {
     //Stop old record
+    if (kDebugMode) {
+      print('DEBUG: _prepareRecordForAnswer');
+    }
+
     await _stopRecord();
 
     int timeRecord = _getRecordTime(_currentQuestion!.numPart);
