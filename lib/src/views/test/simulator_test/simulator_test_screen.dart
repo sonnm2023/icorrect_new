@@ -597,6 +597,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 child: StartNowButtonWidget(
                   isDownloadSuccess: provider.isDownloadAgainSuccess,
                   startNowButtonTapped: () {
+                    _createLog(action: 'click_start_now_button', data: {});
                     _checkPermission();
                   },
                 ),
@@ -714,6 +715,7 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
             child: DownloadAgainWidget(
               isOffline: isOffline,
               onClickTryAgain: () {
+                _createLog(action: 'click_try_again_download', data: {});
                 if (_simulatorTestPresenter != null) {
                   if (isOffline) {
                     _simulatorTestProvider!.setVisibleDownloadAgain(true);
