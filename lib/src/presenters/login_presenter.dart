@@ -363,7 +363,7 @@ class LoginPresenter {
       _repository!.getListClass(merchantID!, checksum).then((value) {
         ClassMerchantModel classMerchantModel = ClassMerchantModel.fromJson(jsonDecode(value));
         if (classMerchantModel.errorCode == 200) {
-          List<ClassModel> classes = classMerchantModel.data!.data;
+          List<ClassModel> classes = classMerchantModel.data!.data!;
           Utils.instance().prepareLogData(
               log: log,
               data: jsonDecode(value),
@@ -494,6 +494,15 @@ class LoginPresenter {
       );
       _view!.onGetListStudentError(
           Utils.instance().multiLanguage(StringConstants.socket_error_message));
+    } on Exception {
+      Utils.instance().prepareLogData(
+        log: log,
+        data: null,
+        message: StringConstants.client_error_message,
+        status: LogEvent.failed,
+      );
+      _view!.onGetListStudentError(
+          Utils.instance().multiLanguage(StringConstants.client_error_message));
     }
   }
 
@@ -508,8 +517,8 @@ class LoginPresenter {
 
     try {
       String deviceID = await Utils.instance().getDeviceIdentifier();
-      deviceID = deviceID.replaceAll('{', '');
-      deviceID = deviceID.replaceAll('}', '');
+      deviceID = deviceID.replaceAll(RegExp(r'[{}]'), '');
+      // deviceID = deviceID.replaceAll('}', '');
       String? merchantID = await Utils.instance().getMerchantID();
       String checksum = await Utils.instance().convertHMacSha256(param1: deviceID, param2: key, param3: merchantID!);
       _repository!.verifyConfig(key, deviceID, checksum, merchantID).then((value) async {

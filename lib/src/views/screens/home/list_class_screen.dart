@@ -300,7 +300,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
             Expanded(child: !_isDownloadAgain? _buildListClass() : DownloadAgainWidget(onClickTryAgain: () {
               _loading!.show(context);
               _presenter.getListClass(context);
-            }, isOffline: false, message: messageError,)));
+            }, isOffline: false, message: messageError, backgroundColor: Colors.transparent)));
   }
 
   Widget _buildListClass() {
@@ -358,7 +358,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_listFilter[index].name, style: const TextStyle(
+                Text(_listFilter[index].name!, style: const TextStyle(
                 color: AppColors.purple,
                 fontWeight: FontWeight.bold,
                 fontSize: 18),),

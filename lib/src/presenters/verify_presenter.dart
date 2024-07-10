@@ -104,7 +104,7 @@ class VerifyPresenter {
     _repository!.getListClass(merchantID, checksum).then((value) {
       ClassMerchantModel classMerchantModel = ClassMerchantModel.fromJson(jsonDecode(value));
       if (classMerchantModel.errorCode == 200) {
-        List<ClassModel> classes = classMerchantModel.data!.data;
+        List<ClassModel> classes = classMerchantModel.data!.data!;
         Utils.instance().prepareLogData(
             log: log,
             data: jsonDecode(value),

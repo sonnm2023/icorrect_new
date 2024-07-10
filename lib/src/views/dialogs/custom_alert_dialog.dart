@@ -5,7 +5,7 @@ import 'package:icorrect_pc/src/utils/utils.dart';
 import '../../../core/app_colors.dart';
 
 class CustomAlertDialog extends StatefulWidget {
-  const CustomAlertDialog({
+  CustomAlertDialog({
     Key? key,
     required this.title,
     required this.description,
@@ -15,6 +15,7 @@ class CustomAlertDialog extends StatefulWidget {
     required this.hasCloseButton,
     required this.okButtonTapped,
     required this.cancelButtonTapped,
+    this.richText
   }) : super(key: key);
 
   final String title;
@@ -25,6 +26,7 @@ class CustomAlertDialog extends StatefulWidget {
   final bool hasCloseButton;
   final Function? okButtonTapped;
   final Function? cancelButtonTapped;
+  RichText? richText;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -65,7 +67,7 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
                       const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: Text(
+                        child: widget.richText ?? Text(
                           widget.description,
                           textAlign: TextAlign.center,
                           style:

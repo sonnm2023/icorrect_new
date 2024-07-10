@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/models/auth_models/student_merchant_model.dart';
 import 'package:icorrect_pc/src/presenters/login_presenter.dart';
-import 'package:icorrect_pc/src/presenters/verify_presenter.dart';
 import 'package:icorrect_pc/src/providers/auth_widget_provider.dart';
 import 'package:icorrect_pc/src/providers/verify_provider.dart';
 import 'package:icorrect_pc/src/views/screens/home/list_class_screen.dart';
+import 'package:icorrect_pc/src/views/widgets/download_again_widget.dart';
 
 import 'package:provider/provider.dart';
 
@@ -30,6 +30,8 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
   late AuthWidgetProvider _provider;
   late VerifyProvider _verifyProvider;
   late LoginPresenter _presenter;
+  bool _isDownloadAgain = false;
+  String _messageError = '';
 
   final _txtLicenseController = TextEditingController();
   final _txtDeviceNameController = TextEditingController();
@@ -52,7 +54,11 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
 
   @override
   Widget build(BuildContext context) {
-    return _buildVerifyForm();
+    return !_isDownloadAgain? _buildVerifyForm() : SizedBox(
+      child: DownloadAgainWidget(onClickTryAgain: () {
+        _autoVerify();
+      }, isOffline: false, message: _messageError, backgroundColor: Colors.transparent,),
+    );
   }
 
   Widget _buildVerifyForm() {
@@ -127,14 +133,9 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
     _loading?.show(context);
     String licenseKey = await Utils.instance().getLicenseKey() ?? '';
     String deviceName = await Utils.instance().getDeviceNameForSchool() ?? '';
-    // String merchantID = await Utils.instance().getMerchantID() ?? '';
-    Timer(const Duration(seconds: 2), () {
-      // if (licenseKey.isNotEmpty && merchantID.isNotEmpty) {
-      //   _verifyPresenter.getListClass(context, merchantID);
-      // }
+    if (mounted) {
       _presenter.verify(context, licenseKey, deviceName);
-      // _loading?.hide();
-    });
+    }
   }
 
   void _onPressVerify() async{
@@ -154,12 +155,10 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
   @override
   void onVerifyError(String message) {
     _loading?.hide();
-    // message = StringConstants.verify_wrong_massage;
-    showDialog(
-        context: context,
-        builder: (context) {
-          return MessageDialog(context: context, message: message);
-        });
+    setState(() {
+      _isDownloadAgain = true;
+      _messageError = message;
+    });
   }
 
   @override

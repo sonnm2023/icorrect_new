@@ -8,12 +8,13 @@ import '../../presenters/my_test_presenter.dart';
 import '../../presenters/simulator_test_presenter.dart';
 
 class DownloadAgainWidget extends StatefulWidget {
-  DownloadAgainWidget({super.key, required this.onClickTryAgain, required this.isOffline, this.visibleText, this.message});
+  DownloadAgainWidget({super.key, required this.onClickTryAgain, required this.isOffline, this.visibleText, this.message, this.backgroundColor});
 
   final Function onClickTryAgain;
   final bool isOffline;
   bool? visibleText;
   String? message;
+  Color? backgroundColor;
 
   @override
   State<DownloadAgainWidget> createState() => _DownloadAgainWidgetState();
@@ -26,7 +27,7 @@ class _DownloadAgainWidgetState extends State<DownloadAgainWidget> {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: AppColors.white,
+        color: widget.backgroundColor ?? AppColors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,

@@ -15,7 +15,7 @@ class ClassMerchantModel {
     errorCode: json["error_code"],
     status: json["status"],
     data: json["data"] == null ? null : Data.fromJson(json["data"]),
-      message: json['message']
+    message: json['message']
   );
 
   Map<String, dynamic> toJson() => {
@@ -27,25 +27,25 @@ class ClassMerchantModel {
 }
 
 class Data {
-  int currentPage;
-  List<ClassModel> data;
-  int from;
-  int lastPage;
-  int perPage;
-  int total;
+  int? currentPage;
+  List<ClassModel>? data;
+  int? from;
+  int? lastPage;
+  int? perPage;
+  int? total;
 
   Data({
-    required this.currentPage,
-    required this.data,
-    required this.from,
-    required this.lastPage,
-    required this.perPage,
-    required this.total,
+    this.currentPage,
+    this.data,
+    this.from,
+    this.lastPage,
+    this.perPage,
+    this.total,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     currentPage: json["current_page"],
-    data: List<ClassModel>.from(json["data"].map((x) => ClassModel.fromJson(x))),
+    data: json['data'] == null ? null : List<ClassModel>.from(json["data"].map((x) => ClassModel.fromJson(x))),
     from: json["from"],
     lastPage: json["last_page"],
     perPage: json["per_page"],
@@ -54,7 +54,7 @@ class Data {
 
   Map<String, dynamic> toJson() => {
     "current_page": currentPage,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    "data": List<dynamic>.from(data!.map((x) => x.toJson())),
     "from": from,
     "last_page": lastPage,
     "per_page": perPage,
@@ -63,20 +63,20 @@ class Data {
 }
 
 class ClassModel {
-  int id;
-  String name;
-  DateTime createdAt;
-  String classId;
-  int studentCount;
-  int activitiesCount;
+  int? id;
+  String? name;
+  DateTime? createdAt;
+  String? classId;
+  int? studentCount;
+  int? activitiesCount;
 
   ClassModel({
-    required this.id,
-    required this.name,
-    required this.createdAt,
-    required this.classId,
-    required this.studentCount,
-    required this.activitiesCount,
+    this.id,
+    this.name,
+    this.createdAt,
+    this.classId,
+    this.studentCount,
+    this.activitiesCount,
   });
 
   factory ClassModel.fromJson(Map<String, dynamic> json) => ClassModel(
@@ -91,7 +91,7 @@ class ClassModel {
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
-    "created_at": createdAt.toIso8601String(),
+    "created_at": createdAt!.toIso8601String(),
     "class_id": classId,
     "student_count": studentCount,
     "activities_count": activitiesCount,

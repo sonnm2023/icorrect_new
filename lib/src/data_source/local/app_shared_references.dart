@@ -27,7 +27,7 @@ class AppSharedPref {
     required String? value,
   }) async {
     if (kDebugMode) {
-      print("Access token save : $value" );
+      print("${key.toString()} : $value" );
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(key.name, value ?? "");

@@ -398,7 +398,7 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
             // child: VideoSimulatorWidget(onVideoEnd: () {
             //   _onVideoEnd();
             // }),
-            child: VideoSimulatorWidget(),
+            child: const VideoSimulatorWidget(),
           ),
           Container(
             width: w / 2,
@@ -463,6 +463,7 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   @override
   Future<void> playFileVideo(File normalFile) async {
+    print(normalFile);
     PlayListModel playListModel = widget.simulatorTestProvider.currentPlay;
     String path = await FileStorageHelper.getFilePath(
         playListModel.fileImage, MediaType.image, null);

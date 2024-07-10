@@ -609,33 +609,55 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
 
     Utils.instance().checkInternetConnection().then((isConnected) async {
       if (isConnected) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomAlertDialog(
-              title: Utils.instance().multiLanguage(StringConstants.dialog_title),
-              description: 'Bạn có muốn bắt đầu làm bài: ${homeWork.activityName}, với tài khoản là ${_mainWidgetProvider!.titleMain} không?',
-              okButtonTitle: StringConstants.ok_button_title,
-              cancelButtonTitle: Utils.instance().multiLanguage(StringConstants.cancel_button_title),
-              borderRadius: 8,
-              hasCloseButton: false,
-              okButtonTapped: () async {
-                Navigations.instance()
-                    .goToSimulatorTestRoom(context, activitiesModel: homeWork);
-                //Add action log
-                LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
-                    action: LogEvent.actionClickOnHomeworkItem);
-                actionLog.addData(
-                    key: StringConstants.k_activity_id,
-                    value: homeWork.activityId.toString());
-                Utils.instance().addLog(actionLog, LogEvent.none);
-              },
-              cancelButtonTapped: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        );
+        // showDialog(
+        //   context: context,
+        //   builder: (BuildContext context) {
+        //     return CustomAlertDialog(
+        //       title: Utils.instance().multiLanguage(StringConstants.dialog_title),
+        //       richText: RichText(
+        //         text: TextSpan(
+        //           // text: 'Bạn có muốn bắt đầu làm bài: ',
+        //           // style: TextStyle(fontSize: FontsSize.fontSize_16,
+        //           children: <TextSpan>[
+        //             const TextSpan(text: 'Bạn có muốn bắt đầu làm bài: ', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black)),
+        //             TextSpan(text: homeWork.activityName, style: const TextStyle(fontSize: FontsSize.fontSize_16, fontWeight: FontWeight.bold, color: Colors.black)),
+        //             const TextSpan(text: ', với tài khoản là ', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black)),
+        //             TextSpan(text: _mainWidgetProvider!.titleMain, style: const TextStyle(fontSize: FontsSize.fontSize_16, fontWeight: FontWeight.bold, color: Colors.black)),
+        //             const TextSpan(text: ' không?', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black))
+        //           ]
+        //         ),
+        //       ),
+        //       description: 'Bạn có muốn bắt đầu làm bài: ${homeWork.activityName}, với tài khoản là ${_mainWidgetProvider!.titleMain} không?',
+        //       okButtonTitle: StringConstants.ok_button_title,
+        //       cancelButtonTitle: Utils.instance().multiLanguage(StringConstants.cancel_button_title),
+        //       borderRadius: 8,
+        //       hasCloseButton: false,
+        //       okButtonTapped: () async {
+        //         Navigations.instance()
+        //             .goToSimulatorTestRoom(context, activitiesModel: homeWork);
+        //         //Add action log
+        //         LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
+        //             action: LogEvent.actionClickOnHomeworkItem);
+        //         actionLog.addData(
+        //             key: StringConstants.k_activity_id,
+        //             value: homeWork.activityId.toString());
+        //         Utils.instance().addLog(actionLog, LogEvent.none);
+        //       },
+        //       cancelButtonTapped: () {
+        //         Navigator.of(context).pop();
+        //       },
+        //     );
+        //   },
+        // );
+        Navigations.instance()
+            .goToSimulatorTestRoom(context, activitiesModel: homeWork);
+        //Add action log
+        LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
+            action: LogEvent.actionClickOnHomeworkItem);
+        actionLog.addData(
+            key: StringConstants.k_activity_id,
+            value: homeWork.activityId.toString());
+        Utils.instance().addLog(actionLog, LogEvent.none);
       } else {
         _handleConnectionError();
       }

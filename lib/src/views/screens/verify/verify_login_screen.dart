@@ -155,7 +155,7 @@ class _LoginVerifyState extends State<LoginVerifyWidget> implements LoginViewCon
                 ),
                 dropdownMenuEntries: [
                   for (var value in classes)
-                    DropdownMenuEntry(value: value.classId, label: value.name)
+                    DropdownMenuEntry(value: value.classId, label: value.name!)
                 ],
                 onSelected: (value) {
                   // classID = value!;

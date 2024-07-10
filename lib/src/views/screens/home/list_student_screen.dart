@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:icorrect_pc/src/data_source/local/app_shared_preferences_keys.dart';
 import 'package:icorrect_pc/src/models/auth_models/class_merchant_model.dart';
 import 'package:icorrect_pc/src/models/auth_models/student_merchant_model.dart';
 import 'package:icorrect_pc/src/providers/main_widget_provider.dart';
@@ -15,11 +14,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/app_assets.dart';
 import '../../../../core/app_colors.dart';
 import '../../../data_source/constants.dart';
-import '../../../data_source/local/app_shared_references.dart';
 import '../../../presenters/login_presenter.dart';
 import '../../../utils/Navigations.dart';
 import '../../../utils/utils.dart';
-import '../../dialogs/message_alert.dart';
+import '../../dialogs/custom_alert_dialog.dart';
 
 class ListStudentWidget extends StatefulWidget {
   const ListStudentWidget({super.key});
@@ -35,6 +33,7 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
   late LoginPresenter _presenter;
   List<StudentModel> _listFilter = [];
   String username = '';
+  int userID = 0;
   final _scrollController = ScrollController();
   bool _isDownloadAgain = false;
   String _messageError = '';
@@ -52,7 +51,7 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        _provider.setTitleMain(_verifyProvider.currentClass!.name);
+        _provider.setTitleMain(_verifyProvider.currentClass!.name!);
       });
     },);
   }
@@ -129,6 +128,7 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
                     onTap: () {
                       setState(() {
                         _provider.setVisibleSearch(!_provider.visibleSearch);
+                        _listFilter = _verifyProvider.currentListStudent;
                       });
                     },
                     child: Column(
@@ -197,8 +197,9 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
     return Consumer<MainWidgetProvider>(
         builder: (context, appState, child) =>
             Expanded(child: !_isDownloadAgain ? _buildListStudent() : DownloadAgainWidget(onClickTryAgain: () {
-
-            }, isOffline: false, message: _messageError, )));
+              _loading!.show(context);
+              _presenter.getListStudent(context);
+            }, isOffline: false, message: _messageError, backgroundColor: Colors.transparent)));
   }
 
   Widget _buildListStudent() {
@@ -235,10 +236,10 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
         itemBuilder: (context, index) {
             return InkWell(
                 onTap: () {
-                  _loading!.show(context);
                   username = _listFilter[index].name!;
+                  userID = _listFilter[index].apiId!;
                   _onPressLogin('${_listFilter[index].apiId}',
-                      _verifyProvider.currentClass!.classId);
+                      _verifyProvider.currentClass!.classId!);
                 },
                 child: _studentItem(index));
         },
@@ -291,8 +292,38 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
   }
 
   void _onPressLogin(String userId, String classId) {
-    LoginPresenter presenter = LoginPresenter(this);
-    presenter.loginWithClassID(context, userId, classId);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Utils.instance().multiLanguage(StringConstants.dialog_title),
+          richText: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              children: <TextSpan>[
+                const TextSpan(text: 'Bạn có muốn đăng nhập với tài khoản là: ', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black)),
+                TextSpan(text: username, style: const TextStyle(fontSize: FontsSize.fontSize_16, fontWeight: FontWeight.bold, color: Colors.black)),
+                // TextSpan(text: _mainWidgetProvider!.titleMain, style: const TextStyle(fontSize: FontsSize.fontSize_16, fontWeight: FontWeight.bold, color: Colors.black)),
+                const TextSpan(text: ' không?', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black))
+              ]
+            ),
+          ),
+          description: '',
+          okButtonTitle: StringConstants.ok_button_title,
+          cancelButtonTitle: Utils.instance().multiLanguage(StringConstants.cancel_button_title),
+          borderRadius: 8,
+          hasCloseButton: false,
+          okButtonTapped: () async {
+            LoginPresenter presenter = LoginPresenter(this);
+            _loading!.show(context);
+            presenter.loginWithClassID(context, userId, classId);
+          },
+          cancelButtonTapped: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
   }
 
   void _runFilter(String enterKeyword) {
@@ -346,7 +377,11 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
 
   @override
   void onGetListStudentError(String message) {
-    // TODO: implement onGetListStudentError
+    _loading?.hide();
+    setState(() {
+      _isDownloadAgain = true;
+      _messageError = message;
+    });
   }
 
   @override
