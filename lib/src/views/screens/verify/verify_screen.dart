@@ -32,7 +32,7 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
   late LoginPresenter _presenter;
   bool _isDownloadAgain = false;
   String _messageError = '';
-
+  String licenseKey = '';
   final _txtLicenseController = TextEditingController();
   final _txtDeviceNameController = TextEditingController();
 
@@ -131,7 +131,7 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
 
   void _autoVerify() async {
     _loading?.show(context);
-    String licenseKey = await Utils.instance().getLicenseKey() ?? '';
+    licenseKey = await Utils.instance().getLicenseKey() ?? '';
     String deviceName = await Utils.instance().getDeviceNameForSchool() ?? '';
     if (mounted) {
       _presenter.verify(context, licenseKey, deviceName);
@@ -156,8 +156,17 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
   void onVerifyError(String message) {
     _loading?.hide();
     setState(() {
-      _isDownloadAgain = true;
-      _messageError = message;
+      if (licenseKey != '') {
+        _isDownloadAgain = true;
+        _messageError = message;
+      } else {
+        _isDownloadAgain = false;
+        showDialog(
+            context: context,
+            builder: (context) {
+              return MessageDialog(context: context, message: message);
+            });
+      }
     });
   }
 
