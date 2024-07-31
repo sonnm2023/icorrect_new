@@ -27,7 +27,6 @@ import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
-import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
@@ -102,6 +101,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   bool _canInitVideoSource = true;
   final int MAX_TIME_VIDEO_CONFIRM_RECORD = 15;
   bool _isEnableToPlayVideo = false;
+
+  //DEBUG
+  String currentPathAudio = '';
 
   @override
   void initState() {
@@ -711,7 +713,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path =
         await FileStorageHelper.getFilePath(fileName, MediaType.video, null);
-
+    print('aasd: $path');
     dataLog["video_path"] = path;
 
     VideoSource? result;
@@ -779,22 +781,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
   }
 
-  void _createLogDoingTest(
-      {required String action, required Map<String, dynamic>? data}) async {
-    if (context.mounted) {
-      //Add action log
-      LogModel actionLog =
-      await Utils.prepareToCreateLog(context, action: action);
-      if (null != data) {
-        if (data.isNotEmpty) {
-          actionLog.addData(
-              key: StringConstants.k_data, value: jsonEncode(data));
-        }
-      }
-      Utils.addLogDoingTest(actionLog, LogEvent.none);
-    }
-  }
-
   void _startToDoTest() {
     Map<String, dynamic> info = {
       StringConstants.k_test_id:
@@ -807,14 +793,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       ]);
     }
 
-    Map<String, dynamic> logData = {
-      StringConstants.k_test_id:
-      _simulatorTestProvider!.currentTestDetail.testId.toString(),
-      StringConstants.k_question_content: _simulatorTestProvider!.currentQuestion.content
-    };
-
     _createLog(action: LogEvent.actionStartToDoTest, data: info);
-    // _createLogDoingTest(action: LogEvent.actionStartToDoTest, data: logData);
 
     _simulatorTestProvider!.resetTotalDuration();
 
@@ -841,14 +820,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         _typeOfActionLog = 2;
         int numPart = _simulatorTestProvider!.currentQuestion.numPart;
 
-        if (_recordController != null) {
-          if (numPart == PartOfTest.part2.get &&
-              await _recordController!.isRecording()) {
-            _recordController!.pause();
-          } else {
-            _recordController!.stop();
-            // _stopRecord();
-          }
+        if (numPart == PartOfTest.part2.get &&
+            await _recordController!.isRecording()) {
+          _recordController!.pause();
+        } else {
+          // _recordController!.stop();
+          _stopRecord();
         }
 
         if (null != _countDown) {
@@ -1089,6 +1066,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     String path = await Utils.createNewFilePath(
         question.answers[question.repeatIndex].url);
+
+    // String path = await Utils.createNewFilePath(_simulatorTestProvider!.answerList[selectedQuestionIndex]);
     if (kDebugMode) {
       print("Audio update : $path");
     }
@@ -1168,8 +1147,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _simulatorTestProvider!.setIsReAnswer();
         }
 
+        // for (FileTopicModel a in question.answers) {
+        //   print(a.);
+        // }
+        print('repeatIndex: ${_simulatorTestProvider!.questionList[selectedQuestionIndex].repeatIndex}');
+
         _prepareRecordForReanswer(
           fileName: question.answers[question.repeatIndex].url,
+          // fileName: await Utils.createNewFilePath(_simulatorTestProvider!.answerList[selectedQuestionIndex]),
           numPart: question.numPart,
           isPart2: isPart2,
         );
@@ -1332,7 +1317,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //   _resetEnableFinishStatus();
     //   return;
     // }
-
     Map<String, dynamic> info = {
       StringConstants.k_question_id: questionTopicModel.id.toString(),
       StringConstants.k_question_content: questionTopicModel.content,
@@ -1352,11 +1336,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
     //Add question into List Question & show it
     _simulatorTestProvider!.addCurrentQuestionIntoList(
-      questionTopic: _currentQuestion!,
+      questionTopic: _simulatorTestProvider!.currentQuestion,
       repeatIndex: _countRepeat,
       isRepeat: true,
     );
-
     _countRepeat++;
 
     _playMediaFile(isRepeat: true);
@@ -1534,7 +1517,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       StringConstants.k_question_content: _currentQuestion!.content
     };
     _createLog(action: LogEvent.actionPlayVideoQuestion, data: info);
-    // _createLogDoingTest(action: LogEvent.actionPlayVideoQuestion, data: info);
 
     //Remove old listener
     // ignore: invalid_use_of_protected_member
@@ -1565,9 +1547,12 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         } else {
           try {
             if (kDebugMode) {
-              print("DEBUG: _videoPlayerController!.loadVideoSource");
+              print("DEBUG: _nativeVideoPlayerController!.loadVideoSource");
             }
-
+            double speed = _getSpeedOfPlaying(_countRepeat);
+            _nativeVideoPlayerController!.setPlaybackSpeed(speed);
+            // _simulatorTestProvider!.setPlayBackSpeed(speed);
+            // _nativeVideoPlayerController = _simulatorTestProvider!.videoPlayerController!;
             _nativeVideoPlayerController!.loadVideoSource(value).then((_) {
               if (kDebugMode) {
                 print(
@@ -1576,7 +1561,6 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
               double speed = _getSpeedOfPlaying(_countRepeat);
               _nativeVideoPlayerController!.setPlaybackSpeed(speed);
               _nativeVideoPlayerController!.play();
-
               if (_currentQuestion!.files.first.fileTopicType ==
                       FileTopicType.question ||
                   _currentQuestion!.files.first.fileTopicType ==
@@ -1604,14 +1588,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
             Utils.prepareLogData(
               log: log,
               data: dataLog,
-              message: "_videoPlayerController!.loadVideoSource",
+              message: "_nativeVideoPlayerController!.loadVideoSource",
               status: LogEvent.failed,
             );
 
             Utils.prepareLogDataDoingTest(
               log: log,
               data: dataLog,
-              message: "_videoPlayerController!.loadVideoSource",
+              message: "_nativeVideoPlayerController!.loadVideoSource",
               status: LogEvent.failed,
             );
           }
@@ -1693,15 +1677,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   Future<void> _stopRecord() async {
     if (null != _recordController) {
-      if (kDebugMode) {
-        print('DEBUG: stop RECORD');
-      }
-      String? path = await _recordController!.stop();
-      if (kDebugMode) {
-        print("DEBUG: RECORD FILE PATH: $path");
-        print("DEBUG: recordController: dispose");
-      }
-      await _recordController!.dispose();
+      // String? path = await _recordController!.stop();
+      // String path = currentPathAudio;
+      await _recordController!.stop();
+      // await _recordController!.dispose();
       _recordController = null;
       // Map<String, dynamic> info = {
       //   StringConstants.k_question_content: _simulatorTestProvider!.currentQuestion.content,
@@ -1727,17 +1706,14 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     String newFileName =
         "${await _createLocalAudioFileName(_simulatorTestProvider!.currentTestDetail.testId.toString(), fileName)}.wav";
     String path = await Utils.createNewFilePath(newFileName);
-
-    if (kDebugMode) {
-      print("DEBUG: RECORD AS FILE PATH: $path");
-    }
+    currentPathAudio = path;
 
     Map<String, dynamic> info = {
       StringConstants.k_file_path: path,
     };
     _createLog(action: LogEvent.actionRecordAnswer, data: info);
 
-    _startRecord(fileName: newFileName, path: path, isAnswer: true);
+    await _startRecord(fileName: newFileName, path: path, isAnswer: true);
   }
 
   Future<void> _startRecord(
@@ -1747,9 +1723,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Add log
     LogModel? log;
     Map<String, dynamic>? dataLog = {};
-
     await _initRecordController();
-
     try {
       await _recordController!.start(
         RecordConfig(
@@ -1784,6 +1758,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           _simulatorTestProvider!.setCurrentQuestion(_currentQuestion!);
         }
       }
+      _setVisibleRecord(true, _countDown, fileName);
     } catch (e) {
       if (kDebugMode) {
         print("DEBUG: init record audio FAIL: ${e.toString()}");
@@ -1813,10 +1788,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     String path = await Utils.createNewFilePath(_reanswerFilePath);
 
     if (kDebugMode) {
-      print("DEBUG: RECORD AS FILE PATH: $path");
+      print("DEBUG: RECORD AS FILE PATH: $path, filename: $fileName");
     }
 
-    _startRecord(fileName: fileName, path: path, isAnswer: false);
+    await _startRecord(fileName: fileName, path: path, isAnswer: false);
   }
 
   bool _checkAnswerFileExist(String url, List<FileTopicModel> list) {
@@ -1848,7 +1823,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       print("DEBUG: Finish to play list questions!!!");
     }
     //Stop old record
-    await _stopRecord();
+    // await _stopRecord();
+    _setVisibleRecord(false, null, null);
 
     // if (null != _cameraService) {
     //   _cameraService!.dispose();
@@ -1986,7 +1962,8 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     //Check duration of all answers
     bool isValidDuration = await _checkDuration();
     if (isValidDuration) {
-      List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+      // List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
+      List<QuestionTopicModel> questions = _simulatorTestProvider!.questionList;
 
       String activityId = "";
       if (widget.activitiesModel != null) {
@@ -2158,7 +2135,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         isReAnswer: false,
         isLessThan2Seconds: true);
 
-    _setVisibleRecord(true, _countDown, fileName);
+    // _setVisibleRecord(true, _countDown, fileName);
 
     _recordAnswer(fileName);
   }
@@ -2259,7 +2236,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     }
 
     if (null != _loading) {
-      _loading!.show(context: context, isViewAIResponse: false);
+      // _loading!.show(context: context, isViewAIResponse: false);
     }
 
     String activityId = "";

@@ -1,3 +1,83 @@
+// import 'package:flutter/material.dart';
+//
+// void main() {
+//   runApp(MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('Overlay Example'),
+//         ),
+//         body: OverlayExample(),
+//       ),
+//     );
+//   }
+// }
+//
+// class OverlayExample extends StatefulWidget {
+//   @override
+//   _OverlayExampleState createState() => _OverlayExampleState();
+// }
+//
+// class _OverlayExampleState extends State<OverlayExample> {
+//   List<bool> isOpenList = List.generate(5, (index) => false); // Danh sách trạng thái mở của các Container lớn
+//
+//   void toggleOverlay(int index) {
+//     setState(() {
+//       isOpenList[index] = !isOpenList[index];
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       child: Stack(
+//         alignment: Alignment.center,
+//         children: [
+//           Column(
+//             children: List.generate(isOpenList.length, (index) {
+//               return Column(
+//                 children: [
+//                   if (isOpenList[index])
+//                     Column(
+//                       children: List.generate(3, (innerIndex) {
+//                         return Container(
+//                           margin: EdgeInsets.only(bottom: 10),
+//                           color: Colors.blue,
+//                           width: double.infinity,
+//                           height: 50,
+//                           child: Center(child: Text('Item $innerIndex')),
+//                         );
+//                       }),
+//                     ),
+//                   GestureDetector(
+//                     onTap: () {
+//                       toggleOverlay(index);
+//                     },
+//                     child: Container(
+//                       margin: EdgeInsets.symmetric(vertical: 10),
+//                       width: double.infinity,
+//                       height: 100,
+//                       color: Colors.red,
+//                       child: Center(child: Text('Container $index')),
+//                     ),
+//                   ),
+//                 ],
+//               );
+//             }),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+
+
 import 'dart:async';
 import 'dart:io';
 
@@ -19,8 +99,11 @@ import 'package:icorrect/src/data_sources/local/app_shared_preferences_keys.dart
 import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/multi_language.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
+import 'package:icorrect/src/provider/ai_response_provider.dart';
 import 'package:icorrect/src/provider/auth_provider.dart';
 import 'package:icorrect/src/provider/homework_provider.dart';
+import 'package:icorrect/src/provider/lesson_provider.dart';
+import 'package:icorrect/src/provider/mission_test_provider.dart';
 import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/my_practice_topics_provider.dart';
 import 'package:icorrect/src/provider/play_answer_provider.dart';
@@ -31,6 +114,9 @@ import 'package:icorrect/src/provider/timer_provider.dart';
 import 'package:icorrect/src/provider/user_auth_detail_provider.dart';
 import 'package:icorrect/src/provider/video_authentication_provider.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
+import 'package:icorrect/src/views/screen/lesson/ai_response_screen.dart';
+import 'package:icorrect/src/views/screen/lesson/list_lesson_screen.dart';
+import 'package:icorrect/src/views/screen/lesson/mission_test_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_compress/video_compress.dart';
@@ -128,6 +214,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => RatingProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeListProvider()),
         ChangeNotifierProvider(create: (_) => MyPracticeTopicsProvider()),
+        ChangeNotifierProvider(create: (_) => MissionTestProvider()),
+        ChangeNotifierProvider(create: (_) => AiResponseProvider()),
+        ChangeNotifierProvider(create: (_) => LessonProvider())
       ],
       child: MaterialApp(
         supportedLocales: _localization.supportedLocales,
@@ -140,6 +229,7 @@ class _MyAppState extends State<MyApp> {
         ),
         debugShowCheckedModeBanner: false,
         home: const LoginScreen(),
+        // home: const ListLessonScreen(),
       ),
     );
   }

@@ -34,6 +34,7 @@ class MultiLanguage {
     StringConstants.record_new_video_title: "Quay Video Mới",
     StringConstants.dialog_title: "Thông báo",
     StringConstants.reload_button_title: "Tải lại",
+    StringConstants.recording: 'Đang ghi âm',
     StringConstants.exit_app_message: "Bạn có muốn thoát khỏi ứng dụng?",
     StringConstants.quit_the_test_message:
         "Bài làm chưa hoàn thành! Bạn có chắc chắn muốn thoát?",
@@ -718,6 +719,7 @@ class MultiLanguage {
     StringConstants.select_your_language_title: 'Select your language',
     StringConstants.prepare_compress_video_title: 'Preparing for submitting',
     StringConstants.reload_button_title: "Reload",
+    StringConstants.recording: 'Recording',
     StringConstants.number_of_topics: 'Number of topics',
     StringConstants.number_question_of_part_1: 'Number question of Part 1',
     StringConstants.number_question_of_part_2: 'Number question of Part 2',

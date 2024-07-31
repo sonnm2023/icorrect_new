@@ -478,6 +478,7 @@ class StringConstants {
   static const String submit_now_title = "Submit Now";
   static const String record_new_video_title = "Record New Video";
   static const String reload_button_title = "Reload";
+  static const String recording = 'Recording...';
   //Dialog
   static const String dialog_title = "Notification";
   static const String exit_app_message = "Do you want to exit app?";

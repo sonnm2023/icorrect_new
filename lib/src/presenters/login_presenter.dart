@@ -218,9 +218,9 @@ class LoginPresenter {
       log = await Utils.prepareToCreateLog(context,
           action: LogEvent.callApiGetUserInfo);
     }
-
     _repository!.getUserInfo(deviceId, appVersion, os).then((value) async {
       Map<String, dynamic> dataMap = jsonDecode(value);
+      print(value);
       if (dataMap[StringConstants.k_error_code] == 200) {
         UserDataModel userDataModel =
             UserDataModel.fromJson(dataMap[StringConstants.k_data]);

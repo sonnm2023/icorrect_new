@@ -16,6 +16,9 @@ class LoadLocalImageWidget extends StatefulWidget {
 }
 
 class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
+
+  late Future<void> _future;
+
   Future<void> _getLocalImagePath() async {
     if (widget.isInRow) {
       localImagePath = await Utils.getLocalImagePath(widget.imageUrl);
@@ -28,7 +31,7 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
 
   @override
   void initState() {
-    _getLocalImagePath();
+    _future = _getLocalImagePath();
     super.initState();
   }
 
@@ -44,7 +47,7 @@ class _LoadLocalImageWidgetState extends State<LoadLocalImageWidget> {
   Widget _buildImageWidget(String messageLoadImg) {
     if (widget.isInRow) {
       return FutureBuilder<void>(
-        future: _getLocalImagePath(),
+        future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.hasError) {

@@ -108,7 +108,7 @@ class DoingTestService {
       //For test: don't send answers
       for (int i = 0; i < q.answers.length; i++) {
         String path =
-            await Utils.createNewFilePath(q.answers.last.url.toString());
+            await Utils.createNewFilePath(q.answers[i].url.toString());
         File audioFile = File(path);
         if (await audioFile.exists()) {
           String audioSize = "${audioFile.lengthSync() / (1024 * 1024)} Mb";

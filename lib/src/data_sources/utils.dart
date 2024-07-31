@@ -615,6 +615,7 @@ class Utils {
   static void showLogoutConfirmDialog({
     required BuildContext context,
     required HomeWorkPresenter? homeWorkPresenter,
+    required CircleLoading? loading
   }) async {
     await showDialog(
       context: context,
@@ -631,6 +632,7 @@ class Utils {
             if (null != homeWorkPresenter) {
               Utils.checkInternetConnection().then((isConnected) {
                 if (isConnected) {
+                  loading!.show(context: context, isViewAIResponse: false);
                   homeWorkPresenter.logout(context);
                 } else {
                   //Show connect error here
@@ -1258,6 +1260,18 @@ class Utils {
         print('Error: $e');
       }
       return "0000-00-00 00:00"; // Trả về null hoặc một giá trị mặc định nếu xảy ra lỗi
+    }
+  }
+
+  static Color setColorScore(double score) {
+    if (score > 0.0 && score < 0.5) {
+      return Colors.red;
+    } else if (score >= 0.5 && score < 0.8) {
+      return Colors.yellow;
+    } else if (score >=0.8 && score <= 1) {
+      return Colors.green;
+    } else {
+      return Colors.white;
     }
   }
 }

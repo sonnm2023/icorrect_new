@@ -6,6 +6,7 @@ import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/my_test_models/student_result_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
+import 'package:native_video_player/native_video_player.dart';
 // import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestProvider with ChangeNotifier {
@@ -621,10 +622,22 @@ class SimulatorTestProvider with ChangeNotifier {
   void updateQuestionStatus(QuestionTopicModel q) {
     int index = questionList.indexWhere((question) => question.id == q.id);
     if (index != -1) {
-      questionList[index] = q;
+      questionList[index].isError = q.isError;
       notifyListeners();
     }
   }
+
+  // NativeVideoPlayerController? _videoPlayerController;
+  // NativeVideoPlayerController? get videoPlayerController => _videoPlayerController;
+  // void setNativeVideoPlayerController(NativeVideoPlayerController controller) {
+  //   _videoPlayerController = controller;
+  //   notifyListeners();
+  // }
+  //
+  // void setPlayBackSpeed(double speed) {
+  //   _videoPlayerController!.setPlaybackSpeed(speed);
+  //   notifyListeners();
+  // }
 
   bool _isReAnswer = false;
   bool get isReAnswer => _isReAnswer;

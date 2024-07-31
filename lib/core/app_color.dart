@@ -10,6 +10,9 @@ class AppColor {
   static const defaultAppColor2 = Color(0xFFeab57c);
   static const defaultAppColor3 = Color(0xFF313943);
 
+  static const defaultLightPurple02Color = Color(0xFFa073dc);
+  static const defaultPurple02Color = Color(0xFF8d3ff7);
+  static const defaultOrangeColor = Color.fromARGB(255, 255, 186, 91);
   static const defaultWhiteColor = Color(0xffffffff);
   static const defaultBlackColor = Color(0xFF000000);
   static const defaultPurpleColor = Color(0xFF533E8B);

@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/views/screen/auth/change_password_screen.dart';
 import 'package:icorrect/src/views/screen/auth/login_screen.dart';
 import 'package:icorrect/src/views/screen/home/my_practice_tab.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/language_selection_dialog.dart';
 import 'package:icorrect/src/views/screen/practice/practice_screen.dart';
 import 'package:icorrect/src/views/screen/video_authentication/user_auth_detail_status_widget.dart';
@@ -42,6 +43,7 @@ class HomeWorkScreen extends StatefulWidget {
 class _HomeWorkScreenState extends State<HomeWorkScreen>
     with AutomaticKeepAliveClientMixin
     implements HomeWorkViewContract {
+  CircleLoading? _loading;
   HomeWorkPresenter? _homeWorkPresenter;
   late HomeWorkProvider _homeWorkProvider;
   late AuthProvider _authProvider;
@@ -68,6 +70,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void initState() {
     super.initState();
+    _loading = CircleLoading();
     _homeWorkPresenter = HomeWorkPresenter(this);
 
     _homeWorkProvider = Provider.of<HomeWorkProvider>(context, listen: false);
@@ -469,6 +472,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
               Utils.showLogoutConfirmDialog(
                 context: context,
                 homeWorkPresenter: _homeWorkPresenter,
+                loading: _loading
               );
             },
           ),
@@ -689,7 +693,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
 
     //Send log
     Utils.sendLog();
-
+    _loading!.hide();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -701,7 +705,7 @@ class _HomeWorkScreenState extends State<HomeWorkScreen>
   @override
   void onLogoutError(String message) {
     _homeWorkProvider.setProcessingStatus(processing: false);
-
+    _loading!.hide();
     //Show error message
     showToastMsg(
       msg: message,

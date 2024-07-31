@@ -15,4 +15,5 @@ class AppAsset {
   static const imgVietName = 'assets/images/img_vietname.png';
   static const imgEnglish = 'assets/images/img_english.png';
   static const ic_book = 'assets/images/ic_book.png';
+  static const img_video_play_holder = 'assets/images/video_playholder.png';
 }

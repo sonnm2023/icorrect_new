@@ -47,7 +47,7 @@ class MyTestImpl implements MyTestRepository {
   Future<String> getSpecialHomeWorks(
       String email, String activityId, int status, int example) {
     String url = specialHomeWorksEP(email, activityId, status, example);
-
+    print(url);
     if (kDebugMode) {
       print("DEBUG: getSpecialHomeWorks: $url");
     }
