@@ -119,6 +119,7 @@ class _MissionTestScreenState extends State<MissionTestScreen> implements Missio
 
   Widget _buildButton(String buttonTitle, Color color, Function() funcTap) {
     double w = MediaQuery.of(context).size.width;
+    print('commit');
     return TextButton(
       onPressed: funcTap,
       child: Container(
