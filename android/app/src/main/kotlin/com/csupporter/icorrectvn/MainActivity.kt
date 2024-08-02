@@ -1,4 +1,4 @@
-package com.icorrect.vn
+package com.csupporter.icorrectvn
 
 import io.flutter.embedding.android.FlutterActivity
 
