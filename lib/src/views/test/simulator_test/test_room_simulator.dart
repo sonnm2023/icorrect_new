@@ -1334,212 +1334,209 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   //MASK: TEST CREATE AND SUBMIT
 
-  // int userQuantity = 0;
-  // int timeRepeat = 0;
-  // int numberRepeat = 0;
-  TextEditingController userQuantity = TextEditingController();
-  TextEditingController timeRepeat = TextEditingController();
-  TextEditingController numberRepeat = TextEditingController();
-  int callCount = 0;
-  Timer? timerRepeat;
-
-  Widget _buildDialogInputTest() {
-    double w = MediaQuery.of(context).size.width;
-    return Consumer<SimulatorTestProvider>(builder: (context, value, child) {
-      return Center(
-        child: SizedBox (
-          width: w/3,
-          height: w/3,
-          child: Dialog(
-          elevation: 0,
-          backgroundColor: const Color(0xffffffff),
-          shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)),
-            child: Stack(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(15),
-                  child: Column (
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Số lượng user test', style: TextStyle (
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      )),
-                      TextField(
-                        // onChanged: (value) {
-                        //   userQuantity = int.parse(value);
-                        // },
-                        controller: userQuantity,
-                      ),
-                      const Text('Thời gian lặp', style: TextStyle (
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      )),
-                      TextField(
-                        // onChanged: (value) {
-                        //   timeRepeat = int.parse(value);
-                        // },
-                        controller: timeRepeat,
-                      ),
-                      const Text('Số lần lặp', style: TextStyle (
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      )),
-                      TextField(
-                        // onChanged: (value) {
-                        //   numberRepeat = int.parse(value);
-                        // },
-                        controller: numberRepeat,
-                      ),
-                      const Spacer(),
-                      InkWell(
-                        onTap: () {
-                          print('user quantity: ${userQuantity.text}');
-                          print(timeRepeat.text);
-                          print(numberRepeat.text);
-                          Navigator.of(context).pop();
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                            return _buildDialogOutputTest();
-                          });
-                          timerRepeat = sendRequest();
-                        },
-                        child: Center(
-                          child: Container(
-                            margin: const EdgeInsets.all(20),
-                            child: const Text('Bắt đầu', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: AppColors.defaultPurpleColor
-                            )),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: InkWell(
-                    child: const SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Center(
-                        child: Icon(Icons.cancel_outlined,
-                            color: Colors.black),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildDialogOutputTest() {
-    double w = MediaQuery.of(context).size.width;
-    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
-      return Center(
-        child: SizedBox (
-          width: w/3,
-          height: w/3,
-          child: Dialog(
-            elevation: 0,
-            backgroundColor: const Color(0xffffffff),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
-            child: Stack(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(15),
-                  child: Column (
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('API 1: create test', style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500
-                      )),
-                      Text('call: ${provider.callCreateTest}', style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                      Text('Success: ${provider.successCreateTest}', style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                      Text('Fail: ${provider.failCreateTest}', style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                      const Text('API 2: submit test', style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                      Text('call: ${provider.callSubmitTest}', style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                      Text('Success: ${provider.successSubmitTest}', style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                      Text('Fail: ${provider.failSubmitTest}', style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: InkWell(
-                    child: const SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Center(
-                        child: Icon(Icons.cancel_outlined,
-                            color: Colors.black),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      timerRepeat!.cancel();
-                      callCount = 0;
-                      widget.simulatorTestProvider.resetAllValue();
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      );
-    });
-  }
-
-  Timer sendRequest() {
-    return Timer.periodic(Duration(seconds: int.parse(timeRepeat.text)), (timer) {
-      if (callCount < int.parse(numberRepeat.text)) {
-        callCount++;
-        for (int i = 0; i < int.parse(userQuantity.text); i++) {
-          widget.simulatorTestProvider.setCallCreateTest();
-          widget.simulatorTestPresenter.getTestDetailByHomeworkForTool(context, widget.activitiesModel!.activityId.toString());
-        }
-      } else {
-        timer.cancel();
-        callCount = 0;
-      }
-    });
-  }
+  // TextEditingController userQuantity = TextEditingController();
+  // TextEditingController timeRepeat = TextEditingController();
+  // TextEditingController numberRepeat = TextEditingController();
+  // int callCount = 0;
+  // Timer? timerRepeat;
+  //
+  // Widget _buildDialogInputTest() {
+  //   double w = MediaQuery.of(context).size.width;
+  //   return Consumer<SimulatorTestProvider>(builder: (context, value, child) {
+  //     return Center(
+  //       child: SizedBox (
+  //         width: w/3,
+  //         height: w/3,
+  //         child: Dialog(
+  //         elevation: 0,
+  //         backgroundColor: const Color(0xffffffff),
+  //         shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(10)),
+  //           child: Stack(
+  //             children: [
+  //               Container(
+  //                 margin: const EdgeInsets.all(15),
+  //                 child: Column (
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     const Text('Số lượng user test', style: TextStyle (
+  //                       fontSize: 20,
+  //                       fontWeight: FontWeight.w500,
+  //                     )),
+  //                     TextField(
+  //                       // onChanged: (value) {
+  //                       //   userQuantity = int.parse(value);
+  //                       // },
+  //                       controller: userQuantity,
+  //                     ),
+  //                     const Text('Thời gian lặp', style: TextStyle (
+  //                       fontSize: 20,
+  //                       fontWeight: FontWeight.w500,
+  //                     )),
+  //                     TextField(
+  //                       // onChanged: (value) {
+  //                       //   timeRepeat = int.parse(value);
+  //                       // },
+  //                       controller: timeRepeat,
+  //                     ),
+  //                     const Text('Số lần lặp', style: TextStyle (
+  //                       fontSize: 20,
+  //                       fontWeight: FontWeight.w500,
+  //                     )),
+  //                     TextField(
+  //                       // onChanged: (value) {
+  //                       //   numberRepeat = int.parse(value);
+  //                       // },
+  //                       controller: numberRepeat,
+  //                     ),
+  //                     const Spacer(),
+  //                     InkWell(
+  //                       onTap: () {
+  //                         print('user quantity: ${userQuantity.text}');
+  //                         print(timeRepeat.text);
+  //                         print(numberRepeat.text);
+  //                         Navigator.of(context).pop();
+  //                         showDialog(
+  //                             context: context,
+  //                             barrierDismissible: false,
+  //                             builder: (context) {
+  //                           return _buildDialogOutputTest();
+  //                         });
+  //                         timerRepeat = sendRequest();
+  //                       },
+  //                       child: Center(
+  //                         child: Container(
+  //                           margin: const EdgeInsets.all(20),
+  //                           child: const Text('Bắt đầu', style: TextStyle(
+  //                             fontWeight: FontWeight.bold,
+  //                             fontSize: 20,
+  //                             color: AppColors.defaultPurpleColor
+  //                           )),
+  //                         ),
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //               Positioned(
+  //                 top: 0,
+  //                 right: 0,
+  //                 child: InkWell(
+  //                   child: const SizedBox(
+  //                     width: 40,
+  //                     height: 40,
+  //                     child: Center(
+  //                       child: Icon(Icons.cancel_outlined,
+  //                           color: Colors.black),
+  //                     ),
+  //                   ),
+  //                   onTap: () {
+  //                     Navigator.of(context).pop();
+  //                   },
+  //                 ),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   });
+  // }
+  //
+  // Widget _buildDialogOutputTest() {
+  //   double w = MediaQuery.of(context).size.width;
+  //   return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
+  //     return Center(
+  //       child: SizedBox (
+  //         width: w/3,
+  //         height: w/3,
+  //         child: Dialog(
+  //           elevation: 0,
+  //           backgroundColor: const Color(0xffffffff),
+  //           shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(10)),
+  //           child: Stack(
+  //             children: [
+  //               Container(
+  //                 margin: const EdgeInsets.all(15),
+  //                 child: Column (
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     const Text('API 1: create test', style: TextStyle(
+  //                       fontSize: 20,
+  //                       fontWeight: FontWeight.w500
+  //                     )),
+  //                     Text('call: ${provider.callCreateTest}', style: const TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                     Text('Success: ${provider.successCreateTest}', style: const TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                     Text('Fail: ${provider.failCreateTest}', style: const TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                     const Text('API 2: submit test', style: TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                     Text('call: ${provider.callSubmitTest}', style: const TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                     Text('Success: ${provider.successSubmitTest}', style: const TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                     Text('Fail: ${provider.failSubmitTest}', style: const TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.w500
+  //                     )),
+  //                   ],
+  //                 ),
+  //               ),
+  //               Positioned(
+  //                 top: 0,
+  //                 right: 0,
+  //                 child: InkWell(
+  //                   child: const SizedBox(
+  //                     width: 40,
+  //                     height: 40,
+  //                     child: Center(
+  //                       child: Icon(Icons.cancel_outlined,
+  //                           color: Colors.black),
+  //                     ),
+  //                   ),
+  //                   onTap: () {
+  //                     Navigator.of(context).pop();
+  //                     timerRepeat!.cancel();
+  //                     callCount = 0;
+  //                     widget.simulatorTestProvider.resetAllValue();
+  //                   },
+  //                 ),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   });
+  // }
+  //
+  // Timer sendRequest() {
+  //   return Timer.periodic(Duration(seconds: int.parse(timeRepeat.text)), (timer) {
+  //     if (callCount < int.parse(numberRepeat.text)) {
+  //       callCount++;
+  //       for (int i = 0; i < int.parse(userQuantity.text); i++) {
+  //         widget.simulatorTestProvider.setCallCreateTest();
+  //         widget.simulatorTestPresenter.getTestDetailByHomeworkForTool(context, widget.activitiesModel!.activityId.toString());
+  //       }
+  //     } else {
+  //       timer.cancel();
+  //       callCount = 0;
+  //     }
+  //   });
+  // }
 }
