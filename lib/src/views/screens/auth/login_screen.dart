@@ -275,7 +275,7 @@ class _LoginState extends State<LoginWidget> implements LoginViewContract {
   }
 
   @override
-  void onGetListClassComplete(List<ClassModel> list) {
+  void onGetListClassComplete(List<ClassModel> list, int lastPage, int total) {
     // TODO: implement onGetListClassComplete
   }
 

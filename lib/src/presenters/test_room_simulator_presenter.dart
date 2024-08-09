@@ -32,8 +32,8 @@ abstract class TestRoomSimulatorContract {
   void onCountDown(String strCount, int count);
   void onFinishAnswer(bool isPart2);
   void onCountDownForCueCard(String strCount);
-  void submitAnswersSuccess(AlertInfo alertInfo);
-  void submitAnswerFail(AlertInfo alertInfo);
+  void submitAnswersSuccess(AlertInfo alertInfo, int errorCode);
+  void submitAnswerFail(AlertInfo alertInfo, int errorCode);
 }
 
 class TestRoomSimulatorPresenter {
@@ -214,6 +214,7 @@ class TestRoomSimulatorPresenter {
   }
 
   Future playingQuestion(String fileNormal) async {
+    print('bbbb: $fileNormal');
     assert(_view != null && _repository != null);
     bool isExistFileNormal = await FileStorageHelper.newCheckExistFile(
         fileNormal, MediaType.video);
@@ -386,6 +387,11 @@ class TestRoomSimulatorPresenter {
         isUpdate: isUpdate,
         videoConfirmFile: videoConfirmFile,
         logAction: logAction);
+    for (var q in questionsList) {
+      for (var f in q.answers) {
+        print('asnwer: ${f.url}');
+      }
+    }
     try {
       _repository!.submitTest(multiRequest).then((value) {
         if (kDebugMode) {
@@ -404,7 +410,7 @@ class TestRoomSimulatorPresenter {
             message: 'is Exam: $isExam',
             status: LogEvent.success,
           );
-          _view!.submitAnswersSuccess(AlertClass.submitTestSuccess);
+          _view!.submitAnswersSuccess(AlertClass.submitTestSuccess, json['error_code']);
         } else {
           //Add log
           Utils.instance().prepareLogData(
@@ -413,7 +419,7 @@ class TestRoomSimulatorPresenter {
             message: StringConstants.submit_test_error_message,
             status: LogEvent.failed,
           );
-          _view!.submitAnswerFail(AlertClass.failToSubmitAndContactAdmin);
+          _view!.submitAnswerFail(AlertClass.failToSubmitAndContactAdmin, json['error_code']);
         }
       }).catchError((onError) {
         if (kDebugMode) {
@@ -428,7 +434,7 @@ class TestRoomSimulatorPresenter {
         );
 
         // ignore: invalid_return_type_for_catch_error
-        _view!.submitAnswerFail(AlertClass.failToSubmitAndContactAdmin);
+        _view!.submitAnswerFail(AlertClass.failToSubmitAndContactAdmin, 9999);
       });
     } on TimeoutException {
       //Add log
@@ -438,7 +444,7 @@ class TestRoomSimulatorPresenter {
         message: StringConstants.submit_test_error_timeout,
         status: LogEvent.failed,
       );
-      _view!.submitAnswerFail(AlertClass.networkFailToSubmit);
+      _view!.submitAnswerFail(AlertClass.networkFailToSubmit, 9999);
     } on SocketException {
       //Add log
       Utils.instance().prepareLogData(
@@ -448,7 +454,7 @@ class TestRoomSimulatorPresenter {
         status: LogEvent.failed,
       );
 
-      _view!.submitAnswerFail(AlertClass.networkFailToSubmit);
+      _view!.submitAnswerFail(AlertClass.networkFailToSubmit, 9999);
     } on http.ClientException {
       //Add log
       Utils.instance().prepareLogData(
@@ -457,7 +463,7 @@ class TestRoomSimulatorPresenter {
         message: StringConstants.submit_test_error_client,
         status: LogEvent.failed,
       );
-      _view!.submitAnswerFail(AlertClass.networkFailToSubmit);
+      _view!.submitAnswerFail(AlertClass.networkFailToSubmit, 9999);
     }
   }
 

@@ -976,4 +976,78 @@ class SimulatorTestProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  //TEST CREATE AND SUBMIT
+
+  int _callCreateTest = 0;
+  int get callCreateTest => _callCreateTest;
+
+  void setCallCreateTest() {
+    _callCreateTest++;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _successCreateTest = 0;
+  int get successCreateTest => _successCreateTest;
+
+  void setSuccessCreateTest() {
+    _successCreateTest++;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _failCreateTest = 0;
+  int get failCreateTest => _failCreateTest;
+
+  void setFailCreateTest() {
+    _failCreateTest++;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _callSubmitTest = 0;
+  int get callSubmitTest => _callSubmitTest;
+
+  void setCallSubmitTest() {
+    _callSubmitTest++;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _successSubmitTest = 0;
+  int get successSubmitTest => _successSubmitTest;
+
+  void setSuccessSubmitTest() {
+    _successSubmitTest++;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _failSubmitTest = 0;
+  int get failSubmitTest => _failSubmitTest;
+
+  void setFailSubmitTest() {
+    _failSubmitTest++;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void resetAllValue() {
+    _callCreateTest = 0;
+    _callSubmitTest = 0;
+    _successCreateTest = 0;
+    _successSubmitTest = 0;
+    _failCreateTest = 0;
+    _failSubmitTest = 0;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
 }

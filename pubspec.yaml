@@ -70,7 +70,7 @@ dependencies:
   grouped_list: ^5.1.2
   connectivity_plus: ^4.0.1 
   dio: ^5.3.2
-  webview_cef: ^0.1.0
+#  webview_cef: ^0.1.0
   camera_windows: ^0.2.1+8
   #ffmpeg_wasm: ^1.0.1
   ffmpeg_cli: ^0.2.0
@@ -80,6 +80,7 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   webview_flutter: ^4.8.0
   webview_windows: ^0.4.0
+  flutter_audio_waveforms: ^1.2.1+8
 
   crypto: ^3.0.3
 
@@ -109,6 +110,8 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/sounds/
+    - assets/videos/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

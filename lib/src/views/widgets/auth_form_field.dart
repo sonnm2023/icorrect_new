@@ -131,7 +131,7 @@ class AuthFormField extends StatelessWidget {
               floatingLabelBehavior: FloatingLabelBehavior.never,
               suffixIconConstraints: suffixIconConstraints,
               // ignore: deprecated_member_use
-              labelStyle: Theme.of(context).textTheme.caption!.copyWith(
+              labelStyle: Theme.of(context).textTheme.titleSmall!.copyWith(
                     color: labelColor,
                   ),
               labelText: labelText,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:icorrect_pc/core/app_assets.dart';
 import 'package:icorrect_pc/core/app_colors.dart';
+import 'package:icorrect_pc/src/data_source/local/file_storage_helper.dart';
 import 'package:icorrect_pc/src/providers/main_widget_provider.dart';
 
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class _MainWidgetState extends State<MainWidget> {
     // Future.delayed(Duration.zero, () {
     //   _provider.setCurrentScreen(const HomeWorksWidget());
     // });
+    _provider.setIsShowTestDevice(true);
   }
 
   @override
@@ -77,7 +79,9 @@ class _MainWidgetState extends State<MainWidget> {
                 width: 170,
                 child: IconButton (
                   onPressed: () {
+                    _provider.setIsShowTestDevice(true);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => _provider.lastScreen,));
+                    FileStorageHelper.deleteFileInAudios();
                   }, icon: const Icon(Icons.arrow_back_outlined, size: 35,),
                 ),
               ),

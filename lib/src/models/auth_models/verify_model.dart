@@ -15,7 +15,7 @@ class VerifyModel {
     errorCode: json["error_code"],
     status: json["status"],
     data: json["data"] == null ? null : Data.fromJson(json["data"]),
-    messages: json["messages"],
+    messages: json["messages"] ?? json['message'],
   );
 
   Map<String, dynamic> toJson() => {

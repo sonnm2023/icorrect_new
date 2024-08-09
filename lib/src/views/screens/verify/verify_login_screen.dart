@@ -179,7 +179,7 @@ class _LoginVerifyState extends State<LoginVerifyWidget> implements LoginViewCon
   void _onExitVerify() async {
     Utils.instance().setLicenseKey('');
     Utils.instance().setMerchantID('');
-    _verifyProvider!.resetListClass();
+    _verifyProvider!.clearListClass();
     _provider.setCurrentScreen(const VerifyWidget());
   }
 
@@ -204,36 +204,6 @@ class _LoginVerifyState extends State<LoginVerifyWidget> implements LoginViewCon
   }
 
   @override
-  void onChangeDeviceNameComplete(String msg) {
-    // TODO: implement onChangeDeviceNameComplete
-  }
-
-  @override
-  void onChangeDeviceNameError(String msg) {
-    // TODO: implement onChangeDeviceNameError
-  }
-
-  @override
-  void onGetListClassComplete(List<ClassModel> list) {
-    // TODO: implement onGetListClassComplete
-  }
-
-  @override
-  void onGetListClassError(String message) {
-    // TODO: implement onGetListClassError
-  }
-
-  @override
-  void onGetListStudentComplete(List<StudentModel> list) {
-    // TODO: implement onGetListStudentComplete
-  }
-
-  @override
-  void onGetListStudentError(String message) {
-    // TODO: implement onGetListStudentError
-  }
-
-  @override
   void onVerifyComplete(String merchantID) {
     // TODO: implement onVerifyComplete
   }
@@ -251,5 +221,35 @@ class _LoginVerifyState extends State<LoginVerifyWidget> implements LoginViewCon
   @override
   void onVerifyError(String message) {
     // TODO: implement onVerifyError
+  }
+
+  @override
+  void onChangeDeviceNameComplete(String msg) {
+    // TODO: implement onChangeDeviceNameComplete
+  }
+
+  @override
+  void onChangeDeviceNameError(String msg) {
+    // TODO: implement onChangeDeviceNameError
+  }
+
+  @override
+  void onGetListClassComplete(List<dynamic> list, int lastPage, int totalClass) {
+    // TODO: implement onGetListClassComplete
+  }
+
+  @override
+  void onGetListClassError(String message) {
+    // TODO: implement onGetListClassError
+  }
+
+  @override
+  void onGetListStudentComplete(List<StudentModel> list) {
+    // TODO: implement onGetListStudentComplete
+  }
+
+  @override
+  void onGetListStudentError(String message) {
+    // TODO: implement onGetListStudentError
   }
 }

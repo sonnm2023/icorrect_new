@@ -72,7 +72,7 @@ class DefaultMaterialButton extends StatelessWidget {
               maxLines: 1,
               textScaleFactor: textScaleFactor,
               // ignore: deprecated_member_use
-              style: Theme.of(context).textTheme.button!.copyWith(
+              style: Theme.of(context).textTheme.labelSmall!.copyWith(
                     color: textColor,
                     fontSize: fontSize,
                   ),

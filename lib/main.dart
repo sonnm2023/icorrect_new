@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect_pc/src/providers/auth_widget_provider.dart';
 import 'package:icorrect_pc/src/providers/camera_preview_provider.dart';
 import 'package:icorrect_pc/src/providers/home_provider.dart';
@@ -31,7 +32,7 @@ Future<void> main() async {
   databaseFactory = databaseFactoryFfi;
   if (Platform.isWindows) {
     windowManager.waitUntilReadyToShow().then((_) async {
-      await windowManager.setMinimumSize(const Size(800, 600));
+      await windowManager.setMinimumSize(const Size(1360, 768));
       await windowManager.center();
       await windowManager.show();
     });
@@ -85,6 +86,7 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(create: (_) => WindowManagerProvider()),
         ],
         child: MaterialApp(
+          builder: FToastBuilder(),
             supportedLocales: _localization.supportedLocales,
             localizationsDelegates: _localization.localizationsDelegates,
             debugShowCheckedModeBanner: false,

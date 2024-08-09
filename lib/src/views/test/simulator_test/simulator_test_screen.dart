@@ -1018,8 +1018,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onSubmitTestFail(String msg) {
-    Utils.instance().sendLog();
+  void onSubmitTestFail(String msg, int errorCode) {
+    print('errorCode: $errorCode');
+    Utils.instance().sendLog(errorCode: errorCode);
     _loading!.hide();
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.fail);
     showDialog(
@@ -1032,8 +1033,9 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
   }
 
   @override
-  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer) {
-    Utils.instance().sendLog();
+  void onSubmitTestSuccess(String msg, ActivityAnswer activityAnswer, int errorCode) {
+    print('errorCode: $errorCode');
+    Utils.instance().sendLog(errorCode: errorCode);
     _loading!.hide();
     showDialog(
         context: context,
@@ -1116,5 +1118,39 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     if (!_simulatorTestProvider!.isTestRoom) {
       _simulatorTestProvider!.setVisibleDownloadAgain(true);
     }
+  }
+
+  @override
+  void onGetTestDetailCompleteForTool(String testID) {
+    String activityId = "";
+    if (widget.homeWorkModel != null) {
+      activityId = widget.homeWorkModel!.activityId.toString();
+    }
+    _simulatorTestProvider!.setSuccessCreateTest();
+
+    _simulatorTestProvider!.setCallSubmitTest();
+    print(testID);
+    _simulatorTestPresenter!.submitTestForTool(context: context,
+        testId: testID,
+        activityId: activityId,
+        questions: _simulatorTestProvider!.questionList,
+        isExam: _isExam,
+        isUpdate: true,
+        logAction: _simulatorTestProvider!.logActions);
+  }
+
+  @override
+  void onGetTestDetailErrorForTool() {
+    _simulatorTestProvider!.setFailCreateTest();
+  }
+
+  @override
+  void onSubmitTestFailForTool() {
+    _simulatorTestProvider!.setFailSubmitTest();
+  }
+
+  @override
+  void onSubmitTestSuccessForTool() {
+    _simulatorTestProvider!.setSuccessSubmitTest();
   }
 }

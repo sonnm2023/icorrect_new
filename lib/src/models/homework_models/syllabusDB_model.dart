@@ -1,12 +1,10 @@
 class SyllabusDBModel {
   // syllabusName TEXT NOT NULL PRIMARY KEY,
-  //     total INTEGER NOT NULL,
   // totalDownloaded INTEGER NOT NULL,
   //     capacity REAL,
   // statusDownload INTEGER NOT NULL
   int syllabusID;
   String syllabusName;
-  int total;
   int totalDownloaded;
   double capacity;
   int statusDownload; //0 : chua down, 1: da down
@@ -17,7 +15,6 @@ class SyllabusDBModel {
       {
       required this.syllabusID,
       required this.syllabusName,
-      required this.total,
       required this.totalDownloaded,
       required this.capacity,
       required this.statusDownload,
@@ -28,7 +25,6 @@ class SyllabusDBModel {
   factory SyllabusDBModel.fromJson(Map<String, dynamic> json) => SyllabusDBModel(
       syllabusID: json['syllabusID'],
     syllabusName: json["syllabusName"],
-    total: json["total"],
     totalDownloaded: json["totalDownloaded"],
     capacity: json["capacity"],
     statusDownload: json["statusDownload"],
@@ -39,7 +35,6 @@ class SyllabusDBModel {
   Map<String, dynamic> toJson() => {
     "syllabusID": syllabusID,
     "syllabusName": syllabusName,
-    "total": total,
     "totalDownloaded": totalDownloaded,
     "capacity": capacity,
     "statusDownload": statusDownload,

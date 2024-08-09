@@ -16,7 +16,7 @@ class EnterTextDialog extends StatefulWidget {
     required this.borderRadius,
     required this.hasCloseButton,
     required this.okButtonTapped,
-    required this.cancelButtonTapped, required this.controller,
+    required this.cancelButtonTapped, required this.controller, required this.isObscureText,
   }) : super(key: key);
 
   final String title;
@@ -27,6 +27,7 @@ class EnterTextDialog extends StatefulWidget {
   final String? cancelButtonTitle;
   final double borderRadius;
   final bool hasCloseButton;
+  final bool isObscureText;
   final Function? okButtonTapped;
   final Function? cancelButtonTapped;
   @override
@@ -84,6 +85,7 @@ class _EnterTextDialogState extends State<EnterTextDialog> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: TextField(
+                            obscureText: widget.isObscureText,
                             controller: widget.controller,
                             decoration: InputDecoration(
                                 hintText: widget.hintText,

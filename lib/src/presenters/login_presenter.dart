@@ -25,7 +25,7 @@ abstract class LoginViewContract {
   void onLoginError(String message);
   void onVerifyComplete(String merchantID);
   void onVerifyError(String message);
-  void onGetListClassComplete(List<ClassModel> list);
+  void onGetListClassComplete(List<ClassModel> list, int lastPage, int totalClass);
   void onGetListClassError(String message);
   void onGetListStudentComplete(List<StudentModel> list);
   void onGetListStudentError(String message);
@@ -271,6 +271,7 @@ class LoginPresenter {
 
     try {
       String deviceID = await Utils.instance().getDeviceIdentifier();
+      await _saveDeviceID(deviceID);
 
       _repository!.verifyDevice(licenseKey, deviceID, deviceName).then((value) async {
         VerifyModel verifyModel = VerifyModel.fromJson(jsonDecode(value));
@@ -285,7 +286,16 @@ class LoginPresenter {
           await _saveLicenseKey(licenseKey);
           await _saveDeviceName(deviceName);
           _view!.onVerifyComplete(verifyModel.data!.merchantId);
-        } else if (verifyModel.errorCode == 401) {
+        } else if (verifyModel.errorCode == 400) {
+          Utils.instance().prepareLogData(
+              log: log,
+              data: jsonDecode(value),
+              message: verifyModel.messages,
+              status: LogEvent.failed
+          );
+          _view!.onVerifyError(verifyModel.messages!);
+        }
+        else if (verifyModel.errorCode == 401) {
           Utils.instance().prepareLogData(
               log: log,
               data: jsonDecode(value),
@@ -335,6 +345,10 @@ class LoginPresenter {
     }
   }
 
+  Future _saveDeviceID(String id) async {
+    AppSharedPref.instance().putString(key: AppSharedKeys.deviceID, value: id);
+  }
+
   Future _saveLicenseKey(String key) async {
     AppSharedPref.instance()
         .putString(key: AppSharedKeys.licenseKey, value: key);
@@ -349,7 +363,7 @@ class LoginPresenter {
         .putString(key: AppSharedKeys.merchantID, value: merchantID);
   }
 
-  void getListClass(BuildContext context) async {
+  void getListClass(BuildContext context, int page) async {
     assert(_view != null && _repository != null);
 
     LogModel? log;
@@ -358,9 +372,11 @@ class LoginPresenter {
           .prepareToCreateLog(context, action: LogEvent.callApiGetListClass);
     }
     try {
+
       String? merchantID = await Utils.instance().getMerchantID();
-      String checksum = await Utils.instance().convertHMacSha256(param1: merchantID);
-      _repository!.getListClass(merchantID!, checksum).then((value) {
+      String checksum = await Utils.instance().convertHMacSha256(param1: merchantID, param2: page.toString());
+      _repository!.getListClass(merchantID!, checksum, page).then((value) {
+        print(value);
         ClassMerchantModel classMerchantModel = ClassMerchantModel.fromJson(jsonDecode(value));
         if (classMerchantModel.errorCode == 200) {
           List<ClassModel> classes = classMerchantModel.data!.data!;
@@ -370,7 +386,7 @@ class LoginPresenter {
               message: classMerchantModel.message,
               status: LogEvent.success
           );
-          _view!.onGetListClassComplete(classes);
+          _view!.onGetListClassComplete(classes, classMerchantModel.data!.lastPage!, classMerchantModel.data!.total!);
         } else {
           if (classMerchantModel.message!.isNotEmpty) {
             Utils.instance().prepareLogData(
@@ -517,8 +533,6 @@ class LoginPresenter {
 
     try {
       String deviceID = await Utils.instance().getDeviceIdentifier();
-      deviceID = deviceID.replaceAll(RegExp(r'[{}]'), '');
-      // deviceID = deviceID.replaceAll('}', '');
       String? merchantID = await Utils.instance().getMerchantID();
       String checksum = await Utils.instance().convertHMacSha256(param1: deviceID, param2: key, param3: merchantID!);
       _repository!.verifyConfig(key, deviceID, checksum, merchantID).then((value) async {

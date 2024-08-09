@@ -34,7 +34,7 @@ class ListClassWidget extends StatefulWidget {
   State<ListClassWidget> createState() => _ListClassWidgetState();
 }
 
-class _ListClassWidgetState extends State<ListClassWidget> with WindowListener implements LoginViewContract {
+class _ListClassWidgetState extends State<ListClassWidget> implements LoginViewContract {
 
   CircleLoading? _loading;
   late List<ClassModel> _listFilter = [];
@@ -44,9 +44,12 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _verifyConfigController = TextEditingController();
   final _deviceNameController = TextEditingController();
+  final _scrollController = ScrollController();
   int currentIndex = 0;
   bool _isDownloadAgain = false;
   String messageError = '';
+  int page = 1;
+  int totalClass = 0;
 
   @override
   void initState() {
@@ -57,14 +60,20 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
     _verifyProvider = Provider.of<VerifyProvider>(context, listen: false);
     _loading!.show(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _verifyProvider.resetListClass();
+      _verifyProvider.clearListClass();
     },);
-    _presenter.getListClass(context);
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        page += 1;
+        _presenter.getListClass(context, page);
+      }
+    });
+    _presenter.getListClass(context, page);
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -176,7 +185,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
                     },
                     cancelButtonTapped: () {
                       Navigator.of(context).pop();
-                    });
+                    }, isObscureText: false,);
               },
             );
           },
@@ -204,13 +213,14 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Image(width: 170, image: AssetImage(AppAssets.img_logo_app)),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Visibility(visible: _provider.visibleSearch, child: _buildSearch()),
-                  Visibility(visible: !_provider.visibleSearch, child: _buildTitle())
-                ],
-              ),
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Visibility(visible: _provider.visibleSearch, child: _buildSearch()),
+              //     Visibility(visible: !_provider.visibleSearch, child: _buildTitle())
+              //   ],
+              // ),
+              _buildTitle(),
               SizedBox(
                   width: 170,
                   child: Column(
@@ -219,6 +229,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
                         onPressed: () {
                           showDialog(
                             context: context,
+                            barrierDismissible: false,
                             builder: (context) {
                               return EnterTextDialog(
                                   title: 'Cảnh báo!',
@@ -229,6 +240,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
                                   cancelButtonTitle: 'Huỷ bỏ',
                                   borderRadius: 20,
                                   hasCloseButton: true,
+                                  isObscureText: true,
                                   okButtonTapped: () {
                                     _loading!.show(context);
                                     _presenter.verifyConfig(context, _verifyConfigController.text.trim());
@@ -288,7 +300,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
   }
 
   Widget _buildTitle() {
-    return Text('Lớp: ${_provider.titleMain}', style: const TextStyle(
+    return const Text('Danh Sách lớp', style: TextStyle(
         color: AppColors.purple,
         fontWeight: FontWeight.bold,
         fontSize: 24));
@@ -299,7 +311,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
         builder: (context, appState, child) =>
             Expanded(child: !_isDownloadAgain? _buildListClass() : DownloadAgainWidget(onClickTryAgain: () {
               _loading!.show(context);
-              _presenter.getListClass(context);
+              _presenter.getListClass(context, page);
             }, isOffline: false, message: messageError, backgroundColor: Colors.transparent)));
   }
 
@@ -315,7 +327,45 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
           dashPattern: const [6, 3, 6, 3],
           strokeWidth: 2,
           color: AppColors.defaultPurpleColor,
-          child: _listClass());
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              InkWell(
+                  onTap: () {
+                    _loading?.show(context);
+                    page = 1;
+                    _verifyProvider.clearListClass();
+                    _presenter.getListClass(context, page);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    width: 120,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.refresh_rounded),
+                          const SizedBox(width: 5),
+                          Text(
+                              Utils.instance().multiLanguage(
+                                  StringConstants.refresh_data),
+                              style: const TextStyle(
+                                color: AppColors.purple,
+                                fontSize: 16,
+                              )),
+                        ]),
+                  )),
+              _listFilter.isEmpty? Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(AppAssets.img_empty),
+                  const Text('Danh sách lớp đang trống!')
+                ],
+              )) : Expanded(child: _listClass()),
+            ],
+          ),
+          );
       },),
     );
   }
@@ -323,23 +373,35 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
   Widget _listClass() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 80),
-      child: GridView.builder(
-        shrinkWrap: true,
-        itemCount: _listFilter.length,
-        physics: const AlwaysScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: 3.5,
-          crossAxisCount: 3,
-          crossAxisSpacing:80,
-          mainAxisSpacing: 20
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: GridView.builder(
+          shrinkWrap: true,
+          itemCount: _listFilter.length + 1,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            childAspectRatio: 3.5,
+            crossAxisCount: 3,
+            crossAxisSpacing:80,
+            mainAxisSpacing: 20
+          ),
+          itemBuilder: (context, index) {
+            if (index == _listFilter.length) {
+              if (_listFilter.length == totalClass) {
+                return SizedBox();
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            } else {
+              return InkWell(
+                  onTap: () {
+                    goToListStudentWidget(index);
+                  },
+                  child: _classItem(index));
+            }
+          },
         ),
-        itemBuilder: (context, index) {
-          return InkWell(
-              onTap: () {
-                goToListStudentWidget(index);
-              },
-              child: _classItem(index));
-        },
       ),
     );
   }
@@ -382,7 +444,6 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
   }
 
   void goToListStudentWidget(int index) {
-    windowManager.removeListener(this);
     _verifyProvider.setCurrentClass(_verifyProvider.listClass[index]);
     AppSharedPref.instance()
         .putString(key: AppSharedKeys.classID, value: _verifyProvider.listClass[index].id.toString());
@@ -394,6 +455,7 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
   @override
   void onVerifyConfigError(String message) {
     _loading!.hide();
+    _verifyConfigController.clear();
     showDialog(
         context: context,
         builder: (context) {
@@ -449,13 +511,19 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
   }
 
   @override
-  void onGetListClassComplete(List<ClassModel> list) {
+  void onGetListClassComplete(List<ClassModel> list, int lastPage, int total) {
+    totalClass = total;
     _verifyProvider.setListClass(list);
-    setState(() {
-      _isDownloadAgain = false;
-      _listFilter = _verifyProvider.listClass;
-    });
-    _loading!.hide();
+    if (page % 2 == 0 || page == lastPage) {
+      setState(() {
+        _isDownloadAgain = false;
+        _listFilter = _verifyProvider.listClass;
+      });
+      _loading!.hide();
+    } else {
+      page += 1;
+      _presenter.getListClass(context, page);
+    }
   }
 
   @override
@@ -465,16 +533,6 @@ class _ListClassWidgetState extends State<ListClassWidget> with WindowListener i
       _isDownloadAgain = true;
       messageError = message;
     });
-    // message = StringConstants.verify_wrong_massage;
-    // showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return MessageDialog(context: context, message: message, onPressOK: () {
-    //         setState(() {
-    //           _isDownloadAgain = true;
-    //         });
-    //       },);
-    //     });
   }
 
   @override

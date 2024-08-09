@@ -1,18 +1,29 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'dart:math' as math;
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect_pc/src/models/user_data_models/user_data_model.dart';
 import 'package:icorrect_pc/src/providers/auth_widget_provider.dart';
 import 'package:icorrect_pc/src/providers/home_provider.dart';
 import 'package:icorrect_pc/src/providers/main_widget_provider.dart';
+import 'package:icorrect_pc/src/views/dialogs/test_video_dialog.dart';
+import 'package:icorrect_pc/src/views/dialogs/test_record_dialog.dart';
 import 'package:icorrect_pc/src/views/widgets/grid_view_widget.dart';
 
 import 'package:provider/provider.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../core/app_colors.dart';
+import '../../../data_source/local/file_storage_helper.dart';
 import '../../../models/homework_models/new_api_135/new_class_model.dart';
 import '../../../models/log_models/log_model.dart';
 import '../../../presenters/home_presenter.dart';
@@ -23,6 +34,7 @@ import '../../dialogs/circle_loading.dart';
 import '../../dialogs/custom_alert_dialog.dart';
 import '../../dialogs/message_alert.dart';
 import '../../widgets/nothing_widget.dart';
+import 'package:record/record.dart';
 
 class HomeWorksWidget extends StatefulWidget {
   const HomeWorksWidget({super.key});
@@ -31,8 +43,7 @@ class HomeWorksWidget extends StatefulWidget {
   State<HomeWorksWidget> createState() => _HomeWorksWidgetState();
 }
 
-class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
-    implements HomeWorkViewContract {
+class _HomeWorksWidgetState extends State<HomeWorksWidget> implements HomeWorkViewContract {
   double w = 0, h = 0;
   late HomeProvider _provider;
   String _choosenStatus = '';
@@ -42,14 +53,22 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
   late HomeWorkPresenter _presenter;
   CameraPreviewProvider? _cameraPreviewProvider;
   MainWidgetProvider? _mainWidgetProvider;
+  Timer? _countDownTime;
+  Record? _recordController;
+  AudioPlayer? _audioPlayer;
+  ActivitiesModel? _activitiesModel;
+  VideoPlayerController? _videoPlayerController;
+
+  late Duration maxDuration;
+  late Duration elapsedDuration;
+  late List<double> samples = [];
+  FToast? fToast;
 
   @override
   void initState() {
-    if (!windowManager.hasListeners) {
-    windowManager.addListener(this);
-    }
     super.initState();
-    _init();
+    _recordController = Record();
+    _audioPlayer = AudioPlayer();
     _provider = Provider.of<HomeProvider>(context, listen: false);
     _cameraPreviewProvider =
         Provider.of<CameraPreviewProvider>(context, listen: false);
@@ -66,30 +85,17 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
     });
 
     Utils.instance().sendLog();
+    fToast = FToast();
+    fToast!.init(context);
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
     dispose();
     super.dispose();
     _provider.dispose();
     _loading!.hide();
   }
-
-  void _init() async {
-    await windowManager.setPreventClose(true);
-    setState(() {
-
-    });
-  }
-
-  @override
-  void onWindowClose() {
-    super.onWindowClose();
-    _showConfirmExitApp();
-  }
-
   @override
   Widget build(BuildContext context) {
     w = MediaQuery.of(context).size.width;
@@ -580,6 +586,17 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
     }
   }
 
+  void _prepareForRecord() {
+    _provider.setCurrentCount(0);
+    String timeFormat = Utils.instance().formattedTime(timeInSecond: 0);
+    _provider.setOkTitle('Dừng lại');
+    _provider.setStrCountDown(timeFormat);
+    _provider.setIsRecord(false);
+    _provider.setStartDoingTest(false);
+    _provider.setDescriptionRecordDialog('Bạn đang ghi âm vui lòng nói gì đó để kiểm tra thiết bị!');
+    samples = [];
+  }
+
   Future<void> _onClickStartTest(ActivitiesModel homeWork) async {
     if (homeWork.activityStatus == Status.loadedTest.get) {
       showDialog(
@@ -609,55 +626,23 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
 
     Utils.instance().checkInternetConnection().then((isConnected) async {
       if (isConnected) {
-        // showDialog(
-        //   context: context,
-        //   builder: (BuildContext context) {
-        //     return CustomAlertDialog(
-        //       title: Utils.instance().multiLanguage(StringConstants.dialog_title),
-        //       richText: RichText(
-        //         text: TextSpan(
-        //           // text: 'Bạn có muốn bắt đầu làm bài: ',
-        //           // style: TextStyle(fontSize: FontsSize.fontSize_16,
-        //           children: <TextSpan>[
-        //             const TextSpan(text: 'Bạn có muốn bắt đầu làm bài: ', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black)),
-        //             TextSpan(text: homeWork.activityName, style: const TextStyle(fontSize: FontsSize.fontSize_16, fontWeight: FontWeight.bold, color: Colors.black)),
-        //             const TextSpan(text: ', với tài khoản là ', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black)),
-        //             TextSpan(text: _mainWidgetProvider!.titleMain, style: const TextStyle(fontSize: FontsSize.fontSize_16, fontWeight: FontWeight.bold, color: Colors.black)),
-        //             const TextSpan(text: ' không?', style: TextStyle(fontSize: FontsSize.fontSize_16, color: Colors.black))
-        //           ]
-        //         ),
-        //       ),
-        //       description: 'Bạn có muốn bắt đầu làm bài: ${homeWork.activityName}, với tài khoản là ${_mainWidgetProvider!.titleMain} không?',
-        //       okButtonTitle: StringConstants.ok_button_title,
-        //       cancelButtonTitle: Utils.instance().multiLanguage(StringConstants.cancel_button_title),
-        //       borderRadius: 8,
-        //       hasCloseButton: false,
-        //       okButtonTapped: () async {
-        //         Navigations.instance()
-        //             .goToSimulatorTestRoom(context, activitiesModel: homeWork);
-        //         //Add action log
-        //         LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
-        //             action: LogEvent.actionClickOnHomeworkItem);
-        //         actionLog.addData(
-        //             key: StringConstants.k_activity_id,
-        //             value: homeWork.activityId.toString());
-        //         Utils.instance().addLog(actionLog, LogEvent.none);
-        //       },
-        //       cancelButtonTapped: () {
-        //         Navigator.of(context).pop();
-        //       },
-        //     );
-        //   },
-        // );
-        Navigations.instance()
-            .goToSimulatorTestRoom(context, activitiesModel: homeWork);
-        //Add action log
-        LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
-            action: LogEvent.actionClickOnHomeworkItem);
-        actionLog.addData(
-            key: StringConstants.k_activity_id,
-            value: homeWork.activityId.toString());
-        Utils.instance().addLog(actionLog, LogEvent.none);
+        //show dialog checking audio, record
+        _activitiesModel = homeWork;
+        // _showDialogStartChecking();
+        if (_mainWidgetProvider!.isShowTestDevice) {
+          _startChecking();
+        } else {
+          //start now
+          Navigations.instance()
+              .goToSimulatorTestRoom(context, activitiesModel: homeWork);
+          //Add action log
+          LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
+              action: LogEvent.actionClickOnHomeworkItem);
+          actionLog.addData(
+              key: StringConstants.k_activity_id,
+              value: homeWork.activityId.toString());
+          Utils.instance().addLog(actionLog, LogEvent.none);
+        }
       } else {
         _handleConnectionError();
       }
@@ -691,33 +676,424 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
     Utils.instance().addConnectionErrorLog(context);
   }
 
-  void _showConfirmExitApp() async {
-    if (_dialogNotShowing) {
-      showDialog(
+  void _showDialogTestRecord() {
+    if (_videoPlayerController != null && _videoPlayerController!.value.isPlaying) {
+      _videoPlayerController!.pause();
+      _provider.resetVideoPlayerController();
+    }
+    _provider.setCurrentCount(0);
+    String timeFormat = Utils.instance().formattedTime(timeInSecond: 0);
+    _provider.setStrCountDown(timeFormat);
+    _provider.setOkTitle((Utils.instance().multiLanguage(StringConstants.start_title)));
+    _provider.setCanDoNextStep(false);
+    _provider.setIsRecord(false);
+    _provider.setStartDoingTest(false);
+    _provider.setStatusButton(ButtonTestDevice.isRecord);
+    _provider.setDescriptionRecordDialog(
+        'Bắt đầu ghi âm và kiểm tra mic có hoạt động hay không, nếu có vấn đề vui lòng báo lại giám khảo');
+    _provider.setRightButtonTitle('Bước tiếp');
+    _provider.setStatusButtonRight(ButtonTestDevice.nothing);
+    _provider.setMsgToast('Hãy bắt đầu để có thể kiểm tra âm thanh');
+    Navigator.of(context).pop();
+    showDialog(
+      barrierDismissible: false,
+      context: context, builder: (context) {
+      // return Consumer<HomeProvider>(builder: (context, provider, child) {
+        return TestRecordDialog(
+          borderRadius: 12,
+          hasCloseButton: true,
+          cancelButtonTitle: 'Huỷ bỏ',
+          okButtonTapped: okButtonTap,
+          cancelButtonTapped: rightButtonTap,
+          closeButtonTapped: _closeButtonTap,
+          samples: samples,
+        );
+      // });
+    },);
+  }
+
+  void _showDialogTestVideo() {
+    _provider.setRightButtonTitle('Bước tiếp');
+    _provider.setStatusButtonRight(ButtonTestDevice.nothing);
+    _provider.setMsgToast('Hãy bấm bắt đầu để nghe hết đoạn video để kiểm tra thiết bị và bấm bươc tiếp');
+    showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            title: Utils.instance().multiLanguage(StringConstants.dialog_title),
-            description: 'Bạn có chắc chắn muốn thoát khỏi phần mềm?',
-            okButtonTitle:
-            'Xác nhận',
-            cancelButtonTitle: 'Để sau',
-            borderRadius: 8,
-            hasCloseButton: false,
-            okButtonTapped: () {
-              _dialogNotShowing = true;
-              windowManager.destroy();
-            },
-            cancelButtonTapped: () {
-              _dialogNotShowing = true;
-              Navigator.of(context).pop();
-            },
-          );
-        },
-      );
-      _dialogNotShowing = false;
+        builder: (context) {
+     return Consumer<HomeProvider>(builder: (context, provider, child) {
+       return TestVideoDialog(
+              borderRadius: 12,
+              hasCloseButton: true,
+              okButtonTapped: _startCheckingVideo,
+              closeButtonTapped: _closeButtonTap,
+              cancelButtonTapped: rightButtonTestVideo,
+            );
+          });
+        });
+  }
+
+  void _showDialogTestAudio() async {
+    _provider.setCanDoNextStep(false);
+    String path = await FileStorageHelper.newGetFilePath(
+        'test_record.wav', MediaType.audio);
+    Uint8List list = await File(path).readAsBytes();
+    samples = list.map((e) => e.toDouble()).toList();
+    samples = loadParseJson('jsonBody');
+    _provider.setListSamples(samples);
+    _provider.setMaxDuration(const Duration(milliseconds: 1000));
+    _provider.setElapsedDuration(const Duration(milliseconds: 0));
+    print('samples: ${samples.length}');
+    // _startPlayAudio();
+  }
+
+  Future<void> _readAssetToFile() async {
+    final ByteData data = await rootBundle.load('assets/videos/745.mp4');
+
+    final path = await FileStorageHelper.getFolderPath(MediaType.video, null);
+    final filePath = '$path/745.mp4';
+    final File file = File(filePath);
+    if (!await file.exists()) {
+      await file.writeAsBytes(data.buffer.asUint8List());
     }
+  }
+
+  void _startChecking() async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.instance()
+          .prepareToCreateLog(context, action: 'initVideoTest');
+    }
+
+    if (_videoPlayerController != null) {
+      _videoPlayerController!.dispose();
+    }
+    _provider.setCanDoNextStep(false);
+    await _readAssetToFile();
+    String path = await FileStorageHelper.newGetFilePath('745.mp4', MediaType.video);
+    _videoPlayerController = VideoPlayerController.file(File(path));
+    await _videoPlayerController!.initialize().then((value) {
+      Utils.instance().prepareLogData(
+        log: log,
+        data: null,
+        message: 'init video success',
+        status: LogEvent.success,
+      );
+    }).catchError((e) {
+      Utils.instance().prepareLogData(
+        log: log,
+        data: null,
+        message: e.toString(),
+        status: LogEvent.failed,
+      );
+    });
+    _provider.setOkTitle((Utils.instance().multiLanguage(StringConstants.start_title)));
+    _provider.setStatusButton(ButtonTestDevice.isPlayVideo);
+    _showDialogTestVideo();
+  }
+
+  void _startCheckingVideo() async {
+    if (_provider.statusButton == ButtonTestDevice.isPlayVideo) {
+      playVideo();
+      _provider.setMsgToast('Hãy nghe hết đoạn video và kiểm tra lại');
+    } else if (_provider.statusButton == ButtonTestDevice.isNextStep) {
+      if (_provider.canDoNextStep) {
+        _showDialogTestRecord();
+      }
+    }
+  }
+
+  void rightButtonTestVideo() {
+    if (_provider.statusButtonRight == ButtonTestDevice.nothing) {
+      _showToast();
+    } else if (_provider.statusButtonRight == ButtonTestDevice.isRePlayVideo) {
+      playVideo();
+    }
+  }
+
+  void playVideo() async {
+    LogModel? log;
+    if (context.mounted) {
+      log = await Utils.instance()
+          .prepareToCreateLog(context, action: 'playVideo');
+    }
+    if (_videoPlayerController != null) {
+      _videoPlayerController!.pause();
+    }
+
+    try {
+      _videoPlayerController!.value.isPlaying
+          ? _videoPlayerController!.pause()
+          : _videoPlayerController!.play();
+      setState(() {});
+      Utils.instance().prepareLogData(
+        log: log,
+        data: null,
+        message: 'play video success',
+        status: LogEvent.success,
+      );
+
+      _provider.setVideoPlayerController(_videoPlayerController!);
+
+      _videoPlayerController!.addListener(() {
+        if (_videoPlayerController!.value.position.inSeconds > 1) {
+          _provider.setCanDoNextStep(true);
+        }
+
+        if (_videoPlayerController!.value.isCompleted) {
+          _provider.setCanDoNextStep(true);
+          _provider.setStatusButtonRight(ButtonTestDevice.isRePlayVideo);
+        }
+      });
+      _provider.setOkTitle('Bước tiếp');
+      _provider.setStatusButton(ButtonTestDevice.isNextStep);
+      _provider.setRightButtonTitle('Nghe lại');
+    } catch (e){
+      Utils.instance().prepareLogData(
+        log: log,
+        data: null,
+        message: e.toString(),
+        status: LogEvent.failed,
+      );
+    }
+  }
+
+  Future<void> _startDoingTest() async {
+    if (_provider.isStartDoingTest) {
+      _closeButtonTap();
+      _mainWidgetProvider!.setIsShowTestDevice(false);
+      Navigator.of(context).pop();
+      Navigations.instance()
+          .goToSimulatorTestRoom(context, activitiesModel: _activitiesModel!);
+      //Add action log
+      LogModel actionLog = await Utils.instance().prepareToCreateLog(context,
+          action: LogEvent.actionClickOnHomeworkItem);
+      actionLog.addData(
+          key: StringConstants.k_activity_id,
+          value: _activitiesModel!.activityId.toString());
+      Utils.instance().addLog(actionLog, LogEvent.none);
+    }
+  }
+
+  Future<void> okButtonTap() async {
+    if (_provider.statusButton == ButtonTestDevice.isRecord) {
+      _prepareForRecord();
+      _startTestRecord();
+      _provider.setStatusButton(ButtonTestDevice.isStopRecord);
+      // _provider.setStatusButtonRight(ButtonTestDevice.isReRecord);
+      _provider.setRightButtonTitle('Bước tiếp');
+      _provider.setMsgToast('Bạn đang ghi âm, hãy bấm dừng lại và kiểm tra âm thanh');
+    } else if (_provider.statusButton == ButtonTestDevice.isPlayAudio) {
+      _provider.setDescriptionRecordDialog('Bạn đang nghe lại đoạn ghi âm để kiểm tra \n Nếu có lỗi hãy báo ngay cho giám khảo \n nếu không hãy bấm bước tiếp để bắt đầu bài kiểm tra');
+      _startPlayAudio();
+      _provider.setCanDoNextStep(false);
+      _provider.setOkTitle('Bước tiếp');
+      _provider.setStatusButton(ButtonTestDevice.isNextStep);
+    }
+    else if (_provider.statusButton == ButtonTestDevice.isStopRecord) {
+      if (_provider.canDoNextStep) {
+        await _stopRecord();
+        _provider.setOkTitle('Nghe lại');
+        _provider.setIsRecord(false);
+        _provider.setDescriptionRecordDialog('Bạn đã ghi âm xong vui lòng nghe lại để kiểm tra MIC');
+        _provider.setStatusButton(ButtonTestDevice.isPlayAudio);
+        _provider.setStatusButtonRight(ButtonTestDevice.isReRecord);
+        _provider.setRightButtonTitle('Ghi âm lại');
+        _showDialogTestAudio();
+      }
+    } else if (_provider.statusButton == ButtonTestDevice.isNextStep) {
+      _startDoingTest();
+    }
+  }
+
+  Future<void> rightButtonTap() async {
+    if (_provider.statusButtonRight == ButtonTestDevice.isRecord) {
+      _prepareForRecord();
+      _startTestRecord();
+      _provider.setStatusButton(ButtonTestDevice.isStopRecord);
+      _provider.setStatusButtonRight(ButtonTestDevice.isReRecord);
+    } else if (_provider.statusButtonRight == ButtonTestDevice.isNextStep) {
+      _startDoingTest();
+    } else if (_provider.statusButtonRight == ButtonTestDevice.isReRecord) {
+      if (_provider.canDoNextStep) {
+        await _stopRecord();
+        _prepareForRecord();
+        _startTestRecord();
+        _provider.setStatusButton(ButtonTestDevice.isStopRecord);
+        _provider.setStatusButtonRight(ButtonTestDevice.isReRecord);
+      }
+    } else if (_provider.statusButtonRight == ButtonTestDevice.isStopRecord) {
+      if (_provider.canDoNextStep) {
+        await _stopRecord();
+        _provider.setOkTitle('Nghe lại');
+        _provider.setIsRecord(false);
+        _provider.setStatusButton(ButtonTestDevice.isPlayAudio);
+        _provider.setDescriptionRecordDialog('Nghe lại đoạn ghi âm để kiểm tra \n Nếu có lỗi hãy báo ngay cho giám khảo');
+      }
+    } else if (_provider.statusButtonRight == ButtonTestDevice.nothing) {
+      _showToast();
+    }
+  }
+
+  Future<void> _startTestRecord() async {
+    if (_countDownTime != null) {
+      _countDownTime!.cancel();
+    }
+    String fileName = await FileStorageHelper.getFilePath(
+        'test_record.wav', MediaType.audio, null);
+    await _recordController!.start(
+      path: fileName,
+      encoder: Platform.isWindows ? AudioEncoder.wav : AudioEncoder.pcm16bit,
+      bitRate: 128000,
+      numChannels: 1,
+      samplingRate: 44100,
+    );
+    _countDownTime = _presenter.startCountDown(context: context, count: _provider.currentCount);
+    _provider.setIsRecord(true);
+  }
+
+  Future<void> _stopRecord() async {
+    await _recordController!.stop();
+    if (null != _countDownTime) {
+      _countDownTime!.cancel();
+    }
+
+    if (_audioPlayer != null) {
+      _audioPlayer!.stop();
+      _audioPlayer!.dispose();
+      _audioPlayer = null;
+    }
+
+    if (_recordController != null && await _recordController!.isRecording()) {
+      _recordController!.stop();
+      _recordController!.dispose();
+    }
+
+    _provider.setCurrentCount(0);
+    String timeFormat = Utils.instance().formattedTime(timeInSecond: 0);
+    _provider.setStrCountDown(timeFormat);
+    _provider.setOkTitle((Utils.instance().multiLanguage(StringConstants.start_title)));
+  }
+  
+  Future<void> _startPlayAudio() async {
+    if (_audioPlayer != null) {
+      _audioPlayer!.dispose();
+      _audioPlayer = null;
+    }
+
+    if (_countDownTime != null) {
+      _countDownTime!.cancel();
+      _countDownTime = null;
+    }
+
+    _provider.setCurrentCount(0);
+    String timeFormat = Utils.instance().formattedTime(timeInSecond: 0);
+    _provider.setStrCountDown(timeFormat);
+    _countDownTime = _presenter.startCountDown(context: context, count: 0);
+
+    _audioPlayer = AudioPlayer();
+    String fileName = await FileStorageHelper.getFilePath(
+        'test_record.wav', MediaType.audio, null);
+    await _audioPlayer!.play(DeviceFileSource(fileName),
+    mode: PlayerMode.mediaPlayer);
+    Duration? maxDurationInMilliseconds =
+    await _audioPlayer!.getDuration();
+    maxDuration = Duration(milliseconds: maxDurationInMilliseconds!.inMilliseconds);
+    _provider.setMaxDuration(maxDuration);
+
+    _audioPlayer!.onPositionChanged.listen((Duration timeElapsed) {
+      _provider.setElapsedDuration(timeElapsed);
+      if (timeElapsed.inSeconds >= 1) {
+        // _provider.setOkTitle(Utils.instance().multiLanguage(StringConstants.start_title));
+        _provider.setStartDoingTest(true);
+        _provider.setCanDoNextStep(true);
+      }
+    });
+
+    _audioPlayer!.onPlayerComplete.listen((event) {
+      _provider.setElapsedDuration(maxDuration);
+      _countDownTime!.cancel();
+      _provider.setStatusButton(ButtonTestDevice.isNextStep);
+      _provider.setStartDoingTest(true);
+    });
+  }
+
+  void _closeButtonTap() {
+    if (_audioPlayer != null) {
+      _audioPlayer!.pause();
+      _audioPlayer!.dispose();
+      _audioPlayer = null;
+    }
+
+    if (_countDownTime != null) {
+      _countDownTime!.cancel();
+      _countDownTime = null;
+    }
+
+    if (_recordController != null) {
+      _recordController!.dispose();
+    }
+
+    if (_videoPlayerController != null && _videoPlayerController!.value.isPlaying) {
+      _videoPlayerController!.pause();
+      _provider.resetVideoPlayerController();
+    }
+  }
+
+  List<double> loadParseJson(String jsonBody) {
+    final List<double> points = samples;
+    List<int> filteredData = [];
+    // Change this value to number of audio samples you want.
+    // Values between 256 and 1024 are good for showing [RectangleWaveform] and [SquigglyWaveform]
+    // While the values above them are good for showing [PolygonWaveform]
+    const int sample = 64;
+    final double blockSize = points.length / sample;
+
+    for (int i = 0; i < sample; i++) {
+      final double blockStart =
+          blockSize * i; // the location of the first sample in the block
+      int sum = 0;
+      for (int j = 0; j < blockSize; j++) {
+        sum = sum +
+            points[(blockStart + j).toInt()]
+                .toInt(); // find the sum of all the samples in the block
+
+      }
+      filteredData.add((sum / blockSize)
+          .round() // take the average of the block and add it to the filtered data
+          .toInt()); // divide the sum by the block size to get the average
+    }
+    final maxNum = filteredData.reduce((a, b) => math.max(a.abs(), b.abs()));
+
+    final double multiplier = math.pow(maxNum, -1).toDouble();
+
+    return filteredData.map<double>((e) => (e * multiplier)).toList();
+  }
+
+  _showToast() {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: AppColors.defaultPurpleColor,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(_provider.msgToast, style: const TextStyle(
+           color: AppColors.defaultAppColor,
+           fontWeight: FontWeight.w500,
+           fontSize: 16
+          )),
+        ],
+      ),
+    );
+
+
+    fToast!.showToast(
+      child: toast,
+      gravity: ToastGravity.CENTER,
+      toastDuration: const Duration(seconds: 2),
+    );
   }
 
   @override
@@ -765,5 +1141,15 @@ class _HomeWorksWidgetState extends State<HomeWorksWidget> with WindowListener
   @override
   void onUpdateCurrentUserInfo(UserDataModel userDataModel) {
     _provider.setCurrentUser(userDataModel);
+  }
+
+  @override
+  void onCountDown(String strCount, int count) {
+    print(_provider.currentCount);
+    _provider.setCurrentCount(count);
+    _provider.setStrCountDown(strCount);
+    if (count > 1) {
+      _provider.setCanDoNextStep(true);
+    }
   }
 }

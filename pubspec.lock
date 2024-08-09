@@ -366,6 +366,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_audio_waveforms:
+    dependency: "direct main"
+    description:
+      name: flutter_audio_waveforms
+      sha256: "425dda9ee5ef9bb2ff2a2000b19ec595593b3baba6a1274da8d1d729846a144b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1+8"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -1286,10 +1294,10 @@ packages:
     dependency: "direct main"
     description:
       name: video_player_win
-      sha256: "13904b42e7eeb4efeec4ae0d45e21344a2d376b83f304ebfe0b3fdf64b7731df"
+      sha256: "6e66a2e88e0c50add3dd7ac0217393273793e8b4e1ac4233a257bb4a80413065"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.8"
+    version: "2.3.9"
   vm_service:
     dependency: transitive
     description:
@@ -1306,14 +1314,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
-  webview_cef:
-    dependency: "direct main"
-    description:
-      name: webview_cef
-      sha256: a3e7a8e54ea612324be47359601808af9b9cdc57bdb96056b88394c345e3c3c6
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
   webview_flutter:
     dependency: "direct main"
     description:

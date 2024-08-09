@@ -13,7 +13,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   record_windows
   screen_retriever
   video_player_win
-  webview_cef
   webview_windows
   window_manager
 )

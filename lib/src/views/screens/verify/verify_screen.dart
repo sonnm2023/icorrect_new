@@ -156,9 +156,18 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
   void onVerifyError(String message) {
     _loading?.hide();
     setState(() {
-      if (licenseKey != '') {
-        _isDownloadAgain = true;
-        _messageError = message;
+      if (message != 'license not found') {
+        if (licenseKey != '') {
+          _isDownloadAgain = true;
+          _messageError = message;
+        } else {
+          _isDownloadAgain = false;
+          showDialog(
+              context: context,
+              builder: (context) {
+                return MessageDialog(context: context, message: message);
+              });
+        }
       } else {
         _isDownloadAgain = false;
         showDialog(
@@ -171,10 +180,10 @@ class _VerifyWidget extends State<VerifyWidget> implements LoginViewContract {
   }
 
   @override
-  void onGetListClassComplete(List<ClassModel> classes) {
-    _verifyProvider.setListClass(classes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const ListClassWidget(),));
-    _loading?.hide();
+  void onGetListClassComplete(List<ClassModel> classes, lastPage, int total) {
+    // _verifyProvider.setListClass(classes);
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => const ListClassWidget(),));
+    // _loading?.hide();
   }
 
   @override

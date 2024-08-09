@@ -1,7 +1,7 @@
 class AppAssets {
   const AppAssets._();
   static const image_folder = 'assets/images/';
-  static const sound_folder = 'assets/sounds/';
+  static const sound_folder = 'sounds/';
 
   static const bg_login = '${image_folder}bg_login.png';
   static const bg_main = '${image_folder}bg_main.png';
@@ -34,6 +34,7 @@ class AppAssets {
   static const img_video_play_holder = '${image_folder}video_playholder.png';
 
   static const sound_default = '${sound_folder}skyline.wav';
+  static const sound_745 = '${sound_folder}745.wav';
   static const img_vietnamese = '${image_folder}img_vietname.png';
   static const img_english = '${image_folder}img_english.png';
 }

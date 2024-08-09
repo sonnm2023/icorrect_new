@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart' as AudioPlayers;
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:icorrect_pc/core/app_colors.dart';
 import 'package:icorrect_pc/core/compress_video.dart';
 import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/models/simulator_test_models/file_path_model.dart';
@@ -26,6 +28,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:record/record.dart';
+import 'package:video_player_win/video_player_win.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../../../core/app_assets.dart';
@@ -65,13 +68,11 @@ class TestRoomSimulator extends StatefulWidget {
 class _TestRoomSimulatorState extends State<TestRoomSimulator>
     with WindowListener, AutomaticKeepAliveClientMixin<TestRoomSimulator>
     implements TestRoomSimulatorContract {
-
   CameraPreviewProvider? _cameraPreviewProvider;
 
   TestRoomSimulatorPresenter? _presenter;
 
   VideoPlayerController? _videoPlayerController;
-
 
   Timer? _countDown;
   AudioPlayers.AudioPlayer? _audioPlayer;
@@ -87,10 +88,12 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   bool _isExam = false;
   bool _dialogNotShowing = true;
+  bool _isVideoEnd = false;
 
   @override
   void initState() {
     windowManager.addListener(this);
+    _init();
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
     _audioPlayer = AudioPlayers.AudioPlayer();
@@ -161,6 +164,23 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
   @override
   void onWindowUnmaximize() {
     _onOutStateWhenTesting();
+  }
+
+  void _init() async {
+    await windowManager.setPreventClose(true);
+    setState(() {
+
+    });
+  }
+
+  @override
+  void onWindowClose() {
+    // TODO: implement onWindowClose
+    super.onWindowClose();
+    if (_recordController != null) {
+      _recordController!.pause();
+      _recordController!.dispose();
+    }
   }
 
   Future _onWindowActive() async {
@@ -360,6 +380,9 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
                       }),
                       SaveTheTestWidget(() {
                         _startSubmitAction();
+                        // showDialog(context: context, builder: (context) {
+                        //   return _buildDialogInputTest();
+                        // });
                       }),
                       TestRecordWidget(
                         onFinishAnswer: (questionTopicModel) {
@@ -398,7 +421,7 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
             // child: VideoSimulatorWidget(onVideoEnd: () {
             //   _onVideoEnd();
             // }),
-            child: const VideoSimulatorWidget(),
+            child: VideoSimulatorWidget(),
           ),
           Container(
             width: w / 2,
@@ -410,6 +433,9 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
                 }),
                 SaveTheTestWidget(() {
                   _startSubmitAction();
+                  // showDialog(context: context, builder: (context) {
+                  //   return _buildDialogInputTest();
+                  // });
                 }),
                 TestRecordWidget(
                   onFinishAnswer: (questionTopicModel) {
@@ -432,18 +458,20 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   void _createLog(
       {required String action, required Map<String, dynamic>? data}) async {
-    if (context.mounted) {
-      //Add action log
-      LogModel actionLog =
-          await Utils.instance().prepareToCreateLog(context, action: action);
-      if (null != data) {
-        if (data.isNotEmpty) {
-          actionLog.addData(
-              key: StringConstants.k_data, value: jsonEncode(data));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (context.mounted) {
+        //Add action log
+        LogModel actionLog =
+        await Utils.instance().prepareToCreateLog(context, action: action);
+        if (null != data) {
+          if (data.isNotEmpty) {
+            actionLog.addData(
+                key: StringConstants.k_data, value: jsonEncode(data));
+          }
         }
+        Utils.instance().addLog(actionLog, LogEvent.none);
       }
-      Utils.instance().addLog(actionLog, LogEvent.none);
-    }
+    },);
   }
 
   void _onClickStartTest() {
@@ -463,7 +491,7 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   @override
   Future<void> playFileVideo(File normalFile) async {
-    print(normalFile);
+    print('aaaaa: ${normalFile.path}');
     PlayListModel playListModel = widget.simulatorTestProvider.currentPlay;
     String path = await FileStorageHelper.getFilePath(
         playListModel.fileImage, MediaType.image, null);
@@ -504,13 +532,31 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
     Map<String, dynamic> data = {
       StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}'
     };
+    _isVideoEnd = false;
     _createLog(action: LogEvent.debugRecordStartVideo, data: data);
-    _videoPlayerController!.setPlaybackSpeed(_getSpeedVideo());
+    // _videoPlayerController!.setPlaybackSpeed(_getSpeedVideo()).catchError((e) {
+    //   Map<String, dynamic> data2 = {
+    //     StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}',
+    //     'error': e.toString()
+    //   };
+    //   _createLog(action: 'set_play_back_speed_video_error', data: data2);
+    // });
+
     _videoPlayerController!.initialize().then((value) {
+      Map<String, dynamic> body = {
+        StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}',
+      };
+      _createLog(action: 'initialize_video_success', data: body);
       _videoPlayerController!.value.isPlaying
           ? _videoPlayerController!.pause()
           : _videoPlayerController!.play();
       setState(() {});
+    }).catchError((e) {
+      Map<String, dynamic> data1 = {
+        StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}',
+        'error': e.toString()
+      };
+      _createLog(action: 'initialize_video_error', data: data1);
     });
 
     widget.simulatorTestProvider.setPlayController(_videoPlayerController!);
@@ -524,20 +570,28 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
     widget.simulatorTestProvider.setCurrentFileVideo(file.path);
 
     widget.simulatorTestProvider.videoPlayController.addListener(() {
-      if (kDebugMode) {
-        print(playListModel.questionContent);
-        print(widget.simulatorTestProvider.videoPlayController.value.position);
-      }
-      if (widget.simulatorTestProvider.videoPlayController.value.position ==
-          widget.simulatorTestProvider.videoPlayController.value.duration) {
-        print('DEBUG RECORD: - end video: ${file.path} , question: ${playListModel.questionContent}');
-        Map<String, dynamic> data = {
-          StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}'
-        };
-        _createLog(action: LogEvent.debugRecordEndVideo, data: data);
-        _onVideoEnd();
-      }
+      _checkVideoEnd(file);
     });
+  }
+  File? filePathCheck;
+
+  void _checkVideoEnd(File file) {
+    filePathCheck = file;
+    PlayListModel playListModel = widget.simulatorTestProvider.currentPlay;
+    if (kDebugMode) {
+      print(playListModel.questionContent);
+      print(widget.simulatorTestProvider.videoPlayController.value.position);
+    }
+    if (widget.simulatorTestProvider.videoPlayController.value.position ==
+        widget.simulatorTestProvider.videoPlayController.value.duration && !_isVideoEnd) {
+      _isVideoEnd = true;
+      print('DEBUG RECORD: - end video: ${file.path} , question: ${playListModel.questionContent}');
+      Map<String, dynamic> data = {
+        StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}'
+      };
+      _createLog(action: LogEvent.debugRecordEndVideo, data: data);
+      _onVideoEnd();
+    }
   }
 
   Future _onVideoEnd() async {
@@ -585,6 +639,7 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   @override
   void onFileNotFound() {
+    print('aaaa');
     if (_countDown != null) {
       _countDown!.cancel();
     }
@@ -674,7 +729,7 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
     }
     PlayListModel playListModel = widget.simulatorTestProvider.currentPlay;
     widget.simulatorTestProvider.clearImageFile();
-    print('DEBUG RECORD: - click finish stop recording question: ${playListModel.questionTopicModel.content}');
+    print('DEBUG RECORD: - click finish stop recording question: ${playListModel.questionTopicModel.content} step 1');
 
     Map<String, dynamic> data = {
       StringConstants.k_question_content: 'question: ${playListModel.questionTopicModel.content}'
@@ -682,7 +737,9 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
     _createLog(action: LogEvent.debugClickFinishStopRecord, data: data);
 
-    _recordController!.stop();
+     _recordController!.stop();
+
+    print('DEBUG RECORD: - click finish stop recording question: ${playListModel.questionTopicModel.content} step 2');
     widget.simulatorTestProvider.setVisibleRecord(false);
 
     String currentFilePath = widget.simulatorTestProvider.currentFileVideo!;
@@ -1192,8 +1249,9 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
   }
 
   @override
-  void submitAnswerFail(AlertInfo alertInfo) {
-    Utils.instance().sendLog();
+  void submitAnswerFail(AlertInfo alertInfo, int errorCode) {
+    print('errorCode: $errorCode');
+    Utils.instance().sendLog(errorCode: errorCode);
     widget.simulatorTestProvider.updateSubmitStatus(SubmitStatus.fail);
     widget.simulatorTestProvider.setVisibleSaveTheTest(true);
     _loading!.hide();
@@ -1206,8 +1264,9 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
   }
 
   @override
-  void submitAnswersSuccess(AlertInfo alertInfo) {
-    Utils.instance().sendLog();
+  void submitAnswersSuccess(AlertInfo alertInfo, int errorCode) {
+    print('errorCode: $errorCode');
+    Utils.instance().sendLog(errorCode: errorCode);
     _loading!.hide();
     showDialog(
         context: context,
@@ -1271,4 +1330,216 @@ class _TestRoomSimulatorState extends State<TestRoomSimulator>
 
   @override
   bool get wantKeepAlive => true;
+
+
+  //MASK: TEST CREATE AND SUBMIT
+
+  // int userQuantity = 0;
+  // int timeRepeat = 0;
+  // int numberRepeat = 0;
+  TextEditingController userQuantity = TextEditingController();
+  TextEditingController timeRepeat = TextEditingController();
+  TextEditingController numberRepeat = TextEditingController();
+  int callCount = 0;
+  Timer? timerRepeat;
+
+  Widget _buildDialogInputTest() {
+    double w = MediaQuery.of(context).size.width;
+    return Consumer<SimulatorTestProvider>(builder: (context, value, child) {
+      return Center(
+        child: SizedBox (
+          width: w/3,
+          height: w/3,
+          child: Dialog(
+          elevation: 0,
+          backgroundColor: const Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)),
+            child: Stack(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(15),
+                  child: Column (
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Số lượng user test', style: TextStyle (
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      )),
+                      TextField(
+                        // onChanged: (value) {
+                        //   userQuantity = int.parse(value);
+                        // },
+                        controller: userQuantity,
+                      ),
+                      const Text('Thời gian lặp', style: TextStyle (
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      )),
+                      TextField(
+                        // onChanged: (value) {
+                        //   timeRepeat = int.parse(value);
+                        // },
+                        controller: timeRepeat,
+                      ),
+                      const Text('Số lần lặp', style: TextStyle (
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      )),
+                      TextField(
+                        // onChanged: (value) {
+                        //   numberRepeat = int.parse(value);
+                        // },
+                        controller: numberRepeat,
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () {
+                          print('user quantity: ${userQuantity.text}');
+                          print(timeRepeat.text);
+                          print(numberRepeat.text);
+                          Navigator.of(context).pop();
+                          showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) {
+                            return _buildDialogOutputTest();
+                          });
+                          timerRepeat = sendRequest();
+                        },
+                        child: Center(
+                          child: Container(
+                            margin: const EdgeInsets.all(20),
+                            child: const Text('Bắt đầu', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: AppColors.defaultPurpleColor
+                            )),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: InkWell(
+                    child: const SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Center(
+                        child: Icon(Icons.cancel_outlined,
+                            color: Colors.black),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildDialogOutputTest() {
+    double w = MediaQuery.of(context).size.width;
+    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
+      return Center(
+        child: SizedBox (
+          width: w/3,
+          height: w/3,
+          child: Dialog(
+            elevation: 0,
+            backgroundColor: const Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)),
+            child: Stack(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(15),
+                  child: Column (
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('API 1: create test', style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500
+                      )),
+                      Text('call: ${provider.callCreateTest}', style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                      Text('Success: ${provider.successCreateTest}', style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                      Text('Fail: ${provider.failCreateTest}', style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                      const Text('API 2: submit test', style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                      Text('call: ${provider.callSubmitTest}', style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                      Text('Success: ${provider.successSubmitTest}', style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                      Text('Fail: ${provider.failSubmitTest}', style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      )),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: InkWell(
+                    child: const SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Center(
+                        child: Icon(Icons.cancel_outlined,
+                            color: Colors.black),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      timerRepeat!.cancel();
+                      callCount = 0;
+                      widget.simulatorTestProvider.resetAllValue();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Timer sendRequest() {
+    return Timer.periodic(Duration(seconds: int.parse(timeRepeat.text)), (timer) {
+      if (callCount < int.parse(numberRepeat.text)) {
+        callCount++;
+        for (int i = 0; i < int.parse(userQuantity.text); i++) {
+          widget.simulatorTestProvider.setCallCreateTest();
+          widget.simulatorTestPresenter.getTestDetailByHomeworkForTool(context, widget.activitiesModel!.activityId.toString());
+        }
+      } else {
+        timer.cancel();
+        callCount = 0;
+      }
+    });
+  }
 }

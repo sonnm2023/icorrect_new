@@ -28,7 +28,7 @@ class StartTestWidget extends StatelessWidget {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      provider.setStartTest(true);
+                      // provider.setStartTest(true);
                       onClickStartTest();
                     },
                     style: ButtonStyle(

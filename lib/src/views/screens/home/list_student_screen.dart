@@ -58,7 +58,9 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
 
   @override
   void dispose() {
-    _verifyProvider.clearAll();
+    if (mounted) {
+      _verifyProvider.clearListStudent();
+    }
     super.dispose();
   }
 
@@ -102,7 +104,7 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
                 child: IconButton(
                     onPressed: () {
                       _provider.setVisibleSearch(true);
-                      _verifyProvider.clearAll();
+                      _verifyProvider.clearListStudent();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -211,10 +213,48 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
         return DottedBorder(
             borderType: BorderType.RRect,
             radius: const Radius.circular(25),
-            dashPattern: [6, 3, 6, 3],
+            dashPattern: const [6, 3, 6, 3],
             strokeWidth: 2,
             color: AppColors.defaultPurpleColor,
-            child: _listStudent());
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                InkWell(
+                    onTap: () {
+                      _loading?.show(context);
+                      _presenter.getListStudent(context);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      width: 120,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.refresh_rounded),
+                            const SizedBox(width: 5),
+                            Text(
+                                Utils.instance().multiLanguage(
+                                    StringConstants.refresh_data),
+                                style: const TextStyle(
+                                  color: AppColors.purple,
+                                  fontSize: 16,
+                                )),
+                          ]),
+                    )),
+                _listFilter.isEmpty ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppAssets.img_empty),
+                      const Text('Danh sách học sinh đang trống!')
+                    ],
+                  ),
+                ) : Expanded(child: _listStudent()),
+              ],
+            ),
+        );
       },),
     );
   }
@@ -222,27 +262,28 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
   Widget _listStudent() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 80),
-      child: GridView.builder(
-        shrinkWrap: true,
-        itemCount: _listFilter.length,
-        controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 3,
-            crossAxisCount: 3,
-            crossAxisSpacing:80,
-            mainAxisSpacing: 20
+      child: SingleChildScrollView(
+        child: GridView.builder(
+          shrinkWrap: true,
+          itemCount: _listFilter.length,
+          // controller: _scrollController,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: 3,
+              crossAxisCount: 3,
+              crossAxisSpacing:80,
+              mainAxisSpacing: 20
+          ),
+          itemBuilder: (context, index) {
+              return InkWell(
+                  onTap: () {
+                    username = _listFilter[index].name!;
+                    userID = _listFilter[index].apiId!;
+                    _onPressLogin('${_listFilter[index].apiId}',
+                        _verifyProvider.currentClass!.classId!);
+                  },
+                  child: _studentItem(index));
+          },
         ),
-        itemBuilder: (context, index) {
-            return InkWell(
-                onTap: () {
-                  username = _listFilter[index].name!;
-                  userID = _listFilter[index].apiId!;
-                  _onPressLogin('${_listFilter[index].apiId}',
-                      _verifyProvider.currentClass!.classId!);
-                },
-                child: _studentItem(index));
-        },
       ),
     );
   }
@@ -258,33 +299,30 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
       ),
       child: Wrap (
         children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: Column (
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_listFilter[index].name!, style: const TextStyle(
-                      color: AppColors.purple,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-                Text(
-                  'Biệt danh: ${_listFilter[index].nickName ?? 'không có'}',
-                  style: const TextStyle(
-                      color: AppColors.purple,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
-                ),
-                Text(
-                  'Bài đã làm: ${_listFilter[index].answersOfStudentCount}',
-                  style: const TextStyle(
-                      color: AppColors.purple,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
-                ),
-              ],
-            ),
+          Column (
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(_listFilter[index].name!, style: const TextStyle(
+                    color: AppColors.purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
+              Text(
+                'Biệt danh: ${_listFilter[index].nickName ?? 'không có'}',
+                style: const TextStyle(
+                    color: AppColors.purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
+              ),
+              Text(
+                'Bài đã làm: ${_listFilter[index].answersOfStudentCount}',
+                style: const TextStyle(
+                    color: AppColors.purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
+              ),
+            ],
           ),
         ],
       ),
@@ -366,7 +404,7 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
 
   @override
   void onGetListStudentComplete(List<StudentModel> list) {
-    _verifyProvider.setCurrentListStudent([]);
+    _verifyProvider.clearListStudent();
     _verifyProvider.setCurrentListStudent(list);
     setState(() {
       _isDownloadAgain = false;
@@ -416,7 +454,7 @@ class _ListStudentWidgetState extends State<ListStudentWidget> implements LoginV
   }
 
   @override
-  void onGetListClassComplete(List<ClassModel> list) {
+  void onGetListClassComplete(List<ClassModel> list, int lastPage, int total) {
     // TODO: implement onGetListClassComplete
   }
 

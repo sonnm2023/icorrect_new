@@ -68,8 +68,7 @@ class _AuthWidgetState extends State<AuthWidget> with WindowListener {
           return CustomAlertDialog(
             title: Utils.instance().multiLanguage(StringConstants.dialog_title),
             description: 'Bạn có chắc chắn muốn thoát khỏi phần mềm?',
-            okButtonTitle:
-            'Xác nhận',
+            okButtonTitle: 'Xác nhận',
             cancelButtonTitle: 'Để sau',
             borderRadius: 8,
             hasCloseButton: false,

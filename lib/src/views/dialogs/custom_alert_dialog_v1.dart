@@ -3,6 +3,7 @@ import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/utils/utils.dart';
 
 import '../../../core/app_colors.dart';
+import '../../models/homework_models/new_api_135/activities_model.dart';
 
 class CustomAlertDialogV1 extends StatefulWidget {
   const CustomAlertDialogV1({
@@ -18,7 +19,8 @@ class CustomAlertDialogV1 extends StatefulWidget {
   final String description;
   final String? okButtonTitle;
   final double borderRadius;
-  final Function? okButtonTapped;
+  final Function()? okButtonTapped;
+
 
   @override
   // ignore: library_private_types_in_public_api

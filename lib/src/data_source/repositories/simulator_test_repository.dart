@@ -24,7 +24,7 @@ abstract class SimulatorTestRepository {
 }
 
 class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
-  final int timeOutForSubmit = 60;
+  final int timeOutForSubmit = 600;
   @override
   Future<String> getTestDetailByHomeWork(
       String homeworkId, String distributeCode) {

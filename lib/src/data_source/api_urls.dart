@@ -7,14 +7,15 @@ import '../utils/utils.dart';
 // const icorrectDomain1 = "ielts-correction.com";
 // const publicDomain = "http://public.icorrect.vn/";
 // const toolDomain = "http://tool.ielts-correction.com/";
-// const icorrectDomain = "https://ielts-correction.com/";
-const icorrectDomain = 'http://devapi.ielts-correction.com/';
+// const devToolDomain = 'http://devapi.ielts-correction.com/';
+const icorrectDomain = "https://ielts-correction.com/";
+// const icorrectDomain = 'http://devapi.ielts-correction.com/';
 const publicDomain = icorrectDomain;
 const toolDomain = icorrectDomain;
 const apiDomain = icorrectDomain;
+const devToolDomain = icorrectDomain;
 const oldPublicDomain = "http://public.icorrect.vn/";
 const oldToolDomain = "http://tool.ielts-correction.com/";
-const devToolDomain = 'http://devapi.ielts-correction.com/';
 
 const testPositionApi = "http://public.icorrect.vn/api/student/test-position";
 const testPositionUser = "ic_landing";

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icorrect_pc/src/data_source/local/app_shared_preferences_keys.dart';
@@ -24,6 +25,7 @@ abstract class HomeWorkViewContract {
   void onLogoutComplete();
   void onLogoutError(String message);
   void onUpdateCurrentUserInfo(UserDataModel userDataModel);
+  void onCountDown(String strCount, int count);
 }
 
 class HomeWorkPresenter {
@@ -59,7 +61,7 @@ class HomeWorkPresenter {
       _homeWorkRepository!.getHomeWorks(email, status).then((value) async {
         Map<String, dynamic> dataMap = jsonDecode(value);
         if (kDebugMode) {
-          print(jsonEncode(dataMap).toString());
+          print('get homework: ${jsonEncode(dataMap).toString()}');
         }
         if (dataMap['error_code'] == 200) {
           List<NewClassModel> classes =
@@ -205,5 +207,28 @@ class HomeWorkPresenter {
       // ignore: invalid_return_type_for_catch_error
       (onError) => _view!.onLogoutError(onError.toString()),
     );
+  }
+
+  Timer startCountDown({required BuildContext context, required int count}) {
+    assert(_view != null);
+    const oneSec = Duration(seconds: 1);
+    return Timer.periodic(oneSec, (Timer timer) {
+      if (count < 0) {
+        timer.cancel();
+      } else {
+        count = count + 1;
+      }
+      dynamic minutes = count ~/ 60;
+      dynamic seconds = count % 60;
+
+      dynamic minuteStr = minutes.toString().padLeft(2, '0');
+      dynamic secondStr = seconds.toString().padLeft(2, '0');
+
+      _view!.onCountDown("$minuteStr:$secondStr", count);
+
+      if (count == 0) {
+        timer.cancel();
+      }
+    });
   }
 }

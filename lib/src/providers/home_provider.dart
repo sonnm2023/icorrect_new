@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/models/homework_models/new_api_135/activities_model.dart';
 import 'package:icorrect_pc/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect_pc/src/utils/utils.dart';
+import 'package:video_player/video_player.dart';
+import 'package:video_player_win/video_player_win.dart';
 
 import '../models/user_data_models/user_data_model.dart';
 import '../presenters/simulator_test_presenter.dart';
@@ -121,9 +126,153 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  SimulatorTestPresenter? _simulatorTestPresenter;
-  SimulatorTestPresenter? get simulatorTestPresenter => _simulatorTestPresenter;
-  void setSimulatorTestPresenter(SimulatorTestPresenter? presenter) {
-    _simulatorTestPresenter = presenter;
+  String _strCountDown = "";
+
+  String get strCountDown => _strCountDown;
+
+  void setStrCountDown(String count) {
+    _strCountDown = count;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  int _currentCount = 0;
+
+  int get currentCount => _currentCount;
+
+  void setCurrentCount(int count) {
+    _currentCount = count;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _description = '';
+  String get descriptionRecordDialog => _description;
+
+  void setDescriptionRecordDialog(String text) {
+    _description = text;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _okTitle = '';
+  String get okTitle => _okTitle;
+
+  void setOkTitle(String text) {
+    _okTitle = text;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _rightButtonTitle = '';
+  String get rightButtonTitle => _rightButtonTitle;
+
+  void setRightButtonTitle(String text) {
+    _rightButtonTitle = text;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  bool _isRecord = false;
+  bool get isRecord => _isRecord;
+
+  void setIsRecord(bool isRecord) {
+    _isRecord = isRecord;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  ButtonTestDevice _statusButton = ButtonTestDevice.isRecord;
+  ButtonTestDevice get statusButton => _statusButton;
+
+  void setStatusButton(ButtonTestDevice status) {
+    _statusButton = status;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  ButtonTestDevice _statusButtonRight = ButtonTestDevice.isRecord;
+  ButtonTestDevice get statusButtonRight => _statusButtonRight;
+
+  void setStatusButtonRight(ButtonTestDevice status) {
+    _statusButtonRight = status;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  String _msgToast = '';
+  String get msgToast => _msgToast;
+
+  void setMsgToast(String msg) {
+    _msgToast = msg;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  List<double> _samples = [];
+  List<double> get samples => _samples;
+
+  void setListSamples(List<double> samples) {
+    _samples.clear();
+    _samples = samples;
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  Duration _maxDuration = const Duration(milliseconds: 1000);
+  Duration get maxDuration => _maxDuration;
+
+  void setMaxDuration(Duration duration) {
+    _maxDuration = duration;
+    notifyListeners();
+  }
+
+  Duration _elapsedDuration = const Duration(milliseconds: 0);
+  Duration get elapsedDuration => _elapsedDuration;
+
+  void setElapsedDuration(Duration duration) {
+    _elapsedDuration = duration;
+    notifyListeners();
+  }
+
+  bool _isStartDoingTest = false;
+  bool get isStartDoingTest => _isStartDoingTest;
+
+  void setStartDoingTest(bool status) {
+    _isStartDoingTest = status;
+
+    notifyListeners();
+  }
+
+  VideoPlayerController? _videoPlayerController;
+  VideoPlayerController get videoPlayerController => _videoPlayerController ?? VideoPlayerController.file(File(''));
+
+  void setVideoPlayerController(VideoPlayerController player) {
+    _videoPlayerController = player;
+
+    notifyListeners();
+  }
+
+  void resetVideoPlayerController() {
+    _videoPlayerController = null;
+    notifyListeners();
+  }
+
+  bool _canDoNextStep = false;
+  bool get canDoNextStep => _canDoNextStep;
+
+  void setCanDoNextStep(bool can) {
+    _canDoNextStep = can;
+    notifyListeners();
   }
 }

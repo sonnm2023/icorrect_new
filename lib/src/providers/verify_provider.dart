@@ -39,12 +39,12 @@ class VerifyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetListClass() {
+  void clearListClass() {
     _listClass.clear();
     notifyListeners();
   }
 
-  void clearAll() {
+  void clearListStudent() {
     _currentListStudent.clear();
     notifyListeners();
   }

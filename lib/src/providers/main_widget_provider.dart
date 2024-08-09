@@ -36,4 +36,11 @@ class MainWidgetProvider extends ChangeNotifier {
     _titleMain = title;
     notifyListeners();
   }
+
+  bool _isShowTestDevice = false;
+  bool get isShowTestDevice => _isShowTestDevice;
+  void setIsShowTestDevice(bool show) {
+    _isShowTestDevice = show;
+    notifyListeners();
+  }
 }

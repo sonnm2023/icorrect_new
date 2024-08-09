@@ -1071,7 +1071,7 @@ class Utils {
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
     String path = "$folderPath/flutter_logs.txt";
     File file = File(path);
-
+    print('delete logggg');
     try {
       if (await file.exists()) {
         await file.delete();
@@ -1126,7 +1126,7 @@ class Utils {
     return deviceName;
   }
 
-  Future<bool> sendLog() async {
+  Future<bool> sendLog({int? errorCode}) async {
     //Check logs file is exist
     String folderPath = await FileStorageHelper.getExternalDocumentPath();
     String path = "$folderPath/flutter_logs.txt";
@@ -1178,7 +1178,9 @@ class Utils {
         if (kDebugMode) {
           print("DEBUG: send log success kDebugMode");
         }
-        deleteLogFile();
+        if (errorCode == null || errorCode == 200) {
+          deleteLogFile();
+        }
       } else {
         if (kDebugMode) {
           print("DEBUG: send log failed  - kDebugMode");

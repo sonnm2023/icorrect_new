@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static const int _version = 1;
-  static const String _dbName = 'syllabus.db';
+  static const String _dbName = 'syllabus1.db';
   static const String _tableSyllabus = 'Syllabus';
 
   //status = 0: chưa download
@@ -19,7 +19,6 @@ class DatabaseHelper {
               '''CREATE TABLE $_tableSyllabus (
          syllabusID INTEGER NOT NULL PRIMARY KEY,
          syllabusName TEXT NOT NULL,
-         total INTEGER NOT NULL,
          totalDownloaded INTEGER,
          capacity REAL,
          statusDownload INTEGER NOT NULL,
@@ -72,14 +71,6 @@ class DatabaseHelper {
     final db = await _getDB();
     Map<String, dynamic> data = {
       'updateAt': updateAt
-    };
-    return db.update(_tableSyllabus, data, where: 'syllabusName = ?', whereArgs: [syllabusName], conflictAlgorithm: ConflictAlgorithm.replace);
-  }
-
-  static Future<int> updateTotalSyllabus(int total, String syllabusName) async {
-    final db = await _getDB();
-    Map<String, dynamic> data = {
-      'total': total
     };
     return db.update(_tableSyllabus, data, where: 'syllabusName = ?', whereArgs: [syllabusName], conflictAlgorithm: ConflictAlgorithm.replace);
   }

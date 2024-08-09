@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/utils/utils.dart';
 
 import '../api_urls.dart';
@@ -14,7 +15,7 @@ abstract class AuthRepository {
   Future<String> getAppConfigInfo();
   Future<String> verifyDevice(String licence, String device_id, String deviceName);
   Future<String> loginWithClassID(String username, String classID, String licenseKey, String merchantID, String checksum);
-  Future<String> getListClass(String merchantID, String checksum);
+  Future<String> getListClass(String merchantID, String checksum, int page);
   Future<String> getListStudent(String merchantID, int classID, String checksum);
   Future<String> verifyConfig(String key, String deviceID, String checksum, String merchantID);
   Future<String> changeDeviceName(String deviceID,String deviceName, String merchantID, String checksum);
@@ -146,7 +147,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<String> verifyDevice(String licence, String device_id, String deviceName) {
-    String url = '$devToolDomain$verifyLicenceEP';
+    String url = '$icorrectDomain$verifyLicenceEP';
     Map<String, dynamic> body = {
       'license': licence,
       'device_id': device_id,
@@ -158,7 +159,7 @@ class AuthRepositoryImpl implements AuthRepository {
         url, false,
         body: body
     )
-        .timeout(const Duration(seconds: 15))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
       return response.body;
     });
@@ -170,7 +171,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // var bytes = utf8.encode('$classID|$merchantID|$userId');
     // var hmacSha256 = Hmac(sha256, key);
     // var checksum = hmacSha256.convert(bytes);
-    String url = '$devToolDomain$loginClassIDEP';
+    String url = '$icorrectDomain$loginClassIDEP';
     Map<String, dynamic> body = {
       'class_id': classID,
       'user_id': userId,
@@ -186,8 +187,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<String> getListClass(String merchantID, String checksum) {
-    String url = '$devToolDomain$getListClassEP?merchant_id=$merchantID&check_sum=$checksum';
+  Future<String> getListClass(String merchantID, String checksum, int page) {
+    String url = '$icorrectDomain$getListClassEP?merchant_id=$merchantID&page=$page&check_sum=$checksum';
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, false)
         .timeout(const Duration(seconds: 15))

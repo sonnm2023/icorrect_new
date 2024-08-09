@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:icorrect_pc/src/data_source/constants.dart';
 import 'package:icorrect_pc/src/utils/utils.dart';
 
 import '../api_urls.dart';
@@ -7,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 abstract class HomeWorkRepository {
   Future<String> getHomeWorks(String email,String status);
-  Future<String> getSyllabusMerchant(String merchantId, String checksum);
+  Future<String> getSyllabusMerchant(String merchantId, String checksum, int page);
   Future<String> getFilesSyllabus(int id, int page, String merchantID, String checksum);
 }
 
@@ -34,10 +35,10 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
   }
 
   @override
-  Future<String> getSyllabusMerchant(String merchantId, String checksum) async {
-    String url = '$icorrectDomain$getListSyllabusEP?merchant_id=$merchantId&check_sum=$checksum';
+  Future<String> getSyllabusMerchant(String merchantId, String checksum, int page) async {
+    String url = '$icorrectDomain$getListSyllabusEP?merchant_id=$merchantId&page=$page&check_sum=$checksum';
     return AppRepository.init().sendRequest(RequestMethod.get, url, true)
-        .timeout(const Duration(seconds: 20))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response) {
           return response.body;
     });
@@ -49,7 +50,7 @@ class HomeWorkRepositoryImpl implements HomeWorkRepository {
     print(url);
     return AppRepository.init()
         .sendRequest(RequestMethod.get, url, false)
-        .timeout(const Duration(seconds: 20))
+        .timeout(const Duration(seconds: timeout))
         .then((http.Response response){
           return response.body;
     });

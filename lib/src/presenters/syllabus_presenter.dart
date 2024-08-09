@@ -19,8 +19,8 @@ import '../models/log_models/log_model.dart';
 import '../utils/utils.dart';
 
 abstract class SyllabusViewContract {
-  void onGetListSyllabusComplete(List<Syllabus> syllabus);
-  void onGetListSyllabusError(String massage);
+  void onGetListSyllabusComplete(List<Syllabus> syllabus, int total);
+  void onGetListSyllabusError(String message);
   void onGetListFileComplete(int total);
   void onGetListFileError(String msg);
   void onDownloadSuccess(int index,int to, int total, int totalCapacity);
@@ -69,7 +69,7 @@ class SyllabusPresenter {
     _autoRequestDownloadTimes = 0;
   }
 
-  void getListSyllabusMerchant(BuildContext context) async {
+  void getListSyllabusMerchant(BuildContext context, int page) async {
     assert(_view != null && _homeWorkRepository != null);
     LogModel? log;
     if (context.mounted) {
@@ -78,8 +78,11 @@ class SyllabusPresenter {
     }
     try {
       String? merchantId = await Utils.instance().getMerchantID();
-      String checksum = await Utils.instance().convertHMacSha256(param1: merchantId);
-      _homeWorkRepository!.getSyllabusMerchant(merchantId!, checksum).then((value) async {
+      String checksum = await Utils.instance().convertHMacSha256(param1: merchantId, param2: page.toString());
+      print(merchantId);
+      print(checksum);
+      _homeWorkRepository!.getSyllabusMerchant(merchantId!, checksum, page).then((value) async {
+        print(value);
         SyllabusMerchantModel model = SyllabusMerchantModel.fromJson(jsonDecode(value));
         if(model.errorCode == 200) {
           //Add log
@@ -89,7 +92,9 @@ class SyllabusPresenter {
             message: null,
             status: LogEvent.success,
           );
-          _view!.onGetListSyllabusComplete(model.data!);
+          _view!.onGetListSyllabusComplete(model.data!.data!.data!, model.data!.data!.total!);
+        } else {
+          _view!.onGetListSyllabusError(model.data!.message!);
         }
       }).catchError(
         // ignore: invalid_return_type_for_catch_error
@@ -147,21 +152,20 @@ class SyllabusPresenter {
       for (Syllabus syllabus in list) {
         if (!listSyllabusDBName.contains(syllabus.name)) {
               SyllabusDBModel syllabusDBModel = SyllabusDBModel(
-                  syllabusID: syllabus.id,
-                  syllabusName: syllabus.name,
-                  total: syllabus.questions,
+                  syllabusID: syllabus.id!,
+                  syllabusName: syllabus.name!,
                   totalDownloaded: 0,
                   capacity: 0,
                   statusDownload: 0,
-                  updateAt: syllabus.updatedAt,
+                  updateAt: syllabus.updatedAt!,
                   downloadAt: null);
               await DatabaseHelper.addSyllabus(syllabusDBModel);
             } else {
           for (SyllabusDBModel syllabusDB in listDB!) {
             if (syllabusDB.syllabusName == syllabus.name) {
               if (syllabus.updatedAt != syllabusDB.updateAt) {
-                await DatabaseHelper.updateTotalSyllabus(syllabus.questions, syllabus.name);
-                await DatabaseHelper.updateUpdateAtSyllabus(syllabus.updatedAt.toIso8601String(), syllabus.name);
+                // await DatabaseHelper.updateTotalSyllabus(syllabus.questions!, syllabus.name!);
+                await DatabaseHelper.updateUpdateAtSyllabus(syllabus.updatedAt!.toIso8601String(), syllabus.name!);
               }
             }
           }
@@ -178,7 +182,7 @@ class SyllabusPresenter {
       List<SyllabusDBModel>? list = await DatabaseHelper.getListSyllabus();
       _view!.onGetListSyllabusDBComplete(list!);
     } catch (e) {
-      _view!.onGetListSyllabusDBError(e.toString());
+      _view!.onGetListSyllabusDBError('Danh sách giáo trình trống!');
     }
   }
 
@@ -201,18 +205,37 @@ class SyllabusPresenter {
       log = await Utils.instance()
           .prepareToCreateLog(context, action: LogEvent.callApiGetListFileSyllabus);
     }
+
     String? merchantID = await Utils.instance().getMerchantID();
     String checksum = await Utils.instance().convertHMacSha256(param1: merchantID, param2: page.toString());
     _homeWorkRepository!.getFilesSyllabus(id, page, merchantID!, checksum).then((value) {
       SyllabusFileModel model = SyllabusFileModel.fromJson(jsonDecode(value));
       if (model.errorCode == 200) {
-        list += model.data.data;
-        downloadFiles(context, list,model.data.from - 1, model.data.to, model.data.total, syllabusName);
-        _view!.onGetListFileComplete(model.data.total);
+        list += model.data!.data!;
+        downloadFiles(context, list,model.data!.from! - 1, model.data!.to!, model.data!.total!, syllabusName);
+        Utils.instance().prepareLogData(
+          log: log,
+          data: null,
+          message: model.messages!,
+          status: LogEvent.success,
+        );
+        _view!.onGetListFileComplete(model.data!.total!);
       } else {
+        Utils.instance().prepareLogData(
+          log: log,
+          data: null,
+          message: model.messages ?? model.errorCode!.toString(),
+          status: LogEvent.failed,
+        );
         _view!.onGetListFileError(value);
       }
     },).catchError((onError) {
+      Utils.instance().prepareLogData(
+        log: log,
+        data: null,
+        message: onError.toString(),
+        status: LogEvent.failed,
+      );
       _view!.onGetListFileError(onError.toString());
     });
   }
@@ -223,7 +246,7 @@ class SyllabusPresenter {
       loop:
       for (from; from < filesTopic.length; from++) {
         Datum temp = filesTopic[from];
-        String fileTopic = temp.url;
+        String fileTopic = temp.url!;
         String fileNameForDownload = Utils.instance().reConvertFileName(fileTopic);
         String savePath = '';
 

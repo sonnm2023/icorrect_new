@@ -204,6 +204,17 @@ enum Alert {
 
 enum SelectType { classType, statusType }
 
+enum ButtonTestDevice {
+  nothing,
+  isPlayVideo,
+  isRecord,
+  isPlayAudio,
+  isNextStep,
+  isRePlayVideo,
+  isReRecord,
+  isStopRecord
+}
+
 class FilterJsonData {
   static Map<String, dynamic> selectAll = {"id": -111, "name": "SelectAll"};
   static Map<String, dynamic> submitted = {"id": 1, "name": "Submitted"};

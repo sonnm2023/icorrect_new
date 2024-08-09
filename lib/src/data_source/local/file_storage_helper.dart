@@ -221,6 +221,25 @@ class FileStorageHelper {
     }
   }
 
+  static Future<bool> deleteFileInAudios() async {
+    try {
+      final path = await getFolderPath(MediaType.audio, null);
+      if (await Directory(path).exists()) {
+        await for (var entity in Directory(path).list(recursive: true, followLinks: false)) {
+          if (entity is File) {
+            await entity.delete();
+          }
+        }
+      }
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('DEBUG: Error when delete folder: ${e.toString()}');
+      }
+      return false;
+    }
+  }
+
   static Future<bool> deleteFile(
       String fileName, MediaType mediaType, String? testId) async {
     try {

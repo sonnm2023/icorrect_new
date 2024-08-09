@@ -5,15 +5,15 @@ List<SyllabusFileModel> syllabusFileModelFromJson(String str) => List<SyllabusFi
 String syllabusFileModelToJson(List<SyllabusFileModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class SyllabusFileModel {
-  int errorCode;
-  String status;
-  Data data;
+  int? errorCode;
+  String? status;
+  Data? data;
   String? messages;
 
   SyllabusFileModel({
-    required this.errorCode,
-    required this.status,
-    required this.data,
+    this.errorCode,
+    this.status,
+    this.data,
     this.messages
   });
 
@@ -28,42 +28,42 @@ class SyllabusFileModel {
     "error_code": errorCode,
     "status": status,
     'messages': messages,
-    "data": data.toJson(),
+    "data": data!.toJson(),
   };
 }
 
 class Data {
-  int currentPage;
-  List<Datum> data;
-  String firstPageUrl;
-  int from;
-  int lastPage;
-  String lastPageUrl;
+  int? currentPage;
+  List<Datum>? data;
+  String? firstPageUrl;
+  int? from;
+  int? lastPage;
+  String? lastPageUrl;
   String? nextPageUrl;
-  String path;
-  String perPage;
+  String? path;
+  String? perPage;
   String? prevPageUrl;
-  int to;
-  int total;
+  int? to;
+  int? total;
 
   Data({
-    required this.currentPage,
-    required this.data,
-    required this.firstPageUrl,
-    required this.from,
-    required this.lastPage,
-    required this.lastPageUrl,
-    required this.nextPageUrl,
-    required this.path,
-    required this.perPage,
-    required this.prevPageUrl,
-    required this.to,
-    required this.total,
+    this.currentPage,
+    this.data,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     currentPage: json["current_page"],
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+    data: json["data"] == null? [] : List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
     firstPageUrl: json["first_page_url"],
     from: json["from"],
     lastPage: json["last_page"],
@@ -78,7 +78,7 @@ class Data {
 
   Map<String, dynamic> toJson() => {
     "current_page": currentPage,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    "data": List<dynamic>.from(data!.map((x) => x.toJson())),
     "first_page_url": firstPageUrl,
     "from": from,
     "last_page": lastPage,
@@ -93,12 +93,12 @@ class Data {
 }
 
 class Datum {
-  int id;
-  String url;
+  int? id;
+  String? url;
 
   Datum({
-    required this.id,
-    required this.url,
+    this.id,
+    this.url,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(

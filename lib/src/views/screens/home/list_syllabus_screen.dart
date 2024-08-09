@@ -17,6 +17,7 @@ import 'package:icorrect_pc/src/views/dialogs/confirm_dialog.dart';
 import 'package:icorrect_pc/src/views/widgets/simulator_test_widgets/download_progressing_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/app_assets.dart';
 import '../../../../core/app_colors.dart';
 import '../../../models/ui_models/download_info.dart';
 import '../../dialogs/message_alert.dart';
@@ -37,6 +38,9 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
   int syllabus_id = 0;
   String syllabusName = '';
   int page = 1;
+  int pageListSyllabus = 1;
+  int totalSyllabus = 0;
+  final _sc = ScrollController();
 
   @override
   void initState() {
@@ -47,11 +51,17 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
     _provider = Provider.of<SyllabusProvider>(context, listen: false);
     _mainWidgetProvider = Provider.of<MainWidgetProvider>(context, listen: false);
     getListSyllabus();
+    _sc.addListener(() {
+      if (_sc.position.pixels == _sc.position.maxScrollExtent) {
+        pageListSyllabus += 1;
+        _presenter!.getListSyllabusMerchant(context, pageListSyllabus);
+      }
+    });
   }
 
   void getListSyllabus() {
     _loading!.show(context);
-    _presenter!.getListSyllabusMerchant(context);
+    _presenter!.getListSyllabusMerchant(context, pageListSyllabus);
   }
 
   @override
@@ -97,13 +107,16 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
                       strokeWidth: 2,
                       color: AppColors.defaultPurpleColor,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           const SizedBox(height: 10),
                           InkWell(
                               onTap: () {
                                 _loading?.show(context);
-                                _presenter!.getListSyllabusMerchant(context);
+                                pageListSyllabus = 1;
+                                _presenter!.getListSyllabusMerchant(context, pageListSyllabus);
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(left: 10),
@@ -122,9 +135,18 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
                                           )),
                                     ]),
                               )),
-                          _listSyllabus(),
+                          provider.listSyllabusDB.isEmpty ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(AppAssets.img_empty),
+                                const Text('Danh sách giáo trình đang trống!')
+                              ],
+                            ),
+                          ) : _listSyllabus(),
                         ],
-                      ));
+                      ),
+                      );
                 },
               ),
             ),
@@ -137,11 +159,22 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
   Widget _listSyllabus() {
     return Consumer<SyllabusProvider>(builder: (context, provider, child) {
       return SingleChildScrollView(
+        controller: _sc,
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: provider.listSyllabusDB.length,
+          itemCount: provider.listSyllabusDB.length + 1,
           itemBuilder: (context, index) {
-            return _syllabusItem(provider.listSyllabusDB, index);
+            if (index == provider.listSyllabusDB.length) {
+              if (index >= totalSyllabus) {
+                return const SizedBox();
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            } else {
+              return _syllabusItem(provider.listSyllabusDB, index);
+            }
         },),
       );
     },);
@@ -174,7 +207,7 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
                     fontWeight: FontWeight.w500,
                     fontSize: 15
                 )),
-                Text('Ngày tải: ${syllabus.downloadAt}', style: const TextStyle (
+                Text('Ngày tải: ${syllabus.downloadAt ?? 'chưa tải'}', style: const TextStyle (
                     color: AppColors.purple,
                     fontWeight: FontWeight.w500,
                     fontSize: 15
@@ -187,7 +220,7 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
               children: [
                 Row(
                   children: [
-                    Text('Số file: ${syllabus.totalDownloaded}/${syllabus.total}', style: const TextStyle (
+                    Text('Số file: ${syllabus.totalDownloaded}', style: const TextStyle (
                         color: AppColors.purple,
                         fontWeight: FontWeight.bold,
                         fontSize: 20
@@ -261,15 +294,19 @@ class _ListSyllabusWidgetState extends State<ListSyllabusWidget> implements Syll
   }
 
   @override
-  void onGetListSyllabusComplete(List<Syllabus> syllabus) {
+  void onGetListSyllabusComplete(List<Syllabus> syllabus, int total) {
+    totalSyllabus = total;
     _provider!.setListSyllabus(syllabus);
     // _loading!.hide();
     _presenter!.insertListSyllabusToDB(syllabus);
   }
 
   @override
-  void onGetListSyllabusError(String massage) {
+  void onGetListSyllabusError(String message) {
     _loading!.hide();
+    showDialog(context: context, builder: (context) {
+      return MessageDialog(context: context, message: message);
+    });
   }
 
   @override
