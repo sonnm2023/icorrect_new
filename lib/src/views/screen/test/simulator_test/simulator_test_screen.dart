@@ -11,6 +11,7 @@ import 'package:icorrect/src/data_sources/local/file_storage_helper.dart';
 import 'package:icorrect/src/data_sources/utils.dart';
 import 'package:icorrect/src/models/auth_models/video_record_exam_info.dart';
 import 'package:icorrect/src/models/homework_models/new_api_135/activities_model.dart';
+import 'package:icorrect/src/models/homework_models/new_api_135/new_class_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/question_topic_model.dart';
 import 'package:icorrect/src/models/simulator_test_models/test_detail_model.dart';
 import 'package:icorrect/src/models/ui_models/alert_info.dart';
@@ -21,6 +22,7 @@ import 'package:icorrect/src/provider/my_practice_list_provider.dart';
 import 'package:icorrect/src/provider/simulator_test_provider.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/circle_loading.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/wait_ai_response_dialog.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/highlight_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/other_tab.dart';
 import 'package:icorrect/src/views/screen/test/simulator_test/test_room_widget.dart';
@@ -31,6 +33,7 @@ import 'package:icorrect/src/views/widget/simulator_test_widget/download_progres
 import 'package:icorrect/src/views/widget/simulator_test_widget/full_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/start_now_button_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_compress/video_compress.dart';
 
 class SimulatorTestScreen extends StatefulWidget {
@@ -378,7 +381,14 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
         top: true,
         right: true,
         bottom: true,
-        child: _buildBody(),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            _buildBody(),
+            havePackageId() ? _aiResponseButton() : Container()
+            // _aiResponseButton()
+          ],
+        ),
       ),
     );
   }
@@ -410,6 +420,17 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
       provider: _simulatorTestProvider!,
       homeWorkModel: widget.activity!,
     );
+  }
+
+  bool havePackageId() {
+    if (widget.activity == null) {
+      return false;
+    }
+    if (widget.activity!.activityPackageId != 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void _backButtonTapped() async {
@@ -753,6 +774,8 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
                 simulatorTestPresenter: _simulatorTestPresenter!,
                 isExam: _isExam,
               ),
+
+              //Loading when submit test
               Consumer<SimulatorTestProvider>(
                 builder: (context, provider, child) {
                   if (SubmitStatus.submitting == provider.submitStatus) {
@@ -768,6 +791,70 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
           ),
         );
       }
+    });
+  }
+
+  Widget _aiResponseButton() {
+    return Consumer<SimulatorTestProvider>(builder: (context, provider, child) {
+      return LayoutBuilder(
+        builder: (_, constraint) {
+          return InkWell(
+            onTap: () async {
+              if (provider.haveAiResponse) {
+                String aiResponseLink =
+                    '${_simulatorTestPresenter!
+                    .aiResponseLink}&token=${await Utils.getAccessToken()}';
+                Utils.createLog(
+                    action: 'launch_url_ai_response',
+                    previousAction: 'null',
+                    status: 'none',
+                    message: 'launch url AiResponse',
+                    data: {'url': aiResponseLink});
+                Uri toLaunch = Uri.parse(aiResponseLink);
+
+                await launchUrl(toLaunch);
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return WaitAiResponseDialog(
+                        presenter: _simulatorTestPresenter!,
+                        clickScoringResult: () {
+                          Timer.periodic(const Duration(seconds: 30), (timer) {
+                            _simulatorTestPresenter!.checkHaveAiResponse(
+                                context,
+                                widget.activity != null
+                                    ? widget.activity!.activityId
+                                    : 0);
+                          });
+                        },
+                      );
+                    });
+              }
+            },
+            child: Container(
+              height: 51,
+              padding: const EdgeInsets.symmetric(
+                vertical: CustomSize.size_10,
+              ),
+              color: provider.haveAiResponse? Colors.green : const Color(0xff9beabd),
+              width: constraint.maxWidth,
+              child: Center(
+                child: Text(
+                  provider.haveAiResponse? Utils.multiLanguage(
+                      StringConstants.view_ai_response_button_title)! : 'AI đang chấm điểm',
+                  style: CustomTextStyle.textWithCustomInfo(
+                    context: context,
+                    color: AppColor.defaultAppColor,
+                    fontsSize: FontsSize.fontSize_16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
     });
   }
 
@@ -975,11 +1062,21 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     //Send log
     Utils.sendLog();
 
-    showToastMsg(
-      msg: msg,
-      toastState: ToastStatesType.success,
-      isCenter: false,
-    );
+    int packageID = 0;
+    if (widget.activity != null) {
+      packageID = widget.activity!.activityPackageId;
+    }
+    if (packageID != 0) {
+      showDialog(context: context, builder: (context) {
+        return WaitAiResponseDialog(presenter: _simulatorTestPresenter!, clickScoringResult: () {  },);
+      });
+    } else {
+      showToastMsg(
+        msg: msg,
+        toastState: ToastStatesType.success,
+        isCenter: false,
+      );
+    }
 
     //Refresh Activity List
     _callToRefresh();
@@ -1093,10 +1190,22 @@ class _SimulatorTestScreenState extends State<SimulatorTestScreen>
     }
 
     setState(() {
-      _isDoingTestFinish = true;
+      if (widget.activity != null) {
+        _isDoingTestFinish = true;
+      }
     });
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void onCheckHaveAiResponseComplete(bool have) {
+    _simulatorTestProvider!.setHaveAiResponse(have);
+  }
+
+  @override
+  void onCheckHaveAiResponseError(String msg) {
+    // TODO: implement onCheckHaveAiResponseError
+  }
 }
