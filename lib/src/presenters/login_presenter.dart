@@ -143,9 +143,15 @@ class LoginPresenter {
         AppConfigInfoModel appConfigInfoModel =
             AppConfigInfoModel.fromJson(dataMap);
         String logApiUrl = appConfigInfoModel.data.logUrl.toString();
+        String submitTimeout = appConfigInfoModel.data.submitTimeout;
         if (logApiUrl.isNotEmpty) {
           AppSharedPref.instance()
               .putString(key: AppSharedKeys.logApiUrl, value: logApiUrl);
+        }
+
+        if (submitTimeout.isNotEmpty) {
+          AppSharedPref.instance()
+              .putString(key: AppSharedKeys.appConfigSubmitTimeout, value: submitTimeout);
         }
 
         String secretkey = appConfigInfoModel.data.secretkey.toString();

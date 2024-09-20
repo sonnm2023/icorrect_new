@@ -34,6 +34,7 @@ class AppConfigInfoModel {
 }
 
 class Data {
+  String? _submitTimeout;
   String? _isShowGgLogin;
   String? _minAnswerTime;
   String? _shortAnswerGuide;
@@ -97,7 +98,9 @@ class Data {
   String? _countryFlagLink;
   List<Country>? _country;
 
-  Data(String? isShowGgLogin,
+  Data(
+      String? submitTimeout,
+      String? isShowGgLogin,
       String? minAnswerTime,
       String? shortAnswerGuide,
       String? shortAnswerMessage,
@@ -159,6 +162,7 @@ class Data {
       String? sharePolicy,
       String? countryFlagLink,
       List<Country>? country) {
+    _submitTimeout = submitTimeout;
     _isShowGgLogin = isShowGgLogin;
     _minAnswerTime = minAnswerTime;
     _shortAnswerGuide = shortAnswerGuide;
@@ -223,6 +227,8 @@ class Data {
     _country = country;
   }
 
+  String get submitTimeout => _submitTimeout ?? "";
+  set submitTimeout(String submitTimeout) => _submitTimeout = submitTimeout;
   String get isShowGgLogin => _isShowGgLogin ?? "";
   set isShowGgLogin(String isShowGgLogin) => _isShowGgLogin = isShowGgLogin;
   String get minAnswerTime => _minAnswerTime ?? "";
@@ -373,6 +379,7 @@ class Data {
   set country(List<Country> country) => _country = country;
 
   Data.fromJson(Map<String, dynamic> json) {
+    _submitTimeout = json['submit_timeout'];
     _isShowGgLogin = json['is_show_gg_login'];
     _minAnswerTime = json['min_answer_time'];
     _shortAnswerGuide = json['short_answer_guide'];
@@ -451,6 +458,7 @@ class Data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['submit_timeout'] = _submitTimeout;
     data['is_show_gg_login'] = _isShowGgLogin;
     data['min_answer_time'] = _minAnswerTime;
     data['short_answer_guide'] = _shortAnswerGuide;

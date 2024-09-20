@@ -244,7 +244,8 @@ class _LoginScreenState extends State<LoginScreen>
   void _getAppConfigInfo() async {
     String appConfigInfo =
         await AppSharedPref.instance().getString(key: AppSharedKeys.secretkey);
-    if (appConfigInfo.isEmpty) {
+    String submitTimeout = await AppSharedPref.instance().getString(key: AppSharedKeys.appConfigSubmitTimeout);
+    if (appConfigInfo.isEmpty || submitTimeout.isEmpty) {
       _loginPresenter!.getAppConfigInfo(context);
     } else {
       Utils.checkInternetConnection().then((isConnected) {

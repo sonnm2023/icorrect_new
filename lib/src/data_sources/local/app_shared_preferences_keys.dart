@@ -9,4 +9,5 @@ enum AppSharedKeys {
   secretkey,
   logApiUrl,
   myPracticeSetting,
+  appConfigSubmitTimeout
 }
