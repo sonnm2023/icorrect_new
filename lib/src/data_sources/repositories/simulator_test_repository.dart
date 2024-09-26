@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:icorrect/src/data_sources/api_urls.dart';
 import 'package:icorrect/src/data_sources/constants.dart';
+import 'package:icorrect/src/data_sources/local/app_shared_preferences.dart';
 import 'package:icorrect/src/data_sources/repositories/app_repository.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+
+import '../local/app_shared_preferences_keys.dart';
 
 abstract class SimulatorTestRepository {
   Future<String> getTestDetailFromHomework({
@@ -30,6 +33,8 @@ abstract class SimulatorTestRepository {
   });
   Future<String> getTestDetailFromMyPractice(
       {required Map<String, dynamic> data});
+
+  Future<String> checkHaveAiResponse();
 }
 
 class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
@@ -161,6 +166,7 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
 
   @override
   Future<String> submitTest(http.MultipartRequest multiRequest) async {
+    String submitTimeout = await AppSharedPref.instance().getString(key: AppSharedKeys.appConfigSubmitTimeout);
     if (kDebugMode) {
       String url = multiRequest.url.toString();
       print('DEBUG: SimulatorTestRepositoryImpl - submitTest: $url');
@@ -186,10 +192,10 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
 
     return await multiRequest
         .send()
-        .timeout(const Duration(seconds: SUBMIT_TIME_OUT))
+        .timeout(Duration(seconds: int.parse(submitTimeout)))
         .then((http.StreamedResponse streamResponse) async {
       return await http.Response.fromStream(streamResponse)
-          .timeout(const Duration(seconds: SUBMIT_TIME_OUT))
+          .timeout(Duration(seconds: int.parse(submitTimeout)))
           .then((http.Response response) {
         final String jsonBody = response.body;
         if (kDebugMode) {
@@ -253,4 +259,15 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           },
         );
   }
+  //
+  // @override
+  // Future<String> checkHaveAiResponse() {
+  //   String url = '$icorrectDomain//api/v1/syllabus/activities-of-class/index';
+  //   return AppRepository.init()
+  //       .sendRequest(RequestMethod.get, url, true, false)
+  //       .timeout(const Duration(seconds: 30))
+  //       .then((http.Response response) {
+  //      return response.body;
+  //   });
+  // }
 }
