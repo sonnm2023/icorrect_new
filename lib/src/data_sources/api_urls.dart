@@ -5,7 +5,9 @@
 
 import 'package:icorrect/src/data_sources/utils.dart';
 
-const icorrectDomain = "https://ielts-correction.com/";
+const devDomain = 'http://devapi.ielts-correction.com/';
+// const icorrectDomain = "https://ielts-correction.com/";
+const icorrectDomain = devDomain;
 const publicDomain = icorrectDomain;
 const toolDomain = icorrectDomain;
 const apiDomain = icorrectDomain;
@@ -26,6 +28,12 @@ const String updateInfoEP = 'auth/update-info';
 const String changePasswordEP = 'auth/change-password';
 const String getTestHomeWorkInfoEP = 'api/v1/ielts-test/syllabus/create';
 const String appConfigEP = 'api/v1/ielts-test/app-config';
+
+// const String getLessonEP = 'api/v1/campaigns';
+// String getMissionDetailEP(String missionID) => 'api/v1/mission/$missionID';
+// String submitQuestionEP(String missionID) => 'api/v1/mission/$missionID/score';
+// const String submitWordEP = 'api/v1/eng/word/score';
+
 String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 String fileEP(String name) => '${icorrectDomain}file?filename=$name';
 
@@ -90,7 +98,8 @@ String getTestPracticeInfoEP(Map<String, String> queryParameters) {
 }
 
 String getMyPracticeTestEP(String page) {
-  return '$icorrectDomain/api/v1/ielts-test/index?page=$page';
+  // return '$icorrectDomain/api/v1/ielts-test/index?page=$page';
+  return '$icorrectDomain/api/v1/ielts-test/index/practices';
 }
 
 String deleteTestEP(String testId) {
