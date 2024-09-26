@@ -519,7 +519,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           }
 
           return Stack(
-            // alignment: Alignment.center,
+            alignment: Alignment.center,
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
