@@ -29,10 +29,10 @@ const String changePasswordEP = 'auth/change-password';
 const String getTestHomeWorkInfoEP = 'api/v1/ielts-test/syllabus/create';
 const String appConfigEP = 'api/v1/ielts-test/app-config';
 
-// const String getLessonEP = 'api/v1/campaigns';
-// String getMissionDetailEP(String missionID) => 'api/v1/mission/$missionID';
-// String submitQuestionEP(String missionID) => 'api/v1/mission/$missionID/score';
-// const String submitWordEP = 'api/v1/eng/word/score';
+const String getLessonEP = 'api/v1/campaigns';
+String getMissionDetailEP(String missionID) => 'api/v1/mission/$missionID';
+String submitQuestionEP(String missionID) => 'api/v1/mission/$missionID/score';
+const String submitWordEP = 'api/v1/eng/word/score';
 
 String downloadFileEP(String name) => '${apiDomain}file?filename=$name';
 String fileEP(String name) => '${icorrectDomain}file?filename=$name';
