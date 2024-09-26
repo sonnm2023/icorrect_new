@@ -259,15 +259,15 @@ class SimulatorTestRepositoryImpl implements SimulatorTestRepository {
           },
         );
   }
-  //
-  // @override
-  // Future<String> checkHaveAiResponse() {
-  //   String url = '$icorrectDomain//api/v1/syllabus/activities-of-class/index';
-  //   return AppRepository.init()
-  //       .sendRequest(RequestMethod.get, url, true, false)
-  //       .timeout(const Duration(seconds: 30))
-  //       .then((http.Response response) {
-  //      return response.body;
-  //   });
-  // }
+
+  @override
+  Future<String> checkHaveAiResponse() {
+    String url = '$icorrectDomain//api/v1/syllabus/activities-of-class/index';
+    return AppRepository.init()
+        .sendRequest(RequestMethod.get, url, true, false)
+        .timeout(const Duration(seconds: 30))
+        .then((http.Response response) {
+       return response.body;
+    });
+  }
 }
