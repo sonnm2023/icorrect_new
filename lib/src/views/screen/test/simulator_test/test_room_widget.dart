@@ -32,6 +32,7 @@ import 'package:icorrect/src/views/screen/other_views/dialog/confirm_dialog.dart
 import 'package:icorrect/src/views/screen/other_views/dialog/custom_alert_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/resize_video_dialog.dart';
 import 'package:icorrect/src/views/screen/other_views/dialog/tip_question_dialog.dart';
+import 'package:icorrect/src/views/screen/other_views/dialog/wait_ai_response_dialog.dart';
 import 'package:icorrect/src/views/widget/default_loading_indicator.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cached_network_image_widget.dart';
 import 'package:icorrect/src/views/widget/simulator_test_widget/cue_card_widget.dart';
@@ -104,6 +105,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   //DEBUG
   String currentPathAudio = '';
+
+  bool isClickScoringResult = false;
+  Timer? _timerScoringResult;
 
   @override
   void initState() {
@@ -293,20 +297,23 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
                                       decoration: const BoxDecoration(
                                         color: AppColor.defaultAppColor,
                                       ),
-                                      child: Center(
-                                        child: simulatorTestProvider
-                                                .questionImageUrlFromLocal
-                                                .isNotEmpty
-                                            ? LoadLocalImageWidget(
-                                                imageUrl: simulatorTestProvider
-                                                    .questionImageUrlFromLocal,
-                                                isInRow: false,
-                                              )
-                                            : CachedNetworkImageWidget(
-                                                imageUrl: simulatorTestProvider
-                                                    .questionImageUrl,
-                                                isInRow: false,
-                                              ),
+                                      child: Visibility(
+                                        visible: provider.reviewingStatus == ReviewingStatus.playing,
+                                        child: Center(
+                                          child: simulatorTestProvider
+                                                  .questionImageUrlFromLocal
+                                                  .isNotEmpty
+                                              ? LoadLocalImageWidget(
+                                                  imageUrl: simulatorTestProvider
+                                                      .questionImageUrlFromLocal,
+                                                  isInRow: false,
+                                                )
+                                              : CachedNetworkImageWidget(
+                                                  imageUrl: simulatorTestProvider
+                                                      .questionImageUrl,
+                                                  isInRow: false,
+                                                ),
+                                        ),
                                       ),
                                     )
                                   : const SizedBox(),
@@ -512,6 +519,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
           }
 
           return Stack(
+            // alignment: Alignment.center,
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
@@ -978,6 +986,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
   void _deallocateMemory() async {
     //Stop count down timer
+    if (null != _timerScoringResult) {
+      _timerScoringResult!.cancel();
+    }
+
     if (null != _countDownCueCard) {
       _countDownCueCard!.cancel();
     }
@@ -1530,6 +1542,9 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         .addListener(_checkStatusWhenFinishVideo);
 
     if (_playingIndex == 0) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _showQuestionImage();
+      });
       _nativeVideoPlayerController!.play();
     } else {
       _createVideoSource(_currentQuestion!.files.first.url).then((value) async {
@@ -1582,7 +1597,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
 
             if (context.mounted) {
               log = await Utils.prepareToCreateLog(context,
-                  action: LogEvent.callApiSubmitTest);
+                  action: LogEvent.init_video_player_error);
             }
             //Add log
             Utils.prepareLogData(
@@ -1915,6 +1930,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _createLog(action: LogEvent.actionSubmitTest, data: null);
 
     _simulatorTestProvider!.updateSubmitStatus(SubmitStatus.submitting);
+    //start loading when submit because submitStatus == submitting
 
     if (_simulatorTestProvider!.videosSaved.isNotEmpty) {
       await _showResizeVideoDialog();
@@ -1959,8 +1975,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
   }
 
   void _startSubmitTest({File? videoConfirmFile}) async {
+    _createLog(action: 'submit_function_start', data: null);
     //Check duration of all answers
     bool isValidDuration = await _checkDuration();
+    _createLog(action: 'check_duration', data: {'result' : isValidDuration});
     if (isValidDuration) {
       // List<QuestionTopicModel> questions = _prepareQuestionListForSubmit();
       List<QuestionTopicModel> questions = _simulatorTestProvider!.questionList;
@@ -1970,6 +1988,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
         activityId = widget.activitiesModel!.activityId.toString();
       }
 
+      _createLog(action: 'start_call_submit_test', data: {'questionList_length': questions.length});
       _testRoomPresenter!.submitTest(
         context: context,
         testId: _simulatorTestProvider!.currentTestDetail.testId.toString(),
@@ -1984,6 +2003,7 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     } else {
       _updateUIWithErrorQuestionList();
     }
+    _createLog(action: 'submit_function_end', data: null);
   }
 
   List<QuestionTopicModel> _prepareQuestionListForSubmit() {
@@ -2458,6 +2478,10 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
     _simulatorTestProvider!.resetNeedUpdateReanswerStatus();
     _simulatorTestProvider!.setNeedRefreshActivityList(true);
 
+    // set call check have airesponse
+    _simulatorTestProvider!.setCallCheck(true);
+    _simulatorTestProvider!.setClickScoring(true);
+
     //Refresh Practice List
     _myPracticeListProvider!.setNeedRefreshPracticeList(true);
 
@@ -2472,11 +2496,37 @@ class _TestRoomWidgetState extends State<TestRoomWidget>
       _deleteFileVideoExam();
     }
 
-    showToastMsg(
-      msg: msg,
-      toastState: ToastStatesType.success,
-      isCenter: true,
-    );
+    int packageID = 0;
+    int activityId = 0;
+    if (widget.activitiesModel != null) {
+      packageID = widget.activitiesModel!.activityPackageId;
+      activityId = widget.activitiesModel!.activityId;
+    }
+
+    if (packageID != 0) {
+      showDialog(context: context, builder: (context) {
+        return WaitAiResponseDialog(presenter: widget.simulatorTestPresenter, clickScoringResult: () {
+          if (_simulatorTestProvider!.isClickScoring) {
+            _simulatorTestProvider!.setClickScoring(false);
+            _timerScoringResult = Timer.periodic(const Duration(seconds: 45), (timer) {
+              if (_simulatorTestProvider!.callCheck || _simulatorTestProvider!.haveAiResponse) {
+                widget.simulatorTestPresenter.checkHaveAiResponse(
+                    context, activityId);
+              } else {
+                timer.cancel();
+                return;
+              }
+            });
+          }
+        });
+      });
+    } else {
+      showToastMsg(
+        msg: msg,
+        toastState: ToastStatesType.success,
+        isCenter: true,
+      );
+    }
   }
 
   @override
